@@ -1,0 +1,176 @@
+{% extends 'skeleton.html' %}
+{% load custom_tags %}
+{% load inlinecompile from compile_static %}
+{% block image %}
+  {% with url=page_url|default:SITE_URL %}
+    {% with img=MEDIA_URL|urljoin:curr_page.url %}
+      <meta name="twitter:image" content="{{ url|urljoin:img }}">
+      <meta property="og:image" content="{{ url|urljoin:img }}">
+    {% endwith %}
+  {% endwith %}
+{% endblock %}
+{% block head_extras %}
+  <style type="text/css">
+    {% inlinecompile 'scss' %}
+      $main-bg: {{ config.MAIN_BACKGROUND|unquote }};
+      $alter-bg: {{ config.ALTER_BACKGROUND|unquote }};
+      $main-fg: {{ config.MAIN_TEXT_COLOR|unquote }};
+      $alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
+      .placeholder, .chapter-page {
+        border: 2px solid $alter-bg;
+        border-radius: 5px;
+      }
+      .dropdown {
+        border: 1px solid $alter-bg;
+        border-radius: 5px;
+        ul {
+          border: 1px solid $alter-bg;
+          border-radius: 5px;
+        }
+      }
+      .fa-circle-o-notch {
+        color: transparentize($alter-fg, 0.5);
+        margin: 25vw auto;
+        @media screen and (max-width: 436px) {
+          color: transparentize($main-fg, 0.5)
+        }
+      }
+    {% endinlinecompile %}
+  </style>
+  <!--[if IE lt 9]>
+  <script type="text/javascript">
+    // Simple addEventListener polyfill
+    if(typeof window.addEventListener === 'undefined') {
+      window.addEventListener = function(evt, cb) {
+        return window.attachEvent('on' + evt, cb);
+      }
+    }
+  </script>
+  <![endif]-->
+  <script type="text/javascript">
+    img = new Image();
+    img.src = '{{ MEDIA_URL|urljoin:curr_page.url }}';
+    img.alt = 'Page {{ curr_page.number }}';
+    img.className = 'chapter-page';
+    img.addEventListener('click', function() {
+      {% if curr_page.number < all_pages.count %}
+        location.pathname = location.pathname
+          .replace(/[0-9]+\/$/, '{{ curr_page.number|add:1 }}/');
+      {% elif next_chapter %}
+        location.pathname = '{{ next_chapter.url }}';
+      {% else %}
+        location.pathname = '/reader/{{ curr_chapter.series.slug }}/';
+      {% endif %}
+    });
+    img.addEventListener('load', function() {
+      var holder = document.querySelector('.placeholder');
+      var drop = document.getElementById('dropdowns');
+      var controls = document.getElementById('controls');
+      holder.parentNode.replaceChild(img, holder);
+      drop.removeAttribute('style');
+      controls.removeAttribute('style');
+    });
+  </script>
+{% endblock %}
+{% block title %}
+  <meta name="twitter:title" content="{{ curr_chapter.title }}">
+  <meta property="og:title" content="{{ curr_chapter.title }}">
+  <title>{{ curr_chapter.title }} :: {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <div id="chapter">
+    <section id="dropdowns" style="display: none">
+      <div class="dropdown chapter-list main-bg" aria-haspopup="true">
+        <span class="dropdown-title alter-fg">
+          <i class="fa fa-chevron-down"></i>
+          Chapters
+        </span>
+        <a href="#" title="{{ curr_chapter.title }}">
+          <i class="fa fa-chevron-down"></i>
+          {% with vol=curr_chapter.volume num=curr_chapter.number %}
+            <span {% if curr_chapter.final %}class="end"{% endif %}>
+              V{{ vol }} / C{{ num }}: {{ curr_chapter.title }}
+            </span>
+          {% endwith %}
+        </a>
+        <ul class="main-bg">
+          {% for chapter in all_chapters %}
+            <li class="chapter-details"
+              {% if chapter == curr_chapter %}
+                data-current="true"
+              {% endif %}>
+              <a href="{{ chapter.url }}" title="{{ chapter.title }}"
+                       {% if chapter.final %}class="end"{% endif %}>
+                {% with vol=chapter.volume num=chapter.number %}
+                  V{{ vol }} / C{{ num }}: {{ chapter.title }}
+                {% endwith %}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div   class="dropdown page-list main-bg" aria-haspopup="true">
+        <span class="dropdown-title alter-fg">
+          Pages
+          <i class="fa fa-caret-down"></i>
+        </span>
+        <a href="#">
+          Page {{ curr_page.number|stringformat:'02d' }}
+          <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="main-bg">
+          {% for page in all_pages %}
+            <li class="page-details"
+              {% if page.number == curr_page.number %}
+                data-current="true"
+              {% endif %}>
+              {% with num=page.number|stringformat:'02d' %}
+                <a href="../{{ page.number }}">Page {{ num }}</a>
+              {% endwith %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+    <section class="placeholder">
+      <i class="fa fa-circle-o-notch fa-spin fa-5x fa-fw"></i>
+    </section>
+    <section id="controls" style="display: none">
+      {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
+        {% if prev == 0 %}
+          {% if prev_chapter %}
+            <a href="{{ prev_chapter.url }}" title="Previous chapter">
+          {% else %}
+            <a href="/reader/{{ curr_chapter.series.slug }}/"
+               title="No previous chapters">
+          {% endif %}
+        {% else %}
+          <a href="../{{ prev }}/" title="Previous page">
+        {% endif %}
+            <i class="fa fa-2x fa-backward fa-fw"></i>
+          </a>
+        {% if next > all_pages.count %}
+          {% if next_chapter %}
+            <a href="{{ next_chapter.url }}" title="Next chapter">
+          {% else %}
+            <a href="/reader/{{ curr_chapter.series.slug }}/"
+               title="No more chapters">
+          {% endif %}
+        {% else %}
+          <a href="../{{ next }}/" title="Next page">
+        {% endif %}
+            <i class="fa fa-2x fa-forward fa-fw"></i>
+          </a>
+      {% endwith %}
+    </section>
+  </div>
+  <div id="preload" style="display: none">
+    {% for page in all_pages %}
+      {% if page.number > curr_page.number %}
+        {% if page.number <= curr_page.number|add:3 %}
+          <img src="{{ MEDIA_URL|urljoin:page.url }}"/>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endblock %}

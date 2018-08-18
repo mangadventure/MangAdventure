@@ -1,0 +1,9 @@
+{% extends 'skeleton.html' %}
+{% block title %}
+      <meta name="twitter:title" content="Error {{ error_status }}">
+      <meta property="og:title" content="Error {{ error_status }}">
+      <title>Error {{ error_status }} :: {{ config.NAME }}</title>
+    {% endblock %}
+{% block content %}
+  <h1 class="alter-fg">{{ error_message }}</h1>
+{% endblock %}

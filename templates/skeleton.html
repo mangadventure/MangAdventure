@@ -1,0 +1,181 @@
+{% load static %}
+{% load custom_tags %}
+{% load compile_static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="generator" content="MangAdventure v{{ MANGADV_VERSION }}">
+    <meta name="keywords" content="manga, reader, django">
+    <meta name="robots" content="index, follow">
+    {% if config.DISCORD != 'N/A' %}
+      <meta name="discord" content="{{ config.DISCORD }}">
+    {% endif %}
+    {% if config.TWITTER != 'N/A' %}
+      <meta name="twitter:user" content="@{{ config.TWITTER }}">
+    {% endif %}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site_name" content="{{ config.NAME }}">
+    {% block description %}
+      <meta name="twitter:description" content="{{ config.DESCRIPTION }}">
+      <meta property="og:description" content="{{ config.DESCRIPTION }}">
+    {% endblock %}
+    {% block image %}
+      {% with url=page_url|default:SITE_URL %}
+        {% with logo=url|urljoin:config.LOGO_LARGE %}
+          <meta name="twitter:image" content="{{ logo }}">
+          <meta property="og:image" content="{{ logo }}">
+        {% endwith %}
+      {% endwith %}
+    {% endblock %}
+    {% block url %}
+      <meta name="url" content="{{ page_url|default:SITE_URL }}">
+      <meta property="og:url" content="{{ page_url|default:SITE_URL }}">
+    {% endblock %}
+    <meta property="og:site_name" content="{{ config.NAME }}">
+    <link href="{{ MEDIA_URL|urljoin:config.FAVICON }}"
+          rel="shortcut icon" type="image/x-icon">
+    <link href="{{ page_url|default:SITE_URL|urljoin:'/' }}"
+          rel="index" title="{{ config.NAME }}">
+    <link href="https://cdn.jsdelivr.net/npm/fork-awesome@1.1.0/css/fork-awesome.min.css"
+          integrity="sha256-sX8HLspqYoXVPetzJRE4wPhIhDBu2NB0kYpufzkQSms="
+          rel="prefetch stylesheet" as="style" type="text/css" crossorigin="anonymous">
+    <link href="{{ config.FONT_URL }}" rel="stylesheet" type="text/css">
+    {% block stylesheets %}
+      <link href="{% static 'styles/style.scss'|compile %}"
+            data-source="{% static 'styles/style.scss' %}"
+            rel="stylesheet" type="text/css">
+      <link href="{% static 'extra/style.scss'|compile %}"
+            data-source="{% static 'extra/style.scss' %}"
+            rel="stylesheet" type="text/css">
+    {% endblock %}
+    <style type="text/css">
+      {% inlinecompile 'scss' %}
+        @import "functions";
+        $main-bg: {{ config.MAIN_BACKGROUND|unquote }};
+        $alter-bg: {{ config.ALTER_BACKGROUND|unquote }};
+        $main-fg: {{ config.MAIN_TEXT_COLOR|unquote }};
+        $alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
+        $shadow-color: if(lightness($alter-fg) < 50%, #DDD, #444);
+        body {
+          background-color: $main-bg;
+          color: $main-fg;
+          font-family: "{{ config.FONT_NAME }}", Helvetica, Arial, sans-serif;
+        }
+        a { color: $alter-fg }
+        #header {
+          background-color: $alter-bg;
+          a {
+            color: $main-fg;
+            &:hover, &:active { color: $alter-fg }
+          }
+        }
+        #content {
+          background-color: $alter-bg;
+          border: 5px solid $alter-bg;
+          border-radius: 5px;
+          article {
+            background-color: $main-bg;
+            border-radius: 5px;
+          }
+        }
+        .end::before {
+          content: 'END';
+          background-color: $alter-bg;
+          color: $main-bg;
+          display: inline-block;
+          border-radius: 3px;
+          padding: 0 2px;
+        }
+        .main-bg { background-color: $main-bg }
+        .alter-bg { background-color: $alter-bg }
+        h1, h2, .alter-fg { color: $alter-fg }
+        h2 { border-color: $alter-fg }
+        .text-shadow { text-shadow: shadow(1px, $shadow-color); }
+      {% endinlinecompile %}
+    </style>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js">
+    </script>
+    {% block head_extras %}{% endblock %}
+    {% block title %}
+      <meta name="twitter:title" content="{{ config.NAME }}">
+      <meta property="og:title" content="{{ config.NAME }}">
+      <title>{{ config.NAME }}</title>
+    {% endblock %}
+  </head>
+  <body>
+    <header id="header">
+      <a id="home" href="/">
+        <span>
+          <object class="logo" type="{{ config.LOGO_LARGE|get_type }}"
+                  data="{{ config.LOGO_LARGE }}" height="45">
+          </object>
+          <object class="logo" type="{{ config.LOGO_MEDIUM|get_type }}"
+                  data="{{ config.LOGO_MEDIUM }}" height="38">
+          </object>
+          <object class="logo" type="{{ config.LOGO_SMALL|get_type }}"
+                  data="{{ config.LOGO_SMALL }}" height="27">
+          </object>
+        </span>
+      </a>
+      <nav id="navig">
+        <ul>
+          {% if config.TWITTER != 'N/A' %}
+            <li>
+              <a href="https://twitter.com/{{ config.TWITTER }}">
+                <i class="fa fa-twitter"></i>
+                <span class="ident">Twitter</span>
+              </a>
+            </li>
+          {% endif %}
+          {% if config.DISCORD != 'N/A' %}
+            <li>
+              <a href="{{ config.DISCORD }}">
+                <i class="fa fa-discord"></i>
+                <span class="ident">Discord</span>
+              </a>
+            </li>
+          {% endif %}
+          <li>
+            <a href="/">
+              <i class="fa fa-clock-o"></i>
+              <span class="ident">Latest releases</span>
+            </a>
+          </li>
+          <li>
+            <a href="/reader/">
+              <i class="fa fa-list"></i>
+              <span class="ident">Series list</span>
+            </a>
+          </li>
+          {% comment %}
+          {# Not yet functional #}
+          <li id="searchlink">
+            <a href="/search/">
+              <i class="fa fa-search"></i>
+              <span class="ident">Search</span>
+            </a>
+          </li>
+          <li>
+            <form action="search" method="POST" accept-charset="utf-8">
+              <input placeholder="Type something to search for"
+                     type="text" name="search" id="searchbox"/>
+            </form>
+          </li>
+          {% endcomment %}
+        </ul>
+      </nav>
+    </header>
+    <main id="content">
+      {% block content %}
+      {% endblock %}
+    </main>
+    <footer id="footer">
+      {% autoescape off %}
+        <p class="text">{{ config.FOOTER|linebreaksbr }}</p>
+      {% endautoescape %}
+    </footer>
+  </body>
+</html>

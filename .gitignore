@@ -1,0 +1,36 @@
+# Python/Django stuff
+__pycache__/
+**/migrations/*auto*
+db.sqlite3
+logs/
+*.pyc
+
+# Environment stuff
+.python-version
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Editor stuff
+.idea/
+.settings/
+.classpath
+.project
+*.pydevproject
+*.cache
+*.sublime-workspace
+*.sublime-project
+.*vimrc
+*.swp
+*~
+
+# MangAdventure stuff
+config.ini
+media/
+static/*
+!static/styles/
+

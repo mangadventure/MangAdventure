@@ -1,0 +1,458 @@
+@import 'functions';
+@import 'mixins';
+
+body {
+  margin: 0 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+:focus { outline: none }
+
+a {
+  text-decoration: none;
+  &:hover { text-decoration: underline }
+}
+
+h1 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: normal;
+  overflow: hidden;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+#header {
+  display: flex;
+  height: 45px;
+  @include flex();
+  #home {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    span { display: inline-block }
+  }
+  li { border: none }
+  .logo {
+    pointer-events: none;
+    float: left;
+    position: relative;
+    z-index: -1;
+  }
+}
+
+#navig {
+  position: absolute;
+  right: 0;
+  a {
+    display: inline-block;
+    padding: 8px;
+    &:hover { text-decoration: none }
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+    li {
+      float: left;
+      margin: 4px 0;
+      @include border-radius(3px);
+    }
+  }
+}
+
+#footer {
+  display: block;
+  text-align: center;
+  margin: 5px;
+  @include flex();
+  .text {
+    font-size: 13px;
+    padding-right: 6px;
+  }
+}
+
+#searchbox {
+  width: 270px;
+  position: relative;
+  bottom: 2px;
+  text-align: left;
+  text-indent: 5px;
+  margin-left: 4px;
+  @include border-radius(3px);
+}
+
+#content {
+  margin: 10px auto;
+  width: 95vw;
+  display: table;
+  @include flex(1 0 auto);
+  @include box-sizing();
+  article {
+    padding: 0 5px;
+    margin-top: 5px;
+  }
+  h1 { padding: 2px 0 }
+  h2 a {
+    display: inline-block;
+    color: inherit;
+  }
+}
+
+#latest {
+  .release {
+    padding: 3px 2px;
+    display: block;
+    vertical-align: top;
+    &-info {
+      display: flex;
+      @include flex(1);
+      @include justify-content(space-between);
+      .chapter-date { max-width: calc(100vw / 3) }
+      a {
+        margin-left: 0.5em;
+        max-width: calc(86vw / 3 * 2);
+        @include truncate();
+      }
+    }
+  }
+}
+
+#list {
+  display: flex;
+  @include justify-content(flex-start);
+  @include flex-direction(column);
+  section {
+    margin-bottom: 3px;
+    padding: 10px 0 0;
+    width: 100%;
+    .cover {
+      max-width: 15vw;
+      width: 100%;
+      float: left;
+    }
+    .series-info {
+      display: block;
+      vertical-align: top;
+      position: relative;
+      left: 0.3em;
+      .series-chapter {
+        display: flex;
+        max-width: 90vw;
+        @include flex(1);
+        a {
+          padding-left: 0.5em;
+          @include truncate();
+        }
+      }
+    }
+  }
+  .series-title {
+    text-align: center;
+    font-size: large;
+    width: 95%;
+    border-bottom: 2px solid;
+    margin: 0 auto 3px;
+  }
+}
+
+#series {
+  display: flex;
+  @include flex-wrap();
+  &-info { max-width: 60vw }
+  &-title {
+    text-transform: none;
+    padding: 0 !important;
+  }
+  .cover {
+    max-width: calc(100vw / 3);
+    height: 100%;
+    position: relative;
+    left: -5px;
+    float: left;
+    @include border-radius();
+  }
+  &-aliases, &-authors, &-artists {
+    max-width: 55vw;
+    @include truncate();
+  }
+  div {
+    &.alias, &.author, &.artist {
+      text-indent: 0.5em;
+      @include truncate();
+    }
+  }
+  &-desc {
+    max-width: 55vw;
+    p {
+      margin: 0;
+      padding: 0 2px;
+      text-indent: 0.5em;
+      max-width: 80vw;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+  &-chapters {
+    width: 100%;
+    h3 { margin: 0.5em 0 }
+    .chapter {
+      padding: 0 0 0.5em;
+      margin: 0 0.5em;
+      a { @include truncate(); }
+      &-date { float: right; }
+    }
+  }
+}
+
+#chapter {
+  .placeholder {
+    width: 80vw;
+    display: flex;
+    cursor: wait;
+  }
+  .chapter-page {
+    display: block;
+    width: auto;
+    cursor: pointer;
+    position: relative;
+    top: 0.5em;
+  }
+  .chapter-list {
+    float: left;
+    a {
+      display: inline-block;
+      max-width: 50vw;
+      @include truncate();
+    }
+    ul {
+      left: -1px;
+      min-width: 100%;
+      text-indent: 0.05em;
+      border-top-left-radius: 0;
+    }
+  }
+  .page-list {
+    float: right;
+    ul {
+      right: -1px;
+      width: 125%;
+      text-align: center;
+      border-top-right-radius: 0;
+    }
+  }
+  #controls {
+    display: flex;
+    width: 100%;
+    margin: 2.5vh auto 1vh;
+    @include justify-content(space-around);
+    a { text-decoration: none }
+  }
+}
+
+.dropdown {
+  display: block;
+  height: 30px;
+  padding: 4px;
+  position: relative;
+  @include box-sizing();
+  ul {
+    display: none;
+    margin: 0;
+    padding: 3px;
+    list-style: none;
+    position: absolute;
+    top: 100%;
+    max-width: 90vw;
+    max-height: 50vh;
+    overflow-y: auto;
+    li { @include truncate(); }
+  }
+  > span {
+    display: none;
+    cursor: pointer;
+  }
+  @include touch() {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    ul {
+      z-index: 10;
+      display: block;
+    }
+  }
+}
+
+.placeholder, .chapter-page {
+  max-width: 100%;
+  height: auto;
+  margin: auto;
+  @include box-sizing();
+}
+
+.separator {
+  height: 0.5vh;
+  width: 99%;
+  display: block;
+  margin: auto;
+  @include border-radius(100px);
+  @include box-sizing();
+}
+
+.chapter-date {
+  margin-left: 0.2em;
+  display: inline-block;
+  @include truncate();
+}
+
+.fa-chevron-down {
+  font-size: 75%;
+  position: relative;
+  bottom: 0.2em;
+}
+
+.fa-caret-down {
+  font-size: 110%;
+  position: relative;
+  top: 0.05em;
+}
+
+img { -ms-interpolation-mode: bicubic }
+
+.colon::after { content: quote(':') }
+
+.logo { &[height='27'], &[height='38'] { display: none } }
+
+#searchlink { display: none }
+
+@include viewport(1024px) {
+  #header {
+    height: 38px;
+    .logo {
+      &[height='45'] { display: none }
+      &[height='38'] { display: inline-block }
+    }
+  }
+  #navig { top: -3px }
+}
+
+@include viewport(812px) {
+  #search {
+    &box { display: none }
+    &link { display: block }
+  }
+}
+
+@include viewport(720px) {
+  #header {
+    height: 27px;
+    .logo {
+      &[height='38'] { display: none }
+      &[height='27'] { display: inline-block }
+    }
+  }
+  #navig ul li {
+    margin-top: -0.2em;
+    margin-left: -0.3em;
+    margin-right: 0.3em;
+  }
+  .ident { display: none }
+  .fa-discord::before { content: '\f2ef' } // fa-discord-alt
+}
+
+@include viewport(436px) {
+  #content {
+    background-color: inherit !important;
+    border: none !important;
+    margin: 5px auto;
+    h1 {
+      display: table;
+      margin: auto;
+      padding: 1px 4px;
+      vertical-align: middle;
+      max-width: 80vw;
+      hyphens: auto;
+      @include border-radius();
+    }
+  }
+  article { margin-top: 0 }
+  #latest h2 { text-align: center }
+  #list {
+    text-align: center;
+    .cover {
+      max-width: calc(100vw / 3);
+      float: none;
+    }
+    .series {
+      &-info { left: 0 }
+      &-chapter {
+        justify-content: center;
+        a { padding: 0 }
+      }
+    }
+  }
+  #series {
+    margin-top: 7px;
+    text-align: center;
+    > div > div { padding: 0.2em 0 }
+    &-title { padding-bottom: 3px !important }
+    &-info {
+      width: 100%;
+      max-width: unset;
+      margin: 0.5em 0;
+    }
+    &-desc {
+      max-width: unset;
+      p {
+        text-indent: 0;
+        hyphens: manual;
+        padding: 0 1em;
+        max-width: unset;
+      }
+    }
+    &-aliases, &-authors, &-artists {
+      max-width: unset;
+      overflow: unset;
+      white-space: normal;
+      span, div {
+        display: block;
+        padding: 0 1em;
+        hyphens: manual;
+      }
+    }
+    &-chapters h3 { margin: 0.1em }
+    .cover {
+      left: 0;
+      margin: auto;
+      max-width: 50vw;
+    }
+    .chapter {
+      margin: 0;
+      &-date {
+        margin: 0;
+        display: block;
+        float: unset;
+      }
+    }
+    div { &.alias, &.author, &.artist { text-indent: 0 } }
+  }
+  #chapter {
+    .dropdown {
+      > a {
+        display: none
+      }
+      > span {
+        display: inline-block
+      }
+    }
+  }
+}
+

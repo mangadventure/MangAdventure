@@ -1,0 +1,10 @@
+@function shadow($size, $color) {
+  @if($size == none) { @return none; }
+  $shadow: null;
+  $values: (-#{$size} 0, 0 $size, $size 0, 0 -#{$size});
+  @for $i from 1 through length($values) {
+    $shadow: append($shadow, nth($values, $i) $size $color, comma);
+  }
+  @return $shadow;
+}
+

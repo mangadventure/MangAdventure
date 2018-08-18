@@ -1,0 +1,148 @@
+@mixin selection($bg, $fg) {
+  $prefixes: '', '-moz-';
+  @each $pref in $prefixes {
+    ::#{$pref}selection {
+      background: $bg;
+      color: $fg;
+    }
+  }
+}
+
+@mixin colors($bg: null, $fg: null) {
+  @if($bg) { background-color: $bg; }
+  @if($fg) { color: $fg; }
+}
+
+@mixin border($color: #FFF, $width: 1px, $style: solid, $suffix: null, $important: false) {
+  $border: $width $style $color;
+  @if($important) { $border: append($border, !important); }
+  border#{$suffix}: $border;
+}
+
+@mixin size($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+@mixin fullwidth() {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+@mixin title() {
+  margin: 0 0 10px;
+  padding: 6px 8px;
+  position: relative;
+  font-size: 17px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+  border-radius: 3px;
+}
+
+@mixin thumbnail() {
+  float: left;
+  position: relative;
+  max-height: 125px;
+  margin-right: 5px;
+  z-index: 100;
+}
+
+@mixin box-sizing($sizing: border-box) {
+  $prefixes: '-ms-', '-webkit-', '-moz-', '';
+  @each $p in $prefixes {
+    #{$p}box-sizing: $sizing;
+  }
+}
+
+@mixin border-radius($radius: 5px) {
+  $prefixes: '-moz-', '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}border-radius: $radius;
+  }
+}
+
+@mixin flex-direction($direction: row) {
+  $prefixes: '-ms-', '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}flex-direction: $direction;
+  }
+}
+
+@mixin justify-content($justify: space-between) {
+  $prefixes: '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}justify-content: $justify;
+  }
+}
+
+@mixin align-items($align: center) {
+  $prefixes: '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}align-items: $align;
+  }
+}
+
+@mixin flex-wrap($wrap: wrap) {
+  $prefixes: '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}flex-wrap: $wrap;
+  }
+}
+
+@mixin flex($flex: none) {
+  $prefixes: '-ms-', '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}flex: $flex;
+  }
+}
+
+@mixin flex-shrink($shrink: 0) {
+  $prefixes: '-ms-', '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}flex-shrink: $shrink;
+  }
+}
+
+@mixin flex-grow($grow: 0) {
+  $prefixes: '-webkit-', '';
+  -ms-flex-positive: $grow;
+  @each $p in $prefixes {
+    #{$p}flex-grow: $grow;
+  }
+}
+
+@mixin flex-basis($basis: 100%) {
+  $prefixes: '-ms-', '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}flex-basis: $basis;
+  }
+}
+
+@mixin text-overflow($overflow: ellipsis) {
+  $prefixes: '-ms-', '';
+  @each $p in $prefixes {
+    #{$p}text-overflow: $overflow;
+  }
+}
+
+@mixin truncate() {
+  overflow: hidden;
+  white-space: nowrap;
+  @include text-overflow();
+}
+
+@mixin touch($selector: null) {
+  &:hover #{$selector},
+  &:active #{$selector},
+  &:focus #{$selector} {
+    @content;
+  }
+}
+
+@mixin viewport($max) {
+  @media screen and (max-width: $max) {
+    @content;
+  }
+}
+

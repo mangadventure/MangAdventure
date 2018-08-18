@@ -1,0 +1,68 @@
+(auto)?emailspider
+(Contact|LMQueue)Bot
+\w?(Browse|Surf|Eval)
+\w?Surf15a
+^Mozilla/3\.0 \(compatible\)$
+^Mozilla/5\.0 \(Version:.+Type:.+\)$
+^User-Agent: Mozilla/4\.0
+Advanced Email Extractor
+Atomic_Email_Hunter
+atSpider
+BlackWidow
+Boston Project
+bwh3_user_agent
+China Local Browse
+ContentSmartz
+DataCha0s
+del\.icio\.us-thumbnails
+Demo Bot \w+ 16b
+DigExt; DTS Agent
+Educate Search
+efp@gmx\.net
+Email(Siphon|Wolf)
+ExtractorPro
+FaceBook
+Franklin Locator
+Full Web Bot
+Guestbook Auto Submitter
+Industry Program
+Indy Library
+Iplexx Spider
+ISC Systems iRc Search
+IUPUI Research Bot
+jaja-jak-globusy\.com
+Jo(Bo|C Web Spider)
+LetsCrawl.com
+Lincoln State Web Browser
+LWP::Simple
+Mac Finder
+MFC Foundation Class Library
+Microsoft URL Control
+Miss(aug|igu)a Locat(e|or)
+Missouri College Browse
+Mizzu Labs
+Mo College
+MVAClient
+NameOfAgent \(CMS Spider\)
+NASA Search
+Nsauditor
+Port Huron Labs
+Production Bot
+Program Shareware
+psycheclone
+scan4mail
+searchbot
+ShablastBot
+SiteSucker
+snap\.com beta crawler
+Snapbot
+sogou (\w+\s)?spider
+sohu agent
+Under the Rainbow
+VadixBot
+We(lls|p) Search
+WebCapture
+WebFetch
+Website eXtractor
+WebVulnCrawl
+Wysigot

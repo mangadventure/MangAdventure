@@ -1,0 +1,32 @@
+{% extends 'skeleton.html' %}
+{% block title %}
+  <meta name="title" content="Latest Releases">
+  <title>Latest Releases :: {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Latest Releases</h1>
+  <article id="latest">
+    {% for release in latest_releases %}
+      <section class="release">
+        <h2>
+          <a href="/reader/{{ release.series.slug }}/"
+             title="{{ release.series.title }}">
+            {{ release.series.title }}
+          </a>
+        </h2>
+        <div class="release-info">
+          {% with vol=release.volume num=release.number %}
+            <a href="/reader/{{ release.series.slug }}/{{ vol }}/{{ num }}/"
+               {% if release.final %}class="end"{% endif %}
+               title="{{ release.title }}">
+              Vol. {{ vol }}, Ch. {{ num }}: {{ release.title }}
+            </a>
+          {% endwith %}
+          <span class="chapter-date" title="{{ release.date }}">
+            - {{ release.date }}
+          </span>
+        </div>
+      </section>
+    {% endfor %}
+  </article>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'skeleton.html' %}
+{% load custom_tags %}
+{% load inlinecompile from compile_static %}
+{% block head_extras %}
+  <style>
+    {% inlinecompile 'scss' %}
+      $color: {{ config.ALTER_BACKGROUND|unquote }};
+      @media screen and (max-width: 436px) {
+        #series > div {
+          border: 2px solid $color;
+          border-radius: 5px;
+          > div:not(:last-of-type) {
+            border-bottom: 2px solid $color;
+          }
+        }
+      }
+    {% endinlinecompile %}
+  </style>
+{% endblock %}
+{% block image %}
+  {% with url=page_url|default:SITE_URL|urljoin:MEDIA_URL %}
+    <meta name="twitter:image" content="{{ url|add:series.cover.name }}">
+    <meta property="og:image" content="{{ url|add:series.cover.name }}">
+  {% endwith %}
+{% endblock %}
+{% block title %}
+  <meta name="twitter:title" content="{{ series.title }}">
+  <meta property="og:title" content="{{ series.title }}">
+  <title>{{ series.title }} :: {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 id="series-title" class="text-shadow alter-bg">{{ series.title }}</h1>
+  <article id="series">
+    <img src="{{ MEDIA_URL|urljoin:series.cover.name }}"
+         alt="Cover" class="cover"/>
+    <div id="series-info">
+      {% if series.aliases.all %}
+        <div id="series-aliases">
+          <strong class="alter-fg colon">Alt. title</strong>
+          {% for alias in series.aliases.all %}
+            {% if forloop.first and forloop.last %}
+              <span class="alias">{{ alias }}</span>
+            {% else %}
+              {% if forloop.first %}
+                <style>#series-aliases .colon::after{content:"s:"}</style>
+              {% endif %}
+              <div class="alias">{{ alias }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      <div id="series-desc">
+        <strong class="alter-fg colon">Description</strong>
+        {% if series.description %}
+          {% autoescape off %}
+            <div>{{ series.description|linebreaks }}</div>
+          {% endautoescape %}
+        {% else %}
+          <span>N/A</span>
+        {% endif %}
+      </div>
+      <div id="series-authors">
+        <strong class="alter-fg colon">Author</strong>
+        {% if series.authors.all %}
+          {% for author in series.authors.all %}
+            {% if forloop.first and forloop.last %}
+              <span class="author">{{ author }}</span>
+            {% else %}
+              {% if forloop.first %}
+                <style>#series-authors .colon::after{content:"s:"}</style>
+              {% endif %}
+              <div class="author">{{ author }}</div>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <span class="author">N/A</span>
+        {% endif %}
+      </div>
+      <div id="series-artists">
+        <strong class="alter-fg colon">Artist</strong>
+        {% if series.artists.all %}
+          {% for artist in series.artists.all %}
+            {% if forloop.first and forloop.last %}
+              <span class="artist">{{ artist }}</span>
+            {% else %}
+              {% if forloop.first %}
+                <style>#series-artists .colon::after{content:"s:"}</style>
+              {% endif %}
+              <div class="artist">{{ artist }}</div>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <span class="artist">N/A</span>
+        {% endif %}
+      </div>
+      <div id="series-status">
+        <strong class="alter-fg colon">Status</strong>
+        <span>{{ series.completed|yesno:'Completed,Ongoing' }}</span>
+      </div>
+    </div>
+    <div id="series-chapters">
+      <h3 class="alter-fg colon">Chapters</h3>
+      {% with chapters=series.chapters|order_by:'date' %}
+        {% for chapter in chapters %}
+          <div class="chapter">
+            {% with vol=chapter.volume num=chapter.number %}
+              <a href="{{ chapter.url }}"
+                 {% if chapter.final %}class="end"{% endif %}
+                 title="{{ chapter.title }}">
+                Vol. {{ vol }}, Ch. {{ num }}: {{ chapter.title }}
+              </a>
+              <span class="chapter-date" title="{{ chapter.date }}">
+                - {{ chapter.date }}
+              </span>
+            {% endwith %}
+          </div>
+        {% endfor %}
+      {% endwith %}
+    </div>
+  </article>
+{% endblock %}
+

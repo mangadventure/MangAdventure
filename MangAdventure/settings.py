@@ -2,7 +2,7 @@ from django.core.management.color import color_style as style
 from os import path, mkdir, environ as env
 from re import compile as reg, IGNORECASE
 from sys import stderr, argv
-from MangAdventure import __version__ as ver
+from . import __version__ as ver
 from settings import CONFIG
 
 # From https://stackoverflow.com/questions/9626535/#36609868
@@ -36,11 +36,10 @@ ALLOWED_HOSTS = [
     '127.0.0.1', '0.0.0.0',
     'localhost', '[::1]',
 ]
-ALLOWED_HOSTS += ['192.168.1.%s' % i for i in range(2, 256)]
 try:
     BASE_URL = get_domain(CONFIG['settings']['site_url'])
     if BASE_URL:
-        ALLOWED_HOSTS += [BASE_URL]
+        ALLOWED_HOSTS += [BASE_URL, 'www.' + BASE_URL]
     else:
         raise KeyError
 except KeyError:
@@ -97,7 +96,7 @@ if DEBUG:
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'OPTIONS': {'context_processors': CONTEXT_PROCESSORS},
-    'APP_DIRS': True, 'DIRS': ['templates'],
+    'APP_DIRS': True, 'DIRS': [path.join(BASE_DIR, 'templates')],
 }]
 
 WSGI_APPLICATION = 'MangAdventure.wsgi.application'
@@ -227,13 +226,13 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filters': ['require_debug_true'],
-            'filename': 'logs/debug.log'
+            'filename': path.join(BASE_DIR, 'logs', 'debug.log')
         },
         'error': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filters': ['require_debug_false'],
-            'filename': 'logs/errors.log'
+            'filename': path.join(BASE_DIR, 'logs', 'errors.log')
         },
     },
     'loggers': {

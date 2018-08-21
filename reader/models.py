@@ -133,7 +133,7 @@ class Chapter(models.Model):
             natural_sort(name_list)
             Page.objects.filter(chapter=self).delete()
             for name in name_list:
-                if zip_file.getinfo(name).is_dir():
+                if is_dir(zip_file.getinfo(name)):
                     continue
                 counter += 1
                 data = zip_file.read(name)

@@ -14,6 +14,11 @@ def _remove_file(file):
         pass
 
 
+def is_dir(zipinfo):
+    if hasattr(zipinfo, 'is_dir'):
+        return zipinfo.is_dir()
+    return zipinfo.filename.endswith('/')
+
 class FileSizeValidator(BaseValidator):
     message = 'File too large. Maximum file size allowed is %(max)dMBs.'
     code = 'file_too_large'
@@ -62,7 +67,7 @@ def validate_zip_file(file):
         )
     first_folder = True
     for f in zip_file.namelist():
-        if zip_file.getinfo(f).is_dir():
+        if is_dir(zip_file.getinfo(f)):
             if first_folder:
                 first_folder = False
                 continue

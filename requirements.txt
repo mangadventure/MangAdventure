@@ -2,6 +2,5 @@ django
 django-next-prev
 django-constance[database]
 django-static-precompiler[libsass]
-dj-static
 Pillow
 

@@ -254,6 +254,7 @@ h2 {
     width: 100%;
     margin: 2.5vh auto 1vh;
     @include justify-content(space-around);
+    span { margin: auto 0 }
     a { text-decoration: none }
   }
 }

@@ -16,7 +16,7 @@
 ## v0.3.x
 
 - [ ] Group and member pages.
-  - [ ] Expand API.
+  - [ ] Expand API & search.
 - [ ] Information page (about + recruitment).
 
 ## v0.4.x
@@ -24,13 +24,14 @@
 - [ ] Categories:
   - [ ] Each series can have multiple categories.
   - [ ] Allow searching for category tags.
-  - [ ] Expand API.
+  - [ ] Expand API & search.
 
 ## v0.5.x
 
 - [ ] User registration:
   - [ ] Allow Google/Twitter sign-in.
   - [ ] Allow users to bookmark series.
+  - [ ] Password reset form.
   - [ ] Expand API.
 - [ ] Comments (custom/Disqus).
 - [ ] Cookie consent.
@@ -53,10 +54,6 @@
 - [ ] Support PDF/EPUB for novels.
 
 ## v0.9.x
-
-- [ ] Password reset form.
-
-## v0.10.x
 
 - [ ] RSS feeds.
 

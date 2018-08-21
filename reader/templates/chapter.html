@@ -149,6 +149,11 @@
         {% endif %}
             <i class="fa fa-2x fa-backward fa-fw"></i>
           </a>
+        {% with curr=curr_page.number|stringformat:'02d' %}
+          <span>
+            Page {{ curr }}/{{ all_pages.count|stringformat:'02d' }}
+          </span>
+        {% endwith %}
         {% if next > all_pages.count %}
           {% if next_chapter %}
             <a href="{{ next_chapter.url }}" title="Next chapter">

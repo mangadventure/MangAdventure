@@ -23,7 +23,7 @@
       <meta property="og:description" content="{{ config.DESCRIPTION }}">
     {% endblock %}
     {% block image %}
-      {% with url=SITE_URL|urljoin:MEDIA_URL %}
+      {% with url=page_url|default:SITE_URL|urljoin:MEDIA_URL %}
         {% with logo=url|urljoin:config.LOGO_LARGE %}
           <meta name="twitter:image" content="{{ logo }}">
           <meta property="og:image" content="{{ logo }}">
@@ -112,15 +112,21 @@
     <header id="header">
       <a id="home" href="/">
         <span>
-          <object class="logo" type="{{ config.LOGO_LARGE|get_type }}"
-                  data="{{ config.LOGO_LARGE }}" height="45">
-          </object>
-          <object class="logo" type="{{ config.LOGO_MEDIUM|get_type }}"
-                  data="{{ config.LOGO_MEDIUM }}" height="38">
-          </object>
-          <object class="logo" type="{{ config.LOGO_SMALL|get_type }}"
-                  data="{{ config.LOGO_SMALL }}" height="27">
-          </object>
+          {% with logo=MEDIA_URL|urljoin:config.LOGO_LARGE %}
+            <object class="logo" type="{{ logo|get_type }}"
+                    data="{{ logo }}" height="45">
+            </object>
+          {% endwith %}
+          {% with logo=MEDIA_URL|urljoin:config.LOGO_MEDIUM %}
+            <object class="logo" type="{{ logo|get_type }}"
+                    data="{{ logo }}" height="38">
+            </object>
+          {% endwith %}
+          {% with logo=MEDIA_URL|urljoin:config.LOGO_SMALL %}
+            <object class="logo" type="{{ logo|get_type }}"
+                    data="{{ logo }}" height="27">
+            </object>
+          {% endwith %}
         </span>
       </a>
       <nav id="navig">

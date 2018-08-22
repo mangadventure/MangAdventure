@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'next_prev',
     'settings',
     'reader',
+    'api',
 ]
 
 MIDDLEWARE = [

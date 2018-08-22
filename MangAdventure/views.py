@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from api.views import invalid_endpoint
 
 
 def _error_context(msg, status=500):
@@ -20,6 +21,8 @@ def handler403(request, exception=None, template_name='error.html'):
 
 
 def handler404(request, exception=None, template_name='error.html'):
+    if request.path.startswith('/api'):
+        return invalid_endpoint(request)
     context = _error_context("Sorry. This page doesn't exist.", 404)
     return render(request, template_name=template_name,
                   context=context, status=404)

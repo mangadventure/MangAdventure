@@ -40,8 +40,7 @@ class Series(models.Model):
     title = models.CharField(max_length=250,
                              help_text='The title of the series.')
     description = models.TextField(blank=True,
-                                   help_text='The description of the '
-                                             'series. HTML allowed.')
+                                   help_text='The description of the series.')
     cover = models.ImageField(storage=OverwriteStorage(),
                               upload_to=cover_uploader,
                               help_text='Upload a cover image for the series.'

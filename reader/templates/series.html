@@ -57,9 +57,7 @@
       <div id="series-desc">
         <strong class="alter-fg colon">Description</strong>
         {% if series.description %}
-          {% autoescape off %}
-            <div>{{ series.description|linebreaks }}</div>
-          {% endautoescape %}
+          <div>{{ series.description|linebreaks }}</div>
         {% else %}
           <span>N/A</span>
         {% endif %}

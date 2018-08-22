@@ -61,7 +61,7 @@
   <![endif]-->
   <script type="text/javascript">
     img = new Image();
-    img.src = '{{ MEDIA_URL|urljoin:curr_page.url }}';
+    img.src = '{{ MEDIA_URL|urljoin:curr_page.image.url }}';
     img.alt = 'Page {{ curr_page.number }}';
     img.className = 'chapter-page';
     img.addEventListener('click', function() {

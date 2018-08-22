@@ -9,7 +9,7 @@
 
 ## v0.2.x
 
-- [ ] API (latest, series).
+- [x] API (latest, series).
 - [ ] Search page (utilise the API if needed).
   - [ ] Allow searching by author & artist.
 

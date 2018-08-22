@@ -4,6 +4,7 @@ from django.urls import include, path as url
 urlpatterns = [
     url('', include('reader.urls')),
     url('admin/', admin.site.urls),
+    url('api/', include('api.urls')),
 ]
 
 handler404 = 'MangAdventure.views.handler404'

@@ -130,30 +130,28 @@ class Chapter(models.Model):
             counter = 0
             zip_file = ZipFile(self.file)
             name_list = zip_file.namelist()
-            natural_sort(name_list)
             Page.objects.filter(chapter=self).delete()
-            for name in name_list:
+            for name in natural_sort(name_list):
                 if is_dir(zip_file.getinfo(name)):
                     continue
                 counter += 1
                 data = zip_file.read(name)
                 filename = '%03d%s' % (counter, path.splitext(name)[-1])
-                components = [
+                file_path = path.join(
                     'series',
                     self.series.slug,
                     str(self.volume),
                     str(self.number),
                     filename
-                ]
-                full_path = path.join(settings.MEDIA_ROOT, *components)
+                )
+                full_path = path.join(settings.MEDIA_ROOT, file_path)
                 if not path.exists(path.dirname(full_path)):
                     makedirs(path.dirname(full_path))
                 if path.exists(full_path):
                     remove(full_path)
                 image = Image.open(BytesIO(data))
                 image.save(full_path, optimize=True, quality=100)
-                self.pages.create(number=counter, image=full_path,
-                                  url='/'.join(components))
+                self.pages.create(number=counter, image=file_path)
             zip_file.close()
             remove(self.file.path)
             self.file.delete(save=True)
@@ -168,7 +166,6 @@ class Page(models.Model):
     chapter = models.ForeignKey(Chapter, related_name='pages',
                                 on_delete=models.CASCADE)
     image = models.ImageField()
-    url = models.FilePathField()
     number = models.PositiveSmallIntegerField()
 
 

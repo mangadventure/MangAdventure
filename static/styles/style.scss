@@ -174,10 +174,10 @@ h2 {
   }
   .cover {
     max-width: calc(100vw / 3);
-    height: 100%;
     position: relative;
     left: -5px;
     float: left;
+    @include size(100%);
     @include border-radius();
   }
   &-aliases, &-authors, &-artists {

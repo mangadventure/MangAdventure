@@ -2,10 +2,22 @@
 {% load custom_tags %}
 {% load inlinecompile from compile_static %}
 {% block image %}
-  {% with url=page_url|default:SITE_URL %}
-    {% with img=MEDIA_URL|urljoin:curr_page.url %}
-      <meta name="twitter:image" content="{{ url|urljoin:img }}">
-      <meta property="og:image" content="{{ url|urljoin:img }}">
+  {% with url=page_url|default:SITE_URL|urljoin:MEDIA_URL %}
+    {% with cover=curr_chapter.series.cover.name %}
+      <meta name="twitter:image" content="{{ url|add:cover }}">
+      <meta property="og:image" content="{{ url|add:cover }}">
+    {% endwith %}
+  {% endwith %}
+{% endblock %}
+{% block description %}
+  {% with vol=curr_chapter.volume|stringformat:'s' %}
+    {% with num=curr_chapter.number|stringformat:'s' %}
+      {% with desc='Volume '|add:vol|add:', Chapter '|add:num %}
+        <meta name="twitter:description"
+              content="{{ desc|add:' - '|add:curr_chapter.title }}">
+        <meta property="og:description"
+              content="{{ desc|add:' - '|add:curr_chapter.title }}">
+      {% endwith %}
     {% endwith %}
   {% endwith %}
 {% endblock %}
@@ -73,8 +85,11 @@
   </script>
 {% endblock %}
 {% block title %}
-  <meta name="twitter:title" content="{{ curr_chapter.title }}">
-  <meta property="og:title" content="{{ curr_chapter.title }}">
+  <meta name="title" content="{{ curr_chapter.title }}">
+  {% with title=curr_chapter.series.title|add:' ~ '|add:config.NAME %}
+    <meta name="twitter:title" content="{{ title }}">
+    <meta property="og:title" content="{{ title }}">
+  {% endwith %}
   <title>{{ curr_chapter.title }} :: {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
@@ -99,7 +114,7 @@
               {% if chapter == curr_chapter %}
                 data-current="true"
               {% endif %}>
-              <a href="{{ chapter.url }}" title="{{ chapter.title }}"
+              <a href="{{ chapter.image.url }}" title="{{ chapter.title }}"
                        {% if chapter.final %}class="end"{% endif %}>
                 {% with vol=chapter.volume num=chapter.number %}
                   V{{ vol }} / C{{ num }}: {{ chapter.title }}
@@ -109,7 +124,7 @@
           {% endfor %}
         </ul>
       </div>
-      <div   class="dropdown page-list main-bg" aria-haspopup="true">
+      <div class="dropdown page-list main-bg" aria-haspopup="true">
         <span class="dropdown-title alter-fg">
           Pages
           <i class="fa fa-caret-down"></i>
@@ -139,7 +154,7 @@
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
         {% if prev == 0 %}
           {% if prev_chapter %}
-            <a href="{{ prev_chapter.url }}" title="Previous chapter">
+            <a href="{{ prev_chapter.image.url }}" title="Previous chapter">
           {% else %}
             <a href="/reader/{{ curr_chapter.series.slug }}/"
                title="No previous chapters">
@@ -156,7 +171,7 @@
         {% endwith %}
         {% if next > all_pages.count %}
           {% if next_chapter %}
-            <a href="{{ next_chapter.url }}" title="Next chapter">
+            <a href="{{ next_chapter.image.url }}" title="Next chapter">
           {% else %}
             <a href="/reader/{{ curr_chapter.series.slug }}/"
                title="No more chapters">
@@ -173,7 +188,7 @@
     {% for page in all_pages %}
       {% if page.number > curr_page.number %}
         {% if page.number <= curr_page.number|add:3 %}
-          <img src="{{ MEDIA_URL|urljoin:page.url }}"/>
+          <img src="{{ page.image.url }}"/>
         {% endif %}
       {% endif %}
     {% endfor %}

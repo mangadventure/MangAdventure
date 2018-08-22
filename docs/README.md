@@ -1,4 +1,4 @@
-# MangAdventure
+# MangAdventure [![release](https://img.shields.io/github/release/evangelos-ch/MangAdventure/all.svg)](https://github.com/evangelos-ch/MangAdventure/releases)
 
 MangAdventure, aka MangADV, is a simple manga hosting webapp.
 
@@ -79,6 +79,20 @@ You will be prompted for a name, email, and password.
 
 ```shell
 python manage.py createsuperuser
+```
+
+### Enable HTTPS:
+
+If you want to enable HTTPS, run this command:
+
+```shell
+python manage.py https on
+```
+
+To disable it, run:
+
+```shell
+python manage.py https off
 ```
 
 ### Finally, set up the server:

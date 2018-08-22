@@ -23,7 +23,7 @@
       <meta property="og:description" content="{{ config.DESCRIPTION }}">
     {% endblock %}
     {% block image %}
-      {% with url=page_url|default:SITE_URL %}
+      {% with url=SITE_URL|urljoin:MEDIA_URL %}
         {% with logo=url|urljoin:config.LOGO_LARGE %}
           <meta name="twitter:image" content="{{ logo }}">
           <meta property="og:image" content="{{ logo }}">
@@ -35,14 +35,17 @@
       <meta property="og:url" content="{{ page_url|default:SITE_URL }}">
     {% endblock %}
     <meta property="og:site_name" content="{{ config.NAME }}">
-    <link href="{{ MEDIA_URL|urljoin:config.FAVICON }}"
-          rel="shortcut icon" type="image/x-icon">
+    {% with favicon=MEDIA_URL|urljoin:config.FAVICON %}
+      <link href="{{ favicon }}" rel="shortcut icon"
+            type="{{ favicon|get_type }}">
+    {% endwith %}
     <link href="{{ page_url|default:SITE_URL|urljoin:'/' }}"
           rel="index" title="{{ config.NAME }}">
     <link href="https://cdn.jsdelivr.net/npm/fork-awesome@1.1.0/css/fork-awesome.min.css"
           integrity="sha256-sX8HLspqYoXVPetzJRE4wPhIhDBu2NB0kYpufzkQSms="
-          rel="prefetch stylesheet" as="style" type="text/css" crossorigin="anonymous">
-    <link href="{{ config.FONT_URL }}" rel="stylesheet" type="text/css">
+          type="text/css" rel="prefetch stylesheet" as="style" crossorigin="anonymous">
+    <link href="{{ config.FONT_URL }}" type="text/css"
+          rel="prefetch stylesheet" as="style">
     {% block stylesheets %}
       <link href="{% static 'styles/style.scss'|compile %}"
             data-source="{% static 'styles/style.scss' %}"

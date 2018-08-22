@@ -104,10 +104,9 @@ WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 # Constance
 # https://django-constance.readthedocs.io/en/latest/index.html#configuration
 
-_site = 'The {} of your website.'
-_color = 'The {} color of your website.'
-_logo = 'The URL to a {}-sized logo for your website.' \
-        ' You may also use the path to a file stored in /static.'
+_site = 'The %s of your website.'
+_color = 'The %s color of your website.'
+_logo = 'Upload a %s-sized logo for your website.'
 
 CONSTANCE_ADDITIONAL_FIELDS = {
     'char': ('django.forms.CharField', {}),
@@ -129,6 +128,7 @@ CONSTANCE_ADDITIONAL_FIELDS = {
         'strip': False,
         'widget': 'django.forms.Textarea'
     }),
+    'logo': ('reader.modules.forms.SVGImageField', {}),
     'favicon': ('django.forms.ImageField', {})
 }
 CONSTANCE_CONFIG = {
@@ -139,31 +139,30 @@ CONSTANCE_CONFIG = {
         '"https://github.com/evangelos-ch/MangAdventure"'
         ' rel="noopener" target="_blank">'
         'MangAdventure v' + ver + '</a>',
-        _site.format('footer') + ' HTML allowed.', 'html'
+        _site % 'footer' + ' HTML allowed.', 'html'
     ),
-    'NAME': ('MangAdventure', _site.format('name'), 'char'),
+    'NAME': ('MangAdventure', _site % 'name', 'char'),
     'DESCRIPTION': (
         'MangAdventure is a simple manga '
         'hosting webapp written in Django',
         'A description for your website.', 'desc'
     ),
-    'DISCORD': ('N/A', _site.format('Discord server'), 'char'),
-    'TWITTER': ('N/A', _site.format('Twitter username'), 'twitter'),
-    'FAVICON': ('', _site.format('favicon'), 'favicon'),
-    'MAIN_BACKGROUND': ('#FFF', _color.format('main background'), 'color'),
-    'ALTER_BACKGROUND': ('#AAA', _color.format(
-        'alternate background'), 'color'),
-    'MAIN_TEXT_COLOR': ('#000', _color.format('main text'), 'color'),
-    'ALTER_TEXT_COLOR': ('#555', _color.format('alternate text'), 'color'),
+    'DISCORD': ('N/A', _site % 'Discord server', 'char'),
+    'TWITTER': ('N/A', _site % 'Twitter username', 'twitter'),
+    'FAVICON': ('', _site % 'favicon', 'favicon'),
+    'MAIN_BACKGROUND': ('#FFF', _color % 'main background', 'color'),
+    'ALTER_BACKGROUND': ('#AAA', _color % 'alternate background', 'color'),
+    'MAIN_TEXT_COLOR': ('#000', _color % 'main text', 'color'),
+    'ALTER_TEXT_COLOR': ('#555', _color % 'alternate text', 'color'),
     'FONT_URL': (
         'https://fonts.googleapis.com/css?family=Lato',
         'The URL of the font to be used in your website.', 'url'
     ),
     'FONT_NAME': ('Lato', 'The name of the font that '
                           'corresponds to the above URL.', 'char'),
-    'LOGO_LARGE': ('', _logo.format('large'), 'char'),
-    'LOGO_MEDIUM': ('', _logo.format('medium'), 'char'),
-    'LOGO_SMALL': ('', _logo.format('small'), 'char'),
+    'LOGO_LARGE': ('', _logo % 'large', 'logo'),
+    'LOGO_MEDIUM': ('', _logo % 'medium', 'logo'),
+    'LOGO_SMALL': ('', _logo % 'small', 'logo'),
     'MAX_RELEASES': (10, 'The maximum number of releases '
                          'to be shown in the main page', 'number'),
     'MAX_CHAPTERS': (1, 'The maximum number of chapters '
@@ -248,13 +247,9 @@ LOGGING = {
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
@@ -280,4 +275,17 @@ STATIC_PRECOMPILER_COMPILERS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = path.join(BASE_DIR, 'media/')
+
+# HTTPS
+try:
+    env['HTTPS'] = CONFIG['settings']['https']
+except KeyError:
+    env['HTTPS'] = 'off'
+
+if env.get('HTTPS', 'off').lower() == 'on':
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    env['wsgi.url_scheme'] = 'https'
 

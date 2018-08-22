@@ -1,6 +1,8 @@
 {% extends 'skeleton.html' %}
 {% block title %}
   <meta name="title" content="Latest Releases">
+  <meta name="twitter:title" content="Latest Releases - {{ config.NAME }}">
+  <meta property="og:title" content="Latest Releases - {{ config.NAME }}">
   <title>Latest Releases :: {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}

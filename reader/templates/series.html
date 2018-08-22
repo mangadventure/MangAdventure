@@ -23,9 +23,14 @@
     <meta property="og:image" content="{{ url|add:series.cover.name }}">
   {% endwith %}
 {% endblock %}
+{% block description %}
+  <meta name="twitter:description" content="{{ series.description }}">
+  <meta property="og:description" content="{{ series.description }}">
+{% endblock %}
 {% block title %}
-  <meta name="twitter:title" content="{{ series.title }}">
-  <meta property="og:title" content="{{ series.title }}">
+  <meta name="title" content="{{ series.title }}">
+  <meta name="twitter:title" content="{{ series.title }} ~ {{ config.NAME }}">
+  <meta property="og:title" content="{{ series.title }} ~ {{ config.NAME }}">
   <title>{{ series.title }} :: {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
@@ -100,7 +105,7 @@
     </div>
     <div id="series-chapters">
       <h3 class="alter-fg colon">Chapters</h3>
-      {% with chapters=series.chapters|order_by:'date' %}
+      {% with chapters=series.chapters.reverse %}
         {% for chapter in chapters %}
           <div class="chapter">
             {% with vol=chapter.volume num=chapter.number %}

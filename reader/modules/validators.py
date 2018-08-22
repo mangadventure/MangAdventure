@@ -89,5 +89,5 @@ def validate_zip_file(file):
             )
 
 
-__all__ = ['FileSizeValidator', 'no_future_date', 'validate_zip_file']
+__all__ = ['FileSizeValidator', 'no_future_date', 'validate_zip_file', 'is_dir']
 

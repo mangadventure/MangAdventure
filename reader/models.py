@@ -152,7 +152,7 @@ class Chapter(models.Model):
                     remove(full_path)
                 image = Image.open(BytesIO(data))
                 image.save(full_path, optimize=True, quality=100)
-                self.pages.create(number=counter, image=full_path,
+                self.pages.create(number=counter, image=path.join(*components),
                                   url='/'.join(components))
             zip_file.close()
             remove(self.file.path)

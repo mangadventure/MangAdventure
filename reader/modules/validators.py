@@ -19,6 +19,7 @@ def is_dir(zipinfo):
         return zipinfo.is_dir()
     return zipinfo.filename.endswith('/')
 
+
 class FileSizeValidator(BaseValidator):
     message = 'File too large. Maximum file size allowed is %(max)dMBs.'
     code = 'file_too_large'

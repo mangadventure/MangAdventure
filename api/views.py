@@ -108,7 +108,11 @@ def series(request, slug=None):
 
 
 def volume(request, slug=None, vol=0):
-    if vol < 0:
+    try:
+        vol = int(vol)
+        if vol < 0:
+            raise ValueError
+    except (ValueError, TypeError):
         return json_error('Bad request', 400)
 
     try:
@@ -120,7 +124,11 @@ def volume(request, slug=None, vol=0):
 
 
 def chapter(request, slug=None, vol=0, num=0):
-    if vol < 0 or num < 0:
+    try:
+        vol, num = int(vol), int(num)
+        if vol < 0 or num < 0:
+            raise ValueError
+    except (ValueError, TypeError):
         return json_error('Bad request', 400)
 
     try:

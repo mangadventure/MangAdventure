@@ -1,14 +1,15 @@
 from django.core.management.color import color_style as style
+from django.utils.six import print_
 from os import path, mkdir, environ as env
 from re import compile as reg, IGNORECASE
 from sys import stderr, argv
 from . import __version__ as ver
-from settings import CONFIG
+from config import CONFIG
 
 # From https://stackoverflow.com/questions/9626535/#36609868
 get_domain = lambda url: url.split('//')[-1].split('/')[0].split('?')[0]
 
-print_err = lambda msg: print(style().ERROR('ERROR: ' + msg), file=stderr)
+print_err = lambda msg: print_(style().ERROR('ERROR: ' + msg), file=stderr)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 _settings = path.dirname(path.abspath(__file__))
@@ -19,7 +20,7 @@ BASE_DIR = path.dirname(_settings)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 try:
-    SECRET_KEY = CONFIG['settings']['secret_key']
+    SECRET_KEY = CONFIG['secret_key']
     if not SECRET_KEY:
         raise KeyError
 except KeyError:
@@ -36,8 +37,10 @@ ALLOWED_HOSTS = [
     '127.0.0.1', '0.0.0.0',
     'localhost', '[::1]',
 ]
+if DEBUG:
+    ALLOWED_HOSTS += ['192.168.1.%s' % i for i in range(2, 256)]
 try:
-    BASE_URL = get_domain(CONFIG['settings']['site_url'])
+    BASE_URL = get_domain(CONFIG['site_url'])
     if BASE_URL:
         ALLOWED_HOSTS += [BASE_URL, 'www.' + BASE_URL]
     else:
@@ -64,9 +67,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'static_precompiler',
     'constance.backends.database',
-    'settings.apps.SettingsConfig',
+    'config.apps.SettingsConfig',
     'next_prev',
-    'settings',
+    'config',
     'reader',
     'api',
 ]
@@ -89,7 +92,7 @@ CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',
     'django.template.context_processors.media',
     'django.contrib.messages.context_processors.messages',
-    'settings.context_processors.extra_settings',
+    'config.context_processors.extra_settings',
 ]
 if DEBUG:
     CONTEXT_PROCESSORS += ['django.template.context_processors.debug']
@@ -279,7 +282,7 @@ MEDIA_ROOT = path.join(BASE_DIR, 'media/')
 
 # HTTPS
 try:
-    env['HTTPS'] = CONFIG['settings']['https']
+    env['HTTPS'] = CONFIG['https']
 except KeyError:
     env['HTTPS'] = 'off'
 

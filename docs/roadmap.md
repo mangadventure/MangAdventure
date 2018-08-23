@@ -1,5 +1,3 @@
-# Roadmap
-
 ## v0.1.0
 
 - [x] Latest landing page with up to x releases.

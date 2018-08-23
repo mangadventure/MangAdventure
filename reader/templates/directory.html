@@ -17,7 +17,8 @@
             {{ series.title }}
           </a>
         </h2>
-        <img src="{{ MEDIA_URL|add:series.cover.name }}" class="cover"/>
+        <img style="max-width: {{ series.cover.width }}px; max-height: {{ series.cover.height }}px"
+             src="{{ MEDIA_URL|add:series.cover.name }}" class="cover"/>
         <div class="series-info">
           {#<div class="series-desc">#}
           {#  {{ series.description }}#}

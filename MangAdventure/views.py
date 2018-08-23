@@ -1,9 +1,20 @@
 from django.shortcuts import render
+from constance import config
 from api.views import invalid_endpoint
+from reader.models import Chapter
 
 
 def _error_context(msg, status=500):
     return {'error_message': msg, 'error_status': status}
+
+
+def index(request):
+    maximum = config.MAX_RELEASES
+    releases = Chapter.objects.all().order_by('-date')[:maximum:1]
+    return render(request, 'index.html', {
+        'latest_releases': releases,
+        'page_url': request.build_absolute_uri()
+    })
 
 
 def handler400(request, exception=None, template_name='error.html'):
@@ -29,7 +40,8 @@ def handler404(request, exception=None, template_name='error.html'):
 
 
 def handler500(request, exception=None, template_name='error.html'):
-    context = _error_context('Whoops! Something went wrong. ¯\_(ツ)_/¯')
+    context = _error_context('Whoops! Something went wrong.'
+                             ' &macr;\_(&#12484;)_/&macr;')  # Shrug
     return render(request, template_name=template_name,
                   context=context, status=500)
 

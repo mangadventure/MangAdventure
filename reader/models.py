@@ -1,3 +1,4 @@
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import slugify
 from django.conf import settings
@@ -10,6 +11,7 @@ from .modules.validators import *
 from os import path, remove, makedirs
 from zipfile import ZipFile
 from datetime import date
+from sys import getsizeof
 from io import BytesIO
 from PIL import Image
 
@@ -61,6 +63,16 @@ class Series(models.Model):
     def save(self, *args, **kwargs):
         self.validate_unique()
         self.slug = self.slug or slugify(self.title)
+        img = Image.open(self.cover)
+        img.thumbnail((300, 300), Image.ANTIALIAS)
+        Image.MIME['ICO'] = 'image/x-icon'
+        mime = Image.MIME.get(img.format)
+        buff = BytesIO()
+        img.save(buff, format=img.format, quality=100)
+        buff.seek(0)
+        self.cover = InMemoryUploadedFile(buff, 'ImageField',
+                                          self.cover.name, mime,
+                                          getsizeof(buff), None)
         super(Series, self).save(*args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):

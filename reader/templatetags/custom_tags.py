@@ -1,8 +1,10 @@
 from django.template.defaultfilters import register, slice_filter
-from urllib.parse import urljoin as join
-from urllib.request import urlopen
+from django.utils.six import moves
 from os.path import splitext, basename
 from re import sub
+
+join = moves.urllib.parse.urljoin
+urlopen = moves.urllib.request.urlopen
 
 
 @register.filter

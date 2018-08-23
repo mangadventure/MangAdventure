@@ -5,7 +5,7 @@ from . import CONFIG
 
 def extra_settings(request):
     try:
-        site = CONFIG['settings']['site_url']
+        site = CONFIG['site_url']
         if not site:
             raise KeyError
     except KeyError:

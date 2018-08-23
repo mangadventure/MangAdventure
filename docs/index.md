@@ -1,4 +1,4 @@
-# MangAdventure [![release](https://img.shields.io/github/release/evangelos-ch/MangAdventure/all.svg)](https://github.com/evangelos-ch/MangAdventure/releases)
+# MangAdventure [![release](https://img.shields.io/github/release/evangelos-ch/MangAdventure/all.svg)](https://github.com/evangelos-ch/MangAdventure/releases/latest)
 
 MangAdventure, aka MangADV, is a simple manga hosting webapp.
 
@@ -10,8 +10,8 @@ It is fully written in Django, SCSS and Vanilla JS. No PHP, no Bootstrap, no jQu
 - [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [Updating](#updating)
 - [Development](#development)
-- [Changelog](#changelog)
 - [Credits](#credits)
 
 ## Features
@@ -23,7 +23,7 @@ It is fully written in Django, SCSS and Vanilla JS. No PHP, no Bootstrap, no jQu
 
 ## Dependencies
 
-- [Python 3](https://www.python.org/downloads/)
+- [Python](https://www.python.org/downloads/)
 - [Django](https://www.djangoproject.com/download/)
 - [Django Next-Prev](https://pypi.org/project/django-next-prev/)
 - [Django Constance](https://django-constance.readthedocs.io/en/latest/#installation)
@@ -175,24 +175,38 @@ server {
 Don't forget to run uwsgi:
 
 ```shell
-/var/www/my-site.com/.venv/bin/uwsgi --socket 127.0.0.1:25432 --chdir /var/www/my-site.com/ --module MangAdventure.wsgi
+uwsgi --socket 127.0.0.1:25432 --chdir /var/www/my-site.com/ --module MangAdventure.wsgi
 ```
 
 ## Configuration
 
 You can configure the site via the admin panel. If you want to overwrite the styling of the site, you can write some SCSS (or regular CSS) in the `static/extra/styles.scss` file.
 
+## Updating
+
+First, install any new or updated dependencies:
+
+```shell
+pip install -U -r requirements.txt
+```
+
+Then, compile and collect the static files:
+
+```shell
+python manage.py compilestatic
+python manage.py collectstatic --noinput
+```
+
+Finally, run the database migrations:
+```shell
+python manage.py migrate
+```
+
 ## Development
 
 To debug the server set the environment variable `MANGADV_DEBUG` to `true`. **Don't do this in production.**
 
 You shouldn't use the production server during development. You can use Django's `runserver` command to run a development server on `127.0.0.1:8000` (or any other address you specify).
-
-## Changelog
-
-You can view the changelog [here](CHANGELOG.md).
-
-There's also a [roadmap](ROADMAP.md) for future releases.
 
 ## Credits
 

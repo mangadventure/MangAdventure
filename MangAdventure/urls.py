@@ -1,11 +1,17 @@
-from django.urls import include, path as url
 from django.contrib import admin
 from django.conf import settings
+from .views import index
+
+try:
+    from django.urls import include, re_path as url
+except ImportError:
+    from django.conf.urls import include, url
 
 urlpatterns = [
-    url('', include('reader.urls')),
-    url('admin/', admin.site.urls),
-    url('api/', include('api.urls')),
+    url(r'^$', index, name='index'),
+    url(r'^reader/', include('reader.urls')),
+    url(r'^admin/', admin.site.urls),
+    url(r'^api/', include('api.urls')),
 ]
 
 if settings.DEBUG:

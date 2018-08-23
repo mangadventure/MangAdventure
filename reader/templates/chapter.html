@@ -49,16 +49,6 @@
       }
     {% endinlinecompile %}
   </style>
-  <!--[if IE lt 9]>
-  <script type="text/javascript">
-    // Simple addEventListener polyfill
-    if(typeof window.addEventListener === 'undefined') {
-      window.addEventListener = function(evt, cb) {
-        return window.attachEvent('on' + evt, cb);
-      }
-    }
-  </script>
-  <![endif]-->
   <script type="text/javascript">
     img = new Image();
     img.src = '{{ MEDIA_URL|urljoin:curr_page.image.url }}';

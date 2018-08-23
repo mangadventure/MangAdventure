@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from settings import write_config
+from config import write_config
 
 
 class Command(BaseCommand):

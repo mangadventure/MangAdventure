@@ -51,6 +51,7 @@ h2 {
 #navig {
   position: absolute;
   right: 0;
+  top: 0;
   a {
     display: inline-block;
     padding: 8px;
@@ -118,6 +119,7 @@ h2 {
       @include justify-content(space-between);
       .chapter-date { max-width: calc(100vw / 3) }
       a {
+        color: inherit;
         margin-left: 0.5em;
         max-width: calc(86vw / 3 * 2);
         @include truncate();
@@ -135,8 +137,7 @@ h2 {
     padding: 10px 0 0;
     width: 100%;
     .cover {
-      max-width: 15vw;
-      width: 100%;
+      width: calc(100vw / 3);
       float: left;
     }
     .series-info {
@@ -167,17 +168,20 @@ h2 {
 #series {
   display: flex;
   @include flex-wrap();
-  &-info { max-width: 60vw }
+  &-info {
+    padding: 3px;
+    max-width: 60vw;
+  }
   &-title {
     text-transform: none;
     padding: 0 !important;
   }
   .cover {
-    max-width: calc(100vw / 3);
     position: relative;
     left: -5px;
     float: left;
-    @include size(100%);
+    height: 100%;
+    width: calc(100vw / 3);
     @include border-radius();
   }
   &-aliases, &-authors, &-artists {
@@ -196,7 +200,6 @@ h2 {
       margin: 0;
       padding: 0 2px;
       text-indent: 0.5em;
-      max-width: 80vw;
       white-space: pre-wrap;
       word-wrap: break-word;
     }
@@ -326,8 +329,6 @@ h2 {
   top: 0.05em;
 }
 
-img { -ms-interpolation-mode: bicubic }
-
 .colon::after { content: quote(':') }
 
 .logo { &[height='27'], &[height='38'] { display: none } }
@@ -388,10 +389,7 @@ img { -ms-interpolation-mode: bicubic }
   #latest h2 { text-align: center }
   #list {
     text-align: center;
-    .cover {
-      max-width: calc(100vw / 3);
-      float: none;
-    }
+    .cover { float: none }
     .series {
       &-info { left: 0 }
       &-chapter {
@@ -408,6 +406,7 @@ img { -ms-interpolation-mode: bicubic }
     &-info {
       width: 100%;
       max-width: unset;
+      padding: 0;
       margin: 0.5em 0;
     }
     &-desc {
@@ -433,6 +432,7 @@ img { -ms-interpolation-mode: bicubic }
     .cover {
       left: 0;
       margin: auto;
+      width: 100%;
       max-width: 50vw;
     }
     .chapter {

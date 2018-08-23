@@ -25,4 +25,5 @@
 * Python version:
 * Operating System and version:
 * Web server and version:
+* Web browser and version:
 

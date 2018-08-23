@@ -1,16 +1,21 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator
-from zipfile import ZipFile, BadZipFile
+from zipfile import ZipFile
 from datetime import date
 from io import BytesIO
 from PIL import Image
 from os import remove
 
+try:
+    from zipfile import BadZipfile
+except ImportError:
+    from zipfile import error as BadZipFile
 
-def _remove_file(file):
+
+def _remove_file(_file):
     try:
-        remove(file.path)
-    except FileNotFoundError:
+        remove(_file.path)
+    except IOError:
         pass
 
 
@@ -28,9 +33,9 @@ class FileSizeValidator(BaseValidator):
         self.max_mb = max_mb
         super(FileSizeValidator, self).__init__(max_mb)
 
-    def __call__(self, file):
-        if file.size >= (self.max_mb * 1024 * 1024):
-            _remove_file(file)
+    def __call__(self, _file):
+        if _file.size >= (self.max_mb * 1024 * 1024):
+            _remove_file(_file)
             raise ValidationError(
                 message=self.message,
                 code=self.code,
@@ -48,7 +53,7 @@ def no_future_date(value):
         )
 
 
-def validate_zip_file(file):
+def validate_zip_file(_file):
     messages = [
         'The file must contain at most 1 subfolder.',
         'The file must not contain non-image files.',
@@ -59,9 +64,9 @@ def validate_zip_file(file):
         'only_images', 'invalid_format'
     ]
     try:
-        zip_file = ZipFile(file)
-    except BadZipFile:
-        _remove_file(file)
+        zip_file = ZipFile(_file)
+    except BadZipfile:
+        _remove_file(_file)
         raise ValidationError(
             message=messages[2],
             code=codes[2]
@@ -72,7 +77,7 @@ def validate_zip_file(file):
             if first_folder:
                 first_folder = False
                 continue
-            _remove_file(file)
+            _remove_file(_file)
             raise ValidationError(
                 message=messages[0],
                 code=codes[0]
@@ -81,8 +86,8 @@ def validate_zip_file(file):
             data = zip_file.read(f)
             img = Image.open(BytesIO(data))
             img.verify()
-        except:
-            _remove_file(file)
+        except BadZipfile:
+            _remove_file(_file)
             raise ValidationError(
                 message=messages[1],
                 code=codes[1]

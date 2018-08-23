@@ -5,5 +5,5 @@
       <title>Error {{ error_status }} :: {{ config.NAME }}</title>
     {% endblock %}
 {% block content %}
-  <h1 class="alter-fg">{{ error_message }}</h1>
+  <h1 class="alter-fg">{{ error_message|safe }}</h1>
 {% endblock %}

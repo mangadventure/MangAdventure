@@ -2,9 +2,13 @@
 {% load custom_tags %}
 {% load inlinecompile from compile_static %}
 {% block head_extras %}
-  <style>
+  <style type="text/css">
     {% inlinecompile 'scss' %}
       $color: {{ config.ALTER_BACKGROUND|unquote }};
+      .cover {
+        max-width: {{ series.cover.width }}px;
+        max-height: {{ series.cover.height }}px;
+      }
       @media screen and (max-width: 436px) {
         #series > div {
           border: 2px solid $color;
@@ -16,6 +20,12 @@
       }
     {% endinlinecompile %}
   </style>
+  <script type="text/javascript">
+    function pluralize(parent) {
+      var selector = parent + ' .colon';
+      document.querySelector(selector).innerHTML += 's';
+    }
+  </script>
 {% endblock %}
 {% block image %}
   {% with url=page_url|default:SITE_URL|urljoin:MEDIA_URL %}
@@ -47,7 +57,7 @@
               <span class="alias">{{ alias }}</span>
             {% else %}
               {% if forloop.first %}
-                <style>#series-aliases .colon::after{content:"s:"}</style>
+                <script>pluralize('#series-aliases')</script>
               {% endif %}
               <div class="alias">{{ alias }}</div>
             {% endif %}
@@ -70,7 +80,7 @@
               <span class="author">{{ author }}</span>
             {% else %}
               {% if forloop.first %}
-                <style>#series-authors .colon::after{content:"s:"}</style>
+                <script>pluralize('#series-authors')</script>
               {% endif %}
               <div class="author">{{ author }}</div>
             {% endif %}
@@ -87,7 +97,7 @@
               <span class="artist">{{ artist }}</span>
             {% else %}
               {% if forloop.first %}
-                <style>#series-artists .colon::after{content:"s:"}</style>
+                <script>pluralize('#series-artists')</script>
               {% endif %}
               <div class="artist">{{ artist }}</div>
             {% endif %}

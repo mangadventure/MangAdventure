@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 from random import SystemRandom
-from settings import write_config
+from config import write_config
 
 
 class Command(BaseCommand):

@@ -6,7 +6,7 @@ except ImportError:
 
 app_name = 'reader'
 
-_slug = '^(?P<slug>[\w_-]+)/'
+_slug = '^(?P<slug>[\w\d_-]+)/'
 _chapter = '%s(?P<vol>\d+)/(?P<num>\d+)/' % _slug
 
 urlpatterns = [

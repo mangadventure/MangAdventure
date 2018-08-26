@@ -41,7 +41,7 @@
 
 ## v0.7.x
 
-- [ ] More reading modes.
+- [ ] More reading modes:
   - [ ] Long strip mode.
   - [ ] Fit page to screen.
 - [ ] Update bookmarked series on MAL/AniList.

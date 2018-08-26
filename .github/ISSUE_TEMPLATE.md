@@ -1,29 +1,17 @@
-<!--- Provide a general summary of the issue in the Title above -->
+<!-- Please check https://github.com/evangelos-ch/MangAdventure/issues/new/choose first. -->
+<!-- If your issue doesn't fall into one of those categories, proceed here. -->
 
 ## Description
-<!-- Provide a more detailed description of the bug or new feature -->
+<!-- Provide a detailed description of your issue. -->
 
-## Expected Behavior
-<!--- If you're describing a bug, tell us what should happen -->
-<!--- If you're suggesting a new feature, tell us how it should work -->
-
-## Actual Behavior
-<!--- If describing a bug, tell us what happens instead of the expected behavior -->
-<!--- If suggesting a new feature, explain the difference from current behavior -->
-
-## Possible Fix/Implementation
-<!--- Not obligatory, but suggest a fix/reason for the bug, -->
-<!--- or ideas on how the new feature could be implemented -->
-
-## Steps to Reproduce (for bugs)
-<!--- Provide a link to a live example, or an unambiguous set of steps to -->
-<!--- reproduce this bug. Include code to reproduce, if relevant -->
+## Screenshots/Code
+<!-- Include some screenshots or a code sample if relevant. -->
 
 ## Your Environment
-<!--- Include as many relevant details about your environment -->
+<!-- Include as many relevant details about your environment as possible. -->
 * MangAdventure version:
-* Python version:
 * Operating System and version:
+* Python version:
 * Web server and version:
-* Web browser and version:
+* Browser type and version:
 

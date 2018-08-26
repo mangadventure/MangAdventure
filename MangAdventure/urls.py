@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.conf import settings
-from .views import index
+from .views import index, search
 
 try:
     from django.urls import include, re_path as url
@@ -9,8 +9,9 @@ except ImportError:
 
 urlpatterns = [
     url(r'^$', index, name='index'),
-    url(r'^reader/', include('reader.urls')),
+    url(r'^search/$', search, name='search'),
     url(r'^admin/', admin.site.urls),
+    url(r'^reader/', include('reader.urls')),
     url(r'^api/', include('api.urls')),
 ]
 

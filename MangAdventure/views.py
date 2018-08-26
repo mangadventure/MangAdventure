@@ -1,11 +1,38 @@
+from django.db.models.query import Q
 from django.shortcuts import render
 from constance import config
 from api.views import invalid_endpoint
-from reader.models import Chapter
+from reader.models import *
 
 
 def _error_context(msg, status=500):
     return {'error_message': msg, 'error_status': status}
+
+
+def _query(params):
+    query = Q()
+    if params['query']:
+        query = Q(title__icontains=params['query'])
+        aliases = SeriesAlias.objects.filter(
+            alias__icontains=params['query'])
+        if aliases.count() > 0:
+            query |= Q(aliases__in=aliases)
+    if params['author']:
+        Author.objects.filter(seri)
+        q = (Q(authors__name__icontains=params['author']) |
+             Q(artists__name__icontains=params['author']))
+        authors = AuthorAlias.objects.filter(
+            alias__icontains=params['author'])
+        if authors.count() > 0:
+            q |= Q(authors__in=authors)
+        artists = ArtistAlias.objects.filter(
+            alias__icontains=params['author'])
+        if artists.count() > 0:
+            q |= Q(artists__in=artists)
+        query &= q
+    if params['status'] != 'any':
+        query &= Q(completed=(params['status'] == 'completed'))
+    return query
 
 
 def index(request):
@@ -17,11 +44,29 @@ def index(request):
     })
 
 
+def search(request):
+    results = None
+    params = {
+        'query': request.GET.get('q', ''),
+        'author': request.GET.get('author', ''),
+        'status': request.GET.get('status', 'any'),
+    }
+    if any(p in ('q', 'author', 'status') for p in request.GET):
+        results = Series.objects.filter(_query(params))
+    return render(request, 'search.html', {
+        'query': params['query'],
+        'author': params['author'],
+        'status': params['status'],
+        'results': results,
+        'page_url': request.build_absolute_uri(),
+    })
+
+
 def handler400(request, exception=None, template_name='error.html'):
     context = _error_context('The server could not '
                              'understand the request.', 400)
     return render(request, template_name=template_name,
-                  context=context, status=403)
+                  context=context, status=400)
 
 
 def handler403(request, exception=None, template_name='error.html'):

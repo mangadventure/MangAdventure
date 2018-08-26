@@ -40,11 +40,11 @@
           border-radius: 5px;
         }
       }
-      .fa-circle-o-notch {
-        color: transparentize($alter-fg, 0.5);
+      .fa-circle-notch {
+        color: transparentize($alter-fg, 0.25);
         margin: 25vw auto;
         @media screen and (max-width: 436px) {
-          color: transparentize($main-fg, 0.5)
+          color: transparentize($main-fg, 0.25)
         }
       }
     {% endinlinecompile %}
@@ -138,7 +138,7 @@
       </div>
     </section>
     <section class="placeholder">
-      <i class="fa fa-circle-o-notch fa-spin fa-5x fa-fw"></i>
+      <i class="fas fa-circle-notch fa-spin fa-5x fa-fw"></i>
     </section>
     <section id="controls" style="display: none">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}

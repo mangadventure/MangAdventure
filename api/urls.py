@@ -8,8 +8,8 @@ except ImportError:
 
 app_name = 'api'
 
-_series = '^series/(?P<slug>[\w_-]+)/'
-_volume = '%s(?P<vol>\d+)/' % _series
+_series = '^series/(?P<slug>[^/]+)/'
+_volume = '%s(?P<vol>[^/]+)/' % _series
 
 urlpatterns = [
     url('^$', views.invalid_endpoint, name='invalid'),
@@ -17,5 +17,6 @@ urlpatterns = [
     url('^series/$', views.all_series, name='series_root'),
     url('%s$' % _series, views.series, name='series'),
     url('%s$' % _volume, views.volume, name='volume'),
-    url('%s(?P<num>\d+)/$' % _volume, views.chapter, name='chapter'),
+    url('%s(?P<num>[^/]+)/$' % _volume, views.chapter, name='chapter'),
 ]
+

@@ -1,0 +1,182 @@
+{% extends 'skeleton.html' %}
+{% load custom_tags %}
+{% load inlinecompile from compile_static %}
+{% block head_extras %}
+  <style type="text/css">
+    {% inlinecompile 'scss' %}
+      @import 'mixins';
+      $main-bg: {{ config.MAIN_BACKGROUND|unquote }};
+      $alter-bg: {{ config.ALTER_BACKGROUND|unquote }};
+      $alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
+      #search-options {
+        input {
+          background-color: $main-bg;
+          border: 2px solid $alter-bg;
+          &:focus {
+            border-color: $alter-fg
+          }
+          &[type='radio'] {
+            display: none;
+            + label {
+              display: inline-block;
+              cursor: pointer;
+              padding: 2px 4px;
+              border: 2px solid $alter-bg;
+              @include border-radius(3px);
+            }
+            &:checked + label {
+              border-color: $alter-fg
+            }
+          }
+        }
+        button {
+          padding: 3px 5px;
+          border: 2px solid $alter-bg;
+          @include border-radius(3px);
+          &:focus { border-color: $alter-fg }
+        }
+      }
+      #result-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        @include border($alter-fg, 2px);
+        @include border-radius(3px);
+        th, td {
+          padding: 0.1em 0.2em;
+          &:not(:last-child) {
+            @include border($alter-fg, 2px, $suffix: '-right');
+          }
+        }
+        td {
+          @include border($alter-fg, 2px, $suffix: '-top');
+        }
+      }
+      #searchbox, #searchlink { display: none }
+    {% endinlinecompile %}
+  </style>
+  <script src="https://unpkg.com/tablesort@5.0.2/dist/tablesort.min.js"
+          type="text/javascript"></script>
+  <script src="https://unpkg.com/tablesort@5.0.2/dist/sorts/tablesort.number.min.js"
+          type="text/javascript"></script>
+  {#<script src="https://unpkg.com/tablesort@5.0.2/dist/sorts/tablesort.date.min.js"#}
+  {#        type="text/javascript"></script>#}
+  <script type="text/javascript" async="async">
+    window.addEventListener('load', function() {
+      var table = document.getElementById('result-table');
+      if(table) {
+        new Tablesort(table);
+        table.querySelector('th').removeAttribute('data-sort-default');
+      }
+      var form = document.getElementById('search-form');
+      var elem = form.elements;
+      form.addEventListener('submit', function(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        var l = elem.length;
+        for(var i = 0; i < l; ++i) {
+          if(!elem[i].value)
+            elem[i].setAttribute('disabled', 'disabled');
+        }
+        form.submit();
+        for(var j = 0; j < l; ++j) {
+          elem[j].removeAttribute('disabled');
+        }
+      });
+    });
+  </script>
+{% endblock %}
+{% block title %}
+  <meta name="title" content="Search">
+  <meta name="twitter:title" content="Search - {{ config.NAME }}">
+  <meta property="og:title" content="Search - {{ config.NAME }}">
+  <title>Search :: {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Search</h1>
+  <article id="search">
+    <section id="search-options">
+      <form action="/search" id="search-form"
+            method="GET" accept-charset="utf-8">
+        <div id="search-title">
+          <label for="query">Series Title:</label>
+          <input name="q" value="{{ query }}"
+                id="query" type="text"/>
+        </div>
+        <div id="search-author">
+          <label for="author">Author/Artist:</label>
+          <input name="author" value="{{ author }}"
+                 id="author" type="text"/>
+        </div>
+        <div id="search-status">
+          <span>Series Status:</span>
+          <input {% if status == 'any' %}checked="checked"{% endif %}
+                 name="status" id="status-any" value="any" type="radio"/>
+          <label for="status-any">Any</label>
+          <input {% if status == 'completed' %}checked="checked"{% endif %}
+                 name="status" id="status-completed" value="completed" type="radio"/>
+          <label for="status-completed">Completed</label>
+          <input {% if status == 'ongoing' %}checked="checked"{% endif %}
+                 name="status" id="status-ongoing" value="ongoing" type="radio"/>
+          <label for="status-ongoing">Ongoing</label>
+        </div>
+        <button id="search-submit" type="submit">
+          <i class="fa fa-paper-plane"></i> Submit Search
+        </button>
+      </form>
+    </section>
+    <section id="search-results">
+    {% if results %}
+      <table id="result-table">
+        <thead>
+          <tr>
+            <th data-sort-default>Series<i class="fas"></i></th>
+            <th>Author / Artist<i class="fas"></i></th>
+            <th>Description<i class="fas"></i></th>
+            <th>Chapters<i class="fas"></i></th>
+            {#<th>Last Update</th>#}
+          </tr>
+        </thead>
+        {% for series in results|order_by:'title' %}
+          <tr class="result">
+            <td class="result-title">
+              {% if series.completed %}
+                <i class="fa fa-fw fa-book" title="Completed"></i>
+              {% else %}
+                <i class="fa fa-fw fa-book-open" title="Ongoing"></i>
+              {% endif %}
+              <a href="/reader/{{ series.slug }}"
+                 title="{{ series.title }}">
+                {{ series.title }}
+              </a>
+            </td>
+            <td class="result-people">
+              <span class="result-authors">
+                {% if series.authors.all %}
+                  {{ series.authors.all|join:' & ' }}
+                {% else %}
+                  N/A
+                {% endif %}
+              </span>
+              <span class="result-artists">
+                {% if series.artists.all %}
+                  {{ series.artists.all|join:' & ' }}
+                {% else %}
+                  N/A
+                {% endif %}
+              </span>
+            </td>
+            <td class="result-desc">
+              {{ series.description|default:'N/A' }}
+            </td>
+            <td class="result-chapters">
+              {{ series.chapters.count }}
+            </td>
+            {#<td>{{ series.date }}</td>#}
+          </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+    </section>
+  </article>
+{% endblock %}
+

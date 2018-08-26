@@ -211,5 +211,5 @@ You shouldn't use the production server during development. You can use Django's
 ## Credits
 
 - Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
-- Icons by [Fork Awesome](https://forkawesome.github.io/Fork-Awesome/)
+- Icons by [Font Awesome 5.2](https://fontawesome.com)
 

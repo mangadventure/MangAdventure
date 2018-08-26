@@ -41,9 +41,9 @@
     {% endwith %}
     <link href="{{ page_url|default:SITE_URL|urljoin:'/' }}"
           rel="index" title="{{ config.NAME }}">
-    <link href="https://cdn.jsdelivr.net/npm/fork-awesome@1.1.0/css/fork-awesome.min.css"
-          integrity="sha256-sX8HLspqYoXVPetzJRE4wPhIhDBu2NB0kYpufzkQSms="
-          type="text/css" rel="prefetch stylesheet" as="style" crossorigin="anonymous">
+    <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" type="text/css"
+          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+          rel="prefetch stylesheet" as="style" crossorigin="anonymous">
     <link href="{{ config.FONT_URL }}" type="text/css"
           rel="prefetch stylesheet" as="style">
     {% block stylesheets %}
@@ -99,8 +99,8 @@
         .text-shadow { text-shadow: shadow(1px, $shadow-color); }
       {% endinlinecompile %}
     </style>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js">
-    </script>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"
+            type="text/javascript"></script>
     {% block head_extras %}{% endblock %}
     {% block title %}
       <meta name="twitter:title" content="{{ config.NAME }}">
@@ -134,7 +134,7 @@
           {% if config.TWITTER != 'N/A' %}
             <li>
               <a href="https://twitter.com/{{ config.TWITTER }}">
-                <i class="fa fa-twitter"></i>
+                <i class="fab fa-fw fa-twitter"></i>
                 <span class="ident">Twitter</span>
               </a>
             </li>
@@ -142,38 +142,35 @@
           {% if config.DISCORD != 'N/A' %}
             <li>
               <a href="{{ config.DISCORD }}">
-                <i class="fa fa-discord"></i>
+                <i class="fab fa-fw fa-discord"></i>
                 <span class="ident">Discord</span>
               </a>
             </li>
           {% endif %}
           <li>
             <a href="/">
-              <i class="fa fa-clock-o"></i>
+              <i class="far fa-fw fa-clock"></i>
               <span class="ident">Latest releases</span>
             </a>
           </li>
           <li>
             <a href="/reader/">
-              <i class="fa fa-list"></i>
+              <i class="far fa-fw fa-list-alt"></i>
               <span class="ident">Series list</span>
             </a>
           </li>
-          {% comment %}
-          {# Not yet functional #}
           <li id="searchlink">
             <a href="/search/">
-              <i class="fa fa-search"></i>
+              <i class="fa fa-fw fa-search"></i>
               <span class="ident">Search</span>
             </a>
           </li>
           <li>
-            <form action="search" method="POST" accept-charset="utf-8">
-              <input placeholder="Type something to search for"
-                     type="text" name="search" id="searchbox"/>
+            <form action="/search" method="GET" accept-charset="utf-8">
+              <input placeholder="Type a series to search for" name="q"
+                     type="search" class="main-bg" id="searchbox"/>
             </form>
           </li>
-          {% endcomment %}
         </ul>
       </nav>
     </header>

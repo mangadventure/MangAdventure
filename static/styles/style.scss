@@ -8,8 +8,6 @@ body {
   flex-direction: column;
 }
 
-:focus { outline: none }
-
 a {
   text-decoration: none;
   &:hover { text-decoration: underline }
@@ -17,7 +15,7 @@ a {
 
 h1 {
   margin: 0;
-  font-size: 25px;
+  font-size: 1.6em;
   font-weight: normal;
   overflow: hidden;
   text-transform: uppercase;
@@ -26,8 +24,34 @@ h1 {
 
 h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: 1em;
 }
+
+button {
+  background-color: inherit;
+  font-family: inherit;
+  font-size: 1.05em;
+  cursor: pointer;
+}
+
+thead {
+  cursor: pointer;
+  th {
+    &[aria-sort='descending'] i::before {
+      margin-left: 0.3em;
+      content: quote('\f0d7'); // caret-down
+    }
+    &[data-sort-default] i::before,
+    &[aria-sort='ascending'] i::before {
+      margin-left: 0.3em;
+      content: quote('\f0d8'); // caret-up
+    }
+  }
+}
+
+:focus { outline: none }
+
+::-moz-focus-inner { border: 0 }
 
 #header {
   display: flex;
@@ -64,7 +88,7 @@ h2 {
     display: block;
     li {
       float: left;
-      margin: 4px 0;
+      margin: 0.25em 0;
       @include border-radius(3px);
     }
   }
@@ -82,13 +106,15 @@ h2 {
 }
 
 #searchbox {
-  width: 270px;
+  width: 250px;
+  text-indent: 3px;
   position: relative;
-  bottom: 2px;
-  text-align: left;
-  text-indent: 5px;
-  margin-left: 4px;
-  @include border-radius(3px);
+  top: 3px;
+  right: 3px;
+  margin-left: 3px;
+  padding: 4px;
+  border-color: transparent;
+  @include border-radius(5px);
 }
 
 #content {
@@ -262,6 +288,34 @@ h2 {
   }
 }
 
+#search {
+  section {
+    width: 100%;
+    padding: 0.5em 0;
+  }
+  &-options {
+    text-align: center;
+    div { margin-bottom: 0.5em }
+    input {
+      border-radius: 4px;
+      padding: 4px;
+    }
+  }
+  table {
+    margin: 0 0.3em;
+    text-align: center;
+    @include box-sizing();
+  }
+  .result {
+    hyphens: auto;
+    &-title a { color: inherit }
+    &-authors::after {
+      content: quote('/ ');
+      white-space: pre-line;
+    }
+  }
+}
+
 .dropdown {
   display: block;
   height: 30px;
@@ -343,17 +397,20 @@ h2 {
       &[height='38'] { display: inline-block }
     }
   }
-  #navig { top: -3px }
+  #navig {
+    top: -2px;
+    right: 1px;
+  }
 }
 
-@include viewport(812px) {
+@include viewport(810px) {
   #search {
     &box { display: none }
     &link { display: block }
   }
 }
 
-@include viewport(720px) {
+@include viewport(690px) {
   #header {
     height: 27px;
     .logo {
@@ -361,13 +418,8 @@ h2 {
       &[height='27'] { display: inline-block }
     }
   }
-  #navig ul li {
-    margin-top: -0.2em;
-    margin-left: -0.3em;
-    margin-right: 0.3em;
-  }
+  #navig ul li { margin: -0.2em 0 -0.3em -0.2em }
   .ident { display: none }
-  .fa-discord::before { content: '\f2ef' } // fa-discord-alt
 }
 
 @include viewport(436px) {
@@ -454,6 +506,22 @@ h2 {
         display: inline-block
       }
     }
+  }
+  #search {
+    label { display: block }
+    &-status {
+      span { display: block }
+      label { display: inline-block }
+    }
+  }
+  #result-table {
+    th, td { &:nth-of-type(3) { display: none } }
+  }
+}
+
+@include viewport(250px) {
+  #result-table {
+    th, td { &:not(:first-of-type) { display: none } }
   }
 }
 

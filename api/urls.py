@@ -10,6 +10,8 @@ app_name = 'api'
 
 _series = '^series/(?P<slug>[^/]+)/'
 _volume = '%s(?P<vol>[^/]+)/' % _series
+_authors = '^authors/'
+_artists = '^artists/'
 
 urlpatterns = [
     url('^$', views.invalid_endpoint, name='invalid'),
@@ -18,5 +20,9 @@ urlpatterns = [
     url('%s$' % _series, views.series, name='series'),
     url('%s$' % _volume, views.volume, name='volume'),
     url('%s(?P<num>[^/]+)/$' % _volume, views.chapter, name='chapter'),
+    url('%s$' % _authors, views.all_authors, name='author_root'),
+    url('%s(?P<auth_id>[^/]+)/$' % _authors, views.author, name='author'),
+    url('%s$' % _artists, views.all_artists, name='artist_root'),
+    url('%s(?P<art_id>[^/]+)/$' % _artists, views.artist, name='artist'),
 ]
 

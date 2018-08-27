@@ -1,5 +1,5 @@
 ---
-name: ":bug: Bug Report"
+name: "\U0001F41B Bug Report"
 about: Did something not work as expected?
 
 ---
@@ -29,4 +29,3 @@ about: Did something not work as expected?
 * Web server and version:
 * Browser type and version:
 * Link to your website: <!-- If applicable. -->
-:bug:

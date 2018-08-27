@@ -1,5 +1,5 @@
 ---
-name: ":question: Question"
+name: "❓ Question"
 about: Do you have a question regarding this project?
 
 ---
@@ -18,4 +18,3 @@ about: Do you have a question regarding this project?
 * Python version:
 * Web server and version:
 * Browser type and version:
-:question:

@@ -1,5 +1,5 @@
 ---
-name: ":wrench: Compatibility"
+name: "\U0001F527 Compatibility"
 about: Is there a compatibility issue?
 
 ---
@@ -24,4 +24,3 @@ about: Is there a compatibility issue?
 * Operating system and version:
 * Python version: <!-- For Python (in)compatibility reports. -->
 * Browser type and version: <!-- For browser (in)compatibility reports. -->
-:wrench:

@@ -1,7 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator
 from zipfile import ZipFile
-from datetime import date
 from io import BytesIO
 from PIL import Image
 from os import remove
@@ -41,16 +40,6 @@ class FileSizeValidator(BaseValidator):
                 code=self.code,
                 params={'max': self.max_mb}
             )
-
-
-def no_future_date(value):
-    message = "Sorry. You can't send a chapter to the future."
-    code = 'no_future_date'
-    if value > date.today():
-        raise ValidationError(
-            message=message,
-            code=code,
-        )
 
 
 def validate_zip_file(_file):
@@ -94,6 +83,5 @@ def validate_zip_file(_file):
             )
 
 
-__all__ = ['FileSizeValidator', 'no_future_date',
-           'validate_zip_file', 'is_dir']
+__all__ = ['FileSizeValidator', 'validate_zip_file', 'is_dir']
 

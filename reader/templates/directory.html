@@ -10,39 +10,43 @@
   <h1 class="text-shadow alter-bg">Series List</h1>
   <article id="list">
     {% for series in all_series %}
-      <section>
-        <h2 class="series-title">
-          <a href="/reader/{{ series.slug }}/"
-             title="{{ series.title }}">
-            {{ series.title }}
-          </a>
-        </h2>
-        <img style="max-width: {{ series.cover.width }}px; max-height: {{ series.cover.height }}px"
-             src="{{ MEDIA_URL|add:series.cover.name }}" class="cover"/>
-        <div class="series-info">
-          {#<div class="series-desc">#}
-          {#  {{ series.description }}#}
-          {#</div>#}
-          <strong>Latest Chapters:</strong>
-          {% with chapters=series.chapters|order_by:'-date' %}
-            {% for chapter in chapters|vslice:config.MAX_CHAPTERS %}
-              {% with vol=chapter.volume num=chapter.number %}
-                <div class="series-chapter">
-                  <a href="{{ chapter.url }}" title="{{ chapter.title }}/"
-                     {% if chapter.final %}class="end"{% endif %}>
-                    Vol. {{ vol }}, Ch. {{ num }}: {{ chapter.title }}
-                  </a>
-                  <span class="chapter-date" title="{{ chapter.date }}">
-                    - {{ chapter.date }}
-                  </span>
-                </div>
-              {% endwith %}
-            {% endfor %}
-          {% endwith %}
-        </div>
-      </section>
-      {% if not forloop.last %}
-        <span class="alter-bg separator"></span>
+      {% if series.chapters.all %}
+        <section>
+          <h2 class="series-title">
+            <a href="/reader/{{ series.slug }}/"
+               title="{{ series.title }}">
+              {{ series.title }}
+            </a>
+          </h2>
+          <img style="max-width: {{ series.cover.width }}px;
+                      max-height: {{ series.cover.height }}px"
+               src="{{ MEDIA_URL|add:series.cover.name }}" class="cover"/>
+          <div class="series-info">
+            {#<div class="series-desc">#}
+            {#  {{ series.description }}#}
+            {#</div>#}
+            <strong>Latest Chapters:</strong>
+            {% with chapters=series.chapters|order_by:'-uploaded' %}
+              {% for chapter in chapters|vslice:config.MAX_CHAPTERS %}
+                {% with vol=chapter.volume num=chapter.number %}
+                  <div class="series-chapter">
+                    <a href="{{ chapter.url }}" title="{{ chapter.title }}/"
+                       {% if chapter.final %}class="end"{% endif %}>
+                      Vol. {{ vol }}, Ch. {{ num }}: {{ chapter.title }}
+                    </a>
+                    <span class="chapter-date"
+                          title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
+                      - {{ chapter.uploaded|date:'N d, Y - H:i' }}
+                    </span>
+                  </div>
+                {% endwith %}
+              {% endfor %}
+            {% endwith %}
+          </div>
+        </section>
+        {% if not forloop.last %}
+          <span class="alter-bg separator"></span>
+        {% endif %}
       {% endif %}
     {% endfor %}
   </article>

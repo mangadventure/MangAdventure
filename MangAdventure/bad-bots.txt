@@ -2,9 +2,6 @@
 (Contact|LMQueue)Bot
 \w?(Browse|Surf|Eval)
 \w?Surf15a
-^Mozilla/3\.0 \(compatible\)$
-^Mozilla/5\.0 \(Version:.+Type:.+\)$
-^User-Agent: Mozilla/4\.0
 Advanced Email Extractor
 Atomic_Email_Hunter
 atSpider

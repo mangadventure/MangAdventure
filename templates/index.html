@@ -35,8 +35,9 @@
               Vol. {{ vol }}, Ch. {{ num }}: {{ release.title }}
             </a>
           {% endwith %}
-          <span class="chapter-date" title="{{ release.date }}">
-            - {{ release.date }}
+          <span class="chapter-date"
+                title="{{ release.uploaded|date:'N d, Y - H:i' }}">
+            - {{ release.uploaded|date:'N d, Y - H:i' }}
           </span>
         </div>
       </section>

@@ -10,7 +10,6 @@ from .modules.sort import natural_sort
 from .modules.validators import *
 from os import path, remove, makedirs
 from zipfile import ZipFile
-from datetime import date
 from sys import getsizeof
 from io import BytesIO
 from PIL import Image
@@ -56,9 +55,11 @@ class Series(models.Model):
                                       'unique and cannot be changed once set.')
     completed = models.BooleanField(default=False,
                                     help_text='Is the series completed?')
+    modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name_plural = 'series'
+        get_latest_by = 'modified'
 
     def save(self, *args, **kwargs):
         self.validate_unique()
@@ -99,45 +100,41 @@ class SeriesAlias(Alias):
 
 
 class Chapter(models.Model):
-    _help = 'The {} of the chapter. {}'
-    _vol_help = _help.format('volume',
-                             'Leave as 0 if the series has no volumes.')
+    _help = 'The %s of the chapter.'
+    _vol_help = _help % 'volume' + ' Leave as 0 if the series has no volumes.'
     _file_help = [
         'Upload a zip or cbz file containing the chapter pages.',
         'Its size cannot exceed 50 MBs and it must not',
         'contain more than 1 subfolder.'
     ]
-    title = models.CharField(max_length=250,
-                             help_text='The title of the chapter.')
+    title = models.CharField(max_length=250, help_text=_help % 'title')
     number = models.PositiveSmallIntegerField(default=0,
-                                              help_text=_help.format(
-                                                  'number', ''))
+                                              help_text=_help % 'number')
     volume = models.PositiveSmallIntegerField(default=0, help_text=_vol_help)
-    date = models.DateField(default=date.today, validators=[no_future_date],
-                            help_text='The date the chapter was uploaded.'
-                                      ' You may choose a past date.')
     series = models.ForeignKey(Series, on_delete=models.CASCADE,
                                related_name='chapters',
                                help_text='The series this chapter belongs to.')
-    file = models.FileField(help_text=' '.join(_file_help), validators=[
-        FileSizeValidator(max_mb=50), validate_zip_file])
+    file = models.FileField(help_text=' '.join(_file_help),
+                            blank=True, validators=[
+                                FileSizeValidator(max_mb=50),
+                                validate_zip_file])
     final = models.BooleanField(default=False,
                                 help_text='Is this the final chapter?')
     url = models.FilePathField(auto_created=True)
+    uploaded = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('series', 'volume', 'number')
         ordering = ('series', 'volume', 'number')
+        get_latest_by = ('uploaded', 'modified')
 
     def save(self, *args, **kwargs):
-        self.series.completed = self.final
-        self.series.save()
         self.url = '/reader/%s/%d/%d/' % (self.series.slug,
                                           self.volume, self.number)
         super(Chapter, self).save(*args, **kwargs)
         if self.file:
-            self.full_clean(exclude=[self.title, self.number, self.volume,
-                                     self.date, self.series, self.final])
+            validate_zip_file(self.file)
             counter = 0
             zip_file = ZipFile(self.file)
             name_list = zip_file.namelist()
@@ -166,6 +163,8 @@ class Chapter(models.Model):
             zip_file.close()
             remove(self.file.path)
             self.file.delete(save=True)
+        self.series.completed = self.final
+        self.series.save()
 
     def __str__(self):
         return '%s - %d/%d: %s' % \

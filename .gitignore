@@ -33,4 +33,5 @@ config.ini
 media/
 static/*
 !static/styles/
+!static/scripts
 

@@ -20,9 +20,9 @@ urlpatterns = [
     url('%s$' % _series, views.series, name='series'),
     url('%s$' % _volume, views.volume, name='volume'),
     url('%s(?P<num>[^/]+)/$' % _volume, views.chapter, name='chapter'),
-    url('%s$' % _authors, views.all_authors, name='author_root'),
-    url('%s(?P<auth_id>[^/]+)/$' % _authors, views.author, name='author'),
-    url('%s$' % _artists, views.all_artists, name='artist_root'),
-    url('%s(?P<art_id>[^/]+)/$' % _artists, views.artist, name='artist'),
+    url('%s$' % _authors, views.all_people, name='author_root'),
+    url('%s(?P<p_id>[^/]+)/$' % _authors, views.person, name='author'),
+    url('%s$' % _artists, views.all_people, name='artist_root'),
+    url('%s(?P<p_id>[^/]+)/$' % _artists, views.person, name='artist'),
 ]
 

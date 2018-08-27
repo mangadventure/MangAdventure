@@ -418,9 +418,21 @@ thead {
       &[height='27'] { display: inline-block }
     }
   }
+  #search {
+    table {
+      margin: auto;
+      border-right: none;
+    }
+    .result-info:nth-last-child(-n+2) {
+      display: inline-block;
+      .fa-clock { margin-left: 0.75em }
+    }
+    .s-hidden { display: none }
+  }
   #navig ul li { margin: -0.2em 0 -0.3em -0.2em }
   .ident { display: none }
 }
+
 
 @include viewport(436px) {
   #content {
@@ -513,15 +525,6 @@ thead {
       span { display: block }
       label { display: inline-block }
     }
-  }
-  #result-table {
-    th, td { &:nth-of-type(3) { display: none } }
-  }
-}
-
-@include viewport(250px) {
-  #result-table {
-    th, td { &:not(:first-of-type) { display: none } }
   }
 }
 

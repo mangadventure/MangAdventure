@@ -2,7 +2,7 @@
 
 |     Version      | Compatibility |
 | :--------------: | :-----------: |
-|   Python <2.7    |   Untested    |
+|  Python &lt;2.7  |   Untested    |
 |    Python 2.7    |  Compatible   |
 | Python 3.0 - 3.4 |   Untested    |
 | Python 3.5 - 3.7 |  Compatible   |

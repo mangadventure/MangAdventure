@@ -1,7 +1,7 @@
 from django.db.models.query import Q
 from django.shortcuts import render
 from constance import config
-from api.views import invalid_endpoint
+from api.views import json_error
 from reader.models import *
 
 
@@ -37,7 +37,7 @@ def _query(params):
 
 def index(request):
     maximum = config.MAX_RELEASES
-    releases = Chapter.objects.all().order_by('-date')[:maximum:1]
+    releases = Chapter.objects.all().order_by('-uploaded')[:maximum:1]
     return render(request, 'index.html', {
         'latest_releases': releases,
         'page_url': request.build_absolute_uri()
@@ -53,6 +53,8 @@ def search(request):
     }
     if any(p in ('q', 'author', 'status') for p in request.GET):
         results = Series.objects.filter(_query(params))
+        if results.count() == 1 and not results.first().chapters.all():
+            results = None
     return render(request, 'search.html', {
         'query': params['query'],
         'author': params['author'],
@@ -78,13 +80,15 @@ def handler403(request, exception=None, template_name='error.html'):
 
 def handler404(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
-        return invalid_endpoint(request)
+        return json_error('Invalid API endpoint', 501)
     context = _error_context("Sorry. This page doesn't exist.", 404)
     return render(request, template_name=template_name,
                   context=context, status=404)
 
 
 def handler500(request, exception=None, template_name='error.html'):
+    if request.path.startswith('/api'):
+        return json_error('Internal server error', 500)
     context = _error_context('Whoops! Something went wrong.'
                              ' &macr;\_(&#12484;)_/&macr;')  # Shrug
     return render(request, template_name=template_name,

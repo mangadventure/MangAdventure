@@ -122,8 +122,9 @@
                  title="{{ chapter.title }}">
                 Vol. {{ vol }}, Ch. {{ num }}: {{ chapter.title }}
               </a>
-              <span class="chapter-date" title="{{ chapter.date }}">
-                - {{ chapter.date }}
+              <span class="chapter-date"
+                    title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
+                - {{ chapter.uploaded|date:'N d, Y - H:i' }}
               </span>
             {% endwith %}
           </div>

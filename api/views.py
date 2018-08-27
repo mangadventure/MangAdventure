@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.http import last_modified
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.urls import reverse
@@ -19,7 +20,7 @@ def _chapter_response(request, _chapter, json=True):
                           _chapter.number])),
         'pages': [request.build_absolute_uri(page.image.url)
                   for page in _chapter.pages.all()],
-        'date': _chapter.date,
+        'date': _chapter.uploaded,
         'final': _chapter.final,
     }
     return JsonResponse(response) if json else response
@@ -66,35 +67,16 @@ def _series_response(request, _series, json=True):
     return JsonResponse(response) if json else response
 
 
-def _author_response(request, _author, json=True):
+def _person_response(request, _person, json=True):
     response = {
-        'name': _author.name,
+        'name': _person.name,
         'aliases': [],
         'series': {},
-        'id': _author.id,
+        'id': _person.id,
     }
-    for alias in _author.aliases.all():
+    for alias in _person.aliases.all():
         response['aliases'].append(alias.alias)
-    for _series in _author.series_set.all():
-        response['series'][_series.slug] = {
-            'title': _series.title,
-            'aliases': [],
-        }
-        for alias in _series.aliases.all():
-            response['series'][_series.slug]['aliases'].append(alias.alias)
-    return JsonResponse(response) if json else response
-
-
-def _artist_response(request, _artist, json=True):
-    response = {
-        'name': _artist.name,
-        'aliases': [],
-        'series': {},
-        'id': _artist.id,
-    }
-    for alias in _artist.aliases.all():
-        response['aliases'].append(alias.alias)
-    for _series in _artist.series_set.all():
+    for _series in _person.series_set.all():
         response['series'][_series.slug] = {
             'title': _series.title,
             'aliases': [],
@@ -105,13 +87,13 @@ def _artist_response(request, _artist, json=True):
 
 
 @csrf_exempt
+@last_modified(lambda request: Series.objects.latest().modified)
 def all_releases(request):
-    if request.method != 'GET':
+    if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
     _series = Series.objects.all()
     response = {}
     for s in _series:
-        last_chapter = s.chapters.last()
         response[s.slug] = {
             'title': s.title,
             'url': request.build_absolute_uri(
@@ -119,30 +101,35 @@ def all_releases(request):
             'cover': request.build_absolute_uri(s.cover.url),
             'latest_chapter': {},
         }
-        if last_chapter:
+        try:
+            last_chapter = s.chapters.latest()
             response[s.slug]['latest_chapter'] = {
                 'title': last_chapter.title,
                 'volume': last_chapter.volume,
                 'number': last_chapter.number,
-                'date': last_chapter.date,
+                'date': last_chapter.uploaded,
             }
+        except ObjectDoesNotExist:
+            pass
     return JsonResponse(response)
 
 
 @csrf_exempt
+@last_modified(lambda request: Series.objects.latest().modified)
 def all_series(request):
-    if request.method != 'GET':
+    if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
     _series = Series.objects.all()
     response = {}
     for s in _series:
-        response[s.slug] = _series_response(request, s)
+        response[s.slug] = _series_response(request, s, json=False)
     return JsonResponse(response)
 
 
 @csrf_exempt
+@last_modified(lambda request, slug: Series.objects.get(slug=slug).modified)
 def series(request, slug=None):
-    if request.method != 'GET':
+    if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
     try:
         _series = Series.objects.get(slug=slug)
@@ -152,8 +139,10 @@ def series(request, slug=None):
 
 
 @csrf_exempt
+@last_modified(lambda request, slug, vol: Chapter.objects.filter(
+    series__slug=slug, volume=vol).latest().modified)
 def volume(request, slug=None, vol=0):
-    if request.method != 'GET':
+    if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
     try:
         vol = int(vol)
@@ -169,8 +158,10 @@ def volume(request, slug=None, vol=0):
 
 
 @csrf_exempt
+@last_modified(lambda request, slug, vol, num: Chapter.objects.filter(
+    series__slug=slug, volume=vol, number=num).latest().modified)
 def chapter(request, slug=None, vol=0, num=0):
-    if request.method != 'GET':
+    if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
     try:
         vol, num = int(vol), int(num)
@@ -187,59 +178,37 @@ def chapter(request, slug=None, vol=0, num=0):
 
 
 @csrf_exempt
-def all_authors(request):
-    if request.method != 'GET':
+def all_people(request):
+    if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
-    authors = Author.objects.all()
+    if request.path.startswith('/api/authors'):
+        people = Author.objects.all()
+    else:
+        people = Artist.objects.all()
     response = []
-    for _author in authors:
-        response.append(_author_response(request, _author, json=False))
+    for _person in people:
+        response.append(_person_response(request, _person, json=False))
     return JsonResponse(response, safe=False)
 
 
 @csrf_exempt
-def author(request, auth_id=0):
-    if request.method != 'GET':
+def person(request, p_id=0):
+    if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
     try:
-        auth_id = int(auth_id)
-        if auth_id < 1:
+        p_id = int(p_id)
+        if p_id < 1:
             raise ValueError
     except (ValueError, TypeError):
         return json_error('Bad request', 400)
     try:
-        _author = Author.objects.get(id=auth_id)
+        if request.path.startswith('/api/authors'):
+            _person = Author.objects.get(id=p_id)
+        else:
+            _person = Artist.objects.get(id=p_id)
     except ObjectDoesNotExist:
         return json_error('Not found', 404)
-    return _author_response(request, _author)
-
-
-@csrf_exempt
-def all_artists(request):
-    if request.method != 'GET':
-        return json_error('Method not allowed', 405)
-    artists = Artist.objects.all()
-    response = []
-    for _artist in artists:
-        response.append(_artist_response(request, _artist, json=False))
-    return JsonResponse(response, safe=False)
-
-
-@csrf_exempt
-def artist(request, art_id=0):
-    if request.method != 'GET':
-        return json_error('Method not allowed', 405)
-    try:
-        art_id = int(art_id)
-        if art_id < 1:
-            raise ValueError
-    except (ValueError, TypeError):
-        return json_error('Bad request', 400)
-    try:
-        _artist = Artist.objects.get(id=art_id)
-    except ObjectDoesNotExist:
-        return json_error('Not found', 404)
-    return _artist_response(request, _artist)
+    return _person_response(request, _person)
 
 
 @csrf_exempt

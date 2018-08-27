@@ -1,5 +1,5 @@
 ---
-name: Feature Request
+name: "\U0001F680 Feature Request"
 about: Do you want something changed or implemented?
 
 ---
@@ -22,4 +22,3 @@ about: Do you want something changed or implemented?
 * Python version:
 * Web server and version:
 * Browser type and version:
-:rocket:

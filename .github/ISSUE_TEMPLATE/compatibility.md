@@ -6,7 +6,7 @@ about: Is there a compatibility issue?
 
 <!-- Only submit a compatibility issue if the compatibility of -->
 <!-- your Python or browser version is inaccuretely portrayed in -->
-<!-- https://github.com/evangelos-ch/docs/compatibility.md. -->
+<!-- https://github.com/evangelos-ch/docs/compatibility.rst. -->
 
 ## Description
 <!-- Provide a description of the issue. -->

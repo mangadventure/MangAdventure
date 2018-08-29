@@ -5,6 +5,11 @@ db.sqlite3
 logs/
 *.pyc
 
+# Sphinx stuff
+_build/
+_static/
+_templates/
+
 # Environment stuff
 .python-version
 .env

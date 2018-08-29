@@ -23,3 +23,6 @@ indent_size = 2
 [*.md]
 indent_size = 2
 
+[*.rst]
+indent_size = 3
+

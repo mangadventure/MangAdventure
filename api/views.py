@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import last_modified
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.http import http_date
 from django.http import JsonResponse
 from django.urls import reverse
 from reader.models import Chapter, Series, Author, Artist
@@ -18,9 +19,8 @@ def _chapter_response(request, _chapter, json=True):
                     args=[_chapter.series.slug,
                           _chapter.volume,
                           _chapter.number])),
-        'pages': [request.build_absolute_uri(page.image.url)
-                  for page in _chapter.pages.all()],
-        'date': _chapter.uploaded,
+        'pages': [p.image.url.split('/')[-1] for p in _chapter.pages.all()],
+        'date': http_date(_chapter.uploaded.timestamp()),
         'final': _chapter.final,
     }
     return JsonResponse(response) if json else response
@@ -39,6 +39,7 @@ def _volume_response(request, _series, vol, json=True):
 
 def _series_response(request, _series, json=True):
     response = {
+        'slug': _series.slug,
         'title': _series.title,
         'aliases': [a.alias for a in _series.aliases.all()],
         'url': request.build_absolute_uri(
@@ -47,8 +48,8 @@ def _series_response(request, _series, json=True):
         'authors': [],
         'artists': [],
         'cover': request.build_absolute_uri(_series.cover.url),
-        'volumes': {},
         'completed': _series.completed,
+        'volumes': {},
     }
     for _chapter in _series.chapters.all():
         if _chapter.volume not in response['volumes']:
@@ -69,20 +70,22 @@ def _series_response(request, _series, json=True):
 
 def _person_response(request, _person, json=True):
     response = {
+        'id': _person.id,
         'name': _person.name,
         'aliases': [],
-        'series': {},
-        'id': _person.id,
+        'series': [],
     }
     for alias in _person.aliases.all():
         response['aliases'].append(alias.alias)
     for _series in _person.series_set.all():
-        response['series'][_series.slug] = {
-            'title': _series.title,
-            'aliases': [],
-        }
+        aliases = []
         for alias in _series.aliases.all():
-            response['series'][_series.slug]['aliases'].append(alias.alias)
+            aliases.append(alias.alias)
+        response['series'].append({
+            'slug': _series.slug,
+            'title': _series.title,
+            'aliases': aliases,
+        })
     return JsonResponse(response) if json else response
 
 
@@ -92,9 +95,10 @@ def all_releases(request):
     if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
     _series = Series.objects.all()
-    response = {}
+    response = []
     for s in _series:
-        response[s.slug] = {
+        series_res = {
+            'slug': s.slug,
             'title': s.title,
             'url': request.build_absolute_uri(
                 reverse('reader:series', args={s.slug})),
@@ -103,15 +107,16 @@ def all_releases(request):
         }
         try:
             last_chapter = s.chapters.latest()
-            response[s.slug]['latest_chapter'] = {
+            series_res['latest_chapter'] = {
                 'title': last_chapter.title,
                 'volume': last_chapter.volume,
                 'number': last_chapter.number,
-                'date': last_chapter.uploaded,
+                'date': http_date(last_chapter.uploaded.timestamp()),
             }
         except ObjectDoesNotExist:
             pass
-    return JsonResponse(response)
+        response.append(series_res)
+    return JsonResponse(response, safe=False)
 
 
 @csrf_exempt
@@ -120,10 +125,10 @@ def all_series(request):
     if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
     _series = Series.objects.all()
-    response = {}
+    response = []
     for s in _series:
-        response[s.slug] = _series_response(request, s, json=False)
-    return JsonResponse(response)
+        response.append(_series_response(request, s, json=False))
+    return JsonResponse(response, safe=False)
 
 
 @csrf_exempt

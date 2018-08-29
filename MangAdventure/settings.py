@@ -9,7 +9,7 @@ from config import CONFIG
 # From https://stackoverflow.com/questions/9626535/#36609868
 get_domain = lambda url: url.split('//')[-1].split('/')[0].split('?')[0]
 
-print_err = lambda msg: print_(style().ERROR('ERROR: ' + msg), file=stderr)
+warn = lambda msg: print_(style().WARNING('WARNING: ' + msg), file=stderr)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 _settings = path.dirname(path.abspath(__file__))
@@ -26,9 +26,8 @@ try:
 except KeyError:
     SECRET_KEY = 'm-4!(a(2a9w5q@n07#_aup4j^mox$e#+brgd51_5xdbg6u3i)x'
     if 'generatekey' not in argv:
-        print_err("You must first generate a secret key "
-                  "by running the 'generatekey' command.")
-        exit(2)
+        warn("You should first generate a secret key "
+             "by running the 'generatekey' command.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.get('MANGADV_DEBUG', 'false').lower() == 'true'
@@ -47,9 +46,8 @@ try:
         raise KeyError
 except KeyError:
     if 'generatekey' not in argv and 'configureurl' not in argv:
-        print_err("You must configure your website's URL "
-                  "by running the 'configureurl' command.")
-        exit(2)
+        warn("You should configure your website's URL "
+             "by running the 'configureurl' command.")
 
 _bad_bots = path.join(_settings, 'bad-bots.txt')
 DISALLOWED_USER_AGENTS = [

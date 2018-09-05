@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'config',
     'reader',
     'api',
+    'groups',
 ]
 
 MIDDLEWARE = [
@@ -131,7 +132,7 @@ CONSTANCE_ADDITIONAL_FIELDS = {
         'strip': False,
         'widget': 'django.forms.Textarea'
     }),
-    'logo': ('reader.modules.forms.SVGImageField', {}),
+    'logo': ('MangAdventure.modules.forms.SVGImageField', {}),
     'favicon': ('django.forms.ImageField', {})
 }
 CONSTANCE_CONFIG = {

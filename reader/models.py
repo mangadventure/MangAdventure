@@ -7,6 +7,7 @@ from MangAdventure.modules.uploaders import cover_uploader
 from MangAdventure.modules.storage import OverwriteStorage
 from MangAdventure.modules.sort import natural_sort
 from MangAdventure.modules.validators import *
+from groups.models import Group
 from os import path, remove, makedirs
 from zipfile import ZipFile
 from sys import getsizeof
@@ -122,6 +123,7 @@ class Chapter(models.Model):
     url = models.FilePathField(auto_created=True)
     uploaded = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+    group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         unique_together = ('series', 'volume', 'number')

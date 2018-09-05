@@ -3,9 +3,9 @@
 import datetime
 from django.db import migrations, models
 import django.db.models.deletion
-import reader.modules.storage
-import reader.modules.uploaders
-import reader.modules.validators
+import MangAdventure.modules.storage
+import MangAdventure.modules.uploaders
+import MangAdventure.modules.validators
 
 
 class Migration(migrations.Migration):
@@ -65,7 +65,8 @@ class Migration(migrations.Migration):
                 ('number', models.PositiveSmallIntegerField(default=0, help_text='The number of the chapter. ')),
                 ('volume', models.PositiveSmallIntegerField(default=0, help_text='The volume of the chapter. Leave as 0 if the series has no volumes.')),
                 ('date', models.DateField(default=datetime.date.today, help_text='The date the chapter was uploaded. You may choose a past date.')),
-                ('file', models.FileField(help_text='Upload a zip or cbz file containing the chapter pages. Its size cannot exceed 50 MBs and it must not contain more than 1 subfolder.', upload_to='', validators=[reader.modules.validators.FileSizeValidator(max_mb=50), reader.modules.validators.validate_zip_file])),
+                ('file', models.FileField(help_text='Upload a zip or cbz file containing the chapter pages. Its size cannot exceed 50 MBs and it must not contain more than 1 subfolder.', upload_to='', validators=[
+                    MangAdventure.modules.validators.FileSizeValidator(max_mb=50), MangAdventure.modules.validators.validate_zip_file])),
                 ('final', models.BooleanField(default=False, help_text='Is this the final chapter?')),
             ],
             options={
@@ -86,7 +87,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('title', models.CharField(help_text='The title of the series.', max_length=250)),
                 ('description', models.TextField(blank=True, help_text='The description of the series.')),
-                ('cover', models.ImageField(help_text='Upload a cover image for the series. Its size must not exceed 2 MBs.', storage=reader.modules.storage.OverwriteStorage(), upload_to=reader.modules.uploaders.cover_uploader, validators=[reader.modules.validators.FileSizeValidator(max_mb=2)])),
+                ('cover', models.ImageField(help_text='Upload a cover image for the series. Its size must not exceed 2 MBs.', storage=MangAdventure.modules.storage.OverwriteStorage(), upload_to=MangAdventure.modules.uploaders.cover_uploader, validators=[
+                    MangAdventure.modules.validators.FileSizeValidator(max_mb=2)])),
                 ('slug', models.SlugField(blank=True, help_text='A custom URL for the series. Must be unique and cannot be changed once set.', primary_key=True, serialize=False, verbose_name='Custom URL')),
                 ('completed', models.BooleanField(default=False, help_text='Is the series completed?')),
                 ('artists', models.ManyToManyField(blank=True, to='reader.Artist')),

@@ -23,6 +23,9 @@ class Group(models.Model):
                                        ' Its size must not exceed 2 MBs.',
                              validators=[FileSizeValidator(max_mb=2)])
 
+    def __str__(self):
+        return self.name
+
 
 class Member(models.Model):
     name = models.CharField(max_length=100,
@@ -38,9 +41,10 @@ class Member(models.Model):
                                help_text='Upload a member avatar.'
                                          ' Its size must not exceed 2 MBs.',
                                validators=[FileSizeValidator(max_mb=2)])
-    group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL,
-                              related_name='members',
-                              help_text='The Group the member is part of.')
+    groups = models.ManyToManyField(Group, blank=True, related_name='members')
+
+    def __str__(self):
+        return self.name
 
 
 class Role(models.Model):

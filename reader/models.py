@@ -123,8 +123,7 @@ class Chapter(models.Model):
     url = models.FilePathField(auto_created=True)
     uploaded = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL,
-                              related_name='releases')
+    groups = models.ManyToManyField(Group, blank=True, related_name='releases')
 
     class Meta:
         unique_together = ('series', 'volume', 'number')

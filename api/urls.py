@@ -12,6 +12,7 @@ _series = '^series/(?P<slug>[^/]+)'
 _volume = '%s/(?P<vol>[^/]+)/' % _series
 _authors = '^authors'
 _artists = '^artists'
+_groups = '^groups'
 
 urlpatterns = [
     url(r'^$', views.invalid_endpoint, name='invalid'),
@@ -24,5 +25,7 @@ urlpatterns = [
     url('%s/(?P<p_id>[^/]+)/?$' % _authors, views.person, name='author'),
     url('%s/?$' % _artists, views.all_people, name='artist_root'),
     url('%s/(?P<p_id>[^/]+)/?$' % _artists, views.person, name='artist'),
+    url('%s/?$' % _groups, views.all_groups, name='groups_root'),
+    url('%s/(?P<g_id>[^/]+)/?$' % _groups, views.group, name='group'),
 ]
 

@@ -5,6 +5,7 @@ from django.utils.http import http_date
 from django.http import JsonResponse
 from django.urls import reverse
 from reader.models import Chapter, Series, Author, Artist
+from groups.models import Group, Member
 
 
 def json_error(message, status=500):
@@ -22,7 +23,13 @@ def _chapter_response(request, _chapter, json=True):
         'pages': [p.image.url.split('/')[-1] for p in _chapter.pages.all()],
         'date': http_date(_chapter.uploaded.timestamp()),
         'final': _chapter.final,
+        'groups': []
     }
+    for _group in _chapter.groups.all():
+        response['groups'].append({
+            'id': _group.id,
+            'name': _group.name,
+        })
     return JsonResponse(response) if json else response
 
 
@@ -86,6 +93,48 @@ def _person_response(request, _person, json=True):
             'title': _series.title,
             'aliases': aliases,
         })
+    return JsonResponse(response) if json else response
+
+
+def _member_response(request, _member, json=True):
+    response = {
+        'id': _member.id,
+        'name': _member.name,
+        'roles': [],
+        'twitter': _member.twitter,
+        'discord': _member.discord,
+        'avatar': request.build_absolute_uri(_member.avatar.url),
+    }
+    for role in _member.roles.all():
+        response['roles'].append(role.get_role_display())
+    return JsonResponse(response) if json else response
+
+
+def _group_response(request, _group, json=True):
+    response = {
+        'id': _group.id,
+        'name': _group.name,
+        'website': _group.website,
+        'discord': _group.discord,
+        'twitter': _group.twitter,
+        'members': [],
+        'description': _group.description,
+        'series': [],
+        'logo': request.build_absolute_uri(_group.logo.url),
+    }
+    for _member in _group.members.all():
+        response['members'].append(_member_response(request, _member, json=False))
+    _series = []
+    for _chapter in _group.releases.all():
+        if _chapter.series.title not in _series:
+            response['series'].append({
+                'name': _chapter.series.title,
+                'aliases': [],
+                'slug': _chapter.series.slug,
+            })
+            for alias in _chapter.series.aliases.all():
+                response['series'][-1]['aliases'].append(alias.alias)
+            _series.append(_chapter.series.title)
     return JsonResponse(response) if json else response
 
 
@@ -217,6 +266,33 @@ def person(request, p_id=0):
 
 
 @csrf_exempt
+def all_groups(request):
+    if request.method not in ['GET', 'HEAD']:
+        return json_error('Method not allowed', 405)
+    _groups = Group.objects.all()
+    response = []
+    for g in _groups:
+        response.append(_group_response(request, g, json=False))
+    return JsonResponse(response, safe=False)
+
+
+@csrf_exempt
+def group(request, g_id=0):
+    if request.method not in ['GET', 'HEAD']:
+        return json_error('Method not allowed', 405)
+    try:
+        g_id = int(g_id)
+        if g_id < 1:
+            raise ValueError
+    except (ValueError, TypeError):
+        return json_error('Bad request', 400)
+    try:
+        _group = Group.objects.get(id=g_id)
+    except ObjectDoesNotExist:
+        return json_error('Not found', 404)
+    return _group_response(request, _group)
+
+
+@csrf_exempt
 def invalid_endpoint(request):
     return json_error('Invalid API endpoint', 501)
-

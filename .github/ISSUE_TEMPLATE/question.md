@@ -1,5 +1,5 @@
 ---
-name: "❓ Question"
+name: ❓ Question
 about: Do you have a question regarding this project?
 
 ---

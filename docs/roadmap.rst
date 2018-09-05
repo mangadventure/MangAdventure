@@ -48,6 +48,7 @@ v0.6.x
 |    |u| Long strip mode.
 |    |u| Fit page to screen.
 | |u| Update bookmarked series on MAL/AniList.
+| |u| IRC links.
 | |u| RSS feeds.
 
 v0.7.x

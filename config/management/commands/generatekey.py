@@ -12,5 +12,3 @@ class Command(BaseCommand):
         write_config('settings', 'secret_key', rand)
         self.stdout.write(self.style.SUCCESS('Saved secret key in config.ini'))
 
-
-

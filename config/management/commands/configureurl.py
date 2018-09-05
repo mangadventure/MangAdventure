@@ -13,5 +13,3 @@ class Command(BaseCommand):
         write_config('settings', 'site_url', *options['URL'])
         self.stdout.write(self.style.SUCCESS('Saved URL in config.ini'))
 
-
-

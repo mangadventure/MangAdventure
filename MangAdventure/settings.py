@@ -140,8 +140,7 @@ CONSTANCE_CONFIG = {
         'consider buying the original versions to support '
         'the authors.\nThis site was created using <a href='
         '"https://github.com/evangelos-ch/MangAdventure"'
-        ' rel="noopener" target="_blank">'
-        'MangAdventure v' + ver + '</a>',
+        ' rel="noopener" target="_blank">MangAdventure</a>',
         _site % 'footer' + ' HTML allowed.', 'html'
     ),
     'NAME': ('MangAdventure', _site % 'name', 'char'),

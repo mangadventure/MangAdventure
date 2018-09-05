@@ -1,5 +1,5 @@
 ---
-name: "\U0001F680 Feature Request"
+name: ✨ Feature Request
 about: Do you want something changed or implemented?
 
 ---

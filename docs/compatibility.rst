@@ -11,13 +11,13 @@ Python
 
    * - Version
      - Compatibility
-   * - Python <2.7
+   * - <2.7
      - Untested
-   * - Python 2.7
+   * - 2.7
      - Compatible
-   * - Python 3.0 - 3.4
+   * - 3.0 - 3.4
      - Untested
-   * - Python 3.5 - 3.7
+   * - 3.5 - 3.7
      - Compatible
 
 Browsers
@@ -31,17 +31,23 @@ Desktop
 
    * - Browser
      - Compatibility
-   * - Chrome
+   * - | |Chrome|
+       | Chrome
      - 21+
-   * - Firefox
+   * - | |FF|
+       | Firefox
      - 28+
-   * - IE
+   * - | |IE|
+       | IE
      - 10+/Edge
-   * - Safari
+   * - | |Safari|
+       | Safari
      - 6.1+
-   * - Opera
+   * - | |Opera|
+       | Opera
      - 15+
-   * - qutebrowser
+   * - | |QB|
+       | qutebrowser
      - 0.11+
 
 Mobile
@@ -52,18 +58,46 @@ Mobile
 
    * - Browser
      - Compatibility
-   * - Chrome Mobile
+   * - | |Chrome|
+       | Chrome Mobile
      - 21+
-   * - Firefox Mobile
+   * - | |FF|
+       | Firefox Mobile
      - 28+
-   * - IE Mobile
+   * - | |IE|
+       | IE Mobile
      - 10+/Edge
-   * - iOS Safari
+   * - | |iOS|
+       | iOS Safari
      - 7.1+
-   * - Opera Mobile
+   * - | |Opera|
+       | Opera Mobile
      - 18+
-   * - Android Browser
+   * - | |Android|
+       | Android Browser
      - 4.4+
-   * - Blackberry Browser
-     - 10+
+
+.. |Chrome| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/chrome/chrome_32x32.png
+   :alt: Chrome
+
+.. |FF| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/firefox/firefox_32x32.png
+   :alt: Firefox
+
+.. |IE| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/archive/internet-explorer_9-11/internet-explorer_9-11_32x32.png
+   :alt: Internet Explorer
+
+.. |Safari| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/safari/safari_32x32.png
+   :alt: Safari
+
+.. |Opera| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/opera/opera_32x32.png
+   :alt: Opera
+
+.. |QB| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/qutebrowser/qutebrowser_32x32.png
+   :alt: qutebrowser
+
+.. |Android| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/archive/android/android_32x32.png
+   :alt: Android Browser
+
+.. |iOS| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/safari-ios/safari-ios_32x32.png
+   :alt: iOS Safari
 

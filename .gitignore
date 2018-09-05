@@ -1,3 +1,9 @@
+# OS stuff
+.directory
+desktop.ini
+Thumbs.db
+.DS_Store
+
 # Python/Django stuff
 __pycache__/
 **/migrations/*auto*
@@ -7,7 +13,6 @@ logs/
 
 # Sphinx stuff
 _build/
-_static/
 _templates/
 
 # Environment stuff

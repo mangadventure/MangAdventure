@@ -1,5 +1,5 @@
 ---
-name: "\U0001F527 Compatibility"
+name: 🔧 Compatibility
 about: Is there a compatibility issue?
 
 ---

@@ -30,6 +30,8 @@ You shouldn't use the production server during development. You can use Django's
 
 * Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
 * Icons by [Font Awesome 5.2](https://fontawesome.com>)
+* Tables use the [tablesort](https://github.com/tristen/tablesort) JS library
+* Browser logos from [alrra/browser-logos](https://github.com/alrra/browser-logos)
 
 ## License
 

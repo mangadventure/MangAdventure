@@ -13,5 +13,5 @@ class Command(BaseCommand):
         https = options['state']
         action = 'Enabled' if https == 'on' else 'Disabled'
         write_config('settings', 'https', https)
-        self.stdout.write(self.style.SUCCESS('%s HTTPS') % action)
+        self.stdout.write(self.style.SUCCESS('%s HTTPS' % action))
 

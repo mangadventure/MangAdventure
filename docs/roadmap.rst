@@ -37,7 +37,6 @@ v0.5.x
 |    |u| Allow Google/Twitter sign-in.
 |    |u| Allow users to bookmark series.
 |    |u| Password reset form.
-|    |u| Expand API.
 | |u| Comments (custom/Disqus).
 | |u| Cookie consent.
 |    |u| Add to information page.
@@ -45,15 +44,16 @@ v0.5.x
 v0.6.x
 ^^^^^^
 
-| |u| Generate complete favicon with RealFaviconGenerator.
-
-v0.7.x
-^^^^^^
-
 | |u| More reading modes:
 |    |u| Long strip mode.
 |    |u| Fit page to screen.
 | |u| Update bookmarked series on MAL/AniList.
+| |u| RSS feeds.
+
+v0.7.x
+^^^^^^
+
+| |u| Generate complete favicon with RealFaviconGenerator.
 
 v0.8.x
 ^^^^^^
@@ -64,7 +64,10 @@ v0.8.x
 v0.9.x
 ^^^^^^
 
-| |u| RSS feeds.
+| |u| Improve API:
+|    |u| API keys.
+|    |u| Rate limit.
+|    |u| POST,PUT,DELETE privileges for staff.
 
 .. unchecked
 .. |u| unicode:: U+00A0 U+00A0 U+2610

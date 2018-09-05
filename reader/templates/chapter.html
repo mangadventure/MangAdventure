@@ -50,7 +50,7 @@
     {% endinlinecompile %}
   </style>
   <script type="text/javascript">
-    img = new Image();
+    var img = new Image();
     img.src = '{{ MEDIA_URL|urljoin:curr_page.image.url }}';
     img.alt = 'Page {{ curr_page.number }}';
     img.className = 'chapter-page';
@@ -65,12 +65,12 @@
       {% endif %}
     });
     img.addEventListener('load', function() {
-      var holder = document.querySelector('.placeholder');
-      var drop = document.getElementById('dropdowns');
-      var controls = document.getElementById('controls');
-      holder.parentNode.replaceChild(img, holder);
-      drop.removeAttribute('style');
-      controls.removeAttribute('style');
+      var ph = document.querySelector('.placeholder');
+      var dd = document.getElementById('dropdowns');
+      var ct = document.getElementById('controls');
+      ph.parentNode.replaceChild(img, ph);
+      dd.removeAttribute('style');
+      ct.removeAttribute('style');
     });
   </script>
 {% endblock %}

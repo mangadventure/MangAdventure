@@ -1,4 +1,4 @@
-# MangAdventure [![release](https://img.shields.io/github/release/evangelos-ch/MangAdventure/all.svg)](https://github.com/evangelos-ch/MangAdventure/releases/latest)
+# MangAdventure [![release](https://img.shields.io/github/release/evangelos-ch/MangAdventure/all.svg)](https://github.com/evangelos-ch/MangAdventure/releases)
 
 MangAdventure, aka MangADV, is a simple manga hosting webapp.
 

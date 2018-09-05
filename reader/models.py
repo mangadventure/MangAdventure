@@ -1,5 +1,4 @@
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.contrib.contenttypes.models import ContentType
 from django.utils.text import slugify
 from django.conf import settings
 from django.db import models

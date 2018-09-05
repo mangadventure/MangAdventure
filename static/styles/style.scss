@@ -27,8 +27,14 @@ h2 {
   font-size: 1em;
 }
 
+input {
+  color: inherit;
+  font-family: inherit;
+}
+
 button {
   background-color: inherit;
+  color: inherit;
   font-family: inherit;
   font-size: 1.05em;
   cursor: pointer;
@@ -363,6 +369,7 @@ thead {
   margin: auto;
   @include border-radius(100px);
   @include box-sizing();
+  &:last-of-type { display: none }
 }
 
 .chapter-date {

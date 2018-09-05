@@ -1,14 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator
-from zipfile import ZipFile
+from zipfile import ZipFile, error as BadZipfile
 from io import BytesIO
 from PIL import Image
 from os import remove
-
-try:
-    from zipfile import BadZipfile
-except ImportError:
-    from zipfile import error as BadZipFile
 
 
 def _remove_file(_file):

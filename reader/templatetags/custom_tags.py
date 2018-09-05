@@ -36,7 +36,7 @@ def get_type(link):
     try:
         with urlopen(link) as response:
             return response.info().get_content_type()
-    except:
+    except Exception:
         ext = splitext(link.lower())[-1]
         return {
             '.svg': 'image/svg+xml',

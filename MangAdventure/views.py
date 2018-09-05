@@ -90,7 +90,7 @@ def handler500(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
         return json_error('Internal server error', 500)
     context = _error_context('Whoops! Something went wrong.'
-                             ' &macr;\_(&#12484;)_/&macr;')  # Shrug
+                             ' &macr;&#8726;_(&#12484;)_/&macr;')  # Shrug
     return render(request, template_name=template_name,
                   context=context, status=500)
 

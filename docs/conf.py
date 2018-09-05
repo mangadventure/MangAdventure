@@ -135,7 +135,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'MangAdventure', 'MangAdventure Documentation',
-     author, 'MangAdventure', 'A simple manga hosting webapp written in Django.',
-     'Miscellaneous'),
+     author, 'MangAdventure', 'A simple manga hosting webapp'
+     ' written in Django.', 'Miscellaneous'),
 ]
 

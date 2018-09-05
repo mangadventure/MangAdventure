@@ -17,13 +17,18 @@ def series(request, slug=None):
         _series = Series.objects.get(slug=slug)
     except ObjectDoesNotExist:
         raise Http404
+    if _series.chapters.count() == 0 and not request.user.is_staff:
+        return render(request, 'error.html', {
+            'error_message': 'Sorry. This series is not yet available.',
+            'error_status': 403
+        }, status=403)
     return render(request, 'series.html', {
         'series': _series,
         'page_url': request.build_absolute_uri()
     })
 
 
-def chapter(request, slug=None, vol=0, num=0, page=1):
+def chapter_page(request, slug=None, vol=0, num=0, page=1):
     try:
         vol, num, page = int(vol), int(num), int(page)
     except (ValueError, TypeError):
@@ -57,6 +62,6 @@ def chapter(request, slug=None, vol=0, num=0, page=1):
 
 
 def chapter_redirect(request, slug=None, vol=0, num=0):
-    return redirect('reader:chapter', permanent=True,
+    return redirect('reader:page', permanent=True,
                     slug=slug, vol=vol, num=num, page=1)
 

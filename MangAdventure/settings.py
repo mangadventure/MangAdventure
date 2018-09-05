@@ -201,10 +201,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},  # noqa: E501
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'}
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},  # noqa: E501
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},  # noqa: E501
 ]
 
 # Debug and Error Logging
@@ -285,7 +285,7 @@ try:
 except KeyError:
     env['HTTPS'] = 'off'
 
-if env.get('HTTPS', 'off').lower() == 'on':
+if env.get('HTTPS', 'off').lower() == 'on' and not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
     SESSION_COOKIE_SECURE = True

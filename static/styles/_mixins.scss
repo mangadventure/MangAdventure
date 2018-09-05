@@ -8,11 +8,6 @@
   }
 }
 
-@mixin colors($bg: null, $fg: null) {
-  @if($bg) { background-color: $bg; }
-  @if($fg) { color: $fg; }
-}
-
 @mixin border($color: #FFF, $width: 1px, $style: solid, $suffix: null, $important: false) {
   $border: $width $style $color;
   @if($important) { $border: append($border, !important); }

@@ -2,11 +2,11 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils.text import slugify
 from django.conf import settings
 from django.db import models
-from .modules.alias import Alias, alias_field, foreign_key
-from .modules.uploaders import cover_uploader
-from .modules.storage import OverwriteStorage
-from .modules.sort import natural_sort
-from .modules.validators import *
+from MangAdventure.modules.alias import Alias, alias_field, foreign_key
+from MangAdventure.modules.uploaders import cover_uploader
+from MangAdventure.modules.storage import OverwriteStorage
+from MangAdventure.modules.sort import natural_sort
+from MangAdventure.modules.validators import *
 from os import path, remove, makedirs
 from zipfile import ZipFile
 from sys import getsizeof

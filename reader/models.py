@@ -1,18 +1,12 @@
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils.text import slugify
-from django.conf import settings
 from django.db import models
-from MangAdventure.modules.alias import Alias, alias_field, foreign_key
-from MangAdventure.modules.uploaders import cover_uploader
-from MangAdventure.modules.storage import OverwriteStorage
-from MangAdventure.modules.sort import natural_sort
-from MangAdventure.modules.validators import *
+from MangAdventure.models import *
+from MangAdventure.utils import *
 from groups.models import Group
-from os import path, remove, makedirs
-from zipfile import ZipFile
-from sys import getsizeof
-from io import BytesIO
-from PIL import Image
+
+
+def _alias_help(name, identifier='name'):
+    return 'Another %s for the %s.' % (identifier, name)
 
 
 class Author(models.Model):
@@ -38,15 +32,16 @@ class Artist(models.Model):
 
 
 class Series(models.Model):
+    _validator = validators.FileSizeValidator(max_mb=2)
     title = models.CharField(max_length=250,
                              help_text='The title of the series.')
     description = models.TextField(blank=True,
                                    help_text='The description of the series.')
-    cover = models.ImageField(storage=OverwriteStorage(),
-                              upload_to=cover_uploader,
+    cover = models.ImageField(storage=storage.OverwriteStorage(),
+                              upload_to=uploaders.cover_uploader,
                               help_text='Upload a cover image for the series.'
                                         ' Its size must not exceed 2 MBs.',
-                              validators=[FileSizeValidator(max_mb=2)])
+                              validators=[_validator])
     authors = models.ManyToManyField(Author, blank=True)
     artists = models.ManyToManyField(Artist, blank=True)
     slug = models.SlugField(primary_key=True, blank=True,
@@ -64,16 +59,7 @@ class Series(models.Model):
     def save(self, *args, **kwargs):
         self.validate_unique()
         self.slug = self.slug or slugify(self.title)
-        img = Image.open(self.cover)
-        img.thumbnail((300, 300), Image.ANTIALIAS)
-        Image.MIME['ICO'] = 'image/x-icon'
-        mime = Image.MIME.get(img.format)
-        buff = BytesIO()
-        img.save(buff, format=img.format, quality=100)
-        buff.seek(0)
-        self.cover = InMemoryUploadedFile(buff, 'ImageField',
-                                          self.cover.name, mime,
-                                          getsizeof(buff), None)
+        self.cover = images.thumbnail(self.cover, 300)
         super(Series, self).save(*args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):
@@ -85,18 +71,19 @@ class Series(models.Model):
 
 
 class AuthorAlias(Alias):
-    author = foreign_key(Author)
-    alias = alias_field('Another name for the author.')
+    author = AliasKeyField(Author)
+    alias = AliasField(help_text=_alias_help('author'))
 
 
 class ArtistAlias(Alias):
-    artist = foreign_key(Artist)
-    alias = alias_field('Another name for the artist.')
+    artist = AliasKeyField(Artist)
+    alias = AliasField(help_text=_alias_help('artist'))
 
 
 class SeriesAlias(Alias):
-    series = foreign_key(Series)
-    alias = alias_field('Another title for the series.', 250)
+    series = AliasKeyField(Series)
+    alias = AliasField(help_text=_alias_help('series', 'title'),
+                       max_length=250)
 
 
 class Chapter(models.Model):
@@ -116,8 +103,8 @@ class Chapter(models.Model):
                                help_text='The series this chapter belongs to.')
     file = models.FileField(help_text=' '.join(_file_help),
                             blank=True, validators=[
-                                FileSizeValidator(max_mb=50),
-                                validate_zip_file])
+                                validators.FileSizeValidator(max_mb=50),
+                                validators.zipfile_validator])
     final = models.BooleanField(default=False,
                                 help_text='Is this the final chapter?')
     url = models.FilePathField(auto_created=True)
@@ -135,35 +122,9 @@ class Chapter(models.Model):
                                           self.volume, self.number)
         super(Chapter, self).save(*args, **kwargs)
         if self.file:
-            validate_zip_file(self.file)
-            counter = 0
-            zip_file = ZipFile(self.file)
-            name_list = zip_file.namelist()
+            validators.zipfile_validator(self.file)
             Page.objects.filter(chapter=self).delete()
-            for name in natural_sort(name_list):
-                if is_dir(zip_file.getinfo(name)):
-                    continue
-                counter += 1
-                data = zip_file.read(name)
-                filename = '%03d%s' % (counter, path.splitext(name)[-1])
-                file_path = path.join(
-                    'series',
-                    self.series.slug,
-                    str(self.volume),
-                    str(self.number),
-                    filename
-                )
-                full_path = path.join(settings.MEDIA_ROOT, file_path)
-                if not path.exists(path.dirname(full_path)):
-                    makedirs(path.dirname(full_path))
-                if path.exists(full_path):
-                    remove(full_path)
-                image = Image.open(BytesIO(data))
-                image.save(full_path, optimize=True, quality=100)
-                self.pages.create(number=counter, image=file_path)
-            zip_file.close()
-            remove(self.file.path)
-            self.file.delete(save=True)
+            images.unzip(self)
         self.series.completed = self.final
         self.series.save()
 

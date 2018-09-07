@@ -1,9 +1,11 @@
 from django.core.exceptions import ValidationError
-from django.core.validators import BaseValidator
+from django.core.validators import BaseValidator, RegexValidator
 from zipfile import ZipFile, error as BadZipfile
+from re import compile as reg
 from io import BytesIO
 from PIL import Image
 from os import remove
+from . import is_dir
 
 
 def _remove_file(_file):
@@ -11,12 +13,6 @@ def _remove_file(_file):
         remove(_file.path)
     except IOError:
         pass
-
-
-def is_dir(zipinfo):
-    if hasattr(zipinfo, 'is_dir'):
-        return zipinfo.is_dir()
-    return zipinfo.filename.endswith('/')
 
 
 class FileSizeValidator(BaseValidator):
@@ -37,7 +33,19 @@ class FileSizeValidator(BaseValidator):
             )
 
 
-def validate_zip_file(_file):
+class UsernameValidator(RegexValidator):
+    def __init__(self, **kwargs):
+        self.regex = reg(kwargs['regex'])
+        self.message = kwargs['message'] or 'Invalid username.'
+        self.code = kwargs['code'] or 'invalid_username'
+        super(UsernameValidator, self).__init__(**kwargs)
+
+    def __call__(self, username):
+        if not self.regex.fullmatch(str(username)):
+            raise ValidationError(message=self.message, code=self.code)
+
+
+def zipfile_validator(_file):
     messages = [
         'The file must contain at most 1 subfolder.',
         'The file must not contain non-image files.',
@@ -78,5 +86,32 @@ def validate_zip_file(_file):
             )
 
 
-__all__ = ['FileSizeValidator', 'validate_zip_file', 'is_dir']
+def discord_server_validator(url):
+    regex = reg(r'^(https?://)?discord\.(gg|me)/[A-Za-z0-9_%-]+$')
+    message = 'Invalid Discord server URL.'
+    code = 'invalid_discord_url'
+    if not regex.fullmatch(str(url)):
+        raise ValidationError(message, code)
+
+
+def twitter_name_validator(username):
+    return UsernameValidator(
+        regex=r'^[A-Za-z0-9_]{1,15}$',
+        message='Invalid Twitter username.',
+        code='invalid_twitter_name').__call__(username)
+
+
+def discord_name_validator(username):
+    return UsernameValidator(
+        regex=r'^(.*){2,32}#[0-9]{4}$',
+        message='Invalid Discord username'
+                ' and discriminator.',
+        code='invalid_discord_name').__call__(username)
+
+
+__all__ = [
+    'FileSizeValidator', 'UsernameValidator',
+    'discord_server_validator', 'zipfile_validator',
+    'twitter_name_validator', 'discord_name_validator'
+]
 

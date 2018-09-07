@@ -7,8 +7,7 @@ from .models import Chapter, Series
 
 def directory(request):
     return render(request, 'directory.html', {
-        'all_series': Series.objects.all().order_by('title'),
-        'page_url': request.build_absolute_uri()
+        'all_series': Series.objects.all().order_by('title')
     })
 
 
@@ -22,10 +21,7 @@ def series(request, slug=None):
             'error_message': 'Sorry. This series is not yet available.',
             'error_status': 403
         }, status=403)
-    return render(request, 'series.html', {
-        'series': _series,
-        'page_url': request.build_absolute_uri()
-    })
+    return render(request, 'series.html', {'series': _series})
 
 
 def chapter_page(request, slug=None, vol=0, num=0, page=1):
@@ -56,8 +52,7 @@ def chapter_page(request, slug=None, vol=0, num=0, page=1):
         'next_chapter': chapters['next'],
         'prev_chapter': chapters['prev'],
         'all_pages': all_pages,
-        'curr_page': all_pages.get(number=page),
-        'page_url': request.build_absolute_uri()
+        'curr_page': all_pages.get(number=page)
     })
 
 

@@ -1,6 +1,14 @@
 Changelog
 ---------
 
+v0.3.0
+^^^^^^
+
+* Added groups app backend.
+* Restructured custom modules.
+* Added custom model & form fields.
+* Added browser icons to compatibility.rst.
+
 v0.2.2
 ^^^^^^
 

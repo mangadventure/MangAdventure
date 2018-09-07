@@ -28,7 +28,7 @@
   </script>
 {% endblock %}
 {% block image %}
-  {% with url=page_url|default:SITE_URL|urljoin:MEDIA_URL %}
+  {% with url=PAGE_URL|urljoin:MEDIA_URL %}
     <meta name="twitter:image" content="{{ url|add:series.cover.name }}">
     <meta property="og:image" content="{{ url|add:series.cover.name }}">
   {% endwith %}

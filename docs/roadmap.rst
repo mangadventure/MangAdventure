@@ -61,6 +61,7 @@ v0.8.x
 
 | |u| Support MySQL database.
 | |u| Support PDF/EPUB for novels.
+| |u| Optionally keep the zipped chapter for downloading.
 
 v0.9.x
 ^^^^^^

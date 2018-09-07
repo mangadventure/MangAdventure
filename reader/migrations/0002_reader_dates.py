@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.db import migrations, models
 from datetime import datetime
-from MangAdventure.modules import validators
+from MangAdventure.utils import validators
 
 
 class Migration(migrations.Migration):
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
             field=models.FileField(blank=True,
                                    help_text='Upload a zip or cbz file containing the chapter pages. Its size cannot exceed 50 MBs and it must not contain more than 1 subfolder.',
                                    upload_to='', validators=[validators.FileSizeValidator(max_mb=50),
-                                                             validators.validate_zip_file]),
+                                                             validators.zipfile_validator]),
         ),
         migrations.AlterField(
             model_name='chapter',

@@ -121,8 +121,11 @@ CONSTANCE_ADDITIONAL_FIELDS = {
     'color': ('django.forms.CharField', {
         'max_length': 20
     }),
-    'twitter': ('django.forms.CharField', {
-        'max_length': 15,
+    'discord': ('MangAdventure.forms.DiscordURLField', {
+        'required': False
+    }),
+    'twitter': ('MangAdventure.forms.TwitterField', {
+        'required': False
     }),
     'desc': ('django.forms.CharField', {
         'max_length': 250,
@@ -132,7 +135,7 @@ CONSTANCE_ADDITIONAL_FIELDS = {
         'strip': False,
         'widget': 'django.forms.Textarea'
     }),
-    'logo': ('MangAdventure.modules.forms.SVGImageField', {}),
+    'logo': ('MangAdventure.forms.SVGImageField', {}),
     'favicon': ('django.forms.ImageField', {})
 }
 CONSTANCE_CONFIG = {
@@ -150,8 +153,8 @@ CONSTANCE_CONFIG = {
         'hosting webapp written in Django',
         'A description for your website.', 'desc'
     ),
-    'DISCORD': ('N/A', _site % 'Discord server', 'char'),
-    'TWITTER': ('N/A', _site % 'Twitter username', 'twitter'),
+    'DISCORD': ('', _site % 'Discord server', 'discord'),
+    'TWITTER': ('', _site % 'Twitter username', 'twitter'),
     'FAVICON': ('', _site % 'favicon', 'favicon'),
     'MAIN_BACKGROUND': ('#FFF', _color % 'main background', 'color'),
     'ALTER_BACKGROUND': ('#AAA', _color % 'alternate background', 'color'),
@@ -285,7 +288,7 @@ try:
 except KeyError:
     env['HTTPS'] = 'off'
 
-if env.get('HTTPS', 'off').lower() == 'on' and not DEBUG:
+if env.get('HTTPS', 'off').lower() == 'on':
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
     SESSION_COOKIE_SECURE = True

@@ -10,10 +10,10 @@
     <meta name="generator" content="MangAdventure v{{ MANGADV_VERSION }}">
     <meta name="keywords" content="manga, reader, django">
     <meta name="robots" content="index, follow">
-    {% if config.DISCORD != 'N/A' %}
+    {% if config.DISCORD %}
       <meta name="discord" content="{{ config.DISCORD }}">
     {% endif %}
-    {% if config.TWITTER != 'N/A' %}
+    {% if config.TWITTER %}
       <meta name="twitter:user" content="@{{ config.TWITTER }}">
     {% endif %}
     <meta name="twitter:card" content="summary_large_image">
@@ -23,7 +23,7 @@
       <meta property="og:description" content="{{ config.DESCRIPTION }}">
     {% endblock %}
     {% block image %}
-      {% with url=page_url|default:SITE_URL|urljoin:MEDIA_URL %}
+      {% with url=PAGE_URL|urljoin:MEDIA_URL %}
         {% with logo=url|urljoin:config.LOGO_LARGE %}
           <meta name="twitter:image" content="{{ logo }}">
           <meta property="og:image" content="{{ logo }}">
@@ -31,15 +31,15 @@
       {% endwith %}
     {% endblock %}
     {% block url %}
-      <meta name="url" content="{{ page_url|default:SITE_URL }}">
-      <meta property="og:url" content="{{ page_url|default:SITE_URL }}">
+      <meta name="url" content="{{ PAGE_URL }}">
+      <meta property="og:url" content="{{ PAGE_URL }}">
     {% endblock %}
     <meta property="og:site_name" content="{{ config.NAME }}">
     {% with favicon=MEDIA_URL|urljoin:config.FAVICON %}
       <link href="{{ favicon }}" rel="shortcut icon"
             type="{{ favicon|get_type }}">
     {% endwith %}
-    <link href="{{ page_url|default:SITE_URL|urljoin:'/' }}"
+    <link href="{{ PAGE_URL|urljoin:'/' }}"
           rel="index" title="{{ config.NAME }}">
     <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" type="text/css"
           integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
@@ -131,7 +131,7 @@
       </a>
       <nav id="navig">
         <ul>
-          {% if config.TWITTER != 'N/A' %}
+          {% if config.TWITTER %}
             <li>
               <a href="https://twitter.com/{{ config.TWITTER }}">
                 <i class="fab fa-fw fa-twitter"></i>
@@ -139,7 +139,7 @@
               </a>
             </li>
           {% endif %}
-          {% if config.DISCORD != 'N/A' %}
+          {% if config.DISCORD %}
             <li>
               <a href="{{ config.DISCORD }}">
                 <i class="fab fa-fw fa-discord"></i>

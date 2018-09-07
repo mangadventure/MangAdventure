@@ -3,9 +3,10 @@ from django.views.decorators.http import last_modified
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.http import http_date
 from django.http import JsonResponse
+from django.conf import settings
 from django.urls import reverse
 from reader.models import Chapter, Series, Author, Artist
-from groups.models import Group, Member
+from groups.models import Group
 
 
 def json_error(message, status=500):
@@ -13,14 +14,14 @@ def json_error(message, status=500):
 
 
 def _chapter_response(request, _chapter, json=True):
+    url = request.build_absolute_uri(_chapter.url)
     response = {
         'title': _chapter.title,
-        'url': request.build_absolute_uri(
-            reverse('reader:chapter',
-                    args=[_chapter.series.slug,
-                          _chapter.volume,
-                          _chapter.number])),
-        'pages': [p.image.url.split('/')[-1] for p in _chapter.pages.all()],
+        'url': url,
+        'pages_root': url.replace('/reader', '%s%s' %
+                                  (settings.MEDIA_URL, 'series')),
+        'pages_list': [p.image.url.split('/')[-1]
+                       for p in _chapter.pages.all()],
         'date': http_date(_chapter.uploaded.timestamp()),
         'final': _chapter.final,
         'groups': []
@@ -103,7 +104,6 @@ def _member_response(request, _member, json=True):
         'roles': [],
         'twitter': _member.twitter,
         'discord': _member.discord,
-        'avatar': request.build_absolute_uri(_member.avatar.url),
     }
     for role in _member.roles.all():
         response['roles'].append(role.get_role_display())
@@ -123,7 +123,8 @@ def _group_response(request, _group, json=True):
         'logo': request.build_absolute_uri(_group.logo.url),
     }
     for _member in _group.members.all():
-        response['members'].append(_member_response(request, _member, json=False))
+        response['members'].append(_member_response(
+            request, _member, json=False))
     _series = []
     for _chapter in _group.releases.all():
         if _chapter.series.title not in _series:
@@ -202,10 +203,9 @@ def volume(request, slug=None, vol=0):
         vol = int(vol)
         if vol < 0:
             raise ValueError
+        _series = Series.objects.get(slug=slug)
     except (ValueError, TypeError):
         return json_error('Bad request', 400)
-    try:
-        _series = Series.objects.get(slug=slug)
     except ObjectDoesNotExist:
         return json_error('Not found', 404)
     return _volume_response(request, _series, vol)
@@ -221,11 +221,10 @@ def chapter(request, slug=None, vol=0, num=0):
         vol, num = int(vol), int(num)
         if vol < 0 or num < 0:
             raise ValueError
-    except (ValueError, TypeError):
-        return json_error('Bad request', 400)
-    try:
         _chapter = Chapter.objects.get(series__slug=slug,
                                        volume=vol, number=num)
+    except (ValueError, TypeError):
+        return json_error('Bad request', 400)
     except ObjectDoesNotExist:
         return json_error('Not found', 404)
     return _chapter_response(request, _chapter)
@@ -253,13 +252,12 @@ def person(request, p_id=0):
         p_id = int(p_id)
         if p_id < 1:
             raise ValueError
-    except (ValueError, TypeError):
-        return json_error('Bad request', 400)
-    try:
         if request.path.startswith('/api/authors'):
             _person = Author.objects.get(id=p_id)
         else:
             _person = Artist.objects.get(id=p_id)
+    except (ValueError, TypeError):
+        return json_error('Bad request', 400)
     except ObjectDoesNotExist:
         return json_error('Not found', 404)
     return _person_response(request, _person)
@@ -284,10 +282,9 @@ def group(request, g_id=0):
         g_id = int(g_id)
         if g_id < 1:
             raise ValueError
+        _group = Group.objects.get(id=g_id)
     except (ValueError, TypeError):
         return json_error('Bad request', 400)
-    try:
-        _group = Group.objects.get(id=g_id)
     except ObjectDoesNotExist:
         return json_error('Not found', 404)
     return _group_response(request, _group)
@@ -296,3 +293,4 @@ def group(request, g_id=0):
 @csrf_exempt
 def invalid_endpoint(request):
     return json_error('Invalid API endpoint', 501)
+

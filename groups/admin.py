@@ -11,5 +11,10 @@ class MemberAdmin(admin.ModelAdmin):
     inlines = [MemberRoleInline]
 
 
-admin.site.register(Group)
+class GroupAdmin(admin.ModelAdmin):
+    exclude = ['id']
+
+
+admin.site.register(Group, GroupAdmin)
 admin.site.register(Member, MemberAdmin)
+

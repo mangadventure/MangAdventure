@@ -1,12 +1,14 @@
 from django.core.exceptions import ValidationError
-from django.forms import ImageField
 from django.utils.six import reraise
+from django.forms import ImageField, CharField, URLField
+from MangAdventure.utils import validators
 from xml.etree import cElementTree as et
 from sys import exc_info
 from io import BytesIO
 from PIL import Image
 
 
+# Source: https://gist.github.com/ambivalentno/9bc42b9a417677d96a21
 class SVGImageField(ImageField):
 
     def to_python(self, data):
@@ -72,7 +74,19 @@ class SVGImageField(ImageField):
         return tag == '{http://www.w3.org/2000/svg}svg'
 
 
-__all__ = ['SVGImageField']
+class TwitterField(CharField):
+    default_validators = [validators.twitter_name_validator]
 
-# Source: https://gist.github.com/ambivalentno/9bc42b9a417677d96a21
+    def __init__(self, *args, **kwargs):
+        super(TwitterField, self).__init__(*args, **kwargs)
+
+
+class DiscordURLField(URLField):
+    default_validators = [validators.discord_server_validator]
+
+    def __init__(self, **kwargs):
+        super(DiscordURLField, self).__init__(**kwargs)
+
+
+__all__ = ['SVGImageField', 'TwitterField', 'DiscordURLField']
 

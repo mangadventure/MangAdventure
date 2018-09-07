@@ -2,7 +2,7 @@
 {% load custom_tags %}
 {% load inlinecompile from compile_static %}
 {% block image %}
-  {% with url=page_url|default:SITE_URL|urljoin:MEDIA_URL %}
+  {% with url=PAGE_URL|urljoin:MEDIA_URL %}
     {% with cover=curr_chapter.series.cover.name %}
       <meta name="twitter:image" content="{{ url|add:cover }}">
       <meta property="og:image" content="{{ url|add:cover }}">

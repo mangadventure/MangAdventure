@@ -18,7 +18,6 @@ def _query(params):
         if aliases.count() > 0:
             query |= Q(aliases__in=aliases)
     if params['author']:
-        Author.objects.filter(seri)
         q = (Q(authors__name__icontains=params['author']) |
              Q(artists__name__icontains=params['author']))
         authors = AuthorAlias.objects.filter(
@@ -39,8 +38,7 @@ def index(request):
     maximum = config.MAX_RELEASES
     releases = Chapter.objects.all().order_by('-uploaded')[:maximum:1]
     return render(request, 'index.html', {
-        'latest_releases': releases,
-        'page_url': request.build_absolute_uri()
+        'latest_releases': releases
     })
 
 
@@ -59,8 +57,7 @@ def search(request):
         'query': params['query'],
         'author': params['author'],
         'status': params['status'],
-        'results': results,
-        'page_url': request.build_absolute_uri(),
+        'results': results
     })
 
 

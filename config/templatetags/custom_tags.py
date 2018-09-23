@@ -20,7 +20,7 @@ def vslice(value, var): return slice_filter(value, ':%s' % var)
 
 
 @register.filter
-def order_by(value, order): return value.order_by(order)
+def order_by(qs, order): return qs.order_by(order)
 
 
 @register.filter

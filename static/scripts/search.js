@@ -1,3 +1,5 @@
+/* global Tablesort */
+
 (function() {
   function appendInfo(row, cln, title, text) {
     var sel = 'tr:nth-child(' + row + ') .result-title';

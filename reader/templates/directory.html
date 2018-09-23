@@ -30,14 +30,31 @@
               {% for chapter in chapters|vslice:config.MAX_CHAPTERS %}
                 {% with vol=chapter.volume num=chapter.number %}
                   <div class="series-chapter">
-                    <a href="{{ chapter.url }}" title="{{ chapter.title }}/"
+                    <a href="{{ chapter.url }}" title="{{ chapter.title }}"
                        {% if chapter.final %}class="end"{% endif %}>
                       Vol. {{ vol }}, Ch. {{ num }}: {{ chapter.title }}
                     </a>
-                    <span class="chapter-date"
-                          title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
-                      - {{ chapter.uploaded|date:'N d, Y - H:i' }}
-                    </span>
+                    <div class="chapter-metadata">
+                      <span class="divider"
+                            title="{{ chapter.groups.all|join:', ' }}">
+                      </span>
+                      <span class="chapter-groups"
+                            title="{{ chapter.groups.all|join:', ' }}">
+                        {% for group in chapter.groups.all %}
+                          <a href="/groups/{{ group.id }}"
+                             title="{{ group.name }}"
+                            {% if not forloop.last %}class="comma"{% endif %}>
+                            {{ group.name }}</a>
+                        {% endfor %}
+                      </span>
+                      <span class="divider"
+                            title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
+                      </span>
+                      <span class="chapter-date"
+                            title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
+                        {{ chapter.uploaded|date:'N d, Y - H:i' }}
+                      </span>
+                    </div>
                   </div>
                 {% endwith %}
               {% endfor %}

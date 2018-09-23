@@ -3,7 +3,6 @@ from django.utils.six import print_
 from os import path, mkdir, environ as env
 from re import compile as reg, IGNORECASE
 from sys import stderr, argv
-from . import __version__ as ver
 from config import CONFIG
 
 # From https://stackoverflow.com/questions/9626535/#36609868
@@ -144,7 +143,7 @@ CONSTANCE_CONFIG = {
         'consider buying the original versions to support '
         'the authors.\nThis site was created using <a href='
         '"https://github.com/evangelos-ch/MangAdventure"'
-        ' rel="noopener" target="_blank">MangAdventure</a>',
+        ' rel="noopener" target="_blank">MangAdventure</a>.',
         _site % 'footer' + ' HTML allowed.', 'html'
     ),
     'NAME': ('MangAdventure', _site % 'name', 'char'),

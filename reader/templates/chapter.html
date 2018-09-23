@@ -142,35 +142,51 @@
     </section>
     <section id="controls" style="display: none">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
-        {% if prev == 0 %}
-          {% if prev_chapter %}
-            <a href="{{ prev_chapter.image.url }}" title="Previous chapter">
+        <div id="controls-top">
+          {% if prev == 0 %}
+            {% if prev_chapter %}
+              <a href="{{ prev_chapter.url }}" title="Previous chapter">
+            {% else %}
+              <a href="/reader/{{ curr_chapter.series.slug }}/"
+                 title="No previous chapters">
+            {% endif %}
           {% else %}
-            <a href="/reader/{{ curr_chapter.series.slug }}/"
-               title="No previous chapters">
+            <a href="../{{ prev }}/" title="Previous page">
           {% endif %}
-        {% else %}
-          <a href="../{{ prev }}/" title="Previous page">
-        {% endif %}
-            <i class="fa fa-2x fa-backward fa-fw"></i>
+            <i class="fa fa-4x fa-caret-left fa-fw"></i>
           </a>
-        {% with curr=curr_page.number|stringformat:'02d' %}
-          <span>
-            Page {{ curr }}/{{ all_pages.count|stringformat:'02d' }}
-          </span>
-        {% endwith %}
-        {% if next > all_pages.count %}
-          {% if next_chapter %}
-            <a href="{{ next_chapter.image.url }}" title="Next chapter">
+          {% with curr=curr_page.number|stringformat:'02d' %}
+            <span>
+              Page {{ curr }}/{{ all_pages.count|stringformat:'02d' }}
+            </span>
+          {% endwith %}
+          {% if next > all_pages.count %}
+            {% if next_chapter %}
+              <a href="{{ next_chapter.url }}" title="Next chapter">
+            {% else %}
+              <a href="/reader/{{ curr_chapter.series.slug }}/"
+                 title="No more chapters">
+            {% endif %}
           {% else %}
-            <a href="/reader/{{ curr_chapter.series.slug }}/"
-               title="No more chapters">
+            <a href="../{{ next }}/" title="Next page">
           {% endif %}
-        {% else %}
-          <a href="../{{ next }}/" title="Next page">
-        {% endif %}
-            <i class="fa fa-2x fa-forward fa-fw"></i>
+            <i class="fa fa-4x fa-caret-right fa-fw"></i>
           </a>
+        </div>
+        <div id="controls-bottom">
+          <a href="../{{ all_pages.first.number }}/" title="First page">
+            <i class="fa fa-2x fa-step-backward fa-fw"></i>
+          </a>
+          <a href="/reader/{{ curr_chapter.series.slug }}/"
+             title="{{ curr_chapter.series }}">
+            <i class="fa fa-2x fa-step-forward fa-rotate-90 fa-fw"
+               {% if all_pages.count > 99 %}style="padding: 0 0.5em"
+               {% endif %}></i>
+          </a>
+          <a href="../{{ all_pages.last.number }}/" title="Last page">
+            <i class="fa fa-2x fa-step-forward fa-fw"></i>
+          </a>
+        </div>
       {% endwith %}
     </section>
   </div>

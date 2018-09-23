@@ -65,21 +65,28 @@
 }
 
 @mixin justify-content($justify: space-between) {
-  $prefixes: '-webkit-', '';
+  $prefixes: '-ms-', '-webkit-', '';
   @each $p in $prefixes {
     #{$p}justify-content: $justify;
   }
 }
 
 @mixin align-items($align: center) {
-  $prefixes: '-webkit-', '';
+  $prefixes: '-ms-', '-webkit-', '';
   @each $p in $prefixes {
     #{$p}align-items: $align;
   }
 }
 
+@mixin align-self($align: center) {
+  $prefixes: '-ms-', '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}align-self: $align;
+  }
+}
+
 @mixin flex-wrap($wrap: wrap) {
-  $prefixes: '-webkit-', '';
+  $prefixes: '-ms-', '-webkit-', '';
   @each $p in $prefixes {
     #{$p}flex-wrap: $wrap;
   }

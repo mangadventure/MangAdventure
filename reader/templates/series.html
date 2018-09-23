@@ -1,5 +1,6 @@
 {% extends 'skeleton.html' %}
 {% load custom_tags %}
+{% load static %}
 {% load inlinecompile from compile_static %}
 {% block head_extras %}
   <style type="text/css">
@@ -20,12 +21,7 @@
       }
     {% endinlinecompile %}
   </style>
-  <script type="text/javascript">
-    function pluralize(parent) {
-      var selector = parent + ' .colon';
-      document.querySelector(selector).innerHTML += 's';
-    }
-  </script>
+  <script src="{% static 'scripts/plural.js' %}"></script>
 {% endblock %}
 {% block image %}
   {% with url=PAGE_URL|urljoin:MEDIA_URL %}
@@ -64,14 +60,6 @@
           {% endfor %}
         </div>
       {% endif %}
-      <div id="series-desc">
-        <strong class="alter-fg colon">Description</strong>
-        {% if series.description %}
-          <div>{{ series.description|linebreaks }}</div>
-        {% else %}
-          <span>N/A</span>
-        {% endif %}
-      </div>
       <div id="series-authors">
         <strong class="alter-fg colon">Author</strong>
         {% if series.authors.all %}
@@ -111,6 +99,12 @@
         <span>{{ series.completed|yesno:'Completed,Ongoing' }}</span>
       </div>
     </div>
+    {% if series.description or not series.description %}
+      <div id="series-desc">
+        <h3 class="alter-fg colon">Description</h3>
+        <div>{{ series.description|linebreaks }}</div>
+      </div>
+    {% endif %}
     <div id="series-chapters">
       <h3 class="alter-fg colon">Chapters</h3>
       {% with chapters=series.chapters.reverse %}
@@ -122,10 +116,27 @@
                  title="{{ chapter.title }}">
                 Vol. {{ vol }}, Ch. {{ num }}: {{ chapter.title }}
               </a>
-              <span class="chapter-date"
-                    title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
-                - {{ chapter.uploaded|date:'N d, Y - H:i' }}
-              </span>
+              <div class="chapter-metadata">
+                <span class="divider"
+                      title="{{ chapter.groups.all|join:', ' }}">
+                </span>
+                <span class="chapter-groups"
+                      title="{{ chapter.groups.all|join:', ' }}">
+                  {% for group in chapter.groups.all %}
+                    <a href="/groups/{{ group.id }}"
+                       title="{{ group.name }}"
+                       {% if not forloop.last %}class="comma"{% endif %}>
+                      {{ group.name }}</a>
+                  {% endfor %}
+                </span>
+                <span class="divider"
+                      title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
+                </span>
+                 <span class="chapter-date"
+                      title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
+                  {{ chapter.uploaded|date:'N d, Y - H:i' }}
+                </span>
+              </div>
             {% endwith %}
           </div>
         {% endfor %}

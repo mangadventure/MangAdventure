@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^reader/', include('reader.urls')),
     url(r'^api/', include('api.urls')),
+    url(r'^groups/', include('groups.urls')),
 ]
 
 if settings.DEBUG:

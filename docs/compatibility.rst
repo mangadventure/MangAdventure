@@ -46,9 +46,6 @@ Desktop
    * - | |Opera|
        | Opera
      - 15+
-   * - | |QB|
-       | qutebrowser
-     - 0.11+
 
 Mobile
 ~~~~~~
@@ -91,9 +88,6 @@ Mobile
 
 .. |Opera| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/opera/opera_32x32.png
    :alt: Opera
-
-.. |QB| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/qutebrowser/qutebrowser_32x32.png
-   :alt: qutebrowser
 
 .. |Android| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/archive/android/android_32x32.png
    :alt: Android Browser

@@ -71,7 +71,7 @@ class Role(models.Model):
     class Meta:
         verbose_name = 'Role'
         unique_together = ('member', 'role', 'group')
-      
+
     def __str__(self):
         return '%s (%s)' % (self.get_role_display(), self.group)
 

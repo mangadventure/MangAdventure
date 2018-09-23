@@ -5,7 +5,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('groups', '0001_initial'),
-        ('reader', '0002_dates'),
+        ('reader', '0002_reader_dates'),
     ]
 
     operations = [

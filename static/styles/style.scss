@@ -149,11 +149,11 @@ thead {
       display: flex;
       @include flex(1);
       @include justify-content(space-between);
-      .chapter-date { max-width: calc(100vw / 3) }
-      a {
+      .chapter-metadata { max-width: 40vw }
+      > a {
         color: inherit;
         margin-left: 0.5em;
-        max-width: calc(86vw / 3 * 2);
+        max-width: 50vw;
         @include truncate();
       }
     }
@@ -180,9 +180,11 @@ thead {
       .series-chapter {
         display: flex;
         max-width: 90vw;
+        padding: 0 0.5em;
         @include flex(1);
-        a {
-          padding-left: 0.5em;
+        .chapter-metadata { width: 50% }
+        > a {
+          width: 50%;
           @include truncate();
         }
       }
@@ -201,6 +203,7 @@ thead {
   display: flex;
   @include flex-wrap();
   &-info {
+    font-size: 1em;
     padding: 3px;
     max-width: 60vw;
   }
@@ -227,23 +230,31 @@ thead {
     }
   }
   &-desc {
-    max-width: 55vw;
+    font-size: 1em;
+    width: 100%;
+    h3 { margin: 0.5em 0 }
     p {
+      max-width: 90vw;
       margin: 0;
-      padding: 0 2px;
-      text-indent: 0.5em;
+      padding: 0 0.5em;
       white-space: pre-wrap;
-      word-wrap: break-word;
+      hyphens: auto;
     }
   }
   &-chapters {
+    font-size: 1em;
     width: 100%;
     h3 { margin: 0.5em 0 }
     .chapter {
       padding: 0 0 0.5em;
       margin: 0 0.5em;
-      a { @include truncate(); }
-      &-date { float: right; }
+      display: flex;
+      > a {
+        display: inline-block;
+        max-width: 50vw;
+        @include truncate();
+      }
+      &-metadata { max-width: 50vw }
     }
   }
 }
@@ -285,12 +296,21 @@ thead {
     }
   }
   #controls {
-    display: flex;
     width: 100%;
+    display: flex;
     margin: 2.5vh auto 1vh;
-    @include justify-content(space-around);
-    span { margin: auto 0 }
+    @include flex-direction(column);
+    span {
+      font-size: 1.25em;
+      margin: auto 0;
+    }
     a { text-decoration: none }
+    &-top, &-bottom {
+      width: 100%;
+      display: inline-flex;
+      @include justify-content(space-around);
+    }
+    .fa-rotate-90 { padding: 0 0.2em }
   }
 }
 
@@ -319,6 +339,52 @@ thead {
       content: quote('/ ');
       white-space: pre-line;
     }
+  }
+}
+
+#all-groups {
+  display: flex;
+  @include flex(0 1 auto);
+  @include flex-wrap();
+  @include flex-direction();
+  @include align-items();
+  @include justify-content(space-around);
+  .group {
+    padding: 0.25em;
+    strong {
+      display: block;
+      text-align: center;
+      max-width: 150px;
+      @include truncate();
+    }
+    &-logo {
+      display: inline-flex;
+      @include size(150px);
+      img {
+        border-radius: 5px;
+        @include size(100%, auto);
+        @include align-self();
+      }
+    }
+  }
+}
+
+#group {
+  &-info {
+    display: flex;
+    img {
+      border-top-left-radius: 5px;
+      margin-left: -5px;
+      margin-right: 5px;
+      @include align-self();
+    }
+    div { margin: auto 0 }
+  }
+  &-desc div { text-indent: 0.5em }
+  .member {
+    padding-left: 0.5em;
+    padding-bottom: 1em;
+    div { padding-left: 0.5em }
   }
 }
 
@@ -363,19 +429,21 @@ thead {
 }
 
 .separator {
-  height: 0.5vh;
-  width: 99%;
   display: block;
   margin: auto;
   @include border-radius(100px);
   @include box-sizing();
+  @include size(99%, 0.5vh);
   &:last-of-type { display: none }
 }
 
-.chapter-date {
+.chapter-metadata {
   margin-left: 0.2em;
-  display: inline-block;
-  @include truncate();
+  display: inline-flex;
+  .chapter-groups, .chapter-date {
+    display: inline-block;
+    @include truncate();
+  }
 }
 
 .fa-chevron-down {
@@ -389,6 +457,10 @@ thead {
   position: relative;
   top: 0.05em;
 }
+
+.divider::before { content: quote('\00a0|\00a0') }
+
+.comma::after { content: quote(',') }
 
 .colon::after { content: quote(':') }
 
@@ -472,21 +544,25 @@ thead {
   #series {
     margin-top: 7px;
     text-align: center;
+    h3 {
+      font-size: 1em;
+      font-weight: bold;
+      margin: 0.2em 0;
+    }
     > div > div { padding: 0.2em 0 }
     &-title { padding-bottom: 3px !important }
     &-info {
       width: 100%;
       max-width: unset;
       padding: 0;
-      margin: 0.5em 0;
+      margin-top: 0.5em;
     }
     &-desc {
-      max-width: unset;
+      padding: 0;
+      margin: 0.5em 0;
       p {
-        text-indent: 0;
-        hyphens: manual;
-        padding: 0 1em;
-        max-width: unset;
+        display: inline-block;
+        padding: 0;
       }
     }
     &-aliases, &-authors, &-artists {
@@ -499,7 +575,6 @@ thead {
         hyphens: manual;
       }
     }
-    &-chapters h3 { margin: 0.1em }
     .cover {
       left: 0;
       margin: auto;
@@ -508,22 +583,38 @@ thead {
     }
     .chapter {
       margin: 0;
-      &-date {
-        margin: 0;
-        display: block;
-        float: unset;
+      display: block;
+      text-align: center;
+      padding-top: 0.5em;
+      &-metadata {
+        display: inline-block;
+        max-width: unset;
+        span {
+          display: block;
+          padding: 0.1em 1em 0;
+          white-space: normal;
+          height: auto;
+          overflow: unset;
+          @include text-overflow(unset);
+        }
+        .divider { display: none }
       }
+      > a {
+        max-width: unset;
+        padding: 0 1em;
+        white-space: normal;
+        hyphens: auto;
+        overflow: unset;
+        @include text-overflow(unset);
+      }
+      &:first-of-type { padding-top: 0.2em }
     }
     div { &.alias, &.author, &.artist { text-indent: 0 } }
   }
   #chapter {
     .dropdown {
-      > a {
-        display: none
-      }
-      > span {
-        display: inline-block
-      }
+      > a { display: none }
+      > span { display: inline-block }
     }
   }
   #search {
@@ -532,6 +623,19 @@ thead {
       span { display: block }
       label { display: inline-block }
     }
+  }
+  #group {
+    text-align: center;
+    &-info {
+      display: block;
+      img {
+        border-radius: 5px;
+        margin: auto;
+      }
+      a { display: block }
+    }
+    &-desc div { text-indent: 0 }
+    .member { &, div { padding-left: 0 } }
   }
 }
 

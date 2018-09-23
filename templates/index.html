@@ -35,10 +35,27 @@
               Vol. {{ vol }}, Ch. {{ num }}: {{ release.title }}
             </a>
           {% endwith %}
-          <span class="chapter-date"
-                title="{{ release.uploaded|date:'N d, Y - H:i' }}">
-            - {{ release.uploaded|date:'N d, Y - H:i' }}
-          </span>
+          <div class="chapter-metadata">
+            <span class="divider"
+                  title="{{ release.groups.all|join:', ' }}">
+            </span>
+            <span class="chapter-groups"
+                  title="{{ release.groups.all|join:', ' }}">
+              {% for group in release.groups.all %}
+                <a href="/groups/{{ group.id }}"
+                   title="{{ group.name }}"
+                  {% if not forloop.last %}class="comma"{% endif %}>
+                  {{ group.name }}</a>
+              {% endfor %}
+            </span>
+            <span class="divider"
+                  title="{{ release.uploaded|date:'N d, Y - H:i' }}">
+            </span>
+            <span class="chapter-date"
+                  title="{{ release.uploaded|date:'N d, Y - H:i' }}">
+              {{ release.uploaded|date:'N d, Y - H:i' }}
+            </span>
+          </div>
         </div>
       </section>
     {% endfor %}

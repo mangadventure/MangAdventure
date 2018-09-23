@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.urls import reverse
 from reader.models import Chapter, Series, Author, Artist
-from groups.models import Group
+from groups.models import Group, Member
 
 
 def json_error(message, status=500):
@@ -111,27 +111,31 @@ def _member_response(request, _member, json=True):
 
 
 def _group_response(request, _group, json=True):
+    logo = ''
+    if _group.logo:
+        logo = request.build_absolute_uri(_group.logo.url)
     response = {
         'id': _group.id,
         'name': _group.name,
+        'description': _group.description,
         'website': _group.website,
         'discord': _group.discord,
         'twitter': _group.twitter,
+        'logo': logo,
         'members': [],
-        'description': _group.description,
         'series': [],
-        'logo': request.build_absolute_uri(_group.logo.url),
     }
-    for _member in _group.members.all():
+    for role in _group.roles.values('member_id').distinct():
+        _member = Member.objects.get(id=role['member_id'])
         response['members'].append(_member_response(
             request, _member, json=False))
     _series = []
     for _chapter in _group.releases.all():
         if _chapter.series.title not in _series:
             response['series'].append({
+                'slug': _chapter.series.slug,
                 'name': _chapter.series.title,
                 'aliases': [],
-                'slug': _chapter.series.slug,
             })
             for alias in _chapter.series.aliases.all():
                 response['series'][-1]['aliases'].append(alias.alias)

@@ -20,17 +20,27 @@ v0.3.x
 ^^^^^^
 
 | |u| Group and member pages.
-|    |u| Expand API & search.
+|    |u| Expand API.
 | |u| Information page (about + recruitment).
 
 v0.4.x
+^^^^^^
+
+| |u| Revamp API:
+|    |u| API keys.
+|    |u| Rate limit.
+|    |u| Search queries.
+|    |u| POST,PUT,DELETE privileges for staff.
+|    |u| Use Django Rest Framework (?)
+
+v0.5.x
 ^^^^^^
 
 | |u| Categories:
 |    |u| Each series can have multiple categories.
 |    |u| Expand API & search.
 
-v0.5.x
+v0.6.x
 ^^^^^^
 
 | |u| User registration:
@@ -41,7 +51,7 @@ v0.5.x
 | |u| Cookie consent.
 |    |u| Add to information page.
 
-v0.6.x
+v0.7.x
 ^^^^^^
 
 | |u| More reading modes:
@@ -51,25 +61,17 @@ v0.6.x
 | |u| IRC links.
 | |u| RSS feeds.
 
-v0.7.x
+v0.8.x
 ^^^^^^
 
 | |u| Generate complete favicon with RealFaviconGenerator.
 
-v0.8.x
+v0.9.x
 ^^^^^^
 
 | |u| Support MySQL database.
 | |u| Support PDF/EPUB for novels.
 | |u| Optionally keep the zipped chapter for downloading.
-
-v0.9.x
-^^^^^^
-
-| |u| Improve API:
-|    |u| API keys.
-|    |u| Rate limit.
-|    |u| POST,PUT,DELETE privileges for staff.
 
 .. unchecked
 .. |u| unicode:: U+00A0 U+00A0 U+2610

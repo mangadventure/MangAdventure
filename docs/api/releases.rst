@@ -1,9 +1,6 @@
 Releases
 ========
 
-All releases
-------------
-
 .. py:data:: GET /api/releases
 
 Retrieve the latest release of each series.

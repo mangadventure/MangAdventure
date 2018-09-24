@@ -11,16 +11,13 @@ MangAdventure
    install
 
 .. toctree::
-   :maxdepth: 2
-   :caption: API
+   :maxdepth: 1
+   :caption: Development
 
-   api/releases
-   api/series
-   api/authors
-   api/artists
+   api/index
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Versions
 
    compatibility

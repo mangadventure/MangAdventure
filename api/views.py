@@ -134,7 +134,7 @@ def _group_response(request, _group, json=True):
         if _chapter.series.title not in _series:
             response['series'].append({
                 'slug': _chapter.series.slug,
-                'name': _chapter.series.title,
+                'title': _chapter.series.title,
                 'aliases': [],
             })
             for alias in _chapter.series.aliases.all():

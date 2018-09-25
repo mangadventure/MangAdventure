@@ -42,6 +42,9 @@ def index(request):
     })
 
 
+def info(request): return render(request, 'info.html', {})
+
+
 def search(request):
     results = None
     params = {

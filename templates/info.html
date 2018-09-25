@@ -1,0 +1,52 @@
+{% extends 'skeleton.html' %}
+{% block head_extras %}
+  <style type="text/css">.link{color:inherit}</style>
+{% endblock %}
+{% block title %}
+  <meta name="twitter:title" content="Info - {{ config.NAME }}">
+  <meta property="og:title" content="Info - {{ config.NAME }}">
+  <meta name="title" content="Info">
+  <title>Info :: {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 id="info-header">Info</h1>
+  <article id="info">
+    {% if config.ABOUT %}
+      <h2>About us</h2>
+      <section id="about">
+        <div>
+          {% autoescape off %}
+            {{ config.ABOUT|linebreaksbr }}
+          {% endautoescape %}
+        </div>
+      </section>
+    {% endif %}
+    {% if config.RECRUITMENT %}
+      <h2>Recruitment</h2>
+      <section id="recruitment">
+        <div>
+          {% autoescape off %}
+            {{ config.RECRUITMENT|linebreaksbr }}
+          {% endautoescape %}
+        </div>
+      </section>
+    {% endif %}
+    {% if config.TWITTER or config.DISCORD %}
+      <h2>Links</h2>
+      <section id="links">
+        {% if config.TWITTER %}
+          <a href="https://twitter.com/{{ config.TWITTER }}"
+             class="link twitter">
+            <i class="fab fa-fw fa-twitter"></i>Twitter
+          </a>
+        {% endif %}
+        {% if config.DISCORD %}
+          <a href="{{ config.DISCORD }}" class="link discord">
+            <i class="fab fa-fw fa-discord"></i>Discord
+          </a>
+        {% endif %}
+      </section>
+    {% endif %}
+  </article>
+{% endblock %}
+

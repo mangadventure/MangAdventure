@@ -105,6 +105,7 @@
     {% block title %}
       <meta name="twitter:title" content="{{ config.NAME }}">
       <meta property="og:title" content="{{ config.NAME }}">
+      <meta name="title" content="{{ config.NAME }}">
       <title>{{ config.NAME }}</title>
     {% endblock %}
   </head>
@@ -131,22 +132,12 @@
       </a>
       <nav id="navig">
         <ul>
-          {% if config.TWITTER %}
-            <li>
-              <a href="https://twitter.com/{{ config.TWITTER }}">
-                <i class="fab fa-fw fa-twitter"></i>
-                <span class="ident">Twitter</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if config.DISCORD %}
-            <li>
-              <a href="{{ config.DISCORD }}">
-                <i class="fab fa-fw fa-discord"></i>
-                <span class="ident">Discord</span>
-              </a>
-            </li>
-          {% endif %}
+          <li>
+            <a href="/info/">
+              <i class="fas fa-fw fa-info-circle"></i>
+              <span class="ident">About us</span>
+            </a>
+          </li>
           <li>
             <a href="/">
               <i class="far fa-fw fa-clock"></i>

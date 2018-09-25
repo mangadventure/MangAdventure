@@ -11,7 +11,7 @@ MangAdventure
    install
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Development
 
    api/index

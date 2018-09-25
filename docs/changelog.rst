@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.3.1
+^^^^^^
+
+* Added group info page.
+
 v0.3.0
 ^^^^^^
 

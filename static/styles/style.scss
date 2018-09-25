@@ -421,6 +421,25 @@ thead {
   }
 }
 
+#info {
+  h2 {
+    font-size: large;
+    text-transform: uppercase;
+    &:first-of-type { padding-top: 0.5em }
+  }
+  section {
+    padding-bottom: 0.5em;
+    div { text-indent: 0.5em }
+  }
+  #links {
+    .link {
+      display: block;
+      margin: 0.25em 0 0.25em 0.5em;
+      span { display: inline-block }
+    }
+  }
+}
+
 .placeholder, .chapter-page {
   max-width: 100%;
   height: auto;
@@ -636,6 +655,12 @@ thead {
     }
     &-desc div { text-indent: 0 }
     .member { &, div { padding-left: 0 } }
+  }
+  #info {
+    text-align: center;
+    &-header { display: none !important }
+    #links .link { margin-left: 0 }
+    section div { text-indent: 0 }
   }
 }
 

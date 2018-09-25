@@ -131,7 +131,7 @@ CONSTANCE_ADDITIONAL_FIELDS = {
         'widget': 'django.forms.Textarea'
     }),
     'html': ('django.forms.CharField', {
-        'strip': False,
+        'strip': False, 'required': False,
         'widget': 'django.forms.Textarea'
     }),
     'logo': ('MangAdventure.forms.SVGImageField', {}),
@@ -152,8 +152,12 @@ CONSTANCE_CONFIG = {
         'hosting webapp written in Django',
         'A description for your website.', 'desc'
     ),
-    'DISCORD': ('', _site % 'Discord server', 'discord'),
-    'TWITTER': ('', _site % 'Twitter username', 'twitter'),
+    'DISCORD': ('', 'The Discord server of your group.', 'discord'),
+    'ABOUT': ('', 'Some general info about your group.'
+              ' HTML allowed.', 'html'),
+    'RECRUITMENT': ('', 'Recruitment instructions for your group.'
+                    ' HTML allowed.', 'html'),
+    'TWITTER': ('', 'The Twitter username of your group.', 'twitter'),
     'FAVICON': ('', _site % 'favicon', 'favicon'),
     'MAIN_BACKGROUND': ('#FFF', _color % 'main background', 'color'),
     'ALTER_BACKGROUND': ('#AAA', _color % 'alternate background', 'color'),
@@ -176,8 +180,12 @@ CONSTANCE_CONFIG = {
 }
 CONSTANCE_CONFIG_FIELDSETS = {
     'Site Settings': (
-        'NAME', 'DESCRIPTION', 'FOOTER',
-        'DISCORD', 'TWITTER', 'FAVICON'
+        'NAME', 'DESCRIPTION',
+        'FOOTER', 'FAVICON'
+    ),
+    'Group Settings': (
+        'ABOUT', 'RECRUITMENT',
+        'TWITTER', 'DISCORD'
     ),
     'Theme Settings': (
         'MAIN_BACKGROUND', 'ALTER_BACKGROUND',

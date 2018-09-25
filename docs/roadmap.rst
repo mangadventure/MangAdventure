@@ -19,9 +19,9 @@ v0.2.x
 v0.3.x
 ^^^^^^
 
-| |u| Group and member pages.
-|    |u| Expand API.
-| |u| Information page (about + recruitment).
+| |c| Group pages.
+|    |c| Expand API.
+| |c| Information page.
 
 v0.4.x
 ^^^^^^

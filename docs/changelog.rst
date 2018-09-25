@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.4.0
+^^^^^^
+
+* Enabled searching for series via the API.
+
 v0.3.1
 ^^^^^^
 

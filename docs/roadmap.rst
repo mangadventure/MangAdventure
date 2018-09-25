@@ -26,21 +26,11 @@ v0.3.x
 v0.4.x
 ^^^^^^
 
-| |u| Revamp API:
-|    |u| API keys.
-|    |u| Rate limit.
-|    |u| Search queries.
-|    |u| POST,PUT,DELETE privileges for staff.
-|    |u| Use Django Rest Framework (?)
+| |u| Categories.
+|    |u| Expand API & search.
+| |c| Search for series by title via the API.
 
 v0.5.x
-^^^^^^
-
-| |u| Categories:
-|    |u| Each series can have multiple categories.
-|    |u| Expand API & search.
-
-v0.6.x
 ^^^^^^
 
 | |u| User registration:
@@ -50,6 +40,15 @@ v0.6.x
 | |u| Comments (custom/Disqus).
 | |u| Cookie consent.
 |    |u| Add to information page.
+
+v0.6.x
+^^^^^^
+
+| |u| Revamp API:
+|    |u| Use a framework.
+|    |u| API keys.
+|    |u| Rate limit.
+|    |u| POST,PUT,PATCH,DELETE privileges for staff.
 
 v0.7.x
 ^^^^^^
@@ -64,14 +63,10 @@ v0.7.x
 v0.8.x
 ^^^^^^
 
-| |u| Generate complete favicon with RealFaviconGenerator.
-
-v0.9.x
-^^^^^^
-
 | |u| Support MySQL database.
 | |u| Support PDF/EPUB for novels.
 | |u| Optionally keep the zipped chapter for downloading.
+| |u| Generate complete favicon with RealFaviconGenerator.
 
 .. unchecked
 .. |u| unicode:: U+00A0 U+00A0 U+2610

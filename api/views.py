@@ -2,10 +2,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import last_modified
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.http import http_date
+from django.db.models.query import Q
 from django.http import JsonResponse
 from django.conf import settings
 from django.urls import reverse
-from reader.models import Chapter, Series, Author, Artist
+from reader.models import Chapter, Series, SeriesAlias, Author, Artist
 from groups.models import Group, Member
 
 
@@ -178,7 +179,16 @@ def all_releases(request):
 def all_series(request):
     if request.method not in ['GET', 'HEAD']:
         return json_error('Method not allowed', 405)
-    _series = Series.objects.all()
+    q = request.GET.get('q')
+    if q:
+        query = Q(title__icontains=q)
+        aliases = SeriesAlias.objects.filter(
+            alias__icontains=q)
+        if aliases.count() > 0:
+            query |= Q(aliases__in=aliases)
+        _series = Series.objects.filter(query)
+    else:
+        _series = Series.objects.all()
     response = []
     for s in _series:
         response.append(_series_response(request, s, json=False))

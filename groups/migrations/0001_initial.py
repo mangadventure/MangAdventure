@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
             name='Role',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('role', models.CharField(choices=[('LD', 'Leader'), ('TL', 'Translator'), ('PR', 'Proofreader'), ('CL', 'Cleaner'), ('RD', 'Redrawer'), ('TS', 'Typesetter'), ('RP', 'Raw Provider')], max_length=2)),
+                ('role', models.CharField(choices=[('LD', 'Leader'), ('TL', 'Translator'), ('PR', 'Proofreader'), ('CL', 'Cleaner'), ('RD', 'Redrawer'), ('TS', 'Typesetter'), ('RP', 'Raw Provider'), ('QC', 'Quality Checker')], max_length=2)),
                 ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='roles', to='groups.Group')),
                 ('member', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='roles', to='groups.Member')),
             ],

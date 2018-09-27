@@ -176,7 +176,9 @@ CONSTANCE_CONFIG = {
                          'to be shown in the main page', 'number'),
     'MAX_CHAPTERS': (1, 'The maximum number of chapters '
                         'to be shown for each series '
-                        'in the reader page.', 'number')
+                        'in the reader page.', 'number'),
+    'COMPRESS_PAGES': (True, 'Controls whether chapter pages '
+                             'are compressed on upload.', bool)
 }
 CONSTANCE_CONFIG_FIELDSETS = {
     'Site Settings': (
@@ -193,7 +195,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'FONT_URL', 'FONT_NAME',
     ),
     'Logo Settings': ('LOGO_LARGE', 'LOGO_MEDIUM', 'LOGO_SMALL'),
-    'Other Settings': ('MAX_RELEASES', 'MAX_CHAPTERS')
+    'Other Settings': ('MAX_RELEASES', 'MAX_CHAPTERS', 'COMPRESS_PAGES')
 }
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 

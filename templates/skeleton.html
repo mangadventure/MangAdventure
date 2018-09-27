@@ -41,11 +41,10 @@
     {% endwith %}
     <link href="{{ PAGE_URL|urljoin:'/' }}"
           rel="index" title="{{ config.NAME }}">
-    <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" type="text/css"
+    <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
           integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
-          rel="prefetch stylesheet" as="style" crossorigin="anonymous">
-    <link href="{{ config.FONT_URL }}" type="text/css"
-          rel="prefetch stylesheet" as="style">
+          rel="prefetch stylesheet" as="style" type="text/css" crossorigin="anonymous">
+    <link href="{{ config.FONT_URL }}" rel="prefetch stylesheet" as="style" type="text/css">
     {% block stylesheets %}
       <link href="{% static 'styles/style.scss'|compile %}"
             data-source="{% static 'styles/style.scss' %}"
@@ -115,17 +114,17 @@
         <span>
           {% with logo=MEDIA_URL|urljoin:config.LOGO_LARGE %}
             <object class="logo" type="{{ logo|get_type }}"
-                    data="{{ logo }}" height="45">
+                                 data="{{ logo }}" height="45">
             </object>
           {% endwith %}
           {% with logo=MEDIA_URL|urljoin:config.LOGO_MEDIUM %}
             <object class="logo" type="{{ logo|get_type }}"
-                    data="{{ logo }}" height="38">
+                                 data="{{ logo }}" height="38">
             </object>
           {% endwith %}
           {% with logo=MEDIA_URL|urljoin:config.LOGO_SMALL %}
             <object class="logo" type="{{ logo|get_type }}"
-                    data="{{ logo }}" height="27">
+                                 data="{{ logo }}" height="27">
             </object>
           {% endwith %}
         </span>
@@ -158,8 +157,8 @@
           </li>
           <li>
             <form action="/search" method="GET" accept-charset="utf-8">
-              <input placeholder="Type a series to search for" name="q"
-                     type="search" class="main-bg" id="searchbox"/>
+              <input placeholder="Type a series to search for"
+                     name="q" type="search" class="main-bg" id="searchbox"/>
             </form>
           </li>
         </ul>

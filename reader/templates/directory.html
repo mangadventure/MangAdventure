@@ -32,7 +32,7 @@
                   <div class="series-chapter">
                     <a href="{{ chapter.url }}" title="{{ chapter.title }}"
                        {% if chapter.final %}class="end"{% endif %}>
-                      Vol. {{ vol }}, Ch. {{ num }}: {{ chapter.title }}
+                      Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ chapter.title }}
                     </a>
                     <div class="chapter-metadata">
                       <span class="divider"

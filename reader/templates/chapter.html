@@ -11,7 +11,7 @@
 {% endblock %}
 {% block description %}
   {% with vol=curr_chapter.volume|stringformat:'s' %}
-    {% with num=curr_chapter.number|stringformat:'s' %}
+    {% with num=curr_chapter.number|stringformat:'g' %}
       {% with desc='Volume '|add:vol|add:', Chapter '|add:num %}
         <meta name="twitter:description"
               content="{{ desc|add:' - '|add:curr_chapter.title }}">
@@ -40,6 +40,23 @@
           border-radius: 5px;
         }
       }
+      .curr-page input {
+        font-size: 1em;
+        text-align: center;
+        width: 1.75em;
+        background-color: $main-bg;
+        color: $alter-fg;
+        border: none;
+        border-radius: 3px;
+        line-height: 110%;
+        vertical-align: bottom;
+        position: relative;
+        bottom: 0.1em;
+        @media screen and (max-width: 436px) {
+          border: 1px solid $alter-bg;
+          bottom: 0.05em;
+        }
+      }
       .fa-circle-notch {
         color: transparentize($alter-fg, 0.25);
         margin: 25vw auto;
@@ -50,28 +67,38 @@
     {% endinlinecompile %}
   </style>
   <script type="text/javascript">
-    var img = new Image();
-    img.src = '{{ MEDIA_URL|urljoin:curr_page.image.url }}';
-    img.alt = 'Page {{ curr_page.number }}';
-    img.className = 'chapter-page';
-    img.addEventListener('click', function() {
-      {% if curr_page.number < all_pages.count %}
-        location.pathname = location.pathname
-          .replace(/[0-9]+\/$/, '{{ curr_page.number|add:1 }}/');
-      {% elif next_chapter %}
-        location.pathname = '{{ next_chapter.url }}';
-      {% else %}
-        location.pathname = '/reader/{{ curr_chapter.series.slug }}/';
-      {% endif %}
-    });
-    img.addEventListener('load', function() {
-      var ph = document.querySelector('.placeholder');
-      var dd = document.getElementById('dropdowns');
-      var ct = document.getElementById('controls');
-      ph.parentNode.replaceChild(img, ph);
-      dd.removeAttribute('style');
-      ct.removeAttribute('style');
-    });
+    (function(img) {
+      img.src = '{{ MEDIA_URL|urljoin:curr_page.image.url }}';
+      img.alt = 'Page {{ curr_page.number }}';
+      img.className = 'chapter-page';
+      img.addEventListener('click', function() {
+        {% if curr_page.number < all_pages.count %}
+          location.pathname = location.pathname
+            .replace(/[0-9]+\/$/, '{{ curr_page.number|add:1 }}/');
+        {% elif next_chapter %}
+          location.pathname = '{{ next_chapter.url }}';
+        {% else %}
+          location.pathname = '/reader/{{ curr_chapter.series.slug }}/';
+        {% endif %}
+      });
+      img.addEventListener('load', function() {
+        var ph = document.querySelector('.placeholder');
+        var dd = document.getElementById('dropdowns');
+        var ct = document.getElementById('controls');
+        ph.parentNode.replaceChild(img, ph);
+        dd.removeAttribute('style');
+        ct.removeAttribute('style');
+        var ci = document.querySelector('.curr-page input');
+        ci.addEventListener('keyup', function(evt) {
+          if(evt.keyCode !== 13) return;
+          var n = Number(ci.value);
+          if(!n || !Number.isInteger(n)) return;
+          if(n === Number(ci.placeholder)) return;
+          if(n > {{ curr_chapter.pages.count }}) return;
+          location.pathname = location.pathname.replace(/[0-9]+\/$/, n);
+        });
+      });
+    })(new Image());
   </script>
 {% endblock %}
 {% block title %}
@@ -94,7 +121,7 @@
           <i class="fa fa-chevron-down"></i>
           {% with vol=curr_chapter.volume num=curr_chapter.number %}
             <span {% if curr_chapter.final %}class="end"{% endif %}>
-              V{{ vol }} / C{{ num }}: {{ curr_chapter.title }}
+              V{{ vol }} / C{{ num|floatformat }}: {{ curr_chapter.title }}
             </span>
           {% endwith %}
         </a>
@@ -104,10 +131,10 @@
               {% if chapter == curr_chapter %}
                 data-current="true"
               {% endif %}>
-              <a href="{{ chapter.image.url }}" title="{{ chapter.title }}"
+              <a href="{{ chapter.url }}" title="{{ chapter.title }}"
                        {% if chapter.final %}class="end"{% endif %}>
                 {% with vol=chapter.volume num=chapter.number %}
-                  V{{ vol }} / C{{ num }}: {{ chapter.title }}
+                  V{{ vol }} / C{{ num|floatformat }}: {{ chapter.title }}
                 {% endwith %}
               </a>
             </li>
@@ -156,8 +183,10 @@
             <i class="fa fa-4x fa-caret-left fa-fw"></i>
           </a>
           {% with curr=curr_page.number|stringformat:'02d' %}
-            <span>
-              Page {{ curr }}/{{ all_pages.count|stringformat:'02d' }}
+            <span class="curr-page">
+              Page <input type="text" value="{{ curr }}"
+                          placeholder="{{ curr }}">
+              /{{ all_pages.count|stringformat:'02d' }}
             </span>
           {% endwith %}
           {% if next > all_pages.count %}

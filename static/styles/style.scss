@@ -295,6 +295,7 @@ thead {
       border-top-right-radius: 0;
     }
   }
+  .curr-page { text-align: center }
   #controls {
     width: 100%;
     display: flex;
@@ -310,7 +311,7 @@ thead {
       display: inline-flex;
       @include justify-content(space-around);
     }
-    .fa-rotate-90 { padding: 0 0.2em }
+    .fa-rotate-90 { padding: 0 0.5em }
   }
 }
 
@@ -376,7 +377,7 @@ thead {
       border-top-left-radius: 5px;
       margin-left: -5px;
       margin-right: 5px;
-      @include align-self();
+      @include align-self(start);
     }
     div { margin: auto 0 }
   }
@@ -384,6 +385,9 @@ thead {
   .member {
     padding-left: 0.5em;
     padding-bottom: 1em;
+    &-roles span:last-of-type {
+      &::after { display: none }
+    }
     div { padding-left: 0.5em }
   }
 }

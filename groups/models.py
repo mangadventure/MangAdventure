@@ -61,6 +61,7 @@ class Role(models.Model):
         ('RD', 'Redrawer'),
         ('TS', 'Typesetter'),
         ('RP', 'Raw Provider'),
+        ('QC', 'Quality Checker')
     ]
     member = models.ForeignKey(Member, on_delete=models.CASCADE,
                                related_name='roles')

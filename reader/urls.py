@@ -8,7 +8,7 @@ except ImportError:
 app_name = 'reader'
 
 _slug = '^(?P<slug>[A-Za-z0-9_-]+)/'
-_chapter = '%s(?P<vol>[0-9]+)/(?P<num>[0-9]+)/' % _slug
+_chapter = '%s(?P<vol>[0-9]+)/(?P<num>[0-9]+(\.[0-9]+|))/' % _slug
 _page = '%s(?P<page>[0-9]+)/' % _chapter
 
 urlpatterns = [

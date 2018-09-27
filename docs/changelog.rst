@@ -1,6 +1,14 @@
 Changelog
 ---------
 
+v0.4.1
+^^^^^^
+
+* Converted chapter numbers to float.
+* Made page number indicator editable.
+* Made page compression optional.
+* Added Quality Checker to roles.
+
 v0.4.0
 ^^^^^^
 

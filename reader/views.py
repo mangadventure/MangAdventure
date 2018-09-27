@@ -26,7 +26,7 @@ def series(request, slug=None):
 
 def chapter_page(request, slug=None, vol=0, num=0, page=1):
     try:
-        vol, num, page = int(vol), int(num), int(page)
+        vol, num, page = int(vol), float(num), int(page)
     except (ValueError, TypeError):
         raise Http404
     if page == 0:

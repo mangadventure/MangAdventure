@@ -95,8 +95,7 @@ class Chapter(models.Model):
         'contain more than 1 subfolder.'
     ]
     title = models.CharField(max_length=250, help_text=_help % 'title')
-    number = models.PositiveSmallIntegerField(default=0,
-                                              help_text=_help % 'number')
+    number = models.FloatField(default=0, help_text=_help % 'number')
     volume = models.PositiveSmallIntegerField(default=0, help_text=_vol_help)
     series = models.ForeignKey(Series, on_delete=models.CASCADE,
                                related_name='chapters',
@@ -118,8 +117,8 @@ class Chapter(models.Model):
         get_latest_by = ('uploaded', 'modified')
 
     def save(self, *args, **kwargs):
-        self.url = '/reader/%s/%d/%d/' % (self.series.slug,
-                                          self.volume, self.number)
+        self.url = '/reader/{0.series.slug}/' \
+                   '{0.volume}/{0.number:g}/'.format(self)
         super(Chapter, self).save(*args, **kwargs)
         if self.file:
             validators.zipfile_validator(self.file)
@@ -129,9 +128,8 @@ class Chapter(models.Model):
         self.series.save()
 
     def __str__(self):
-        return '%s - %d/%d: %s' % \
-               (self.series, self.volume,
-                self.number, self.title)
+        return '{0.series.title} - {0.volume}/' \
+               '{0.number:g}: {0.title}'.format(self)
 
 
 class Page(models.Model):

@@ -107,26 +107,9 @@
               {% if member.roles.all %}
                 {% for role in member.roles.all %}
                   {% if role.group == group %}
-                    <span {% if not forloop.last %}class="comma"{% endif %}>
-                        {{ role.get_role_display }}</span>
+                    <span class="comma">{{ role.get_role_display }}</span>
                   {% endif %}
                 {% endfor %}
-                {% comment %} {# Leaving this here in case it's needed #}
-                {% with count=forloop.revcounter|stringformat:'s' %}
-                  {% with script_id='member-script'|add:count %}
-                    <script id="{{ script_id }}" type="text/javascript">
-                      (function(self) {
-                        if(self.parentElement.children.length === 2) {
-                          var span = document.createElement('span');
-                          span.append('N/A');
-                          self.parentElement.appendChild(span);
-                        }
-                        self.parentElement.removeChild(self);
-                      })(document.getElementById('{{ script_id }}'));
-                    </script>
-                  {% endwith %}
-                {% endwith %}
-                {% endcomment %}
               {% else %}
                 <span>N/A</span>
               {% endif %}

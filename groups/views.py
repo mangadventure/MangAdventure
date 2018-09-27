@@ -26,6 +26,6 @@ def group(request, g_id=0):
         member_ids.append(role['member_id'])
     members = Member.objects.filter(id__in=member_ids)
     return render(request, 'group.html', {
-        'group': _group, 'members': members
+        'group': _group, 'members': members.order_by('name')
     })
 

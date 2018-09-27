@@ -38,7 +38,7 @@ venv/
 # MangAdventure stuff
 config.ini
 media/
-static/COMPILED/
-static/admin/
-static/extra/
+static/*
+!static/scripts
+!static/styles
 

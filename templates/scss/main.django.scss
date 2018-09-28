@@ -1,0 +1,54 @@
+@import 'functions';
+
+$main-bg: {{ config.MAIN_BACKGROUND|unquote }};
+$alter-bg: {{ config.ALTER_BACKGROUND|unquote }};
+$main-fg: {{ config.MAIN_TEXT_COLOR|unquote }};
+$alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
+$font-family: {{ config.FONT_NAME }};
+$shadow-color: if(lightness($alter-fg) < 50%, #DDD, #444);
+
+body {
+  background-color: $main-bg;
+  color: $main-fg;
+  font-family: quote($font-family), 'Helvetica', 'Arial', sans-serif;
+}
+
+a { color: $alter-fg }
+
+#header {
+  background-color: $alter-bg;
+  a {
+    color: $main-fg;
+    &:hover, &:active { color: $alter-fg }
+  }
+}
+
+#content {
+  background-color: $alter-bg;
+  border: 5px solid $alter-bg;
+  border-radius: 5px;
+  article {
+    background-color: $main-bg;
+    border-radius: 5px;
+  }
+}
+
+.end::before {
+  content: 'END';
+  background-color: $alter-bg;
+  color: $main-bg;
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.main-bg { background-color: $main-bg }
+
+.alter-bg { background-color: $alter-bg }
+
+h1, h2, .alter-fg { color: $alter-fg }
+
+h2 { border-color: $alter-fg }
+
+.text-shadow { text-shadow: shadow(1px, $shadow-color); }
+

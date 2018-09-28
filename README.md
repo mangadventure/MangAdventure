@@ -18,18 +18,24 @@ The documentation is available on [Read the Docs](https://mangadventure.rtfd.io)
 
 ## Configuration
 
-You can configure the site via the admin panel. If you want to overwrite the styling of the site, you can write some SCSS (or regular CSS) in the `static/extra/styles.scss` file.
+You can configure the site via the admin panel
+If you want to overwrite the styling of the site,
+you can write some SCSS (or regular CSS) in the
+`static/extra/styles.scss` file.
 
 ## Development
 
-To debug the server set the environment variable ``MANGADV_DEBUG`` to ``true``. **Don't do this in production.**
+To debug the server set the environment variable ``MANGADV_DEBUG``
+to ``true``. **Don't do this in production.**
 
-You shouldn't use the production server during development. You can use Django's ``runserver`` command to run a development server on `127.0.0.1:8000` (or any other address you specify).
+You shouldn't use the production server during development.
+You can use Django's ``runserver`` command to run a development
+server on `127.0.0.1:8000` (or any other address you specify).
 
 ## Credits
 
 * Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
-* Icons by [Font Awesome 5.2](https://fontawesome.com>)
+* Icons by [Font Awesome 5.2](https://fontawesome.com)
 * Tables use the [tablesort](https://github.com/tristen/tablesort) JS library
 * Browser logos from [alrra/browser-logos](https://github.com/alrra/browser-logos)
 

@@ -4,61 +4,19 @@
 {% block head_extras %}
   <style type="text/css">
     {% inlinecompile 'scss' %}
-      @import 'mixins';
-      $main-bg: {{ config.MAIN_BACKGROUND|unquote }};
-      $alter-bg: {{ config.ALTER_BACKGROUND|unquote }};
-      $alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
-      #search-options {
-        input {
-          background-color: $main-bg;
-          border: 2px solid $alter-bg;
-          &:focus { border-color: $alter-fg }
-          &[type='radio'] {
-            display: none;
-            + label {
-              display: inline-block;
-              cursor: pointer;
-              padding: 2px 4px;
-              border: 2px solid $alter-bg;
-              @include border-radius(3px);
-            }
-            &:checked + label {
-              border-color: $alter-fg;
-            }
-          }
-        }
-        button {
-          padding: 3px 5px;
-          border: 2px solid $alter-bg;
-          @include border-radius(3px);
-          &:focus { border-color: $alter-fg }
-        }
-      }
-      #result-table {
-        border-collapse: separate;
-        border-spacing: 0;
-        @include border($alter-fg, 2px);
-        @include border-radius(3px);
-        th, td {
-          padding: 0.1em 0.2em;
-          &:not(:last-child) {
-            @include border($alter-fg, 2px, $suffix: '-right');
-          }
-        }
-        td {
-          @include border($alter-fg, 2px, $suffix: '-top');
-        }
-      }
-      #searchbox, #searchlink { display: none }
+      {% include 'scss/search.django.scss' %}
     {% endinlinecompile %}
   </style>
-  <script src="https://unpkg.com/tablesort@5.0.2/dist/tablesort.min.js"
-          type="text/javascript"></script>
-  <script src="https://unpkg.com/tablesort@5.0.2/dist/sorts/tablesort.number.min.js"
-          type="text/javascript"></script>
-  <script src="https://unpkg.com/tablesort@5.0.2/dist/sorts/tablesort.date.min.js"
-          type="text/javascript"></script>
-  <script src="/static/scripts/search.js" async="async"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.1.0/tablesort.min.js"
+          integrity="sha384-X4ygFY9D+rThZo+qYAK0a6e80aea1N6ZJT5pClZ/lFeji8fTw2MYtxHoXYkvWFA5"
+          crossorigin="anonymous" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.1.0/sorts/tablesort.number.min.js"
+          integrity="sha384-6i1Ebthcj0aIZq17cuL3wYI7KWqByGszxDcURQVUDBUq5xt9bBlF6kOPuYpkVOuN"
+          crossorigin="anonymous" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.1.0/sorts/tablesort.date.min.js"
+          integrity="sha384-FS9DiHTRu5S2IsfHVyB0DgxutdvNZ8TrlWaOXsWfdvWGjJakqS3DDT0dLLS80r2H"
+          crossorigin="anonymous" type="text/javascript"></script>
+  <script src="/static/scripts/search.js" type="text/javascript" async="async"></script>
 {% endblock %}
 {% block title %}
   <meta name="title" content="Search">

@@ -1,7 +1,7 @@
 (auto)?emailspider
 (Contact|LMQueue)Bot
-\w?(Browse|Surf|Eval)
-\w?Surf15a
+^\w?(Browse|Surf|Eval)
+^\w?Surf15a
 Advanced Email Extractor
 Atomic_Email_Hunter
 atSpider

@@ -115,7 +115,7 @@ CONSTANCE_ADDITIONAL_FIELDS = {
     'char': ('django.forms.CharField', {}),
     'url': ('django.forms.URLField', {}),
     'number': ('django.forms.IntegerField', {
-        'min_value': 0
+        'min_value': 1
     }),
     'color': ('django.forms.CharField', {
         'max_length': 20
@@ -293,9 +293,9 @@ MEDIA_ROOT = path.join(BASE_DIR, 'media/')
 
 # HTTPS
 try:
-    env['HTTPS'] = CONFIG['https']
+    env.setdefault('HTTPS', CONFIG['https'])
 except KeyError:
-    env['HTTPS'] = 'off'
+    env.setdefault('HTTPS', 'off')
 
 if env.get('HTTPS', 'off').lower() == 'on':
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

@@ -1,31 +1,41 @@
 Changelog
 ---------
 
+v0.4.2
+^^^^^^
+
+* Fixed blocked user agents
+* Added default group icon file
+* Added ``Vary``, ``Allow`` headers to api responses
+* Moved inline styles & scripts to separate files
+* Replaced ``pluralize`` script with ``count`` checks
+* Switched to ``cdnjs`` for all remote scripts and added SRI hash
+
 v0.4.1
 ^^^^^^
 
-* Converted chapter numbers to float.
-* Made page number indicator editable.
-* Made page compression optional.
-* Added Quality Checker to roles.
+* Converted chapter numbers to float
+* Made page number indicator editable
+* Made page compression optional
+* Added ``Quality Checker`` to roles
 
 v0.4.0
 ^^^^^^
 
-* Enabled searching for series via the API.
+* Enabled searching for series via the API
 
 v0.3.1
 ^^^^^^
 
-* Added group info page.
+* Added group info page
 
 v0.3.0
 ^^^^^^
 
-* Added groups app.
-* Restructured custom modules.
-* Added custom model & form fields.
-* Added browser icons to compatibility.rst.
+* Added groups app
+* Restructured custom modules
+* Added custom model & form fields
+* Added browser icons to compatibility.rst
 
 v0.2.2
 ^^^^^^

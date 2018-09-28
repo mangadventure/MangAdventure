@@ -24,81 +24,11 @@
 {% block head_extras %}
   <style type="text/css">
     {% inlinecompile 'scss' %}
-      $main-bg: {{ config.MAIN_BACKGROUND|unquote }};
-      $alter-bg: {{ config.ALTER_BACKGROUND|unquote }};
-      $main-fg: {{ config.MAIN_TEXT_COLOR|unquote }};
-      $alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
-      .placeholder, .chapter-page {
-        border: 2px solid $alter-bg;
-        border-radius: 5px;
-      }
-      .dropdown {
-        border: 1px solid $alter-bg;
-        border-radius: 5px;
-        ul {
-          border: 1px solid $alter-bg;
-          border-radius: 5px;
-        }
-      }
-      .curr-page input {
-        font-size: 1em;
-        text-align: center;
-        width: 1.75em;
-        background-color: $main-bg;
-        color: $alter-fg;
-        border: none;
-        border-radius: 3px;
-        line-height: 110%;
-        vertical-align: bottom;
-        position: relative;
-        bottom: 0.1em;
-        @media screen and (max-width: 436px) {
-          border: 1px solid $alter-bg;
-          bottom: 0.05em;
-        }
-      }
-      .fa-circle-notch {
-        color: transparentize($alter-fg, 0.25);
-        margin: 25vw auto;
-        @media screen and (max-width: 436px) {
-          color: transparentize($main-fg, 0.25)
-        }
-      }
+      {% include 'scss/chapter.django.scss' %}
     {% endinlinecompile %}
   </style>
   <script type="text/javascript">
-    (function(img) {
-      img.src = '{{ MEDIA_URL|urljoin:curr_page.image.url }}';
-      img.alt = 'Page {{ curr_page.number }}';
-      img.className = 'chapter-page';
-      img.addEventListener('click', function() {
-        {% if curr_page.number < all_pages.count %}
-          location.pathname = location.pathname
-            .replace(/[0-9]+\/$/, '{{ curr_page.number|add:1 }}/');
-        {% elif next_chapter %}
-          location.pathname = '{{ next_chapter.url }}';
-        {% else %}
-          location.pathname = '/reader/{{ curr_chapter.series.slug }}/';
-        {% endif %}
-      });
-      img.addEventListener('load', function() {
-        var ph = document.querySelector('.placeholder');
-        var dd = document.getElementById('dropdowns');
-        var ct = document.getElementById('controls');
-        ph.parentNode.replaceChild(img, ph);
-        dd.removeAttribute('style');
-        ct.removeAttribute('style');
-        var ci = document.querySelector('.curr-page input');
-        ci.addEventListener('keyup', function(evt) {
-          if(evt.keyCode !== 13) return;
-          var n = Number(ci.value);
-          if(!n || !Number.isInteger(n)) return;
-          if(n === Number(ci.placeholder)) return;
-          if(n > {{ curr_chapter.pages.count }}) return;
-          location.pathname = location.pathname.replace(/[0-9]+\/$/, n);
-        });
-      });
-    })(new Image());
+    {% include 'js/chapter.django.js' %}
   </script>
 {% endblock %}
 {% block title %}

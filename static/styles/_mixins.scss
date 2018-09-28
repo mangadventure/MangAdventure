@@ -134,6 +134,13 @@
   @include text-overflow();
 }
 
+@mixin text-size-adjust($size: 100%) {
+  $prefixes: '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}text-size-adjust: $size;
+  }
+}
+
 @mixin touch($selector: null) {
   &:hover #{$selector},
   &:active #{$selector},

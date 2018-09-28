@@ -5,23 +5,9 @@
 {% block head_extras %}
   <style type="text/css">
     {% inlinecompile 'scss' %}
-      $color: {{ config.ALTER_BACKGROUND|unquote }};
-      .cover {
-        max-width: {{ series.cover.width }}px;
-        max-height: {{ series.cover.height }}px;
-      }
-      @media screen and (max-width: 436px) {
-        #series > div {
-          border: 2px solid $color;
-          border-radius: 5px;
-          > div:not(:last-of-type) {
-            border-bottom: 2px solid $color;
-          }
-        }
-      }
+      {% include 'scss/series.django.scss' %}
     {% endinlinecompile %}
   </style>
-  <script src="{% static 'scripts/plural.js' %}"></script>
 {% endblock %}
 {% block image %}
   {% with url=PAGE_URL|urljoin:MEDIA_URL %}
@@ -47,53 +33,66 @@
     <div id="series-info">
       {% if series.aliases.all %}
         <div id="series-aliases">
-          <strong class="alter-fg colon">Alt. title</strong>
+          <strong class="alter-fg colon">
+            {% if series.aliases.count > 1 %}
+              Alt. titles
+            {% else %}
+              Alt. title
+            {% endif %}
+          </strong>
           {% for alias in series.aliases.all %}
             {% if forloop.first and forloop.last %}
               <span class="alias">{{ alias }}</span>
             {% else %}
-              {% if forloop.first %}
-                <script>pluralize('#series-aliases')</script>
-              {% endif %}
               <div class="alias">{{ alias }}</div>
             {% endif %}
           {% endfor %}
         </div>
       {% endif %}
-      <div id="series-authors">
-        <strong class="alter-fg colon">Author</strong>
-        {% if series.authors.all %}
+    <div id="series-authors">
+      {% if series.authors.all %}
+        <div id="series-authors">
+          <strong class="alter-fg colon">
+            {% if series.authors.count > 1 %}
+              Authors
+            {% else %}
+              Author
+            {% endif %}
+          </strong>
           {% for author in series.authors.all %}
             {% if forloop.first and forloop.last %}
               <span class="author">{{ author }}</span>
             {% else %}
-              {% if forloop.first %}
-                <script>pluralize('#series-authors')</script>
-              {% endif %}
               <div class="author">{{ author }}</div>
             {% endif %}
           {% endfor %}
-        {% else %}
-          <span class="author">N/A</span>
-        {% endif %}
-      </div>
-      <div id="series-artists">
-        <strong class="alter-fg colon">Artist</strong>
-        {% if series.artists.all %}
+        </div>
+      {% else %}
+        <span class="author">N/A</span>
+      {% endif %}
+    </div>
+    <div id="series-artists">
+      {% if series.artists.all %}
+        <div id="series-artists">
+          <strong class="alter-fg colon">
+            {% if series.artists.count > 1 %}
+              Artists
+            {% else %}
+              Artist
+            {% endif %}
+          </strong>
           {% for artist in series.artists.all %}
             {% if forloop.first and forloop.last %}
               <span class="artist">{{ artist }}</span>
             {% else %}
-              {% if forloop.first %}
-                <script>pluralize('#series-artists')</script>
-              {% endif %}
               <div class="artist">{{ artist }}</div>
             {% endif %}
           {% endfor %}
-        {% else %}
-          <span class="artist">N/A</span>
-        {% endif %}
-      </div>
+        </div>
+      {% else %}
+        <span class="artist">N/A</span>
+      {% endif %}
+    </div>
       <div id="series-status">
         <strong class="alter-fg colon">Status</strong>
         <span>{{ series.completed|yesno:'Completed,Ongoing' }}</span>

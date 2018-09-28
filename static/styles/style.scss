@@ -6,6 +6,7 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  @include text-size-adjust();
 }
 
 a {
@@ -24,7 +25,7 @@ h1 {
 
 h2 {
   margin: 0;
-  font-size: 1em;
+  font-size: 1.01em;
 }
 
 input {
@@ -203,7 +204,6 @@ thead {
   display: flex;
   @include flex-wrap();
   &-info {
-    font-size: 1em;
     padding: 3px;
     max-width: 60vw;
   }
@@ -230,7 +230,6 @@ thead {
     }
   }
   &-desc {
-    font-size: 1em;
     width: 100%;
     h3 { margin: 0.5em 0 }
     p {
@@ -242,7 +241,6 @@ thead {
     }
   }
   &-chapters {
-    font-size: 1em;
     width: 100%;
     h3 { margin: 0.5em 0 }
     .chapter {
@@ -329,7 +327,7 @@ thead {
     }
   }
   table {
-    margin: 0 0.3em;
+    margin: 0 auto;
     text-align: center;
     @include box-sizing();
   }

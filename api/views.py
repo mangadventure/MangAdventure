@@ -10,8 +10,17 @@ from reader.models import Chapter, Series, SeriesAlias, Author, Artist
 from groups.models import Group, Member
 
 
+class JsonVaryAllowResponse(JsonResponse):
+    def __init__(self, *args, **kwargs):
+        super(JsonVaryAllowResponse, self).__init__(*args, **kwargs)
+        self['Vary'] = 'Allow'
+        if(kwargs.get('status', 0) == 405):
+            self['Allow'] = 'GET, HEAD'
+
+
 def json_error(message, status=500):
-    return JsonResponse({'error': message, 'status': status}, status=status)
+    data = {'error': message, 'status': status}
+    return JsonVaryAllowResponse(data, status=status)
 
 
 def _chapter_response(request, _chapter, json=True):
@@ -32,7 +41,7 @@ def _chapter_response(request, _chapter, json=True):
             'id': _group.id,
             'name': _group.name,
         })
-    return JsonResponse(response) if json else response
+    return JsonVaryAllowResponse(response) if json else response
 
 
 def _volume_response(request, _series, vol, json=True):
@@ -43,7 +52,7 @@ def _volume_response(request, _series, vol, json=True):
     for _chapter in chapters:
         response[_chapter.number] = _chapter_response(
             request, _chapter, json=False)
-    return JsonResponse(response) if json else response
+    return JsonVaryAllowResponse(response) if json else response
 
 
 def _series_response(request, _series, json=True):
@@ -74,7 +83,7 @@ def _series_response(request, _series, json=True):
         for alias in _artist.aliases.all():
             names.append(alias.alias)
         response['artists'].append(names)
-    return JsonResponse(response) if json else response
+    return JsonVaryAllowResponse(response) if json else response
 
 
 def _person_response(request, _person, json=True):
@@ -95,7 +104,7 @@ def _person_response(request, _person, json=True):
             'title': _series.title,
             'aliases': aliases,
         })
-    return JsonResponse(response) if json else response
+    return JsonVaryAllowResponse(response) if json else response
 
 
 def _member_response(request, _member, json=True):
@@ -108,7 +117,7 @@ def _member_response(request, _member, json=True):
     }
     for role in _member.roles.all():
         response['roles'].append(role.get_role_display())
-    return JsonResponse(response) if json else response
+    return JsonVaryAllowResponse(response) if json else response
 
 
 def _group_response(request, _group, json=True):
@@ -141,7 +150,7 @@ def _group_response(request, _group, json=True):
             for alias in _chapter.series.aliases.all():
                 response['series'][-1]['aliases'].append(alias.alias)
             _series.append(_chapter.series.title)
-    return JsonResponse(response) if json else response
+    return JsonVaryAllowResponse(response) if json else response
 
 
 @csrf_exempt
@@ -171,7 +180,7 @@ def all_releases(request):
         except ObjectDoesNotExist:
             pass
         response.append(series_res)
-    return JsonResponse(response, safe=False)
+    return JsonVaryAllowResponse(response, safe=False)
 
 
 @csrf_exempt
@@ -192,7 +201,7 @@ def all_series(request):
     response = []
     for s in _series:
         response.append(_series_response(request, s, json=False))
-    return JsonResponse(response, safe=False)
+    return JsonVaryAllowResponse(response, safe=False)
 
 
 @csrf_exempt
@@ -255,7 +264,7 @@ def all_people(request):
     response = []
     for _person in people:
         response.append(_person_response(request, _person, json=False))
-    return JsonResponse(response, safe=False)
+    return JsonVaryAllowResponse(response, safe=False)
 
 
 @csrf_exempt
@@ -285,7 +294,7 @@ def all_groups(request):
     response = []
     for g in _groups:
         response.append(_group_response(request, g, json=False))
-    return JsonResponse(response, safe=False)
+    return JsonVaryAllowResponse(response, safe=False)
 
 
 @csrf_exempt

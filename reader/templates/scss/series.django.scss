@@ -1,0 +1,17 @@
+$color: {{ config.ALTER_BACKGROUND|unquote }};
+
+.cover {
+  max-width: {{ series.cover.width }}px;
+  max-height: {{ series.cover.height }}px;
+}
+
+@media screen and (max-width: 436px) {
+  #series > div {
+    border: 2px solid $color;
+    border-radius: 5px;
+    > div:not(:last-of-type) {
+      border-bottom: 2px solid $color;
+    }
+  }
+}
+

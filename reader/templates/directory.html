@@ -25,7 +25,13 @@
             {#<div class="series-desc">#}
             {#  {{ series.description }}#}
             {#</div>#}
-            <strong>Latest Chapters:</strong>
+            <strong class="colon">
+              {% if config.MAX_CHAPTERS > 1 %}
+                Latest Chapters
+              {% else %}
+                Latest Chapter
+              {% endif %}
+            </strong>
             {% with chapters=series.chapters|order_by:'-uploaded' %}
               {% for chapter in chapters|vslice:config.MAX_CHAPTERS %}
                 {% with vol=chapter.volume num=chapter.number %}

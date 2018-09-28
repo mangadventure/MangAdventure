@@ -1,0 +1,51 @@
+@import 'mixins';
+
+$main-bg: {{ config.MAIN_BACKGROUND|unquote }};
+$alter-bg: {{ config.ALTER_BACKGROUND|unquote }};
+$alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
+
+#search-options {
+  input {
+    background-color: $main-bg;
+    border: 2px solid $alter-bg;
+    &:focus { border-color: $alter-fg }
+    &[type='radio'] {
+      display: none;
+      + label {
+        display: inline-block;
+        cursor: pointer;
+        padding: 2px 4px;
+        border: 2px solid $alter-bg;
+        @include border-radius(3px);
+      }
+      &:checked + label {
+        border-color: $alter-fg;
+      }
+    }
+  }
+  button {
+    padding: 3px 5px;
+    border: 2px solid $alter-bg;
+    @include border-radius(3px);
+    &:focus { border-color: $alter-fg }
+  }
+}
+
+#result-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  @include border($alter-fg, 2px);
+  @include border-radius(3px);
+  th, td {
+    padding: 0.1em 0.2em;
+    &:not(:last-child) {
+      @include border($alter-fg, 2px, $suffix: '-right');
+    }
+  }
+  td {
+    @include border($alter-fg, 2px, $suffix: '-top');
+  }
+}
+
+#searchbox, #searchlink { display: none }
+

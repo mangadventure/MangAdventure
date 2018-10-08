@@ -13,7 +13,7 @@ from groups.models import Group, Member
 class JsonVaryAllowResponse(JsonResponse):
     def __init__(self, *args, **kwargs):
         super(JsonVaryAllowResponse, self).__init__(*args, **kwargs)
-        self['Vary'] = 'Allow'
+        self.setdefault('Vary', 'Allow')
         if(kwargs.get('status', 0) == 405):
             self['Allow'] = 'GET, HEAD'
 

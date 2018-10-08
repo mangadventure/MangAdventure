@@ -47,5 +47,7 @@ $alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
   }
 }
 
+.tooltip::after { background-color: $alter-bg }
+
 #searchbox, #searchlink { display: none }
 

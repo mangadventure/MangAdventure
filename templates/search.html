@@ -1,5 +1,6 @@
 {% extends 'skeleton.html' %}
 {% load custom_tags %}
+{% load static %}
 {% load inlinecompile from compile_static %}
 {% block head_extras %}
   <style type="text/css">
@@ -16,7 +17,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.1.0/sorts/tablesort.date.min.js"
           integrity="sha384-FS9DiHTRu5S2IsfHVyB0DgxutdvNZ8TrlWaOXsWfdvWGjJakqS3DDT0dLLS80r2H"
           crossorigin="anonymous" type="text/javascript"></script>
-  <script src="/static/scripts/search.js" type="text/javascript" async="async"></script>
+  <script src="{% static 'scripts/search.js' %}"
+          integrity="{% sha256hash 'scripts/search.js' %}"
+          crossorigin="anonymous" type="text/javascript" async></script>
 {% endblock %}
 {% block title %}
   <meta name="title" content="Search">
@@ -31,17 +34,17 @@
       <form action="/search" id="search-form"
             method="GET" accept-charset="utf-8">
         <div id="search-title">
-          <label for="query">Series Title:</label>
+          <label for="query" class="colon">Series Title</label>
           <input name="q" value="{{ query }}"
                 id="query" type="text"/>
         </div>
         <div id="search-author">
-          <label for="author">Author/Artist:</label>
+          <label for="author" class="colon">Author/Artist</label>
           <input name="author" value="{{ author }}"
                  id="author" type="text"/>
         </div>
         <div id="search-status">
-          <span>Series Status:</span>
+          <span class="colon">Series Status</span>
           <input {% if status == 'any' %}checked="checked"{% endif %}
                  name="status" id="status-any" value="any" type="radio"/>
           <label for="status-any">Any</label>
@@ -51,6 +54,29 @@
           <input {% if status == 'ongoing' %}checked="checked"{% endif %}
                  name="status" id="status-ongoing" value="ongoing" type="radio"/>
           <label for="status-ongoing">Ongoing</label>
+        </div>
+        <div id="search-categories">
+          <div class="colon">Categories</div>
+          <div>(
+            <i class="far fa-check-circle fa-fw"></i> = include /
+            <i class="far fa-times-circle fa-fw"></i> = exclude )
+          </div>
+          <div id="category-container">
+            {% for category in all_categories %}
+              <span class="tooltip category" data-value=""
+                   data-tooltip="{{ category.description }}">
+                {% if category|lower in in_categories %}
+                  <i class="far fa-check-circle fa-fw"></i> {{ category.name }}
+                {% elif category|lower in ex_categories %}
+                  <i class="far fa-times-circle fa-fw"></i> {{ category.name }}
+                {% else %}
+                  <i class="far fa-circle fa-fw"></i> {{ category.name }}
+                {% endif %}
+              </span>
+            {% endfor %}
+          </div>
+          <input type="text" class="no-display"
+                 id="categories" name="categories" hidden/>
         </div>
         <button id="search-submit" type="submit">
           <i class="fa fa-paper-plane"></i> Submit Search

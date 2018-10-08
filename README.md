@@ -36,7 +36,7 @@ server on `127.0.0.1:8000` (or any other address you specify).
 
 * Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
 * Icons by [Font Awesome 5.2](https://fontawesome.com)
-* Tables use the [tablesort](https://github.com/tristen/tablesort) JS library
+* Search results are sorted using the [tablesort](https://github.com/tristen/tablesort) JS library
 * Browser logos from [alrra/browser-logos](https://github.com/alrra/browser-logos)
 
 ## License

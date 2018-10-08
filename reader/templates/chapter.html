@@ -1,5 +1,6 @@
 {% extends 'skeleton.html' %}
 {% load custom_tags %}
+{% load static %}
 {% load inlinecompile from compile_static %}
 {% block image %}
   {% with url=PAGE_URL|urljoin:MEDIA_URL %}
@@ -27,9 +28,6 @@
       {% include 'scss/chapter.django.scss' %}
     {% endinlinecompile %}
   </style>
-  <script type="text/javascript">
-    {% include 'js/chapter.django.js' %}
-  </script>
 {% endblock %}
 {% block title %}
   <meta name="title" content="{{ curr_chapter.title }}">
@@ -41,7 +39,7 @@
 {% endblock %}
 {% block content %}
   <div id="chapter">
-    <section id="dropdowns" style="display: none">
+    <section id="dropdowns" class="no-display">
       <div class="dropdown chapter-list main-bg" aria-haspopup="true">
         <span class="dropdown-title alter-fg">
           <i class="fa fa-chevron-down"></i>
@@ -94,10 +92,29 @@
         </ul>
       </div>
     </section>
-    <section class="placeholder">
-      <i class="fas fa-circle-notch fa-spin fa-5x fa-fw"></i>
-    </section>
-    <section id="controls" style="display: none">
+    {% with series_url='/reader/'|add:curr_chapter.series.slug|add:'/' %}
+      <section id="placeholder" data-num="{{ curr_page.number }}"
+               data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
+               {% if curr_page.number == all_pages.count %}
+                 {% if next_chapter %}
+                   data-next="{{ next_chapter.url }}"
+                 {% else %}
+                   data-next="{{ series_url }}"
+                 {% endif %}
+              {% elif curr_page.number == 1 %}
+                 {% if prev_chapter %}
+                   data-prev="{{ prev_chapter.url }}"
+                 {% else %}
+                   data-prev="{{ series_url }}"
+                 {% endif %}
+              {% endif %}>
+        <i class="fas fa-circle-notch fa-spin fa-5x fa-fw"></i>
+      </section>
+    {% endwith %}
+    <script src="{% static 'scripts/chapter.js' %}"
+            integrity="{% sha256hash 'scripts/chapter.js' %}"
+            crossorigin="anonymous" type="text/javascript"></script>
+    <section id="controls" class="no-display">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
         <div id="controls-top">
           {% if prev == 0 %}
@@ -114,8 +131,8 @@
           </a>
           {% with curr=curr_page.number|stringformat:'02d' %}
             <span class="curr-page">
-              Page <input type="text" value="{{ curr }}"
-                          placeholder="{{ curr }}">
+              Page <input type="text" data-max="{{ curr_chapter.pages.count }}"
+                          value="{{ curr }}" placeholder="{{ curr }}">
               /{{ all_pages.count|stringformat:'02d' }}
             </span>
           {% endwith %}
@@ -139,7 +156,7 @@
           <a href="/reader/{{ curr_chapter.series.slug }}/"
              title="{{ curr_chapter.series }}">
             <i class="fa fa-2x fa-step-forward fa-rotate-90 fa-fw"
-               {% if all_pages.count > 99 %}style="padding: 0 0.5em"
+               {% if all_pages.count > 99 %}data-pcount="100+"
                {% endif %}></i>
           </a>
           <a href="../{{ all_pages.last.number }}/" title="Last page">
@@ -149,7 +166,7 @@
       {% endwith %}
     </section>
   </div>
-  <div id="preload" style="display: none">
+  <div id="preload" class="no-display">
     {% for page in all_pages %}
       {% if page.number > curr_page.number %}
         {% if page.number <= curr_page.number|add:3 %}

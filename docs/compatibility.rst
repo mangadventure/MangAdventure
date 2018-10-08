@@ -12,7 +12,7 @@ Python
    * - Version
      - Compatibility
    * - <2.7
-     - Untested
+     - Incompatible
    * - 2.7
      - Compatible
    * - 3.0 - 3.4
@@ -23,17 +23,14 @@ Python
 Browsers
 ^^^^^^^^
 
-Desktop
-~~~~~~~
-
 .. list-table::
    :header-rows: 1
 
    * - Browser
-     - Compatibility
+     - Versions
    * - | |Chrome|
        | Chrome
-     - 21+
+     - 29+
    * - | |FF|
        | Firefox
      - 28+
@@ -46,33 +43,15 @@ Desktop
    * - | |Opera|
        | Opera
      - 15+
-
-Mobile
-~~~~~~
-
-.. list-table::
-   :header-rows: 1
-
-   * - Browser
-     - Compatibility
-   * - | |Chrome|
-       | Chrome Mobile
-     - 21+
-   * - | |FF|
-       | Firefox Mobile
-     - 28+
-   * - | |IE|
-       | IE Mobile
-     - 10+/Edge
    * - | |iOS|
        | iOS Safari
      - 7.1+
-   * - | |Opera|
-       | Opera Mobile
-     - 18+
    * - | |Android|
        | Android Browser
      - 4.4+
+   * - | |Samsung|
+       | Samsung Internet
+     - 4+
 
 .. |Chrome| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/chrome/chrome_32x32.png
    :alt: Chrome
@@ -88,6 +67,9 @@ Mobile
 
 .. |Opera| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/opera/opera_32x32.png
    :alt: Opera
+
+.. |Samsung| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/samsung-internet/samsung-internet_32x32.png
+   :alt: Samsung Internet
 
 .. |Android| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/archive/android/android_32x32.png
    :alt: Android Browser

@@ -170,8 +170,10 @@ thead {
     padding: 10px 0 0;
     width: 100%;
     .cover {
-      width: calc(100vw / 3);
+      max-width: 100%;
+      height: auto;
       float: left;
+      &-container { max-width: calc(100vw / 3) }
     }
     .series-info {
       display: block;
@@ -258,7 +260,7 @@ thead {
 }
 
 #chapter {
-  .placeholder {
+  #placeholder {
     width: 80vw;
     display: flex;
     cursor: wait;
@@ -318,6 +320,11 @@ thead {
     width: 100%;
     padding: 0.5em 0;
   }
+  table {
+    margin: 0 auto;
+    text-align: center;
+    @include box-sizing();
+  }
   &-options {
     text-align: center;
     div { margin-bottom: 0.5em }
@@ -326,10 +333,9 @@ thead {
       padding: 4px;
     }
   }
-  table {
-    margin: 0 auto;
-    text-align: center;
-    @include box-sizing();
+  .category {
+    display: inline-block;
+    cursor: pointer;
   }
   .result {
     hyphens: auto;
@@ -390,6 +396,25 @@ thead {
   }
 }
 
+#info {
+  h2 {
+    font-size: large;
+    text-transform: uppercase;
+    &:first-of-type { padding-top: 0.5em }
+  }
+  section {
+    padding-bottom: 0.5em;
+    div { text-indent: 0.5em }
+  }
+  #links {
+    .link {
+      display: block;
+      margin: 0.25em 0 0.25em 0.5em;
+      span { display: inline-block }
+    }
+  }
+}
+
 .dropdown {
   display: block;
   height: 30px;
@@ -423,26 +448,24 @@ thead {
   }
 }
 
-#info {
-  h2 {
-    font-size: large;
-    text-transform: uppercase;
-    &:first-of-type { padding-top: 0.5em }
-  }
-  section {
-    padding-bottom: 0.5em;
-    div { text-indent: 0.5em }
-  }
-  #links {
-    .link {
-      display: block;
-      margin: 0.25em 0 0.25em 0.5em;
-      span { display: inline-block }
-    }
+.tooltip {
+  position: relative;
+  @include touch('::after') {
+    content: attr(data-tooltip);
+    display: inline-block;
+    position: absolute;
+    bottom: calc(100% + 3px);
+    left: 50%;
+    z-index: 1;
+    padding: 3px;
+    border-radius: 5px;
+    width: 200%;
+    text-align: center;
+    @include transform(translateX(-50%));
   }
 }
 
-.placeholder, .chapter-page {
+#placeholder, .chapter-page {
   max-width: 100%;
   height: auto;
   margin: auto;
@@ -479,6 +502,14 @@ thead {
   top: 0.05em;
 }
 
+.fa-circle { color: lightslategray }
+
+.fa-check-circle { color: limegreen }
+
+.fa-times-circle { color: tomato }
+
+.no-display { display: none }
+
 .divider::before { content: quote('\00a0|\00a0') }
 
 .comma::after { content: quote(',') }
@@ -488,6 +519,8 @@ thead {
 .logo { &[height='27'], &[height='38'] { display: none } }
 
 #searchlink { display: none }
+
+i[data-pcount='100+'] { padding: 0 0.5em }
 
 @include viewport(1024px) {
   #header {

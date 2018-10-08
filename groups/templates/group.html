@@ -1,5 +1,6 @@
 {% extends 'skeleton.html' %}
 {% load custom_tags %}
+{% load static %}
 {% block description %}
   <meta name="twitter:description" content="{{ group.description }}">
   <meta property="og:description" content="{{ group.description }}">
@@ -33,7 +34,7 @@
       {% if group.logo %}
         <img src="{{ group.logo.url }}" alt="Logo">
       {% else %}
-        <img src="/static/icons/group.png" alt="Logo">
+        <img src="{% static /icons/group.png %}" alt="Logo">
       {% endif %}
       <div>
         <div class="group-site">

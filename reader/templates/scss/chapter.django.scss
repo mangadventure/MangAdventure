@@ -3,7 +3,7 @@ $alter-bg: {{ config.ALTER_BACKGROUND|unquote }};
 $main-fg: {{ config.MAIN_TEXT_COLOR|unquote }};
 $alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
 
-.placeholder, .chapter-page {
+#placeholder, .chapter-page {
   border: 2px solid $alter-bg;
   border-radius: 5px;
 }

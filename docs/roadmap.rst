@@ -68,6 +68,11 @@ v0.8.x
 | |u| Optionally keep the zipped chapter for downloading.
 | |u| Generate complete favicon with RealFaviconGenerator.
 
+v0.9.x
+^^^^^^
+
+| |u| Write an installer.
+
 .. unchecked
 .. |u| unicode:: U+00A0 U+00A0 U+2610
 

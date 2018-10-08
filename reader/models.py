@@ -13,10 +13,6 @@ class Author(models.Model):
     name = models.CharField(max_length=100,
                             help_text="The author's full name.")
 
-    def delete(self, using=None, keep_parents=False):
-        Series.authors.through.objects.filter(author=self).delete()
-        super(Author, self).delete(using, keep_parents)
-
     def __str__(self): return self.name
 
 
@@ -24,9 +20,19 @@ class Artist(models.Model):
     name = models.CharField(max_length=100,
                             help_text="The artist's full name.")
 
-    def delete(self, using=None, keep_parents=False):
-        Series.artists.through.objects.filter(artist=self).delete()
-        super(Artist, self).delete(using, keep_parents)
+    def __str__(self): return self.name
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=25, primary_key=True,
+                            help_text='The name of the category.'
+                                      ' Must be unique.')
+    description = models.CharField(max_length=250,
+                                   help_text='A description for'
+                                             ' the category.')
+
+    class Meta:
+        verbose_name_plural = 'categories'
 
     def __str__(self): return self.name
 
@@ -48,6 +54,7 @@ class Series(models.Model):
                             verbose_name='Custom URL',
                             help_text='A custom URL for the series. Must be '
                                       'unique and cannot be changed once set.')
+    categories = models.ManyToManyField(Category, blank=True)
     completed = models.BooleanField(default=False,
                                     help_text='Is the series completed?')
     modified = models.DateTimeField(auto_now=True)
@@ -57,15 +64,9 @@ class Series(models.Model):
         get_latest_by = 'modified'
 
     def save(self, *args, **kwargs):
-        self.validate_unique()
-        self.slug = self.slug or slugify(self.title)
+        self.slug = slugify(self.slug or self.title)
         self.cover = images.thumbnail(self.cover, 300)
         super(Series, self).save(*args, **kwargs)
-
-    def delete(self, using=None, keep_parents=False):
-        self.authors.clear()
-        self.artists.clear()
-        super(Series, self).delete(using, keep_parents)
 
     def __str__(self): return self.title
 
@@ -141,6 +142,6 @@ class Page(models.Model):
 
 __all__ = [
     'Author', 'AuthorAlias', 'Artist', 'ArtistAlias',
-    'Series', 'SeriesAlias', 'Chapter', 'Page'
+    'Series', 'SeriesAlias', 'Chapter', 'Page', 'Category'
 ]
 

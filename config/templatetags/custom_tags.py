@@ -1,6 +1,9 @@
 from django.template.defaultfilters import register, slice_filter
+from django.contrib.staticfiles.finders import find
 from django.utils.six import moves
 from os.path import splitext, basename
+from base64 import b64encode
+from hashlib import sha256
 from re import sub
 
 join = moves.urllib.parse.urljoin
@@ -54,4 +57,18 @@ def get_type(link):
             '.pic': 'image/pict',
             '.pict': 'image/pict'
         }.get(ext, 'image/jpeg')
+
+
+@register.simple_tag
+def sha256hash(sfile):
+    BUF_SIZE = 4096
+    hash = sha256()
+    with open(find(sfile), 'rb') as f:
+        while True:
+            data = f.read(BUF_SIZE)
+            if not data:
+                break
+            hash.update(data)
+    b64 = b64encode(hash.digest()).decode()
+    return 'sha256-%s' % b64
 

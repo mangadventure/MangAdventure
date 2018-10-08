@@ -1,6 +1,17 @@
 /* global Tablesort */
 
 (function() {
+  function getSearchParam(param) {
+    var tmp = [];
+    var items = location.search.substr(1).split('&');
+    for(var i = 0, l = items.length; i <l; ++i) {
+      tmp = items[i].split('=');
+      if(tmp[0] === param)
+        return decodeURIComponent(tmp[1]);
+    }
+    return ''
+  }
+
   function appendInfo(row, cln, title, text) {
     var sel = 'tr:nth-child(' + row + ') .result-title';
     var fa = document.createElement('i');
@@ -11,6 +22,10 @@
     div.appendChild(fa);
     div.innerHTML += text;
     document.querySelector(sel).appendChild(div);
+  }
+
+  function regFilter(arr, reg) {
+    return arr.filter(function(e) { return !reg.test(e) });
   }
 
   function matchQuery(query) {
@@ -52,11 +67,39 @@
     table.querySelector('th').removeAttribute('data-sort-default');
   }
 
+  var categ = document.getElementById('category-container');
+  categ.addEventListener('click', function(evt) {
+    var el = evt.target;
+    if(el.tagName === 'I') el = el.parentNode;
+    if(el.tagName !== 'SPAN') return;
+    var state = el.children[0];
+    var text = el.textContent.trim().toLowerCase();
+    var values = getSearchParam('categories').split(',')
+      .filter(function(e) { return (e !== '') });
+    var reg = new RegExp('-?' + text.replace(
+      /[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
+    switch(state.className) {
+      case 'far fa-circle fa-fw':
+        values = regFilter(values, reg).concat(text);
+        state.className = 'far fa-check-circle fa-fw';
+        break;
+      case 'far fa-check-circle fa-fw':
+        values = regFilter(values, reg).concat('-' + text);
+        state.className = 'far fa-times-circle fa-fw';
+        break;
+      case 'far fa-times-circle fa-fw':
+        values = regFilter(values, reg);
+        state.className = 'far fa-circle fa-fw';
+        break;
+    }
+    form.categories.value = values.join(',');
+  });
+
   var form = document.getElementById('search-form');
-  var elem = form.elements;
   form.addEventListener('submit', function(evt) {
     evt.preventDefault();
     evt.stopPropagation();
+    var elem = form.elements;
     var l = elem.length;
     for(var i = 0; i < l; ++i) {
       if(!elem[i].value)

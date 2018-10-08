@@ -45,6 +45,7 @@ admin.site.register(Series, SeriesAdmin)
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Chapter, ChapterAdmin)
+admin.site.register(Category)
 
 
 admin.site.unregister(Group)

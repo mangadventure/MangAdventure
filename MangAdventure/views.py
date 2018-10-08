@@ -47,10 +47,15 @@ def info(request): return render(request, 'info.html', {})
 
 def search(request):
     results = None
+    categories = request.GET.get('categories', '').split(',')
     params = {
         'query': request.GET.get('q', ''),
         'author': request.GET.get('author', ''),
         'status': request.GET.get('status', 'any'),
+        'categories': {
+            'include': [c for c in categories if len(c) and c[0] != '-'],
+            'exclude': [c[1:] for c in categories if len(c) and c[0] == '-'],
+        }
     }
     if any(p in ('q', 'author', 'status') for p in request.GET):
         results = Series.objects.filter(_query(params))
@@ -60,6 +65,9 @@ def search(request):
         'query': params['query'],
         'author': params['author'],
         'status': params['status'],
+        'in_categories': params['categories']['include'],
+        'ex_categories': params['categories']['exclude'],
+        'all_categories': Category.objects.all(),
         'results': results
     })
 

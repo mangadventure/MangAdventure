@@ -141,10 +141,17 @@
   }
 }
 
+@mixin transform($transform) {
+  $prefixes: '-ms-', '-moz-', '-webkit-', '';
+  @each $p in $prefixes {
+    #{$p}transform: $transform;
+  }
+}
+
 @mixin touch($selector: null) {
-  &:hover #{$selector},
-  &:active #{$selector},
-  &:focus #{$selector} {
+  &:hover#{$selector},
+  &:active#{$selector},
+  &:focus#{$selector} {
     @content;
   }
 }

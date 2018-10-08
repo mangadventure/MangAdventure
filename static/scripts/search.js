@@ -68,14 +68,14 @@
   }
 
   var categ = document.getElementById('category-container');
+  var values = getSearchParam('categories').split(',')
+    .filter(function(e) { return (e !== '') });
   categ.addEventListener('click', function(evt) {
     var el = evt.target;
     if(el.tagName === 'I') el = el.parentNode;
     if(el.tagName !== 'SPAN') return;
     var state = el.children[0];
     var text = el.textContent.trim().toLowerCase();
-    var values = getSearchParam('categories').split(',')
-      .filter(function(e) { return (e !== '') });
     var reg = new RegExp('-?' + text.replace(
       /[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
     switch(state.className) {

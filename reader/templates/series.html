@@ -9,89 +9,100 @@
     {% endinlinecompile %}
   </style>
 {% endblock %}
+{% block keywords %}
+  {% with tags=series.categories.all|join:',' %}
+    <meta name="keywords" content="{{ config.KEYWORDS }},{{ tags }}">
+  {% endwith %}
+{% endblock %}
 {% block image %}
   {% with url=PAGE_URL|urljoin:MEDIA_URL %}
     <meta name="twitter:image" content="{{ url|add:series.cover.name }}">
     <meta property="og:image" content="{{ url|add:series.cover.name }}">
+    <meta name="twitter:image:alt" content="Series Cover">
+    <meta property="og:image:alt" content="Series Cover">
   {% endwith %}
 {% endblock %}
 {% block description %}
   <meta name="twitter:description" content="{{ series.description }}">
   <meta property="og:description" content="{{ series.description }}">
+  <meta name="description" content="{{ series.description }}">
 {% endblock %}
 {% block title %}
   <meta name="title" content="{{ series.title }}">
   <meta name="twitter:title" content="{{ series.title }} ~ {{ config.NAME }}">
   <meta property="og:title" content="{{ series.title }} ~ {{ config.NAME }}">
-  <title>{{ series.title }} :: {{ config.NAME }}</title>
+  <title>{{ series.title }} &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
   <h1 id="series-title" class="text-shadow alter-bg">{{ series.title }}</h1>
   <article id="series">
     <img src="{{ MEDIA_URL|urljoin:series.cover.name }}"
-         alt="Cover" class="cover"/>
+         alt="Cover" class="cover">
     <div id="series-info">
-      {% if series.aliases.all %}
-        <div id="series-aliases">
-          <strong class="alter-fg colon">
-            {% if series.aliases.count > 1 %}
-              Alt. titles
-            {% else %}
-              Alt. title
-            {% endif %}
-          </strong>
-          {% for alias in series.aliases.all %}
-            {% if forloop.first and forloop.last %}
-              <span class="alias">{{ alias }}</span>
-            {% else %}
-              <div class="alias">{{ alias }}</div>
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
+      {% with aliases=series.aliases.all %}
+        {% if aliases %}
+          <div id="series-aliases">
+            <strong class="alter-fg colon">
+              {% if aliases|length > 1 %}
+                Alt. titles</strong>
+              {% else %}
+                Alt. title</strong>
+              {% endif %}
+            {% for alias in aliases %}
+              {% if forloop.first and forloop.last %}
+                <span class="alias">{{ alias }}</span>
+              {% else %}
+                <div class="alias">{{ alias }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
     <div id="series-authors">
-      {% if series.authors.all %}
-        <div id="series-authors">
-          <strong class="alter-fg colon">
-            {% if series.authors.count > 1 %}
-              Authors
-            {% else %}
-              Author
-            {% endif %}
-          </strong>
-          {% for author in series.authors.all %}
-            {% if forloop.first and forloop.last %}
-              <span class="author">{{ author }}</span>
-            {% else %}
-              <div class="author">{{ author }}</div>
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% else %}
-        <span class="author">N/A</span>
-      {% endif %}
+      {% with authors=series.authors.all  %}
+        {% if authors %}
+          <div id="series-authors">
+            <strong class="alter-fg colon">
+              {% if authors|length > 1 %}
+                Authors</strong>
+              {% else %}
+                Author</strong>
+              {% endif %}
+            {% for author in authors %}
+              {% if forloop.first and forloop.last %}
+                <span class="author">{{ author }}</span>
+              {% else %}
+                <div class="author">{{ author }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <span class="author">N/A</span>
+        {% endif %}
+      {% endwith %}
     </div>
     <div id="series-artists">
-      {% if series.artists.all %}
-        <div id="series-artists">
-          <strong class="alter-fg colon">
-            {% if series.artists.count > 1 %}
-              Artists
-            {% else %}
-              Artist
-            {% endif %}
-          </strong>
-          {% for artist in series.artists.all %}
-            {% if forloop.first and forloop.last %}
-              <span class="artist">{{ artist }}</span>
-            {% else %}
-              <div class="artist">{{ artist }}</div>
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% else %}
-        <span class="artist">N/A</span>
-      {% endif %}
+      {% with artists=series.artists.all  %}
+        {% if artists %}
+          <div id="series-artists">
+            <strong class="alter-fg colon">
+              {% if artists|length > 1 %}
+                Artists</strong>
+              {% else %}
+                Artist</strong>
+              {% endif %}
+            {% for artist in artists %}
+              {% if forloop.first and forloop.last %}
+                <span class="artist">{{ artist }}</span>
+              {% else %}
+                <div class="artist">{{ artist }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <span class="artist">N/A</span>
+        {% endif %}
+      {% endwith %}
     </div>
       <div id="series-status">
         <strong class="alter-fg colon">Status</strong>
@@ -116,18 +127,18 @@
                 Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ chapter.title }}
               </a>
               <div class="chapter-metadata">
-                <span class="divider"
-                      title="{{ chapter.groups.all|join:', ' }}">
-                </span>
-                <span class="chapter-groups"
-                      title="{{ chapter.groups.all|join:', ' }}">
-                  {% for group in chapter.groups.all %}
-                    <a href="/groups/{{ group.id }}"
-                       title="{{ group.name }}"
-                       {% if not forloop.last %}class="comma"{% endif %}>
-                      {{ group.name }}</a>
-                  {% endfor %}
-                </span>
+                {% with groups=chapter.groups.all %}
+                  <span class="divider" title="{{ groups|join:', ' }}">
+                  </span>
+                  <span class="chapter-groups" title="{{ groups|join:', ' }}">
+                    {% for group in groups %}
+                      <a href="/groups/{{ group.id }}"
+                         title="{{ group.name }}"
+                         {% if not forloop.last %}class="comma"{% endif %}>
+                        {{ group.name }}</a>
+                    {% endfor %}
+                  </span>
+                {% endwith %}
                 <span class="divider"
                       title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
                 </span>
@@ -142,5 +153,23 @@
       {% endwith %}
     </div>
   </article>
+{% endblock %}
+{% block breadcrumbs %}
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL|urljoin:'/reader/' }}">
+      <span itemprop="name">Reader</span>
+    </a>
+    <meta itemprop="position" content="2">
+  </li>
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL }}">
+      <span itemprop="name">Series</span>
+    </a>
+    <meta itemprop="position" content="3">
+  </li>
 {% endblock %}
 

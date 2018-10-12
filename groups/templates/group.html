@@ -4,12 +4,15 @@
 {% block description %}
   <meta name="twitter:description" content="{{ group.description }}">
   <meta property="og:description" content="{{ group.description }}">
+  <meta name="description" content="{{ group.description }}">
 {% endblock %}
 {% block image %}
   {% if group.logo %}
     {% with logo=PAGE_URL|urljoin:group.logo.url %}
       <meta name="twitter:image" content="{{ logo }}">
       <meta property="og:image" content="{{ logo }}">
+      <meta name="twitter:image:alt" content="Group Logo">
+      <meta property="og:image:alt" content="Group Logo">
     {% endwith %}
   {% else %}
     <meta name="twitter:image" content="">
@@ -25,7 +28,7 @@
   <meta name="title" content="{{ group }}">
   <meta name="twitter:title" content="{{ group }} - {{ config.NAME }}">
   <meta property="og:title" content="{{ group }} - {{ config.NAME }}">
-  <title>{{ group }} :: {{ config.NAME }}</title>
+  <title>{{ group }} &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
   <h1>{{ group.name }}</h1>
@@ -78,7 +81,9 @@
         <div>{{ group.description }}</div>
       </section>
     {% elif not members %}
-      <style>img{border-bottom-left-radius:5px}</style>
+      <style type="text/css">
+        img { border-bottom-left-radius: 5px }
+      </style>
     {% endif %}
     {% if members %}
       <section id="group-members">
@@ -105,20 +110,40 @@
             </div>
             <div class="member-roles">
               <strong class="colon">Roles</strong>
-              {% if member.roles.all %}
-                {% for role in member.roles.all %}
-                  {% if role.group == group %}
-                    <span class="comma">{{ role.get_role_display }}</span>
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-                <span>N/A</span>
-              {% endif %}
+              {% with member_roles=member.roles.all  %}
+                {% if member_roles %}
+                  {% for role in member_roles %}
+                    {% if role.group == group %}
+                      <span class="comma">{{ role.get_role_display }}</span>
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  <span>N/A</span>
+                {% endif %}
+              {% endwith %}
             </div>
           </div>
         {% endfor %}
       </section>
     {% endif %}
   </article>
+{% endblock %}
+{% block breadcrumbs %}
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL|urljoin:'/groups/' }}">
+      <span itemprop="name">Groups</span>
+    </a>
+    <meta itemprop="position" content="2">
+  </li>
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL }}">
+      <span itemprop="name">Group Page</span>
+    </a>
+    <meta itemprop="position" content="3">
+  </li>
 {% endblock %}
 

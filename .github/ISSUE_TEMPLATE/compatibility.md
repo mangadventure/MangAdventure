@@ -1,7 +1,6 @@
 ---
 name: 🔧 Compatibility
 about: Is there a compatibility issue?
-
 ---
 
 <!-- Only submit a compatibility issue if the compatibility of -->
@@ -24,3 +23,4 @@ about: Is there a compatibility issue?
 * Operating system and version:
 * Python version: <!-- For Python (in)compatibility reports. -->
 * Browser type and version: <!-- For browser (in)compatibility reports. -->
+

@@ -1,7 +1,7 @@
 All series
 ----------
 
-.. py:data:: GET /api/series
+.. py:data:: GET /api/v1/series
 
 Retrieve the info of every series.
 
@@ -10,7 +10,7 @@ Example request
 
 .. sourcecode:: shell
 
-   curl -i http://example.com/api/series \
+   curl -i http://example.com/api/v1/series \
         -H 'If-Modified-Since: Fri, 24 Aug 2018 12:48:01 GMT'
 
 .. include:: ../includes/headers-modified.rst
@@ -46,6 +46,12 @@ Example response
        "artists": [
          ["Jane Doe"]
        ],
+       "categories": [
+         {
+           "name": "Drama",
+           "description": "Drama"
+         }
+       ],
        "cover": "http://example.com/media/series/some-manga/cover.jpg",
        "completed": false,
        "volumes": {
@@ -53,12 +59,13 @@ Example response
            "0": {
              "title": "Prologue",
              "url": "http://example.com/reader/some-manga/1/0/",
-             "pages": [
+             "pages_list": [
                "001.jpg",
                "002.jpg",
                "003.jpg",
                "004.jpg"
              ],
+             "pages_root": "http://example.com/media/series/some-manga/1/0/",
              "date": "Sun, 26 Aug 2018 16:14:52 GMT",
              "final": false
            }

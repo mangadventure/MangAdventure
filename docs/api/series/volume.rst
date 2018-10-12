@@ -1,7 +1,7 @@
 Volume
 ------
 
-.. py:data:: GET /api/series/:slug/:volume
+.. py:data:: GET /api/v1/series/:slug/:volume
 
 Retrieve all chapters of a volume.
 
@@ -16,7 +16,7 @@ Example request
 
 .. sourcecode:: shell
 
-   curl -i http://example.com/api/series/some-manga/1 \
+   curl -i http://example.com/api/v1/series/some-manga/1 \
         -H 'If-Modified-Since: Fri, 24 Aug 2018 12:48:01 GMT'
 
 .. include:: ../includes/headers-modified.rst
@@ -40,12 +40,13 @@ Example response
      "0": {
        "title": "Prologue",
        "url": "http://example.com/reader/some-manga/1/0/",
-       "pages": [
+       "pages_list": [
          "001.jpg",
          "002.jpg",
          "003.jpg",
          "004.jpg"
        ],
+       "pages_root": "http://example.com/media/some-manga/1/0/",
        "date": "Sun, 26 Aug 2018 16:14:52 GMT",
        "final": false
      }

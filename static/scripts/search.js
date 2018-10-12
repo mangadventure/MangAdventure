@@ -32,7 +32,7 @@
     if(query.matches) {
       var hidden = document.querySelectorAll('td.s-hidden');
       for(var i = 0, l = hidden.length; i < l; ++i) {
-        var n = Math.floor(i / 4) + 1;
+        var n = Math.floor(i / 5) + 1;
         var elem = hidden[i];
         switch(elem.className) {
           case 'result-people s-hidden':
@@ -40,6 +40,9 @@
             break;
           case 'result-desc s-hidden':
             appendInfo(n, 'info-circle', 'Description', elem.innerHTML);
+            break;
+          case 'result-categories s-hidden':
+            appendInfo(n, 'tag', 'Categories', elem.innerHTML);
             break;
           case 'result-chapters s-hidden':
             appendInfo(n, 'file-alt', 'Chapters', elem.innerHTML);
@@ -71,9 +74,10 @@
   var values = getSearchParam('categories').split(',')
     .filter(function(e) { return (e !== '') });
   categ.addEventListener('click', function(evt) {
-    var el = evt.target;
-    if(el.tagName === 'I') el = el.parentNode;
-    if(el.tagName !== 'SPAN') return;
+    var el = evt.target || evt.srcElement;
+    if(el.tagName === 'I' || el.nodeType === 3)
+      el = el.parentNode;
+    if(el.className !== 'tooltip category') return;
     var state = el.children[0];
     var text = el.textContent.trim().toLowerCase();
     var reg = new RegExp('-?' + text.replace(

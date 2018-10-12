@@ -2,22 +2,34 @@
 {% load custom_tags %}
 {% load static %}
 {% load inlinecompile from compile_static %}
+{% block robots %}
+  <meta name="googlebot" content="nosnippet">
+  <meta name="robots" content="nosnippet">
+{% endblock %}
+{% block keywords %}
+  {% with tags=curr_chapter.series.categories.all|join:',' %}
+    <meta name="keywords" content="{{ config.KEYWORDS }},{{ tags }}">
+  {% endwith %}
+{% endblock %}
 {% block image %}
   {% with url=PAGE_URL|urljoin:MEDIA_URL %}
     {% with cover=curr_chapter.series.cover.name %}
       <meta name="twitter:image" content="{{ url|add:cover }}">
       <meta property="og:image" content="{{ url|add:cover }}">
+      <meta name="twitter:image:alt" content="Series Cover">
+      <meta property="og:image:alt" content="Series Cover">
     {% endwith %}
   {% endwith %}
 {% endblock %}
 {% block description %}
   {% with vol=curr_chapter.volume|stringformat:'s' %}
     {% with num=curr_chapter.number|stringformat:'g' %}
-      {% with desc='Volume '|add:vol|add:', Chapter '|add:num %}
-        <meta name="twitter:description"
-              content="{{ desc|add:' - '|add:curr_chapter.title }}">
-        <meta property="og:description"
-              content="{{ desc|add:' - '|add:curr_chapter.title }}">
+      {% with tmp='Volume '|add:vol|add:', Chapter '|add:num %}
+        {% with desc=tmp|add:' - '|add:curr_chapter.title  %}
+          <meta name="twitter:description" content="{{ desc }}">
+          <meta property="og:description" content="{{ desc }}">
+          <meta name="description" content="{{ desc }}">
+        {% endwith %}
       {% endwith %}
     {% endwith %}
   {% endwith %}
@@ -35,9 +47,14 @@
     <meta name="twitter:title" content="{{ title }}">
     <meta property="og:title" content="{{ title }}">
   {% endwith %}
-  <title>{{ curr_chapter.title }} :: {{ config.NAME }}</title>
+  <title>{{ curr_chapter.title }} &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
+  {% with vol=curr_chapter.volume num=curr_chapter.number %}
+    <h1 class="no-display">
+      {{ curr_chapter.series }}, V{{ vol }} / C{{ num|floatformat }}
+    </h1>
+  {% endwith %}
   <div id="chapter">
     <section id="dropdowns" class="no-display">
       <div class="dropdown chapter-list main-bg" aria-haspopup="true">
@@ -92,7 +109,7 @@
         </ul>
       </div>
     </section>
-    {% with series_url='/reader/'|add:curr_chapter.series.slug|add:'/' %}
+    {% with series_url='/reader/'|add:curr_chapter.series_id|add:'/' %}
       <section id="placeholder" data-num="{{ curr_page.number }}"
                data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
                {% if curr_page.number == all_pages.count %}
@@ -114,6 +131,10 @@
     <script src="{% static 'scripts/chapter.js' %}"
             integrity="{% sha256hash 'scripts/chapter.js' %}"
             crossorigin="anonymous" type="text/javascript"></script>
+    <noscript>
+      <img src="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
+           alt="Page {{ curr_page.number }}" class="chapter-page">
+    </noscript>
     <section id="controls" class="no-display">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
         <div id="controls-top">
@@ -121,7 +142,7 @@
             {% if prev_chapter %}
               <a href="{{ prev_chapter.url }}" title="Previous chapter">
             {% else %}
-              <a href="/reader/{{ curr_chapter.series.slug }}/"
+              <a href="/reader/{{ curr_chapter.series_id }}/"
                  title="No previous chapters">
             {% endif %}
           {% else %}
@@ -129,31 +150,31 @@
           {% endif %}
             <i class="fa fa-4x fa-caret-left fa-fw"></i>
           </a>
-          {% with curr=curr_page.number|stringformat:'02d' %}
+          {% with curr=curr_page.number|stringformat:'02d' max=all_pages|length %}
             <span class="curr-page">
               Page <input type="text" data-max="{{ curr_chapter.pages.count }}"
                           value="{{ curr }}" placeholder="{{ curr }}">
-              /{{ all_pages.count|stringformat:'02d' }}
+              /{{ max|stringformat:'02d' }}
             </span>
-          {% endwith %}
-          {% if next > all_pages.count %}
-            {% if next_chapter %}
-              <a href="{{ next_chapter.url }}" title="Next chapter">
+            {% if next > max %}
+              {% if next_chapter %}
+                <a href="{{ next_chapter.url }}" title="Next chapter">
+              {% else %}
+                <a href="/reader/{{ curr_chapter.series_id }}/"
+                   title="No more chapters">
+              {% endif %}
             {% else %}
-              <a href="/reader/{{ curr_chapter.series.slug }}/"
-                 title="No more chapters">
+              <a href="../{{ next }}/" title="Next page">
             {% endif %}
-          {% else %}
-            <a href="../{{ next }}/" title="Next page">
-          {% endif %}
-            <i class="fa fa-4x fa-caret-right fa-fw"></i>
-          </a>
+              <i class="fa fa-4x fa-caret-right fa-fw"></i>
+            </a>
+          {% endwith %}
         </div>
         <div id="controls-bottom">
           <a href="../{{ all_pages.first.number }}/" title="First page">
             <i class="fa fa-2x fa-step-backward fa-fw"></i>
           </a>
-          <a href="/reader/{{ curr_chapter.series.slug }}/"
+          <a href="/reader/{{ curr_chapter.series_id }}/"
              title="{{ curr_chapter.series }}">
             <i class="fa fa-2x fa-step-forward fa-rotate-90 fa-fw"
                {% if all_pages.count > 99 %}data-pcount="100+"
@@ -176,3 +197,32 @@
     {% endfor %}
   </div>
 {% endblock %}
+{% block breadcrumbs %}
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL|urljoin:'/reader/' }}">
+      <span itemprop="name">Reader</span>
+    </a>
+    <meta itemprop="position" content="2">
+  </li>
+  {% with series_url='/reader/'|add:curr_chapter.series_id|add:'/' %}
+    <li itemprop="itemListElement" itemscope
+        itemtype="https://schema.org/ListItem">
+      <a itemtype="https://schema.org/Thing"
+         itemprop="item" href="{{ PAGE_URL|urljoin:series_url }}">
+        <span itemprop="name">Series</span>
+      </a>
+      <meta itemprop="position" content="3">
+    </li>
+  {% endwith %}
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL }}">
+      <span itemprop="name">Chapter</span>
+    </a>
+    <meta itemprop="position" content="4">
+  </li>
+{% endblock %}
+

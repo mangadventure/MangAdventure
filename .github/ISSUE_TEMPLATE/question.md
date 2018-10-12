@@ -1,7 +1,6 @@
 ---
 name: ❓ Question
 about: Do you have a question regarding this project?
-
 ---
 
 <!-- Please read the documentation at -->
@@ -9,7 +8,7 @@ about: Do you have a question regarding this project?
 <!-- before submitting your question. -->
 
 # Question
-<!-- Provide your question here. -->
+<!-- Ask your question here. -->
 
 ## Your Environment
 <!-- Include as many relevant details about your environment as possible. -->
@@ -18,3 +17,4 @@ about: Do you have a question regarding this project?
 * Python version:
 * Web server and version:
 * Browser type and version:
+

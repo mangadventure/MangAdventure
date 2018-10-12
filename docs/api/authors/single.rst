@@ -1,7 +1,7 @@
 Single author
 -------------
 
-.. py:data:: GET /api/authors/:id
+.. py:data:: GET /api/v1/authors/:id
 
 Retrieve the info of a certain author.
 
@@ -15,7 +15,7 @@ Example request
 
 .. sourcecode:: shell
 
-   curl -i http://example.com/api/authors/1 \
+   curl -i http://example.com/api/v1/authors/1 \
         -H 'If-None-Match: cf62b5e432293fc2b7cf32d5f100d415'
 
 .. include:: ../includes/headers-etag.rst

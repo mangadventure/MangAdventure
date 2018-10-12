@@ -1,7 +1,9 @@
+from django.db.models.functions import Lower
 from django.db.models.query import Q
 from django.shortcuts import render
+from django.conf import settings
+from api.response import JsonError
 from constance import config
-from api.views import json_error
 from reader.models import *
 
 
@@ -15,30 +17,34 @@ def _query(params):
         query = Q(title__icontains=params['query'])
         aliases = SeriesAlias.objects.filter(
             alias__icontains=params['query'])
-        if aliases.count() > 0:
+        if len(aliases):
             query |= Q(aliases__in=aliases)
     if params['author']:
         q = (Q(authors__name__icontains=params['author']) |
              Q(artists__name__icontains=params['author']))
         authors = AuthorAlias.objects.filter(
             alias__icontains=params['author'])
-        if authors.count() > 0:
+        if len(authors):
             q |= Q(authors__in=authors)
         artists = ArtistAlias.objects.filter(
             alias__icontains=params['author'])
-        if artists.count() > 0:
+        if len(artists):
             q |= Q(artists__in=artists)
         query &= q
     if params['status'] != 'any':
         query &= Q(completed=(params['status'] == 'completed'))
+    categories = params['categories']
+    if categories['include']:
+        query &= Q(c_lower__in=categories['include'])
+    if categories['exclude']:
+        query &= ~Q(c_lower__in=categories['exclude'])
     return query
 
 
 def index(request):
-    maximum = config.MAX_RELEASES
-    releases = Chapter.objects.all().order_by('-uploaded')[:maximum:1]
     return render(request, 'index.html', {
-        'latest_releases': releases
+        'latest_releases': Chapter.objects.prefetch_related(
+            'groups', 'series').order_by('-uploaded')[:config.MAX_RELEASES:1]
     })
 
 
@@ -58,8 +64,14 @@ def search(request):
         }
     }
     if any(p in ('q', 'author', 'status') for p in request.GET):
-        results = Series.objects.filter(_query(params))
-        if results.count() == 1 and not results.first().chapters.all():
+        prefetch = ('chapters', 'authors', 'artists', 'categories')
+        if len(categories):
+            results = Series.objects.prefetch_related(*prefetch).annotate(
+                c_lower=Lower('categories')).filter(_query(params))
+        else:
+            results = Series.objects.prefetch_related(
+                *prefetch).filter(_query(params))
+        if len(results) == 1 and not results.first().chapters.all():
             results = None
     return render(request, 'search.html', {
         'query': params['query'],
@@ -68,8 +80,18 @@ def search(request):
         'in_categories': params['categories']['include'],
         'ex_categories': params['categories']['exclude'],
         'all_categories': Category.objects.all(),
-        'results': results
+        'results': results, 'total': len(results or '')
     })
+
+
+def opensearch(request):
+    host = request.get_host()
+    icon = request.build_absolute_uri(
+        settings.MEDIA_URL + config.FAVICON)
+    return render(request, 'opensearch.xml', context={
+        'host': host, 'name': config.NAME, 'icon': icon,
+        'url': '%s://%s' % (request.scheme, host)
+    }, content_type='application/opesearchdescription+xml')
 
 
 def handler400(request, exception=None, template_name='error.html'):
@@ -88,7 +110,7 @@ def handler403(request, exception=None, template_name='error.html'):
 
 def handler404(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
-        return json_error('Invalid API endpoint', 501)
+        return JsonError('Invalid API endpoint', 501)
     context = _error_context("Sorry. This page doesn't exist.", 404)
     return render(request, template_name=template_name,
                   context=context, status=404)
@@ -96,9 +118,18 @@ def handler404(request, exception=None, template_name='error.html'):
 
 def handler500(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
-        return json_error('Internal server error', 500)
+        return JsonError('Internal server error', 500)
     context = _error_context('Whoops! Something went wrong.'
                              ' &macr;&#8726;_(&#12484;)_/&macr;')  # Shrug
     return render(request, template_name=template_name,
                   context=context, status=500)
+
+
+def handler503(request, exception=None, template_name='error.html'):
+    if request.path.startswith('/api'):
+        return JsonError('Service unavailable', 503)
+    context = _error_context('The server is currently under maintenance.'
+                             ' Please try again later.', 503)
+    return render(request, template_name=template_name,
+                  context=context, status=503)
 

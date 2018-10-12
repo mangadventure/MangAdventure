@@ -3,6 +3,7 @@
 {% load static %}
 {% load inlinecompile from compile_static %}
 {% block head_extras %}
+  <meta name="totalResults" content="{{ total }}">
   <style type="text/css">
     {% inlinecompile 'scss' %}
       {% include 'scss/search.django.scss' %}
@@ -22,10 +23,10 @@
           crossorigin="anonymous" type="text/javascript" async></script>
 {% endblock %}
 {% block title %}
-  <meta name="title" content="Search">
+  <meta name="title" content="Search {{ config.NAME }}">
   <meta name="twitter:title" content="Search - {{ config.NAME }}">
   <meta property="og:title" content="Search - {{ config.NAME }}">
-  <title>Search :: {{ config.NAME }}</title>
+  <title>Search &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
   <h1 class="text-shadow alter-bg">Search</h1>
@@ -36,7 +37,7 @@
         <div id="search-title">
           <label for="query" class="colon">Series Title</label>
           <input name="q" value="{{ query }}"
-                id="query" type="text"/>
+                 id="query" type="text"/>
         </div>
         <div id="search-author">
           <label for="author" class="colon">Author/Artist</label>
@@ -46,13 +47,13 @@
         <div id="search-status">
           <span class="colon">Series Status</span>
           <input {% if status == 'any' %}checked="checked"{% endif %}
-                 name="status" id="status-any" value="any" type="radio"/>
+            name="status" id="status-any" value="any" type="radio"/>
           <label for="status-any">Any</label>
           <input {% if status == 'completed' %}checked="checked"{% endif %}
-                 name="status" id="status-completed" value="completed" type="radio"/>
+            name="status" id="status-completed" value="completed" type="radio"/>
           <label for="status-completed">Completed</label>
           <input {% if status == 'ongoing' %}checked="checked"{% endif %}
-                 name="status" id="status-ongoing" value="ongoing" type="radio"/>
+            name="status" id="status-ongoing" value="ongoing" type="radio"/>
           <label for="status-ongoing">Ongoing</label>
         </div>
         <div id="search-categories">
@@ -63,14 +64,14 @@
           </div>
           <div id="category-container">
             {% for category in all_categories %}
-              <span class="tooltip category" data-value=""
-                   data-tooltip="{{ category.description }}">
+              <span class="tooltip category"
+                    data-tooltip="{{ category.description }}">
                 {% if category|lower in in_categories %}
-                  <i class="far fa-check-circle fa-fw"></i> {{ category.name }}
+                  <i class="far fa-check-circle fa-fw"></i> {{ category }}
                 {% elif category|lower in ex_categories %}
-                  <i class="far fa-times-circle fa-fw"></i> {{ category.name }}
+                  <i class="far fa-times-circle fa-fw"></i> {{ category }}
                 {% else %}
-                  <i class="far fa-circle fa-fw"></i> {{ category.name }}
+                  <i class="far fa-circle fa-fw"></i> {{ category }}
                 {% endif %}
               </span>
             {% endfor %}
@@ -84,66 +85,86 @@
       </form>
     </section>
     <section id="search-results">
-    {% if results %}
-      <table id="result-table">
-        <thead>
-          <tr>
-            <th data-sort-default>Series<i class="fas"></i></th>
-            <th class="s-hidden">Author / Artist<i class="fas"></i></th>
-            <th class="s-hidden">Description<i class="fas"></i></th>
-            <th class="s-hidden">Chapters<i class="fas"></i></th>
-            <th class="s-hidden">Last Update<i class="fas"></i></th>
-          </tr>
-        </thead>
-        {% for series in results|order_by:'title' %}
-          {% if series.chapters.all %}
-            <tr class="result">
-              <td class="result-title">
-                {% if series.completed %}
-                  <i class="fa fa-fw fa-book" title="Completed"></i>
-                {% else %}
-                  <i class="fa fa-fw fa-book-open" title="Ongoing"></i>
-                {% endif %}
-                <a href="/reader/{{ series.slug }}"
-                   title="{{ series.title }}">
-                  {{ series.title }}
-                </a>
-              </td>
-              <td class="result-people s-hidden">
-                <span class="result-authors">
-                  {% if series.authors.all %}
-                    {{ series.authors.all|join:' & ' }}
-                  {% else %}
-                    N/A
-                  {% endif %}
-                </span>
-                <span class="result-artists">
-                  {% if series.artists.all %}
-                    {{ series.artists.all|join:' & ' }}
-                  {% else %}
-                    N/A
-                  {% endif %}
-                </span>
-              </td>
-              <td class="result-desc s-hidden">
-                {{ series.description|default:'N/A' }}
-              </td>
-              <td class="result-chapters s-hidden" data-sort-method="number">
-                {{ series.chapters.count }}
-              </td>
-              <td class="result-date s-hidden" data-sort-method="date">
-                {% if series.chapters.all %}
-                  {{ series.chapters.latest.uploaded|date:'N d, Y - H:i' }}
-                {% else %}
-                  N/A
-                {% endif %}
-              </td>
+      {% if results %}
+        <table id="result-table">
+          <thead>
+            <tr>
+              <th data-sort-default>Series<i class="fas"></i></th>
+              <th class="s-hidden">Author / Artist<i class="fas"></i></th>
+              <th class="s-hidden">Description<i class="fas"></i></th>
+              <th class="s-hidden">Categories<i class="fas"></i></th>
+              <th class="s-hidden">Chapters<i class="fas"></i></th>
+              <th class="s-hidden">Last Update<i class="fas"></i></th>
             </tr>
-          {% endif %}
-        {% endfor %}
-      </table>
-    {% endif %}
+          </thead>
+          {% for series in results|order_by:'title' %}
+            {% if series.chapters.all %}
+              <tr class="result">
+                <td class="result-title">
+                  {% if series.completed %}
+                    <i class="fa fa-fw fa-book" title="Completed"></i>
+                  {% else %}
+                    <i class="fa fa-fw fa-book-open" title="Ongoing"></i>
+                  {% endif %}
+                  <a href="/reader/{{ series.slug }}"
+                     title="{{ series.title }}">
+                    {{ series.title }}
+                  </a>
+                </td>
+                <td class="result-people s-hidden">
+                  <span class="result-authors">
+                    {% with authors=series.authors.all %}
+                      {% if authors %}
+                        {{ authors|join:' & ' }}
+                      {% else %}
+                        N/A
+                      {% endif %}
+                    {% endwith %}
+                  </span>
+                  <span class="result-artists">
+                    {% with artists=series.artists.all  %}
+                      {% if artists %}
+                        {{ artists|join:' & ' }}
+                      {% else %}
+                        N/A
+                      {% endif %}
+                    {% endwith %}
+                  </span>
+                </td>
+                <td class="result-desc s-hidden">
+                  {{ series.description|default:'N/A' }}
+                </td>
+                <td class="result-categories s-hidden">
+                  {{ series.categories.all|join:', '|default:'N/A' }}
+                </td>
+                <td class="result-chapters s-hidden" data-sort-method="number">
+                  {{ series.chapters|length }}
+                </td>
+                <td class="result-date s-hidden" data-sort-method="date">
+                  {% with chapters=series.chapters.all %}
+                    {% if chapters %}
+                      {{ chapters.latest.uploaded|date:'N d, Y - H:i' }}
+                    {% else %}
+                      N/A
+                    {% endif %}
+                  {% endwith %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </table>
+      {% endif %}
     </section>
   </article>
+{% endblock %}
+{% block breadcrumbs %}
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL }}">
+      <span itemprop="name">Search</span>
+    </a>
+    <meta itemprop="position" content="2">
+  </li>
 {% endblock %}
 

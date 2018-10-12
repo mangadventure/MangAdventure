@@ -1,7 +1,7 @@
 All artists
 -----------
 
-.. py:data:: GET /api/artists
+.. py:data:: GET /api/v1/artists
 
 Retrieve the info of each artist.
 
@@ -10,7 +10,7 @@ Example request
 
 .. sourcecode:: shell
 
-   curl -i http://example.com/api/artists \
+   curl -i http://example.com/api/v1/artists \
         -H 'If-None-Match: cb51bd8357e0c7fba317ee1331d765c4'
 
 .. include:: ../includes/headers-etag.rst

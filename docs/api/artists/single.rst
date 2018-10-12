@@ -1,7 +1,7 @@
 Single artist
 -------------
 
-.. py:data:: GET /api/artists/:id
+.. py:data:: GET /api/v1/artists/:id
 
 Retrieve the info of a certain artist.
 
@@ -15,7 +15,7 @@ Example request
 
 .. sourcecode:: shell
 
-   curl -i http://example.com/api/artists/1 \
+   curl -i http://example.com/api/v1/artists/1 \
         -H 'If-None-Match: 7cd7ac5d353b1ee4833b6b1e1cf17705'
 
 .. include:: ../includes/headers-etag.rst

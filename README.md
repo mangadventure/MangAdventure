@@ -7,6 +7,7 @@ It is fully written in Django, SCSS and Vanilla JS. No PHP, no Bootstrap, no jQu
 ## Features
 
 * Open source.
+* Includes JSON API.
 * Simple and configurable.
 * Upload chapters as zip files.
 * Search for series.
@@ -25,11 +26,11 @@ you can write some SCSS (or regular CSS) in the
 
 ## Development
 
-To debug the server set the environment variable ``MANGADV_DEBUG``
-to ``true``. **Don't do this in production.**
+To debug the server set the environment variable `MANGADV_DEBUG`
+to `true`. **Don't do this in production.**
 
 You shouldn't use the production server during development.
-You can use Django's ``runserver`` command to run a development
+You can use Django's `runserver` command to run a development
 server on `127.0.0.1:8000` (or any other address you specify).
 
 ## Credits
@@ -42,4 +43,5 @@ server on `127.0.0.1:8000` (or any other address you specify).
 ## License
 
 [MIT](LICENSE)
+
 

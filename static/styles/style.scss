@@ -409,6 +409,7 @@ thead {
   #links {
     .link {
       display: block;
+      color: inherit;
       margin: 0.25em 0 0.25em 0.5em;
       span { display: inline-block }
     }
@@ -520,6 +521,8 @@ thead {
 
 #searchlink { display: none }
 
+#breadcrumbs { display: none }
+
 i[data-pcount='100+'] { padding: 0 0.5em }
 
 @include viewport(1024px) {
@@ -554,7 +557,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
   #search {
     table {
       margin: auto;
-      border-right: none;
+      border-right-style: none;
     }
     .result-info:nth-last-child(-n+2) {
       display: inline-block;

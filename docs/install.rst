@@ -1,5 +1,13 @@
-Dependencies
+Installation
 ------------
+
+.. warning::
+
+   This project is still in an experimental state and may be unstable.
+   Proceed at your own risk.
+
+Dependencies
+^^^^^^^^^^^^
 
 * `Python <https://www.python.org/downloads/>`_
 * `Django <https://www.djangoproject.com/download/>`_
@@ -9,14 +17,6 @@ Dependencies
 * `Django Static Precompiler <https://django-static-precompiler.readthedocs.io/en/stable/installation.html>`_
 * `LibSass <https://sass.github.io/libsass-python/#install>`_
 * `Pillow <https://pillow.readthedocs.io/en/latest/installation.html#basic-installation>`_
-
-Installing
-----------
-
-.. warning::
-
-   This project is still in an experimental state and may be unstable.
-   Proceed at your own risk.
 
 First, install the dependencies. If you already have Python & `pip <https://pip.pypa.io/en/stable/installing/>`_\ , you can install all the required Python modules with:
 

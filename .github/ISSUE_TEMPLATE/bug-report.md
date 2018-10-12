@@ -1,7 +1,6 @@
 ---
 name: 🐛 Bug Report
 about: Did something not work as expected?
-
 ---
 
 ## Description
@@ -29,3 +28,4 @@ about: Did something not work as expected?
 * Web server and version:
 * Browser type and version:
 * Link to your website: <!-- If applicable. -->
+

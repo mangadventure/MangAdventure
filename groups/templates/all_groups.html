@@ -4,7 +4,7 @@
   <meta name="title" content="Groups">
   <meta name="twitter:title" content="Groups - {{ config.NAME }}">
   <meta property="og:title" content="Groups - {{ config.NAME }}">
-  <title>Groups :: {{ config.NAME }}</title>
+  <title>Groups &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
   <h1>Groups</h1>
@@ -25,5 +25,15 @@
       </section>
     {% endfor %}
   </article>
+{% endblock %}
+{% block breadcrumbs %}
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL }}">
+      <span itemprop="name">Groups</span>
+    </a>
+    <meta itemprop="position" content="2">
+  </li>
 {% endblock %}
 

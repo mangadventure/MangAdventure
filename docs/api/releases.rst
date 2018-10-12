@@ -1,7 +1,7 @@
 Releases
 ========
 
-.. py:data:: GET /api/releases
+.. py:data:: GET /api/v1/releases
 
 Retrieve the latest release of each series.
 
@@ -10,7 +10,7 @@ Example request
 
 .. sourcecode:: shell
 
-   curl -i http://example.com/api/releases \
+   curl -i http://example.com/api/v1/releases \
         -H 'If-Modified-Since: Fri, 24 Aug 2018 12:48:01 GMT'
 
 .. include:: includes/headers-modified.rst

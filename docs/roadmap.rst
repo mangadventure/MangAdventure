@@ -26,8 +26,8 @@ v0.3.x
 v0.4.x
 ^^^^^^
 
-| |u| Categories.
-|    |u| Expand API & search.
+| |c| Categories.
+|    |c| Expand API & search.
 | |c| Search for series by title via the API.
 
 v0.5.x

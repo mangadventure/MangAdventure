@@ -1,6 +1,18 @@
 Changelog
 ---------
 
+v0.4.3
+^^^^^^
+
+* Added series categories
+* Moved ``/api/`` to ``/api/v1/``
+* Made site keywords configurable
+* Added Google breadcrumbs & description
+* Added OpenSearch description
+* Added ``noscript`` fallbacks
+* Improved database queries
+
+
 v0.4.2
 ^^^^^^
 

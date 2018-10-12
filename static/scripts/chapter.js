@@ -38,7 +38,7 @@
         location.pathname = changePage('prev');
         break;
       case 39:
-        location.pathname = changePage('prev');
+        location.pathname = changePage('next');
         break;
       default:
         return;

@@ -1,12 +1,18 @@
 {% extends 'skeleton.html' %}
-{% block head_extras %}
-  <style type="text/css">.link{color:inherit}</style>
-{% endblock %}
+{% if config.ABOUT %}
+  {% block description %}
+    {% with desc=config.ABOUT|striptags %}
+      <meta name="twitter:description" content="{{ desc }}">
+      <meta property="og:description" content="{{ desc }}">
+      <meta name="description" content="{{ desc }}">
+    {% endwith %}
+  {% endblock %}
+{% endif %}
 {% block title %}
-  <meta name="twitter:title" content="Info - {{ config.NAME }}">
-  <meta property="og:title" content="Info - {{ config.NAME }}">
-  <meta name="title" content="Info">
-  <title>Info :: {{ config.NAME }}</title>
+  <meta name="twitter:title" content="About Us - {{ config.NAME }}">
+  <meta property="og:title" content="About Us - {{ config.NAME }}">
+  <meta name="title" content="About Us">
+  <title>About Us &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
   <h1 id="info-header">Info</h1>
@@ -48,5 +54,15 @@
       </section>
     {% endif %}
   </article>
+{% endblock %}
+{% block breadcrumbs %}
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL }}">
+      <span itemprop="name">Info</span>
+    </a>
+    <meta itemprop="position" content="2">
+  </li>
 {% endblock %}
 

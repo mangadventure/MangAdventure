@@ -12,9 +12,9 @@
 {% endblock %}
 {% block title %}
   <meta name="title" content="Latest Releases">
-  <meta name="twitter:title" content="Latest Releases - {{ config.NAME }}">
-  <meta property="og:title" content="Latest Releases - {{ config.NAME }}">
-  <title>Latest Releases :: {{ config.NAME }}</title>
+  <meta name="twitter:title" content="Home - {{ config.NAME }}">
+  <meta property="og:title" content="Home - {{ config.NAME }}">
+  <title>Home &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
   <h1 class="text-shadow alter-bg">Latest Releases</h1>
@@ -22,9 +22,9 @@
     {% for release in latest_releases %}
       <section class="release">
         <h2>
-          <a href="/reader/{{ release.series.slug }}/"
-             title="{{ release.series.title }}">
-            {{ release.series.title }}
+          <a href="/reader/{{ release.series_id }}/"
+             title="{{ release.series }}">
+            {{ release.series }}
           </a>
         </h2>
         <div class="release-info">
@@ -35,17 +35,17 @@
             </a>
           {% endwith %}
           <div class="chapter-metadata">
-            <span class="divider"
-                  title="{{ release.groups.all|join:', ' }}">
-            </span>
-            <span class="chapter-groups"
-                  title="{{ release.groups.all|join:', ' }}">
-              {% for group in release.groups.all %}
-                <a href="/groups/{{ group.id }}"
-                   title="{{ group.name }}"
-                  {% if not forloop.last %}class="comma"{% endif %}>
-                  {{ group.name }}</a>
-              {% endfor %}
+            {% with groups=release.groups.all  %}
+              <span class="divider" title="{{ groups|join:', ' }}">
+              </span>
+              <span class="chapter-groups" title="{{ groups|join:', ' }}">
+                {% for group in groups %}
+                  <a href="/groups/{{ group.id }}"
+                     title="{{ group.name }}"
+                    {% if not forloop.last %}class="comma"{% endif %}>
+                    {{ group.name }}</a>
+                {% endfor %}
+            {% endwith %}
             </span>
             <span class="divider"
                   title="{{ release.uploaded|date:'N d, Y - H:i' }}">
@@ -60,3 +60,14 @@
     {% endfor %}
   </article>
 {% endblock %}
+{% block breadcrumbs %}
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL }}">
+      <span itemprop="name">Latest Releases</span>
+    </a>
+    <meta itemprop="position" content="2">
+  </li>
+{% endblock %}
+

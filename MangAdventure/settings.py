@@ -2,6 +2,7 @@ from django.core.management.color import color_style as style
 from django.utils.six import print_
 from os import path, mkdir, environ as env
 from re import compile as reg, IGNORECASE
+from socket import gethostbyname
 from sys import stderr, argv
 from config import CONFIG
 
@@ -13,9 +14,6 @@ warn = lambda msg: print_(style().WARNING('WARNING: ' + msg), file=stderr)
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 _settings = path.dirname(path.abspath(__file__))
 BASE_DIR = path.dirname(_settings)
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 try:
@@ -29,7 +27,7 @@ except KeyError:
              "by running the 'generatekey' command.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.get('MANGADV_DEBUG', 'false').lower() == 'true'
+DEBUG = (env.get('MANGADV_DEBUG', 'false').lower() == 'true')
 
 ALLOWED_HOSTS = [
     '127.0.0.1', '0.0.0.0',
@@ -41,6 +39,8 @@ try:
     BASE_URL = get_domain(CONFIG['site_url'])
     if BASE_URL:
         ALLOWED_HOSTS += [BASE_URL, 'www.' + BASE_URL]
+        HOST_IP = gethostbyname(BASE_URL)
+        ALLOWED_HOSTS += [HOST_IP] if HOST_IP else []
     else:
         raise KeyError
 except KeyError:
@@ -104,6 +104,12 @@ TEMPLATES = [{
 
 WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 
+IGNORABLE_404_URLS = [
+    reg(r'^/favicon.ico'),
+    reg(r'^/robots.txt'),
+    reg(r'^/api'),
+]
+
 # Constance
 # https://django-constance.readthedocs.io/en/latest/index.html#configuration
 
@@ -152,6 +158,11 @@ CONSTANCE_CONFIG = {
         'hosting webapp written in Django',
         'A description for your website.', 'desc'
     ),
+    'KEYWORDS': (
+        'mangadventure,manga,scanlation,reader',
+        'A comma-separated list of keywords '
+        'that describe your website.', 'char'
+    ),
     'DISCORD': ('', 'The Discord server of your group.', 'discord'),
     'ABOUT': ('', 'Some general info about your group.'
               ' HTML allowed.', 'html'),
@@ -178,16 +189,16 @@ CONSTANCE_CONFIG = {
                         'to be shown for each series '
                         'in the reader page.', 'number'),
     'COMPRESS_PAGES': (True, 'Controls whether chapter pages '
-                             'are compressed on upload.', bool)
+                             'are compressed on upload.', bool),
 }
 CONSTANCE_CONFIG_FIELDSETS = {
     'Site Settings': (
-        'NAME', 'DESCRIPTION',
-        'FOOTER', 'FAVICON'
+        'NAME', 'DESCRIPTION', 'KEYWORDS',
+        'FOOTER', 'FAVICON',
     ),
     'Group Settings': (
         'ABOUT', 'RECRUITMENT',
-        'TWITTER', 'DISCORD'
+        'TWITTER', 'DISCORD',
     ),
     'Theme Settings': (
         'MAIN_BACKGROUND', 'ALTER_BACKGROUND',
@@ -212,11 +223,12 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
+_pw_validation = 'django.contrib.auth.password_validation'
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},  # noqa: E501
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},  # noqa: E501
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},  # noqa: E501
+    {'NAME': '%s.UserAttributeSimilarityValidator' % _pw_validation},
+    {'NAME': '%s.MinimumLengthValidator' % _pw_validation},
+    {'NAME': '%s.CommonPasswordValidator' % _pw_validation},
+    {'NAME': '%s.NumericPasswordValidator' % _pw_validation},
 ]
 
 # Debug and Error Logging
@@ -292,13 +304,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = path.join(BASE_DIR, 'media/')
 
 # HTTPS
-try:
-    env.setdefault('HTTPS', CONFIG['https'])
-except KeyError:
-    env.setdefault('HTTPS', 'off')
-
+env.setdefault('HTTPS', CONFIG.get('https', 'off'))
 if env.get('HTTPS', 'off').lower() == 'on':
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

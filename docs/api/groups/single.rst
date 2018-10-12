@@ -1,7 +1,7 @@
 Single group
 ------------
 
-.. py:data:: GET /api/groups/:id
+.. py:data:: GET /api/v1/groups/:id
 
 Retrieve the info of a certain group.
 
@@ -15,7 +15,7 @@ Example request
 
 .. sourcecode:: shell
 
-   curl -i http://example.com/api/groups/1 \
+   curl -i http://example.com/api/v1/groups/1 \
         -H 'If-None-Match: 820727be5a235d089af4ad66ffeae017'
 
 .. include:: ../includes/headers-etag.rst

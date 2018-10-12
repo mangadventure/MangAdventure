@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.conf import settings
-from .views import index, info, search
+from .views import index, info, search, opensearch
 
 try:
     from django.urls import include, re_path as url
@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^reader/', include('reader.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^groups/', include('groups.urls')),
+    url(r'^opensearch\.xml$', opensearch, name='opensearch'),
 ]
 
 if settings.DEBUG:
@@ -24,4 +25,5 @@ if settings.DEBUG:
 
 handler404 = 'MangAdventure.views.handler404'
 handler500 = 'MangAdventure.views.handler500'
+handler503 = 'MangAdventure.views.handler503'
 

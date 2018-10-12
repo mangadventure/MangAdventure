@@ -5,21 +5,10 @@ MangAdventure
 | It is fully written in Django, SCSS and Vanilla JS. No PHP, no Bootstrap, no jQuery.
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Installation
+   :maxdepth: 2
 
    install
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Development
-
    api/index
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Versions
-
    compatibility
    changelog
    roadmap

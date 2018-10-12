@@ -1,32 +1,46 @@
+<!DOCTYPE html>
 {% load static %}
 {% load custom_tags %}
 {% load compile_static %}
-<!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1">
-    <meta name="generator" content="MangAdventure v{{ MANGADV_VERSION }}">
-    <meta name="keywords" content="manga, reader, django">
-    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="HandheldFriendly" content="True">
+    {% block color %}
+      <meta name="theme-color" content="{{ config.MAIN_BACKGROUND }}">
+      <meta name="msapplication-navbutton-color"
+            content="{{ config.MAIN_BACKGROUND }}">
+      <meta name="apple-mobile-web-app-status-bar-style"
+            content="{{ config.MAIN_BACKGROUND }}">
+    {% endblock %}
+    {% block keywords %}
+      <meta name="keywords" content="{{ config.KEYWORDS }}">
+    {% endblock %}
+    {% block robots %}
+      <meta name="robots" content="index,follow">
+    {% endblock %}
     {% if config.DISCORD %}
-      <meta name="discord" content="{{ config.DISCORD }}">
+      <meta name="discord:server" content="{{ config.DISCORD }}">
     {% endif %}
     {% if config.TWITTER %}
-      <meta name="twitter:user" content="@{{ config.TWITTER }}">
+      <meta name="twitter:site" content="@{{ config.TWITTER }}">
     {% endif %}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site_name" content="{{ config.NAME }}">
     {% block description %}
       <meta name="twitter:description" content="{{ config.DESCRIPTION }}">
       <meta property="og:description" content="{{ config.DESCRIPTION }}">
+      <meta name="description" content="{{ config.DESCRIPTION }}">
     {% endblock %}
     {% block image %}
       {% with url=PAGE_URL|urljoin:MEDIA_URL %}
         {% with logo=url|urljoin:config.LOGO_LARGE %}
           <meta name="twitter:image" content="{{ logo }}">
           <meta property="og:image" content="{{ logo }}">
+          <meta name="twitter:image:alt" content="Site logo">
+          <meta property="og:image:alt" content="Site logo">
         {% endwith %}
       {% endwith %}
     {% endblock %}
@@ -34,13 +48,18 @@
       <meta name="url" content="{{ PAGE_URL }}">
       <meta property="og:url" content="{{ PAGE_URL }}">
     {% endblock %}
+    <meta property="og:determiner" content="">
+    <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ config.NAME }}">
     {% with favicon=MEDIA_URL|urljoin:config.FAVICON %}
       <link href="{{ favicon }}" rel="shortcut icon"
             type="{{ favicon|get_type }}">
     {% endwith %}
+    <link href="/opensearch.xml" rel="search" title="{{ config.NAME }}"
+          type="application/opensearchdescription+xml">
     <link href="{{ PAGE_URL|urljoin:'/' }}" rel="index"
           title="{{ config.NAME }}" type="text/html">
+    <link href="{{ PAGE_URL }}" rel="canonical" type="text/html">
     <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
           integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
           rel="prefetch stylesheet" as="style" type="text/css" crossorigin="anonymous">
@@ -48,10 +67,17 @@
     {% block stylesheets %}
       <link href="{% static 'styles/style.scss'|compile %}"
             data-source="{% static 'styles/style.scss' %}"
-            rel="stylesheet" type="text/css">
+            integrity="{% sha256hash 'COMPILED/styles/style.css' %}"
+            crossorigin="anonymous" rel="stylesheet" type="text/css">
       <link href="{% static 'extra/style.scss'|compile %}"
             data-source="{% static 'extra/style.scss' %}"
-            rel="stylesheet" type="text/css">
+            integrity="{% sha256hash 'COMPILED/extra/style.css' %}"
+            crossorigin="anonymous" rel="stylesheet" type="text/css">
+      <noscript>
+        <link href="{% static 'styles/noscript.css' %}"
+              integrity="{% sha256hash 'styles/noscript.css' %}"
+              crossorigin="anonymous" rel="stylesheet" type="text/css">
+      </noscript>
     {% endblock %}
     <style type="text/css">
       {% inlinecompile 'scss' %}
@@ -62,6 +88,7 @@
             integrity="sha384-qFIkRsVO/J5orlMvxK1sgAt2FXT67og+NyFTITYzvbIP1IJavVEKZM7YWczXkwpB"
             crossorigin="anonymous" type="text/javascript"></script>
     {% block head_extras %}{% endblock %}
+    <meta name="generator" content="MangAdventure v{{ MANGADV_VERSION }}">
     {% block title %}
       <meta name="twitter:title" content="{{ config.NAME }}">
       <meta property="og:title" content="{{ config.NAME }}">
@@ -73,6 +100,10 @@
     <header id="header">
       <a id="home" href="/">
         <span>
+          <noscript>
+            <span title="{{ config.NAME }}" class="fas fa-home fa-fw">
+            </span>
+          </noscript>
           {% with logo=MEDIA_URL|urljoin:config.LOGO_LARGE %}
             <object class="logo" type="{{ logo|get_type }}"
                                  data="{{ logo }}" height="45">
@@ -129,6 +160,19 @@
       {% block content %}
       {% endblock %}
     </main>
+    <ol id="breadcrumbs" itemscope
+        itemtype="https://schema.org/BreadcrumbList">
+      <li itemprop="itemListElement" itemscope
+          itemtype="https://schema.org/ListItem">
+        <a itemtype="https://schema.org/Thing"
+           itemprop="item" href="{{ PAGE_URL|urljoin:'/' }}">
+          <span itemprop="name">{{ config.NAME }}</span>
+        </a>
+        <meta itemprop="position" content="1">
+      </li>
+      {% block breadcrumbs %}
+      {% endblock %}
+    </ol>
     <footer id="footer">
       {% autoescape off %}
         <p class="text">{{ config.FOOTER|linebreaksbr }}</p>

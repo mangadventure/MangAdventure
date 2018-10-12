@@ -7,6 +7,8 @@
   Each array contains the name and aliases of the author.
 * **artists** (*array of array*) - The series' artists.
   Each array contains the name and aliases of the artist.
+* **categories** (*array of object*) - The series' categories.
+  Each object contains the name and description of the category.
 * **cover** (*string*) - The URL of the series' cover.
 * **completed** (*boolean*) - Whether the series is completed.
 * **volumes** (*object*) - The volumes of the series.

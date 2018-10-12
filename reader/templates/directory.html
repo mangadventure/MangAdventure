@@ -4,7 +4,7 @@
   <meta name="title" content="Series List">
   <meta name="twitter:title" content="Series List - {{ config.NAME }}">
   <meta property="og:title" content="Series List - {{ config.NAME }}">
-  <title>Series List :: {{ config.NAME }}</title>
+  <title>Series List &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
   <h1 class="text-shadow alter-bg">Series List</h1>
@@ -19,7 +19,7 @@
             </a>
           </h2>
           <div class="cover-container">
-            <img src="{{ MEDIA_URL|add:series.cover.name }}" class="cover"/>
+            <img src="{{ MEDIA_URL|add:series.cover.name }}" class="cover">
           </div>
           <div class="series-info">
             {#<div class="series-desc">#}
@@ -41,17 +41,17 @@
                       Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ chapter.title }}
                     </a>
                     <div class="chapter-metadata">
-                      <span class="divider"
-                            title="{{ chapter.groups.all|join:', ' }}">
-                      </span>
-                      <span class="chapter-groups"
-                            title="{{ chapter.groups.all|join:', ' }}">
-                        {% for group in chapter.groups.all %}
-                          <a href="/groups/{{ group.id }}"
-                             title="{{ group.name }}"
-                            {% if not forloop.last %}class="comma"{% endif %}>
-                            {{ group.name }}</a>
-                        {% endfor %}
+                      {% with groups=chapter.groups.all %}
+                        <span class="divider" title="{{ groups|join:', ' }}">
+                        </span>
+                        <span class="chapter-groups" title="{{ groups|join:', ' }}">
+                          {% for group in groups %}
+                            <a href="/groups/{{ group.id }}"
+                               title="{{ group.name }}"
+                              {% if not forloop.last %}class="comma"{% endif %}>
+                              {{ group.name }}</a>
+                          {% endfor %}
+                      {% endwith %}
                       </span>
                       <span class="divider"
                             title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
@@ -71,5 +71,15 @@
       {% endif %}
     {% endfor %}
   </article>
+{% endblock %}
+{% block breadcrumbs %}
+  <li itemprop="itemListElement" itemscope
+      itemtype="https://schema.org/ListItem">
+    <a itemtype="https://schema.org/Thing"
+       itemprop="item" href="{{ PAGE_URL }}">
+      <span itemprop="name">Reader</span>
+    </a>
+    <meta itemprop="position" content="2">
+  </li>
 {% endblock %}
 

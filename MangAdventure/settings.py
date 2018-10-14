@@ -81,6 +81,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
+    'MangAdventure.middleware.XPBMiddleware',
 ]
 
 ROOT_URLCONF = 'MangAdventure.urls'

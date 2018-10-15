@@ -4,7 +4,7 @@ class XPBMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        response['X-Powered-By'] = 'MangAdventure'
+        response.setdefault('X-Powered-By', 'MangAdventure')
         return response
 
 

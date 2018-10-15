@@ -333,9 +333,13 @@ thead {
       padding: 4px;
     }
   }
-  .category {
-    display: inline-block;
-    cursor: pointer;
+  #category-container {
+    width: 90%;
+    margin: 0 auto 0.5em;
+    .category {
+      display: inline-block;
+      cursor: pointer;
+    }
   }
   .result {
     hyphens: auto;

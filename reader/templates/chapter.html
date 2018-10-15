@@ -3,12 +3,11 @@
 {% load static %}
 {% load inlinecompile from compile_static %}
 {% block robots %}
-  <meta name="googlebot" content="nosnippet">
   <meta name="robots" content="nosnippet">
 {% endblock %}
 {% block keywords %}
-  {% with tags=curr_chapter.series.categories.all|join:',' %}
-    <meta name="keywords" content="{{ config.KEYWORDS }},{{ tags }}">
+  {% with tags=curr_chapter.series.categories.all|join:', ' %}
+    <meta name="keywords" content="{{ config.KEYWORDS }}, {{ tags }}">
   {% endwith %}
 {% endblock %}
 {% block image %}

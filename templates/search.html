@@ -66,9 +66,9 @@
             {% for category in all_categories %}
               <span class="tooltip category"
                     data-tooltip="{{ category.description }}">
-                {% if category|lower in in_categories %}
+                {% if category.id in in_categories %}
                   <i class="far fa-check-circle fa-fw"></i> {{ category }}
-                {% elif category|lower in ex_categories %}
+                {% elif category.id in ex_categories %}
                   <i class="far fa-times-circle fa-fw"></i> {{ category }}
                 {% else %}
                   <i class="far fa-circle fa-fw"></i> {{ category }}
@@ -137,18 +137,19 @@
                 <td class="result-categories s-hidden">
                   {{ series.categories.all|join:', '|default:'N/A' }}
                 </td>
-                <td class="result-chapters s-hidden" data-sort-method="number">
-                  {{ series.chapters|length }}
-                </td>
-                <td class="result-date s-hidden" data-sort-method="date">
-                  {% with chapters=series.chapters.all %}
+                {% with chapters=series.chapters.all %}
+                  <td class="result-chapters s-hidden"
+                      data-sort-method="number">
+                    {{ chapters|length }}
+                  </td>
+                  <td class="result-date s-hidden" data-sort-method="date">
                     {% if chapters %}
                       {{ chapters.latest.uploaded|date:'N d, Y - H:i' }}
                     {% else %}
                       N/A
                     {% endif %}
-                  {% endwith %}
-                </td>
+                  </td>
+                {% endwith %}
               </tr>
             {% endif %}
           {% endfor %}

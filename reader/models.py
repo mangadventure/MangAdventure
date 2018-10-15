@@ -24,15 +24,22 @@ class Artist(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=25, primary_key=True,
+    id = models.CharField(primary_key=True, default='',
+                          max_length=25, auto_created=True)
+    name = models.CharField(max_length=25, unique=True,
                             help_text='The name of the category.'
-                                      ' Must be unique.')
+                                      ' Must be unique and cannot'
+                                      ' be changed once set.')
     description = models.CharField(max_length=250,
                                    help_text='A description for'
                                              ' the category.')
 
     class Meta:
         verbose_name_plural = 'categories'
+
+    def save(self, *args, **kwargs):
+        self.id = self.name.lower()
+        super(Category, self).save(*args, **kwargs)
 
     def __str__(self): return self.name
 

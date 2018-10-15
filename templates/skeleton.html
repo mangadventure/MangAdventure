@@ -7,13 +7,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="HandheldFriendly" content="True">
     {% block color %}
-      <meta name="theme-color" content="{{ config.MAIN_BACKGROUND }}">
+      <meta name="theme-color" content="{{ config.ALTER_BACKGROUND }}">
       <meta name="msapplication-navbutton-color"
-            content="{{ config.MAIN_BACKGROUND }}">
+            content="{{ config.ALTER_BACKGROUND }}">
       <meta name="apple-mobile-web-app-status-bar-style"
-            content="{{ config.MAIN_BACKGROUND }}">
+            content="{{ config.ALTER_BACKGROUND }}">
     {% endblock %}
     {% block keywords %}
       <meta name="keywords" content="{{ config.KEYWORDS }}">
@@ -22,7 +21,7 @@
       <meta name="robots" content="index,follow">
     {% endblock %}
     {% if config.DISCORD %}
-      <meta name="discord:server" content="{{ config.DISCORD }}">
+      <link title="Discord" type="text/html" href="{{ config.DISCORD }}">
     {% endif %}
     {% if config.TWITTER %}
       <meta name="twitter:site" content="@{{ config.TWITTER }}">
@@ -106,17 +105,17 @@
           </noscript>
           {% with logo=MEDIA_URL|urljoin:config.LOGO_LARGE %}
             <object class="logo" type="{{ logo|get_type }}"
-                                 data="{{ logo }}" height="45">
+                    data="{{ logo }}" height="45">
             </object>
           {% endwith %}
           {% with logo=MEDIA_URL|urljoin:config.LOGO_MEDIUM %}
             <object class="logo" type="{{ logo|get_type }}"
-                                 data="{{ logo }}" height="38">
+                    data="{{ logo }}" height="38">
             </object>
           {% endwith %}
           {% with logo=MEDIA_URL|urljoin:config.LOGO_SMALL %}
             <object class="logo" type="{{ logo|get_type }}"
-                                 data="{{ logo }}" height="27">
+                    data="{{ logo }}" height="27">
             </object>
           {% endwith %}
         </span>

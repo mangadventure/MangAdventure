@@ -10,6 +10,7 @@ v0.4.3
 * Added Google breadcrumbs & description
 * Added OpenSearch description
 * Added ``noscript`` fallbacks
+* Added ``X-Powered-By`` response header
 * Improved database queries
 
 

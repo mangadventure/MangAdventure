@@ -41,11 +41,18 @@ class ChapterAdmin(admin.ModelAdmin):
     exclude = ['url']
 
 
+class CategoryAdmin(admin.ModelAdmin):
+    exclude = ['id']
+
+    def get_readonly_fields(self, request, obj=None):
+        return ['name'] if obj else []
+
+
 admin.site.register(Series, SeriesAdmin)
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Chapter, ChapterAdmin)
-admin.site.register(Category)
+admin.site.register(Category, CategoryAdmin)
 
 
 admin.site.unregister(Group)

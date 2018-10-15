@@ -1,4 +1,3 @@
-from django.db.models.functions import Lower
 from django.db.models.query import Q
 from django.shortcuts import render
 from django.conf import settings
@@ -35,9 +34,7 @@ def _query(params):
         query &= Q(completed=(params['status'] == 'completed'))
     categories = params['categories']
     if categories['include']:
-        query &= Q(c_lower__in=categories['include'])
-    if categories['exclude']:
-        query &= ~Q(c_lower__in=categories['exclude'])
+        query &= Q(categories__in=categories['include'])
     return query
 
 
@@ -59,19 +56,18 @@ def search(request):
         'author': request.GET.get('author', ''),
         'status': request.GET.get('status', 'any'),
         'categories': {
-            'include': [c for c in categories if len(c) and c[0] != '-'],
-            'exclude': [c[1:] for c in categories if len(c) and c[0] == '-'],
+            'include': [c.lower() for c in categories
+                        if len(c) and c[0] != '-'],
+            'exclude': [c[1:].lower() for c in categories
+                        if len(c) and c[0] == '-'],
         }
     }
     if any(p in ('q', 'author', 'status') for p in request.GET):
         prefetch = ('chapters', 'authors', 'artists', 'categories')
-        if len(categories):
-            results = Series.objects.prefetch_related(*prefetch).annotate(
-                c_lower=Lower('categories')).filter(_query(params))
-        else:
-            results = Series.objects.prefetch_related(
-                *prefetch).filter(_query(params))
-        if len(results) == 1 and not results.first().chapters.all():
+        results = Series.objects.prefetch_related(
+            *prefetch).filter(_query(params)).distinct().exclude(
+                categories__in=params['categories']['exclude'])
+        if len(results) == 1 and not results.first().chapters.count():
             results = None
     return render(request, 'search.html', {
         'query': params['query'],

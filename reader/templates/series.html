@@ -42,81 +42,72 @@
       {% with aliases=series.aliases.all %}
         {% if aliases %}
           <div id="series-aliases">
-            <strong class="alter-fg colon">
-              {% if aliases|length > 1 %}
-                Alt. titles</strong>
-              {% else %}
-                Alt. title</strong>
-              {% endif %}
-            {% for alias in aliases %}
-              {% if forloop.first and forloop.last %}
-                <span class="alias">{{ alias }}</span>
-              {% else %}
+            {% if aliases|length > 1 %}
+              <strong class="alter-fg">Alt. titles:</strong>
+              {% for alias in aliases %}
                 <div class="alias">{{ alias }}</div>
-              {% endif %}
-            {% endfor %}
+              {% endfor %}
+            {% else %}
+              <strong class="alter-fg">Alt. title:</strong>
+              <span class="alias">{{ aliases.first }}</span>
+            {% endif %}
           </div>
         {% endif %}
       {% endwith %}
-    <div id="series-authors">
-      {% with authors=series.authors.all  %}
-        {% if authors %}
-          <div id="series-authors">
-            <strong class="alter-fg colon">
-              {% if authors|length > 1 %}
-                Authors</strong>
-              {% else %}
-                Author</strong>
-              {% endif %}
+      {% with authors=series.authors.all %}
+        <div id="series-authors">
+          {% if authors|length > 1 %}
+            <strong class="alter-fg">Authors:</strong>
             {% for author in authors %}
-              {% if forloop.first and forloop.last %}
-                <span class="author">{{ author }}</span>
-              {% else %}
-                <div class="author">{{ author }}</div>
-              {% endif %}
+              <div class="author">{{ author }}</div>
             {% endfor %}
-          </div>
-        {% else %}
-          <span class="author">N/A</span>
-        {% endif %}
+          {% else %}
+            <strong class="alter-fg">Author:</strong>
+            <span class="author">{{ authors.first|default:'N/A' }}</span>
+          {% endif %}
+        </div>
       {% endwith %}
-    </div>
-    <div id="series-artists">
-      {% with artists=series.artists.all  %}
-        {% if artists %}
-          <div id="series-artists">
-            <strong class="alter-fg colon">
-              {% if artists|length > 1 %}
-                Artists</strong>
-              {% else %}
-                Artist</strong>
-              {% endif %}
+      {% with artists=series.artists.all %}
+        <div id="series-artists">
+          {% if artists|length > 1 %}
+            <strong class="alter-fg">Artists:</strong>
             {% for artist in artists %}
-              {% if forloop.first and forloop.last %}
-                <span class="artist">{{ artist }}</span>
-              {% else %}
-                <div class="artist">{{ artist }}</div>
-              {% endif %}
+              <div class="artist">{{ artist }}</div>
             {% endfor %}
+          {% else %}
+            <strong class="alter-fg">Artist:</strong>
+            <span class="artist">{{ artists.first|default:'N/A' }}</span>
+          {% endif %}
+        </div>
+      {% endwith %}
+      {% with categories=series.categories.all %}
+        {% if categories %}
+          <div id="series-categories">
+            {% if categories|length > 1 %}
+              <strong class="alter-fg">Categories:</strong>
+              {% for category in categories %}
+                <div class="category">{{ category }}</div>
+              {% endfor %}
+            {% else %}
+              <strong class="alter-fg">Category:</strong>
+              <span class="category">{{ categories.first }}</span>
+            {% endif %}
           </div>
-        {% else %}
-          <span class="artist">N/A</span>
         {% endif %}
       {% endwith %}
-    </div>
       <div id="series-status">
-        <strong class="alter-fg colon">Status</strong>
+        <strong class="alter-fg">Status:</strong>
         <span>{{ series.completed|yesno:'Completed,Ongoing' }}</span>
       </div>
     </div>
-    {% if series.description or not series.description %}
+    {% if series.description %}
       <div id="series-desc">
-        <h3 class="alter-fg colon">Description</h3>
+        <h3 class="alter-fg">Description:</h3>
         <div>{{ series.description|linebreaks }}</div>
       </div>
     {% endif %}
     <div id="series-chapters">
-      <h3 class="alter-fg colon">Chapters</h3>
+      <h3 class="alter-fg">Chapters:</h3>
       {% with chapters=series.chapters.reverse %}
         {% for chapter in chapters %}
           <div class="chapter">
@@ -153,23 +144,5 @@
       {% endwith %}
     </div>
   </article>
-{% endblock %}
-{% block breadcrumbs %}
-  <li itemprop="itemListElement" itemscope
-      itemtype="https://schema.org/ListItem">
-    <a itemtype="https://schema.org/Thing"
-       itemprop="item" href="{{ PAGE_URL|urljoin:'/reader/' }}">
-      <span itemprop="name">Reader</span>
-    </a>
-    <meta itemprop="position" content="2">
-  </li>
-  <li itemprop="itemListElement" itemscope
-      itemtype="https://schema.org/ListItem">
-    <a itemtype="https://schema.org/Thing"
-       itemprop="item" href="{{ PAGE_URL }}">
-      <span itemprop="name">Series</span>
-    </a>
-    <meta itemprop="position" content="3">
-  </li>
 {% endblock %}
 

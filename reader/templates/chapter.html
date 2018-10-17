@@ -128,8 +128,7 @@
       </section>
     {% endwith %}
     <script src="{% static 'scripts/chapter.js' %}"
-            integrity="{% sha256hash 'scripts/chapter.js' %}"
-            crossorigin="anonymous" type="text/javascript"></script>
+            type="text/javascript"></script>
     <noscript>
       <img src="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
            alt="Page {{ curr_page.number }}" class="chapter-page">
@@ -195,33 +194,5 @@
       {% endif %}
     {% endfor %}
   </div>
-{% endblock %}
-{% block breadcrumbs %}
-  <li itemprop="itemListElement" itemscope
-      itemtype="https://schema.org/ListItem">
-    <a itemtype="https://schema.org/Thing"
-       itemprop="item" href="{{ PAGE_URL|urljoin:'/reader/' }}">
-      <span itemprop="name">Reader</span>
-    </a>
-    <meta itemprop="position" content="2">
-  </li>
-  {% with series_url='/reader/'|add:curr_chapter.series_id|add:'/' %}
-    <li itemprop="itemListElement" itemscope
-        itemtype="https://schema.org/ListItem">
-      <a itemtype="https://schema.org/Thing"
-         itemprop="item" href="{{ PAGE_URL|urljoin:series_url }}">
-        <span itemprop="name">Series</span>
-      </a>
-      <meta itemprop="position" content="3">
-    </li>
-  {% endwith %}
-  <li itemprop="itemListElement" itemscope
-      itemtype="https://schema.org/ListItem">
-    <a itemtype="https://schema.org/Thing"
-       itemprop="item" href="{{ PAGE_URL }}">
-      <span itemprop="name">Chapter</span>
-    </a>
-    <meta itemprop="position" content="4">
-  </li>
 {% endblock %}
 

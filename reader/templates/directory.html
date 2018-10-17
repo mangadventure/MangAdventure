@@ -25,11 +25,11 @@
             {#<div class="series-desc">#}
             {#  {{ series.description }}#}
             {#</div>#}
-            <strong class="colon">
+            <strong>
               {% if config.MAX_CHAPTERS > 1 %}
-                Latest Chapters
+                Latest Chapters:
               {% else %}
-                Latest Chapter
+                Latest Chapter:
               {% endif %}
             </strong>
             {% with chapters=series.chapters|order_by:'-uploaded' %}
@@ -71,15 +71,5 @@
       {% endif %}
     {% endfor %}
   </article>
-{% endblock %}
-{% block breadcrumbs %}
-  <li itemprop="itemListElement" itemscope
-      itemtype="https://schema.org/ListItem">
-    <a itemtype="https://schema.org/Thing"
-       itemprop="item" href="{{ PAGE_URL }}">
-      <span itemprop="name">Reader</span>
-    </a>
-    <meta itemprop="position" content="2">
-  </li>
 {% endblock %}
 

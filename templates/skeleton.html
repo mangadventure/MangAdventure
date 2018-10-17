@@ -66,16 +66,13 @@
     {% block stylesheets %}
       <link href="{% static 'styles/style.scss'|compile %}"
             data-source="{% static 'styles/style.scss' %}"
-            integrity="{% sha256hash 'COMPILED/styles/style.css' %}"
-            crossorigin="anonymous" rel="stylesheet" type="text/css">
+            rel="stylesheet" type="text/css">
       <link href="{% static 'extra/style.scss'|compile %}"
             data-source="{% static 'extra/style.scss' %}"
-            integrity="{% sha256hash 'COMPILED/extra/style.css' %}"
-            crossorigin="anonymous" rel="stylesheet" type="text/css">
+            rel="stylesheet" type="text/css">
       <noscript>
         <link href="{% static 'styles/noscript.css' %}"
-              integrity="{% sha256hash 'styles/noscript.css' %}"
-              crossorigin="anonymous" rel="stylesheet" type="text/css">
+              rel="stylesheet" type="text/css">
       </noscript>
     {% endblock %}
     <style type="text/css">
@@ -159,19 +156,6 @@
       {% block content %}
       {% endblock %}
     </main>
-    <ol id="breadcrumbs" itemscope
-        itemtype="https://schema.org/BreadcrumbList">
-      <li itemprop="itemListElement" itemscope
-          itemtype="https://schema.org/ListItem">
-        <a itemtype="https://schema.org/Thing"
-           itemprop="item" href="{{ PAGE_URL|urljoin:'/' }}">
-          <span itemprop="name">{{ config.NAME }}</span>
-        </a>
-        <meta itemprop="position" content="1">
-      </li>
-      {% block breadcrumbs %}
-      {% endblock %}
-    </ol>
     <footer id="footer">
       {% autoescape off %}
         <p class="text">{{ config.FOOTER|linebreaksbr }}</p>

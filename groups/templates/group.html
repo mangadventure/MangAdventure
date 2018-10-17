@@ -41,7 +41,7 @@
       {% endif %}
       <div>
         <div class="group-site">
-          <strong class="colon">Website</strong>
+          <strong>Website:</strong>
           {% if group.website %}
             <a href="{{ group.website }}"
                rel="noopener" target="_blank">
@@ -52,7 +52,7 @@
           {% endif %}
         </div>
         <div class="group-discord">
-          <strong class="colon">Discord</strong>
+          <strong>Discord:</strong>
           {% if group.discord %}
             <a href="{{ group.discord }}"
                rel="noopener" target="_blank">
@@ -63,7 +63,7 @@
           {% endif %}
         </div>
         <div class="group-twitter">
-          <strong class="colon">Twitter</strong>
+          <strong>Twitter:</strong>
           {% if group.twitter %}
             <a href="https://twitter.com/{{ group.twitter }}"
                rel="noopener" target="_blank">
@@ -77,7 +77,7 @@
     </section>
     {% if group.description %}
       <section id="group-desc">
-        <h3 class="colon alter-fg">Description</h3>
+        <h3 class="alter-fg">Description:</h3>
         <div>{{ group.description }}</div>
       </section>
     {% elif not members %}
@@ -87,18 +87,18 @@
     {% endif %}
     {% if members %}
       <section id="group-members">
-        <h3 class="colon alter-fg">Members</h3>
+        <h3 class="alter-fg">Members:</h3>
         {% for member in members %}
           <div class="member">
             <h2 class="member-name">{{ member.name }}</h2>
             <div class="member-discord">
-              <strong class="colon">Discord</strong>
+              <strong>Discord:</strong>
               <span class="member-discord">
                 {{ member.discord|default:'N/A' }}
               </span>
             </div>
             <div class="member-twitter">
-              <strong class="colon">Twitter</strong>
+              <strong>Twitter:</strong>
               {% if member.twitter %}
                 <a href="https://twitter.com/{{ member.twitter }}"
                    rel="noopener" target="_blank">
@@ -109,7 +109,7 @@
               {% endif %}
             </div>
             <div class="member-roles">
-              <strong class="colon">Roles</strong>
+              <strong>Roles:</strong>
               {% with member_roles=member.roles.all  %}
                 {% if member_roles %}
                   {% for role in member_roles %}
@@ -127,23 +127,5 @@
       </section>
     {% endif %}
   </article>
-{% endblock %}
-{% block breadcrumbs %}
-  <li itemprop="itemListElement" itemscope
-      itemtype="https://schema.org/ListItem">
-    <a itemtype="https://schema.org/Thing"
-       itemprop="item" href="{{ PAGE_URL|urljoin:'/groups/' }}">
-      <span itemprop="name">Groups</span>
-    </a>
-    <meta itemprop="position" content="2">
-  </li>
-  <li itemprop="itemListElement" itemscope
-      itemtype="https://schema.org/ListItem">
-    <a itemtype="https://schema.org/Thing"
-       itemprop="item" href="{{ PAGE_URL }}">
-      <span itemprop="name">Group Page</span>
-    </a>
-    <meta itemprop="position" content="3">
-  </li>
 {% endblock %}
 

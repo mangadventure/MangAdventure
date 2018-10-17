@@ -1,4 +1,5 @@
-#home .__NoScript_PlaceHolder__ { display: none !important }
+.__NoScript_PlaceHolder__ { display: none !important }
+#home object.logo { display: none }
 #home .home-url .fas { font-size: 45px }
 #chapter #placeholder { display: none }
 #chapter #dropdowns, #chapter #controls { display: block }

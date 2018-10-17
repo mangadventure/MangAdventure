@@ -221,12 +221,12 @@ thead {
     width: calc(100vw / 3);
     @include border-radius();
   }
-  &-aliases, &-authors, &-artists {
+  &-aliases, &-authors, &-artists, &-categories {
     max-width: 55vw;
     @include truncate();
   }
   div {
-    &.alias, &.author, &.artist {
+    &.alias, &.author, &.artist, &.category {
       text-indent: 0.5em;
       @include truncate();
     }
@@ -519,13 +519,9 @@ thead {
 
 .comma::after { content: quote(',') }
 
-.colon::after { content: quote(':') }
-
 .logo { &[height='27'], &[height='38'] { display: none } }
 
 #searchlink { display: none }
-
-#breadcrumbs { display: none }
 
 i[data-pcount='100+'] { padding: 0 0.5em }
 
@@ -569,6 +565,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     }
     .s-hidden { display: none }
   }
+  #series { max-width: 92vw }
   #navig ul li { margin: -0.2em 0 -0.3em -0.2em }
   .ident { display: none }
 }
@@ -604,6 +601,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
   }
   #series {
     margin-top: 7px;
+    max-width: unset;
     text-align: center;
     h3 {
       font-size: 1em;
@@ -621,12 +619,9 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     &-desc {
       padding: 0;
       margin: 0.5em 0;
-      p {
-        display: inline-block;
-        padding: 0;
-      }
+      p { display: inline-block }
     }
-    &-aliases, &-authors, &-artists {
+    &-aliases, &-authors, &-artists, &-categories {
       max-width: unset;
       overflow: unset;
       white-space: normal;
@@ -670,7 +665,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       }
       &:first-of-type { padding-top: 0.2em }
     }
-    div { &.alias, &.author, &.artist { text-indent: 0 } }
+    div { &.alias, &.author, &.artist, &.category { text-indent: 0 } }
   }
   #chapter {
     .dropdown {

@@ -1,6 +1,13 @@
 Changelog
 ---------
 
+v0.4.4
+^^^^^^
+
+* Added categories to series page.
+* Removed sha256 hashes.
+* Removed breadcrumbs.
+
 v0.4.3
 ^^^^^^
 
@@ -12,7 +19,6 @@ v0.4.3
 * Added ``noscript`` fallbacks
 * Added ``X-Powered-By`` response header
 * Improved database queries
-
 
 v0.4.2
 ^^^^^^

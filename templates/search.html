@@ -19,8 +19,7 @@
           integrity="sha384-FS9DiHTRu5S2IsfHVyB0DgxutdvNZ8TrlWaOXsWfdvWGjJakqS3DDT0dLLS80r2H"
           crossorigin="anonymous" type="text/javascript"></script>
   <script src="{% static 'scripts/search.js' %}"
-          integrity="{% sha256hash 'scripts/search.js' %}"
-          crossorigin="anonymous" type="text/javascript" async></script>
+          type="text/javascript" async></script>
 {% endblock %}
 {% block title %}
   <meta name="title" content="Search {{ config.NAME }}">
@@ -35,17 +34,17 @@
       <form action="/search" id="search-form"
             method="GET" accept-charset="utf-8">
         <div id="search-title">
-          <label for="query" class="colon">Series Title</label>
+          <label for="query">Series Title:</label>
           <input name="q" value="{{ query }}"
                  id="query" type="text"/>
         </div>
         <div id="search-author">
-          <label for="author" class="colon">Author/Artist</label>
+          <label for="author">Author/Artist:</label>
           <input name="author" value="{{ author }}"
                  id="author" type="text"/>
         </div>
         <div id="search-status">
-          <span class="colon">Series Status</span>
+          <span>Series Status:</span>
           <input {% if status == 'any' %}checked="checked"{% endif %}
             name="status" id="status-any" value="any" type="radio"/>
           <label for="status-any">Any</label>
@@ -57,7 +56,7 @@
           <label for="status-ongoing">Ongoing</label>
         </div>
         <div id="search-categories">
-          <div class="colon">Categories</div>
+          <div>Categories:</div>
           <div>(
             <i class="far fa-check-circle fa-fw"></i> = include /
             <i class="far fa-times-circle fa-fw"></i> = exclude )
@@ -157,15 +156,5 @@
       {% endif %}
     </section>
   </article>
-{% endblock %}
-{% block breadcrumbs %}
-  <li itemprop="itemListElement" itemscope
-      itemtype="https://schema.org/ListItem">
-    <a itemtype="https://schema.org/Thing"
-       itemprop="item" href="{{ PAGE_URL }}">
-      <span itemprop="name">Search</span>
-    </a>
-    <meta itemprop="position" content="2">
-  </li>
 {% endblock %}
 

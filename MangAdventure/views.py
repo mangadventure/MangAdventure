@@ -1,41 +1,13 @@
-from django.db.models.query import Q
 from django.shortcuts import render
 from django.conf import settings
-from api.response import JsonError
 from constance import config
-from reader.models import *
+from reader.models import Category, Chapter
+from api.response import JsonError
+from .utils import search as s
 
 
 def _error_context(msg, status=500):
     return {'error_message': msg, 'error_status': status}
-
-
-def _query(params):
-    query = Q()
-    if params['query']:
-        query = Q(title__icontains=params['query'])
-        aliases = SeriesAlias.objects.filter(
-            alias__icontains=params['query'])
-        if len(aliases):
-            query |= Q(aliases__in=aliases)
-    if params['author']:
-        q = (Q(authors__name__icontains=params['author']) |
-             Q(artists__name__icontains=params['author']))
-        authors = AuthorAlias.objects.filter(
-            alias__icontains=params['author'])
-        if len(authors):
-            q |= Q(authors__in=authors)
-        artists = ArtistAlias.objects.filter(
-            alias__icontains=params['author'])
-        if len(artists):
-            q |= Q(artists__in=artists)
-        query &= q
-    if params['status'] != 'any':
-        query &= Q(completed=(params['status'] == 'completed'))
-    categories = params['categories']
-    if categories['include']:
-        query &= Q(categories__in=categories['include'])
-    return query
 
 
 def index(request):
@@ -50,23 +22,9 @@ def info(request): return render(request, 'info.html', {})
 
 def search(request):
     results = None
-    categories = request.GET.get('categories', '').split(',')
-    params = {
-        'query': request.GET.get('q', ''),
-        'author': request.GET.get('author', ''),
-        'status': request.GET.get('status', 'any'),
-        'categories': {
-            'include': [c.lower() for c in categories
-                        if len(c) and c[0] != '-'],
-            'exclude': [c[1:].lower() for c in categories
-                        if len(c) and c[0] == '-'],
-        }
-    }
+    params = s.parse(request)
     if any(p in ('q', 'author', 'status') for p in request.GET):
-        prefetch = ('chapters', 'authors', 'artists', 'categories')
-        results = Series.objects.prefetch_related(
-            *prefetch).filter(_query(params)).distinct().exclude(
-                categories__in=params['categories']['exclude'])
+        results = s.query(params)
         if len(results) == 1 and not results.first().chapters.count():
             results = None
     return render(request, 'search.html', {
@@ -91,6 +49,8 @@ def opensearch(request):
 
 
 def handler400(request, exception=None, template_name='error.html'):
+    if request.path.startswith('/api'):
+        return JsonError('Bad request', 400)
     context = _error_context('The server could not '
                              'understand the request.', 400)
     return render(request, template_name=template_name,
@@ -98,6 +58,8 @@ def handler400(request, exception=None, template_name='error.html'):
 
 
 def handler403(request, exception=None, template_name='error.html'):
+    if request.path.startswith('/api'):
+        return JsonError('Forbidden', 403)
     context = _error_context("You don't have permission "
                              "to access this page.", 403)
     return render(request, template_name=template_name,

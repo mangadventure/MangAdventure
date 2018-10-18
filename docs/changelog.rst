@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+v0.4.5
+^^^^^^
+
+* Added categories to API.
+* Added series filtering to API.
+
 v0.4.4
 ^^^^^^
 

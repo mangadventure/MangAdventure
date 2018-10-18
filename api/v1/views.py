@@ -2,11 +2,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import last_modified
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.http import http_date
-from django.db.models.query import Q
 from django.conf import settings
 from django.urls import reverse
-from reader.models import Chapter, Series, SeriesAlias, Author, Artist
+from reader.models import Chapter, Series, Author, Artist, Category
 from api.response import JsonVaryAllowResponse, JsonError
+from MangAdventure.utils.search import get_response
 from groups.models import Group, Member
 
 
@@ -181,18 +181,8 @@ def all_releases(request):
 def all_series(request):
     if request.method not in ['GET', 'HEAD']:
         return JsonError('Method not allowed', 405)
-    prefetch = ('aliases', 'authors', 'artists', 'categories')
-    q = request.GET.get('q')
-    if q:
-        query = Q(title__icontains=q)
-        aliases = SeriesAlias.objects.filter(alias__icontains=q)
-        if aliases.count() > 0:
-            query |= Q(aliases__in=aliases)
-        _series = Series.objects.prefetch_related(*prefetch).filter(query)
-    else:
-        _series = Series.objects.prefetch_related(*prefetch).all()
     response = []
-    for s in _series:
+    for s in get_response(request):
         response.append(_series_response(request, s, json=False))
     return JsonVaryAllowResponse(response, safe=False)
 
@@ -316,6 +306,14 @@ def group(request, g_id=0):
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return _group_response(request, _group)
+
+
+@csrf_exempt
+def categories(request):
+    if request.method not in ['GET', 'HEAD']:
+        return JsonError('Method not allowed', 405)
+    values = list(Category.objects.values())
+    return JsonVaryAllowResponse(values, safe=False)
 
 
 @csrf_exempt

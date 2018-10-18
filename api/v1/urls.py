@@ -24,5 +24,6 @@ urlpatterns = [
     url('%s/(?P<p_id>[^/]+)/?$' % _artists, views.person, name='v1_artist'),
     url('%s/?$' % _groups, views.all_groups, name='v1_all_groups'),
     url('%s/(?P<g_id>[^/]+)/?$' % _groups, views.group, name='v1_group'),
+    url('^categories/?$', views.categories, name='v1_categories'),
 ]
 

@@ -68,7 +68,7 @@ v0.8.x
 | |u| Optionally keep the zipped chapter for downloading.
 | |u| Generate complete favicon with RealFaviconGenerator.
 
-v0.9.x
+v1.0.0
 ^^^^^^
 
 | |u| Write an installer.

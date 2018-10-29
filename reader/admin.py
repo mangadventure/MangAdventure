@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.contrib import admin
 from constance import config
 from .models import *
@@ -56,5 +56,4 @@ admin.site.register(Category, CategoryAdmin)
 
 
 admin.site.unregister(Group)
-admin.site.unregister(User)
 

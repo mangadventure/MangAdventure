@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^api/', include('api.urls')),
     url(r'^groups/', include('groups.urls')),
     url(r'^opensearch\.xml$', opensearch, name='opensearch'),
+    url(r'^auth/', include('users.urls')),
 ]
 
 if settings.DEBUG:

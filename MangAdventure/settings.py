@@ -333,4 +333,4 @@ if 'users' in INSTALLED_APPS:
     except KeyError:
         warn("You should first configure SMTP settings "
              "by running the 'configuresmtp' command. Users module disabled")
-        INSTALLED_APPS -= 'users'
+        INSTALLED_APPS.remove('users')

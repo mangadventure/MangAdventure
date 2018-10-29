@@ -1,0 +1,32 @@
+{% extends 'skeleton.html' %}
+{% load custom_tags %}
+{% block title %}
+  <meta name="title" content="Register">
+  <meta name="twitter:title" content="Register - {{ config.NAME }}">
+  <meta name="og:title" content="Register - {{ config.NAME }}">
+  <title>Register &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Register</h1>
+  <div>
+
+    <form method="post" action="{% url 'users:register' %}">
+      {% csrf_token %}
+
+      {% if form.errors %}
+        {% for field in form %}
+          {% for error in field.errors %}
+            <p>{{ error|escape }}</p>
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
+
+      <p>Username: {{ form.username }}</p>
+      <p>Email: {{ form.email }}</p>
+      <p>Password: {{ form.password1 }}</p>
+      <p>Confirm password: {{ form.password2 }}</p>
+
+      <input type="submit" value="Register">
+    </form>
+  </div>
+{% endblock %}

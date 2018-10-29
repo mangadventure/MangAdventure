@@ -1,0 +1,14 @@
+{% extends 'skeleton.html' %}
+{% load custom_tags %}
+{% block title %}
+  <meta name="title" content="Password reset!">
+  <meta name="twitter:title" content="Password reset! - {{ config.NAME }}">
+  <meta name="og:title" content="Password reset! - {{ config.NAME }}">
+  <title>Password reset! &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Password reset!</h1>
+  <div>
+    <p>You have successfully reset your password! To log in, head over <a href="{% url 'users:login' %}">here</a> to log in.</p>
+  </div>
+{% endblock %}

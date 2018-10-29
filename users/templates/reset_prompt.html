@@ -1,0 +1,31 @@
+{% extends 'skeleton.html' %}
+{% load custom_tags %}
+{% block title %}
+  <meta name="title" content="Forgot password">
+  <meta name="twitter:title" content="Forgot password - {{ config.NAME }}">
+  <meta name="og:title" content="Forgot password - {{ config.NAME }}">
+  <title>Forgot password &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Forgot your password?</h1>
+  <div>
+
+    <p>If you forgot your password, please enter your email down below so we can send you a password reset email.</p>
+
+    <form method="post" action="{% url 'users:reset_prompt' %}">
+      {% csrf_token %}
+
+      {% if form.errors %}
+        {% for field in form %}
+          {% for error in field.errors %}
+            <p>{{ error|escape }}</p>
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
+
+      {{ form }}
+
+      <input type="submit" value="Send Reset Email">
+    </form>
+  </div>
+{% endblock %}

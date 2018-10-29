@@ -1,0 +1,14 @@
+{% extends 'skeleton.html' %}
+{% load custom_tags %}
+{% block title %}
+  <meta name="title" content="Activation">
+  <meta name="twitter:title" content="Activation - {{ config.NAME }}">
+  <meta name="og:title" content="Activation - {{ config.NAME }}">
+  <title>Activation &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Activation Page</h1>
+  <div>
+    <p>{{ response }}</p>
+  </div>
+{% endblock %}

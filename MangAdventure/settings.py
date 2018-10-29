@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'reader',
     'api',
     'groups',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -315,3 +316,21 @@ if env.get('HTTPS', 'off').lower() == 'on':
     CSRF_COOKIE_SECURE = True
     env['wsgi.url_scheme'] = 'https'
 
+
+# Login
+LOGIN_REDIRECT_URL = '/'
+
+if 'users' in INSTALLED_APPS:
+    try:
+        EMAIL_USE_TLS = True
+        EMAIL_HOST = CONFIG['smtp_host']
+        EMAIL_PORT = CONFIG['smtp_port']
+        EMAIL_HOST_USER = CONFIG['smtp_user']
+        EMAIL_HOST_PASSWORD = CONFIG['smtp_pass']
+
+        if not (EMAIL_HOST and EMAIL_PORT and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
+            raise KeyError
+    except KeyError:
+        warn("You should first configure SMTP settings "
+             "by running the 'configuresmtp' command. Users module disabled")
+        INSTALLED_APPS -= 'users'

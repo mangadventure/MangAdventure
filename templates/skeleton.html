@@ -21,7 +21,7 @@
       <meta name="robots" content="index,follow">
     {% endblock %}
     {% if config.DISCORD %}
-      <link title="Discord" type="text/html" href="{{ config.DISCORD }}">
+      <meta name="discord" content="{{ config.DISCORD }}">
     {% endif %}
     {% if config.TWITTER %}
       <meta name="twitter:site" content="@{{ config.TWITTER }}">

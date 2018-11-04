@@ -1,5 +1,0 @@
-Dear {{ user.username }},
-
-You have issued to reset your password on {{ config.NAME }}. To do so please click the link below. If you did not issue this yourself, feel free to ignore this e-mail.
-
-http://{{ domain }}{% url 'users:reset' uidb64=uid token=token %}

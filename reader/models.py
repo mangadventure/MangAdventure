@@ -1,7 +1,12 @@
 from django.utils.text import slugify
 from django.db import models
-from MangAdventure.models import *
-from MangAdventure.utils import *
+from MangAdventure.models import (
+    Alias, AliasKeyField, AliasField
+)
+from MangAdventure.utils import (
+    validators, storage,
+    uploaders, images
+)
 from groups.models import Group
 
 

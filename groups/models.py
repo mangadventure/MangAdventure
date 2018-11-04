@@ -4,7 +4,9 @@ from MangAdventure.utils.storage import OverwriteStorage
 from MangAdventure.utils.uploaders import group_logo_uploader
 from MangAdventure.utils.validators import FileSizeValidator
 from MangAdventure.utils.images import thumbnail
-from MangAdventure.models import *
+from MangAdventure.models import (
+    TwitterField, DiscordURLField, DiscordNameField
+)
 
 
 class Group(models.Model):

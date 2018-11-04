@@ -1,0 +1,18 @@
+{% extends 'skeleton.html' %}
+{% block title %}
+  <meta name="title" content="{{ title }}">
+  <meta name="twitter:title" content="{{ title }} - {{ config.NAME }}">
+  <meta name="og:title" content="{{ title }} - {{ config.NAME }}">
+  <title>{{ title }} &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">{{ title }}</h1>
+  {% if title == 'Account Activation' %}
+    <article class="user-action" id="activation">
+  {% else %}
+    <article class="user-action" id="activation-mail">
+  {% endif %}
+    <div>{{ response }}</div>
+  </article>
+{% endblock %}
+

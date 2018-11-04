@@ -1,7 +1,11 @@
-from django.contrib.auth.models import Group
 from django.contrib import admin
 from constance import config
-from .models import *
+from .models import (
+    Series, SeriesAlias,
+    Author, AuthorAlias,
+    Artist, ArtistAlias,
+    Chapter, Category
+)
 
 admin.site.site_header = '{} {}'.format(
     config.NAME, 'Administration')
@@ -53,7 +57,4 @@ admin.site.register(Author, AuthorAdmin)
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Chapter, ChapterAdmin)
 admin.site.register(Category, CategoryAdmin)
-
-
-admin.site.unregister(Group)
 

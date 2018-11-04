@@ -1,12 +1,14 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils import six
 
 
-class EmailTokenGenerator(PasswordResetTokenGenerator):
-    def _make_hash_value(self, user, timestamp):
-        return (
-            six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.is_active)
-        )
+class InvalidTokenError(Exception):
+    pass
 
 
-activation_token = EmailTokenGenerator()
+activation_token = PasswordResetTokenGenerator()
+
+__all__ = [
+    'InvalidTokenError',
+    'activation_token',
+]
+

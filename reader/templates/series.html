@@ -37,7 +37,7 @@
   <h1 id="series-title" class="text-shadow alter-bg">{{ series.title }}</h1>
   <article id="series">
     <img src="{{ MEDIA_URL|urljoin:series.cover.name }}"
-         alt="Cover" class="cover">
+         alt="{{ series }} Cover" class="cover">
     <div id="series-info">
       {% with aliases=series.aliases.all %}
         {% if aliases %}

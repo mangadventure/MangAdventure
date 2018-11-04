@@ -13,7 +13,7 @@ def write_config(section, key, value):
     PARSER.read(CONFIG_FILE)
     if not PARSER.has_section(section):
         PARSER.add_section(section)
-    if value.startswith('#'):
+    if str(value).startswith('#'):
         value = "'{}'".format(value)
     PARSER.set(section, key, value)
     with open(CONFIG_FILE, 'w+') as config:

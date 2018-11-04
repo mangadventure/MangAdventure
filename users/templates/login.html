@@ -7,21 +7,27 @@
   <title>Login &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
-  <h1 class="text-shadow alter-bg">Register</h1>
-  <div>
-
-    <form method="post" action="{% url 'users:login' %}">
+  <h1 class="text-shadow alter-bg">Sign in</h1>
+  <article class="user-action" id="login">
+    <form method="POST" action="{% url 'users:login' %}">
       {% csrf_token %}
-
-
       {% if form.errors %}
-        <p>Errors</p>
+        {% for field in form %}
+          {% for error in field.errors %}
+            <p class="error">{{ error|escape }}</p>
+          {% endfor %}
+        {% endfor %}
       {% endif %}
-
-      <p>Username: {{ form.username }}</p>
-      <p>Password: {{ form.password }}</p>
-
-      <input type="submit" value="Login">
+      <label>
+        <div>Username</div>
+        {{ form.username }}
+      </label>
+      <label>
+        <div>Password</div>
+        {{ form.password }}
+      </label>
+      <button type="submit">Login</button>
     </form>
-  </div>
+  </article>
 {% endblock %}
+

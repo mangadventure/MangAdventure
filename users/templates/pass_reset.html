@@ -1,0 +1,58 @@
+{% extends 'skeleton.html' %}
+{% block title %}
+  <meta name="title" content="Password Reset">
+  <meta name="twitter:title" content="Password Reset - {{ config.NAME }}">
+  <meta name="og:title" content="Password Reset - {{ config.NAME }}">
+  <title>Password Reset &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-fg">Password Reset</h1>
+  {% if form %}
+    <article class="user-action" id="password-reset">
+      <form method="POST" action="{% url 'users:reset' %}">
+        {% csrf_token %}
+        {% if form.errors %}
+          {% for field in form %}
+            {% for error in field.errors %}
+              <p class="error">{{ error|escape }}</p>
+            {% endfor %}
+          {% endfor %}
+        {% endif %}
+      <label>
+        <div>
+          Enter your email address and we will
+          send you a link to reset your password.
+        </div>
+        {{ form.email }}
+      </label>
+        <button type="submit">Reset password</button>
+      </form>
+  {% elif email %}
+    <article class="user-action" id="password-reset-sent">
+      <div>
+        {% if exists %}
+          <p>
+            You will receive an email at {{ email }}
+            with a link to reset your password.
+          </p>
+          <p>
+            If you can't find the email in
+            your inbox, check your junk folder.
+          </p>
+        {% else %}
+          <p class="error">
+            Error: No user was found with the
+            provided email address ({{ email }}).
+          </p>
+        {% endif %}
+      </div>
+  {% else %}
+    <article class="user-action" id="password-reset-done">
+      <div>
+        <p>You have successfully reset your password.</p>
+        <p>Click <a href="{% url 'users:login' %}">this link</a> to sign in.</p>
+      </div>
+  {% endif %}
+  </article>
+{% endblock %}
+

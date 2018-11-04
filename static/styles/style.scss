@@ -420,6 +420,19 @@ thead {
   }
 }
 
+article.user-action {
+  text-align: center;
+  form {
+    padding: 3px 0 5px;
+    button {
+      display: block;
+      margin: 5px auto 0;
+      border-radius: 3px;
+    }
+    input { border-radius: 3px }
+  }
+}
+
 .dropdown {
   display: block;
   height: 30px;

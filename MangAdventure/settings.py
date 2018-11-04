@@ -44,7 +44,7 @@ try:
     else:
         raise KeyError
 except KeyError:
-    if 'generatekey' not in argv and 'configureurl' not in argv:
+    if not {'generatekey', 'configureurl'} & set(argv):
         warn("You should configure your website's URL "
              "by running the 'configureurl' command.")
 
@@ -320,17 +320,20 @@ if env.get('HTTPS', 'off').lower() == 'on':
 # Login
 LOGIN_REDIRECT_URL = '/'
 
-if 'users' in INSTALLED_APPS:
-    try:
-        EMAIL_USE_TLS = True
-        EMAIL_HOST = CONFIG['smtp_host']
-        EMAIL_PORT = CONFIG['smtp_port']
-        EMAIL_HOST_USER = CONFIG['smtp_user']
-        EMAIL_HOST_PASSWORD = CONFIG['smtp_pass']
+try:
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = CONFIG['smtp_host']
+    EMAIL_PORT = CONFIG['smtp_port']
+    EMAIL_HOST_USER = CONFIG['smtp_user']
+    EMAIL_HOST_PASSWORD = CONFIG['smtp_pass']
+    DEFAULT_FROM_EMAIL = CONFIG['smtp_mail']
 
-        if not (EMAIL_HOST and EMAIL_PORT and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
-            raise KeyError
-    except KeyError:
-        warn("You should first configure SMTP settings "
-             "by running the 'configuresmtp' command. Users module disabled")
-        INSTALLED_APPS.remove('users')
+    if not all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
+                EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL]):
+        raise KeyError
+except KeyError:
+    INSTALLED_APPS.remove('users')
+    if not {'generatekey', 'configuresmtp'} & set(argv):
+        warn("To enable the User module, you have to configure your SMTP "
+             "mail server's settings via the 'configuresmtp' command.")
+

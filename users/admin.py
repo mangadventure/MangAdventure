@@ -1,15 +1,13 @@
+from django.contrib.auth.models import Group
 from django.contrib import admin
-from .models import *
-
-
-class UserBookmarkInline(admin.StackedInline):
-    model = Bookmark
-    extra = 1
+from .models import User
 
 
 class UserAdmin(admin.ModelAdmin):
-    inlines = [UserBookmarkInline]
+    exclude = ['password', 'groups']
 
 
 admin.site.unregister(User)
+admin.site.unregister(Group)
 admin.site.register(User, UserAdmin)
+

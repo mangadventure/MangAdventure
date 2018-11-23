@@ -32,11 +32,11 @@ def filter(params):
         authors = AuthorAlias.objects.filter(
             alias__icontains=params['author'])
         if len(authors):
-            q |= Q(authors__in=authors)
+            q |= Q(authors__pk__in=authors)
         artists = ArtistAlias.objects.filter(
             alias__icontains=params['author'])
         if len(artists):
-            q |= Q(artists__in=artists)
+            q |= Q(artists__pk__in=artists)
         filters &= q
     if params['status'] != 'any':
         filters &= Q(completed=(params['status'] == 'completed'))

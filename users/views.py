@@ -1,12 +1,13 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import authenticate, login, logout
-from django.utils.encoding import force_text, force_bytes
 from django.core.mail import EmailMessage
 from django.shortcuts import render
 from django.conf import settings
-from base64 import b64decode, b64encode
 from constance import config
-from .tokens import activation_token, InvalidTokenError
+from .tokens import (
+    activation_token, make_token,
+    InvalidTokenError, parse_token
+)
 from .forms import (
     RegistrationForm, LoginForm,
     PassResetForm, SetPassForm
@@ -16,15 +17,6 @@ from .utils import (
     RESET_TEMPLATE, ACTIVATE_TEMPLATE
 )
 from .models import User
-
-
-def make_token(user):
-    token = activation_token.make_token(user)
-    return b64encode(force_bytes(token)).decode()
-
-
-def parse_token(token):
-    return force_text(b64decode(token))
 
 
 def register(request):

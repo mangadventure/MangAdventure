@@ -33,6 +33,7 @@ LetsCrawl.com
 Lincoln State Web Browser
 LWP::Simple
 Mac Finder
+Mail\.RU_Bot
 MFC Foundation Class Library
 Microsoft URL Control
 Miss(aug|igu)a Locat(e|or)

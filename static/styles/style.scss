@@ -261,7 +261,7 @@ thead {
 
 #chapter {
   #placeholder {
-    width: 80vw;
+    width: 100%;
     display: flex;
     cursor: wait;
   }
@@ -435,7 +435,6 @@ article.user-action {
 
 .dropdown {
   display: block;
-  height: 30px;
   padding: 4px;
   position: relative;
   @include box-sizing();
@@ -533,6 +532,8 @@ article.user-action {
 .comma::after { content: quote(',') }
 
 .logo { &[height='27'], &[height='38'] { display: none } }
+
+#dropdowns { height: 30px }
 
 #searchlink { display: none }
 

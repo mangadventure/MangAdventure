@@ -1,15 +1,14 @@
+from __future__ import print_function
 from django.core.management.color import color_style as style
-from django.utils.six import print_
 from os import path, mkdir, environ as env
-from re import compile as reg, IGNORECASE
-from socket import gethostbyname
+from re import compile as regex, IGNORECASE
 from sys import stderr, argv
 from config import CONFIG
 
 # From https://stackoverflow.com/questions/9626535/#36609868
 get_domain = lambda url: url.split('//')[-1].split('/')[0].split('?')[0]
 
-warn = lambda msg: print_(style().WARNING('WARNING: ' + msg), file=stderr)
+warn = lambda msg: print(style().WARNING('WARNING: ' + msg), file=stderr)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 _settings = path.dirname(path.abspath(__file__))
@@ -39,8 +38,6 @@ try:
     BASE_URL = get_domain(CONFIG['site_url'])
     if BASE_URL:
         ALLOWED_HOSTS += [BASE_URL, 'www.' + BASE_URL]
-        HOST_IP = gethostbyname(BASE_URL)
-        ALLOWED_HOSTS += [HOST_IP] if HOST_IP else []
     else:
         raise KeyError
 except KeyError:
@@ -48,9 +45,9 @@ except KeyError:
         warn("You should configure your website's URL "
              "by running the 'configureurl' command.")
 
-_bad_bots = path.join(_settings, 'bad-bots.txt')
 DISALLOWED_USER_AGENTS = [
-    reg(r'%s' % l.strip(), IGNORECASE) for l in open(_bad_bots)
+    regex(r'%s' % l.strip(), IGNORECASE)
+    for l in open(path.join(_settings, 'bad-bots.txt'))
 ]
 
 # Application definition
@@ -107,9 +104,9 @@ TEMPLATES = [{
 WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 
 IGNORABLE_404_URLS = [
-    reg(r'^/favicon.ico'),
-    reg(r'^/robots.txt'),
-    reg(r'^/api'),
+    regex(r'^/favicon.ico'),
+    regex(r'^/robots.txt'),
+    regex(r'^/api'),
 ]
 
 # Constance
@@ -236,8 +233,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Debug and Error Logging
 # https://docs.djangoproject.com/en/dev/topics/logging/
 
-if not path.exists(path.join(BASE_DIR, 'logs')):
-    mkdir(path.join(BASE_DIR, 'logs'))
+LOGS_DIR = path.join(BASE_DIR, 'logs')
+if not path.exists(LOGS_DIR):
+    mkdir(LOGS_DIR)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -254,13 +252,13 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filters': ['require_debug_true'],
-            'filename': path.join(BASE_DIR, 'logs', 'debug.log')
+            'filename': path.join(LOGS_DIR, 'debug.log')
         },
         'error': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filters': ['require_debug_false'],
-            'filename': path.join(BASE_DIR, 'logs', 'errors.log')
+            'filename': path.join(LOGS_DIR, 'errors.log')
         },
     },
     'loggers': {
@@ -307,7 +305,7 @@ MEDIA_ROOT = path.join(BASE_DIR, 'media/')
 
 # HTTPS
 env.setdefault('HTTPS', CONFIG.get('https', 'off'))
-if env.get('HTTPS', 'off').lower() == 'on':
+if env.get('HTTPS').lower() == 'on':
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True

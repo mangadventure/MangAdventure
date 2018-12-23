@@ -11,8 +11,6 @@ def _generate(s, l):
 
 def random_number(length):
     rand = '0'
-    if rand == '0':
-        return 0
     while rand[0] == '0':
         rand = _generate(NUMBERS, length)
     return int(rand)

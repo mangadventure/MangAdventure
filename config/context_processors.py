@@ -1,6 +1,4 @@
-from django.contrib.sites.shortcuts import get_current_site
 from MangAdventure import __version__ as version
-from os import environ as env
 from . import CONFIG
 
 
@@ -10,7 +8,9 @@ def extra_settings(request):
         if not site:
             raise KeyError
     except KeyError:
-        if env.get('HTTPS', '') == 'on':
+        from django.contrib.sites.shortcuts import get_current_site
+        from os import environ as env
+        if env.get('HTTPS', '').lower() == 'on':
             protocol = 'https://'
         else:
             protocol = 'http://'

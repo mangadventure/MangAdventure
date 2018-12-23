@@ -1,6 +1,7 @@
 from django.db.models.query import Q
-from reader.models import Series, \
-    SeriesAlias, AuthorAlias, ArtistAlias
+from reader.models import (
+    Series, SeriesAlias, AuthorAlias, ArtistAlias
+)
 
 
 def parse(request):

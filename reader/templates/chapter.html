@@ -109,7 +109,7 @@
       </div>
     </section>
     {% with series_url='/reader/'|add:curr_chapter.series_id|add:'/' %}
-      <section id="placeholder" data-num="{{ curr_page.number }}"
+      <section id="placeholder" class="main-bg" data-num="{{ curr_page.number }}"
                data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
                {% if curr_page.number == all_pages.count %}
                  {% if next_chapter %}

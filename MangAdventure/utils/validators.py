@@ -11,8 +11,10 @@ from . import is_dir
 def _remove_file(_file):
     try:
         remove(_file.path)
-    except IOError:
-        pass
+    except OSError as err:
+        # Ignore FileNotFoundError
+        if err.errno != 2:
+            raise err
 
 
 class FileSizeValidator(BaseValidator):
@@ -98,7 +100,8 @@ def twitter_name_validator(username):
     return UsernameValidator(
         regex=r'^[A-Za-z0-9_]{1,15}$',
         message='Invalid Twitter username.',
-        code='invalid_twitter_name').__call__(username)
+        code='invalid_twitter_name'
+    ).__call__(username)
 
 
 def discord_name_validator(username):
@@ -106,7 +109,8 @@ def discord_name_validator(username):
         regex=r'^(.*){2,32}#[0-9]{4}$',
         message='Invalid Discord username'
                 ' and discriminator.',
-        code='invalid_discord_name').__call__(username)
+        code='invalid_discord_name'
+    ).__call__(username)
 
 
 __all__ = [

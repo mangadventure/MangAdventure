@@ -26,7 +26,7 @@ class Command(BaseCommand):
         host = options['HOST'][0].split(':')
         port = host[1] if len(host) > 1 else '587'
         mail = options.get('ADDRESS', '%s@%s' % (user, host[0]))
-        password = options.get('PASSWORD', [])[:1]
+        password = options.get('PASSWORD', [None])[0]
         if not password:
             if hasattr(stdin, 'isatty') and not stdin.isatty():
                 self.stderr.write(self.style.ERROR(

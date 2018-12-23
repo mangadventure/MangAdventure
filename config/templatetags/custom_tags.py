@@ -1,5 +1,5 @@
 from django.template.defaultfilters import register, slice_filter
-from django.contrib.staticfiles.finders import find
+# from django.contrib.staticfiles.finders import find
 from django.utils.six import moves
 from os.path import splitext, basename
 # from base64 import b64encode
@@ -40,15 +40,14 @@ def get_type(link):
         with urlopen(link) as response:
             return response.info().get_content_type()
     except Exception:
-        ext = splitext(link.lower())[-1]
         return {
-            '.svg': 'image/svg+xml',
             '.png': 'image/png',
             '.jpg': 'image/jpeg',
             '.jpeg': 'image/jpeg',
+            '.webp': 'image/webp',
+            '.svg': 'image/svg+xml',
             '.ico': 'image/x-icon',
             '.icon': 'image/x-icon',
-            '.webp': 'image/webp',
             '.apng': 'image/apng',
             '.gif': 'image/gif',
             '.bmp': 'image/bmp',
@@ -56,7 +55,7 @@ def get_type(link):
             '.tiff': 'image/tiff',
             '.pic': 'image/pict',
             '.pict': 'image/pict'
-        }.get(ext, 'image/jpeg')
+        }.get(splitext(link.lower())[-1], 'image/jpeg')
 
 
 # Currently unused

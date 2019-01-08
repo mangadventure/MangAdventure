@@ -12,7 +12,13 @@ from . import is_dir, sort
 
 def thumbnail(obj, max_size=100):
     img = Image.open(obj)
-    img.thumbnail((max_size, max_size), Image.ANTIALIAS)
+    # Convert grayscale images to RGB for better downsampling
+    if img.mode in ["1", "L", "P"]:
+        img = img.convert("RGB")
+        img.thumbnail((max_size, max_size), Image.ANTIALIAS)
+        img = img.convert("P", dither=Image.NONE, palette=Image.ADAPTIVE)
+    else:
+        img.thumbnail((max_size, max_size), Image.ANTIALIAS)
     Image.MIME.setdefault('ICO', 'image/x-icon')
     mime = Image.MIME.get(img.format)
     buff = BytesIO()

@@ -144,7 +144,7 @@
 @mixin transform($transform) {
   $prefixes: '-ms-', '-moz-', '-webkit-', '';
   @each $p in $prefixes {
-    #{$p}transform: $transform;
+    #{$p}transform: unquote($transform);
   }
 }
 
@@ -152,12 +152,6 @@
   &:hover#{$selector},
   &:active#{$selector},
   &:focus#{$selector} {
-    @content;
-  }
-}
-
-@mixin viewport($max) {
-  @media screen and (max-width: $max) {
     @content;
   }
 }

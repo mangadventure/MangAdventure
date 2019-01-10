@@ -1,16 +1,16 @@
 .__NoScript_PlaceHolder__ { display: none !important }
 #home object.logo { display: none }
-#home .home-url .fas { font-size: 45px }
+#home .mi-home { font-size: 45px }
 #chapter #placeholder { display: none }
 #chapter #dropdowns, #chapter #controls { display: block }
 #search #search-categories { display: none }
 
 @media screen and (max-width: 1024px) {
-  #home span.fas { font-size: 38px }
+  #home span.mi { font-size: 38px }
 }
 
 @media screen and (max-width: 690px) {
-  #home span.fas { font-size: 27px }
+  #home span.mi { font-size: 27px }
   #search .s-hidden { display: inline }
   #search table { border-right-style: solid }
 }

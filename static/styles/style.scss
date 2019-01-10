@@ -44,14 +44,10 @@ button {
 thead {
   cursor: pointer;
   th {
-    &[aria-sort='descending'] i::before {
-      margin-left: 0.3em;
-      content: quote('\f0d7'); // caret-down
-    }
-    &[data-sort-default] i::before,
-    &[aria-sort='ascending'] i::before {
-      margin-left: 0.3em;
-      content: quote('\f0d8'); // caret-up
+    .mi { margin: 0 }
+    .mi::before { content: quote('\f107') } // mi-down
+    &[data-sort-default] .mi, &[aria-sort='ascending'] .mi {
+      @include transform('rotate(-180deg)');
     }
   }
 }
@@ -306,12 +302,15 @@ thead {
       margin: auto 0;
     }
     a { text-decoration: none }
+    .mi {
+      font-size: 3em;
+      margin: auto;
+    }
     &-top, &-bottom {
       width: 100%;
       display: inline-flex;
       @include justify-content(space-around);
     }
-    .fa-rotate-90 { padding: 0 0.5em }
   }
 }
 
@@ -436,6 +435,7 @@ article.user-action {
 .dropdown {
   display: block;
   padding: 4px;
+  line-height: 1.1em;
   position: relative;
   @include box-sizing();
   ul {
@@ -478,7 +478,7 @@ article.user-action {
     border-radius: 5px;
     width: 200%;
     text-align: center;
-    @include transform(translateX(-50%));
+    @include transform('translateX(-50%)');
   }
 }
 
@@ -507,23 +507,17 @@ article.user-action {
   }
 }
 
-.fa-chevron-down {
-  font-size: 75%;
-  position: relative;
-  bottom: 0.2em;
+.mi {
+  &-discord {
+    font-size: 1.1em;
+    margin-left: -0.1em;
+  }
+  &-book, &-book-o { margin: 0 }
+  &-down { margin: -0.1em }
+  &-circle { color: lightslategray }
+  &-ok-circle { color: limegreen }
+  &-x-circle { color: tomato }
 }
-
-.fa-caret-down {
-  font-size: 110%;
-  position: relative;
-  top: 0.05em;
-}
-
-.fa-circle { color: lightslategray }
-
-.fa-check-circle { color: limegreen }
-
-.fa-times-circle { color: tomato }
 
 .no-display { display: none }
 
@@ -539,7 +533,7 @@ article.user-action {
 
 i[data-pcount='100+'] { padding: 0 0.5em }
 
-@include viewport(1024px) {
+@media screen and (max-width: 1024px) {
   #header {
     height: 38px;
     .logo {
@@ -553,14 +547,14 @@ i[data-pcount='100+'] { padding: 0 0.5em }
   }
 }
 
-@include viewport(810px) {
+@media screen and (max-width: 810px) {
   #search {
     &box { display: none }
     &link { display: block }
   }
 }
 
-@include viewport(690px) {
+@media screen and (max-width: 690px) {
   #header {
     height: 27px;
     .logo {
@@ -573,19 +567,24 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       margin: auto;
       border-right-style: none;
     }
-    .result-info:nth-last-child(-n+2) {
-      display: inline-block;
-      .fa-clock { margin-left: 0.75em }
+    .result-info {
+      i { margin: 0 }
+      .mi-people { margin-right: 0.3em }
+      &:nth-last-child(-n+2) {
+        display: inline-block;
+        .mi-clock { margin-left: 0.75em }
+      }
     }
     .s-hidden { display: none }
   }
   #series { max-width: 92vw }
+  #chapter #controls .mi { font-size: 2em }
   #navig ul li { margin: -0.2em 0 -0.3em -0.2em }
   .ident { display: none }
 }
 
 
-@include viewport(436px) {
+@media screen and (max-width: 436px) {
   #content {
     background-color: inherit !important;
     border: none !important;
@@ -679,9 +678,12 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       }
       &:first-of-type { padding-top: 0.2em }
     }
-    div { &.alias, &.author, &.artist, &.category { text-indent: 0 } }
+    div.alias, div.author, div.artist, div.category { text-indent: 0 }
   }
   #chapter {
+    #controls {
+      .mi { font-size: 1.5em }
+    }
     .dropdown {
       > a { display: none }
       > span { display: inline-block }
@@ -705,7 +707,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       a { display: block }
     }
     &-desc div { text-indent: 0 }
-    .member { &, div { padding-left: 0 } }
+    .member, .member div { padding-left: 0 }
   }
   #info {
     text-align: center;

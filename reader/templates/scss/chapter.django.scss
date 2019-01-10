@@ -3,9 +3,17 @@ $alter-bg: {{ config.ALTER_BACKGROUND|unquote }};
 $main-fg: {{ config.MAIN_TEXT_COLOR|unquote }};
 $alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
 
+#content {
+  background: none;
+  border: none;
+}
+
 #placeholder, .chapter-page {
-  border: 2px solid $alter-bg;
+  border: 3px solid $alter-bg;
   border-radius: 5px;
+  @media screen and (max-width: 436px) {
+    border-width: 2px;
+  }
 }
 
 .dropdown {
@@ -25,19 +33,17 @@ $alter-fg: {{ config.ALTER_TEXT_COLOR|unquote }};
   color: $alter-fg;
   border: none;
   border-radius: 3px;
-  line-height: 110%;
+  line-height: 105%;
   vertical-align: bottom;
   position: relative;
-  bottom: 0.1em;
-  @media screen and (max-width: 436px) {
-    border: 1px solid $alter-bg;
-    bottom: 0.05em;
-  }
+  bottom: 0.05em;
+  border: 1px solid $alter-bg;
 }
 
-.fa-circle-notch {
+.mi-spin {
   color: transparentize($alter-fg, 0.25);
   margin: 25vw auto;
+  font-size: 9em;
   @media screen and (max-width: 436px) {
     color: transparentize($main-fg, 0.25)
   }

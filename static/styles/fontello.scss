@@ -1,0 +1,149 @@
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+@-o-keyframes spin {
+  0% {
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(359deg);
+    -o-transform: rotate(359deg);
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+$font-path: '/static/fontello/font/mangadventure';
+$font-formats: (
+  'woff2': 'woff2',
+  'woff': 'woff',
+  'ttf': 'truetype',
+  // 'svg#mangadventure': 'svg',
+  // 'eot': 'embedded-opentype',
+);
+
+$fontello-codes: (
+  'book': '\f101',
+  'book-o': '\f102',
+  'clock': '\f103',
+  'discord': '\f104',
+  'spin': '\f105',
+  'bookmark': '\f106',
+  'down': '\f107',
+  'left': '\f108',
+  'right': '\f109',
+  'user': '\f10a',
+  'search': '\f10b',
+  'comment': '\f10c',
+  'chat': '\f10d',
+  'mail': '\f10e',
+  'info-circle': '\f10f',
+  'reply': '\f110',
+  'lock': '\f111',
+  'warning': '\f112',
+  'twitter': '\f113',
+  'facebook': '\f114',
+  'gplus': '\f115',
+  'menu': '\f116',
+  'send': '\f117',
+  'contact': '\f118',
+  'edit': '\f119',
+  'feather': '\f11a',
+  'people': '\f11b',
+  'tags': '\f11c',
+  'pages': '\f11d',
+  'save': '\f11e',
+  'download': '\f11f',
+  'trash': '\f120',
+  'link': '\f121',
+  'heart-o': '\f122',
+  'heart': '\f123',
+  'bookmark-o': '\f124',
+  'rss': '\f125',
+  'home': '\f126',
+  'info': '\f127',
+  'cog': '\f128',
+  'ok-circle': '\f129',
+  'x-circle': '\f12a',
+  'circle': '\f12b',
+  'hash': '\f12c',
+  'library': '\f12d',
+  'key': '\f12e',
+  'rewind': '\f12f',
+  'forward': '\f130',
+);
+
+@font-face {
+  $src: null;
+  @each $ext, $format in $font-formats {
+    $url: '#{$font-path + '.' + $ext}';
+    $src: append($src, url(quote($url)) format(quote($format)), comma);
+  }
+  unicode-range: u+f101-f130;
+  font-family: quote('mangadventure');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+  src: $src;
+}
+
+.mi {
+  // stylelint-disable font-family-no-missing-generic-family-keyword
+  font-family: quote('mangadventure');
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1em;
+  font-variant: normal;
+  text-decoration: inherit;
+  text-transform: none;
+  text-align: center;
+  line-height: 1em;
+  display: inline-block;
+  margin-right: 0.2em;
+  width: 1em;
+  speak: none;
+  &-spin {
+    margin-left: 0.2em;
+    display: inline-block;
+    @each $p in ('-moz-', '-o-', '-webkit-', '') {
+      #{$p}animation: spin 2s infinite linear;
+    }
+  }
+}
+
+@each $name, $code in $fontello-codes {
+  .mi-#{$name}::before { content: quote($code) }
+}
+

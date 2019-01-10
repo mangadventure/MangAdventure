@@ -34,14 +34,24 @@ v0.5.x
 ^^^^^^
 
 | |u| User registration:
-|    |u| Allow Google/Twitter sign-in.
+|    |u| Allow Google/Twitter/Reddit sign-in.
 |    |u| Allow users to bookmark series.
 |    |u| Password reset form.
-| |u| Comments (custom/Disqus).
+| |u| Comments (custom/Disqus/Commento).
 | |u| Cookie consent.
 |    |u| Add to information page.
 
 v0.6.x
+^^^^^^
+
+| |u| More reading modes:
+|    |u| Long strip mode.
+|    |u| Fit page to screen.
+|    |u| Double page.
+|    |u| Right to left.
+| |u| RSS feeds.
+
+v0.7.x
 ^^^^^^
 
 | |u| Revamp API:
@@ -50,17 +60,16 @@ v0.6.x
 |    |u| Rate limit.
 |    |u| POST,PUT,PATCH,DELETE privileges for staff.
 
-v0.7.x
+v0.8.x
 ^^^^^^
 
-| |u| More reading modes:
-|    |u| Long strip mode.
-|    |u| Fit page to screen.
+| |u| Serialize models into JSON-LD.
+|    |u| Use https://github.com/HadrienGardeur/comics-manifest for series.
 | |u| Update bookmarked series on MAL/AniList.
 | |u| IRC links.
-| |u| RSS feeds.
+| |u| Sitemap.
 
-v0.8.x
+v0.9.x
 ^^^^^^
 
 | |u| Support MySQL database.

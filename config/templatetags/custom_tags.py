@@ -58,6 +58,11 @@ def get_type(link):
         }.get(splitext(link.lower())[-1], 'image/jpeg')
 
 
+@register.filter
+def preload_pages(pages, num):
+    preload = lambda p: p.number > num and p.number < (num + 4)
+    return list(filter(preload, pages))
+
 # Currently unused
 # @register.simple_tag
 # def sha256hash(sfile):

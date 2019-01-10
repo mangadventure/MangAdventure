@@ -4,7 +4,7 @@
   function getSearchParam(param) {
     var tmp = [];
     var items = location.search.substr(1).split('&');
-    for(var i = 0, l = items.length; i <l; ++i) {
+    for(var i = 0, l = items.length; i < l; ++i) {
       tmp = items[i].split('=');
       if(tmp[0] === param)
         return decodeURIComponent(tmp[1]);
@@ -14,12 +14,12 @@
 
   function appendInfo(row, cln, title, text) {
     var sel = 'tr:nth-child(' + row + ') .result-title';
-    var fa = document.createElement('i');
-    fa.className = 'fas fa-' + cln;
-    fa.setAttribute('title', title);
+    var mi = document.createElement('i');
+    mi.className = 'mi mi-' + cln;
+    mi.setAttribute('title', title);
     var div = document.createElement('div');
     div.className = 'result-info';
-    div.appendChild(fa);
+    div.appendChild(mi);
     div.innerHTML += text;
     document.querySelector(sel).appendChild(div);
   }
@@ -36,16 +36,16 @@
         var elem = hidden[i];
         switch(elem.className) {
           case 'result-people s-hidden':
-            appendInfo(n, 'user-friends', 'Author/Artist', elem.innerHTML);
+            appendInfo(n, 'people', 'Author/Artist', elem.innerHTML);
             break;
           case 'result-desc s-hidden':
-            appendInfo(n, 'info-circle', 'Description', elem.innerHTML);
+            appendInfo(n, 'info', 'Description', elem.innerHTML);
             break;
           case 'result-categories s-hidden':
-            appendInfo(n, 'tag', 'Categories', elem.innerHTML);
+            appendInfo(n, 'tags', 'Categories', elem.innerHTML);
             break;
           case 'result-chapters s-hidden':
-            appendInfo(n, 'file-alt', 'Chapters', elem.innerHTML);
+            appendInfo(n, 'pages', 'Chapters', elem.innerHTML);
             break;
           case 'result-date s-hidden':
             appendInfo(n, 'clock', 'Last Update', elem.innerHTML);
@@ -83,17 +83,17 @@
     var reg = new RegExp('-?' + text.replace(
       /[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
     switch(state.className) {
-      case 'far fa-circle fa-fw':
+      case 'mi mi-circle':
         values = regFilter(values, reg).concat(text);
-        state.className = 'far fa-check-circle fa-fw';
+        state.className = 'mi mi-ok-circle';
         break;
-      case 'far fa-check-circle fa-fw':
+      case 'mi mi-ok-circle':
         values = regFilter(values, reg).concat('-' + text);
-        state.className = 'far fa-times-circle fa-fw';
+        state.className = 'mi mi-x-circle';
         break;
-      case 'far fa-times-circle fa-fw':
+      case 'mi mi-x-circle':
         values = regFilter(values, reg);
-        state.className = 'far fa-circle fa-fw';
+        state.className = 'mi mi-circle';
         break;
     }
     form.categories.value = values.join(',');

@@ -38,8 +38,12 @@ venv/
 # MangAdventure stuff
 config.ini
 media/
-static/*
-!static/scripts
-!static/styles
-!static/icons
+static/COMPILED
+static/admin
+static/extra
+
+# Fontello stuff
+static/fontello/README.txt
+static/fontello/demo.html
+static/fontello/css
 

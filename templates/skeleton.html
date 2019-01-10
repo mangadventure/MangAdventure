@@ -57,16 +57,15 @@
     <link href="/opensearch.xml" rel="search" title="{{ config.NAME }}"
           type="application/opensearchdescription+xml">
     <link href="{{ PAGE_URL }}" rel="canonical" type="text/html">
-    <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
-          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
-          rel="prefetch stylesheet" as="style" type="text/css" crossorigin="anonymous">
-    <link href="{{ config.FONT_URL }}" rel="prefetch stylesheet" as="style" type="text/css">
+    <link href="{% static 'styles/fontello.scss'|compile %}"
+          rel="preload stylesheet" as="style"
+          type="text/css" crossorigin="anonymous">
+    <link href="{{ config.FONT_URL }}" rel="preload stylesheet"
+          as="style" type="text/css" crossorigin="anonymous">
     {% block stylesheets %}
       <link href="{% static 'styles/style.scss'|compile %}"
-            data-source="{% static 'styles/style.scss' %}"
             rel="stylesheet" type="text/css">
       <link href="{% static 'extra/style.scss'|compile %}"
-            data-source="{% static 'extra/style.scss' %}"
             rel="stylesheet" type="text/css">
       <noscript>
         <link href="{% static 'styles/noscript.css' %}"
@@ -95,7 +94,7 @@
       <a id="home" href="/">
         <span>
           <noscript>
-            <span title="{{ config.NAME }}" class="fas fa-home fa-fw">
+            <span title="{{ config.NAME }}" class="mi mi-home">
             </span>
           </noscript>
           {% with logo=MEDIA_URL|urljoin:config.LOGO_LARGE %}
@@ -119,25 +118,25 @@
         <ul>
           <li>
             <a href="/info/">
-              <i class="fas fa-fw fa-info-circle"></i>
+              <i class="mi mi-info-circle"></i>
               <span class="ident">About us</span>
             </a>
           </li>
           <li>
             <a href="/">
-              <i class="far fa-fw fa-clock"></i>
+              <i class="mi mi-clock"></i>
               <span class="ident">Latest releases</span>
             </a>
           </li>
           <li>
             <a href="/reader/">
-              <i class="far fa-fw fa-list-alt"></i>
-              <span class="ident">Series list</span>
+              <i class="mi mi-library"></i>
+              <span class="ident">Library</span>
             </a>
           </li>
           <li id="searchlink">
             <a href="/search/">
-              <i class="fa fa-fw fa-search"></i>
+              <i class="mi mi-search"></i>
               <span class="ident">Search</span>
             </a>
           </li>

@@ -64,27 +64,17 @@ v0.8.x
 ^^^^^^
 
 | |u| Serialize models into JSON-LD.
-|    |u| Use https://github.com/HadrienGardeur/comics-manifest for series.
-| |u| Update bookmarked series on MAL/AniList.
-| |u| IRC links.
+|    |u| Use comics-manifest_ for series.
+| |u| Heroku Procfile & app.json_.
+| |u| Web App Manifest.
 | |u| Sitemap.
-
-v0.9.x
-^^^^^^
-
-| |u| Support MySQL database.
-| |u| Support PDF/EPUB for novels.
-| |u| Optionally keep the zipped chapter for downloading.
-| |u| Generate complete favicon with RealFaviconGenerator.
-
-v1.0.0
-^^^^^^
-
-| |u| Write an installer.
 
 .. unchecked
 .. |u| unicode:: U+00A0 U+00A0 U+2610
 
 .. checked
 .. |c| unicode:: U+00A0 U+00A0 U+2611
+
+.. _comics-manifest: https://github.com/HadrienGardeur/comics-manifest
+.. _app.json: https://devcenter.heroku.com/articles/app-json-schema
 

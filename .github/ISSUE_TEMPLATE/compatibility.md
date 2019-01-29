@@ -1,5 +1,6 @@
 ---
 name: 🔧 Compatibility
+labels: "Type: Compatibility"
 about: Is there a compatibility issue?
 ---
 

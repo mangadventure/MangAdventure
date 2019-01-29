@@ -99,7 +99,7 @@ Apache requires `mod_wsgi <https://modwsgi.rtfd.io/en/latest/>`_ to be installed
 
 .. literalinclude:: examples/apache.conf
    :language: apache
-   :lines: 1-28
+   :lines: 1-25
 
 Nginx example
 ~~~~~~~~~~~~~
@@ -108,7 +108,7 @@ Nginx requires `uwsgi <https://uwsgi-docs.rtfd.io/en/latest/>`_ to be installed.
 
 .. literalinclude:: examples/nginx.conf
    :language: nginx
-   :lines: 1-27
+   :lines: 1-24
 
 Don't forget to run uwsgi:
 

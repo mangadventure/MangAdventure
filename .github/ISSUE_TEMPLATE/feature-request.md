@@ -1,5 +1,6 @@
 ---
 name: ✨ Feature Request
+labels: "Type: Enhancement"
 about: Do you want something changed or implemented?
 ---
 

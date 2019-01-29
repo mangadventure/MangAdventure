@@ -1,5 +1,6 @@
 ---
 name: ❓ Question
+labels: "Type: Question"
 about: Do you have a question regarding this project?
 ---
 

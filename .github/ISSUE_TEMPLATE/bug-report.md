@@ -1,5 +1,6 @@
 ---
 name: 🐛 Bug Report
+labels: "Type: Bug"
 about: Did something not work as expected?
 ---
 

@@ -1,4 +1,5 @@
 from __future__ import print_function
+from . import __version__
 from django.core.management.color import color_style as style
 from os import path, mkdir, environ as env
 from re import compile as regex, IGNORECASE
@@ -69,6 +70,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.reddit',
     'allauth.socialaccount.providers.twitter',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.discord',
     'next_prev',
     'config',
     'reader',
@@ -335,7 +337,11 @@ AUTHENTICATION_BACKENDS = [
 SOCIALACCOUNT_PROVIDERS = {
     'reddit': {
         'AUTH_PARAMS': {'duration': 'permanent'},
-        'USER_AGENT': 'django:mangadv:1 (by <username>)',
+        'USER_AGENT': 'Django:MangAdventure:{} (by {})'.format(
+            __version__, "https://github.com/evangelos-ch/MangAdventure"),
+    },
+    'discord': {
+        'SCOPE': ['identity'],
     }
 }
 

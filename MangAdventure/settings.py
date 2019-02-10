@@ -59,9 +59,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'static_precompiler',
     'constance.backends.database',
     'config.apps.SettingsConfig',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.reddit',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.google',
     'next_prev',
     'config',
     'reader',
@@ -317,6 +324,22 @@ if env.get('HTTPS').lower() == 'on':
 
 # Login
 LOGIN_REDIRECT_URL = '/'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Socialaccount Provider Customization
+# https://django-allauth.readthedocs.io/en/latest/providers.html
+SOCIALACCOUNT_PROVIDERS = {
+    'reddit': {
+        'AUTH_PARAMS': {'duration': 'permanent'},
+        'USER_AGENT': 'django:mangadv:1 (by <username>)',
+    }
+}
+
+SITE_ID = 1
 
 try:
     EMAIL_USE_TLS = True

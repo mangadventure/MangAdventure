@@ -42,10 +42,10 @@ def register(request):
                 ),
                 to=[safe_mail(email)],
             ).send()
-            response = ' '.join[
+            response = ' '.join([
                 'We have sent you an activation link to',
                 'the email address you provided. Click',
-                'that link to complete your registration.']
+                'that link to complete your registration.'])
             return render(request, 'activate.html', {
                 'title': 'Activation Pending',
                 'response': response
@@ -61,7 +61,8 @@ def user_login(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
-            login(request, user)
+            login(request, user,
+                  backend='django.contrib.auth.backends.ModelBackend')
             return redirect_next(request)
     return render(request, 'login.html', {'form': form})
 
@@ -81,7 +82,8 @@ def activate(request):
     else:
         user.is_active = True
         user.save()
-        login(request, user)
+        login(request, user,
+              backend='django.contrib.auth.backends.ModelBackend')
         response = 'Your account has been successfully activated.'
     return render(request, 'activate.html', {
         'title': 'Account Activation',

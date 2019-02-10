@@ -3,4 +3,4 @@ django-next-prev
 django-constance[database]
 django-static-precompiler[libsass]
 Pillow
-
+django-allauth

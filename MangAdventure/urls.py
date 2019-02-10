@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^groups/', include('groups.urls')),
     url(r'^opensearch\.xml$', opensearch, name='opensearch'),
     url(r'^user/', include('users.urls')),
+    url(r'^accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:

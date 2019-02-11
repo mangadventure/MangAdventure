@@ -5,22 +5,29 @@ Thumbs.db
 .DS_Store
 
 # Python/Django stuff
-__pycache__/
 **/migrations/*auto*
-db.sqlite3
+__pycache__/
 logs/
+db.sqlite3
 *.pyc
 
-# Sphinx stuff
-_build/
-_templates/
-
 # Environment stuff
-.python-version
 .env/
 .venv/
 env/
 venv/
+.python-version
+
+# Setuptools stuff
+build/
+dist/
+PKG-INFO
+*.egg-info
+*.egg-link
+
+# Sphinx stuff
+_build/
+_templates/
 
 # Editor stuff
 .idea/
@@ -38,12 +45,8 @@ venv/
 # MangAdventure stuff
 config.ini
 media/
-static/COMPILED
-static/admin
-static/extra
-
-# Fontello stuff
-static/fontello/README.txt
-static/fontello/demo.html
-static/fontello/css
+static/styles/_variables.scss
+static/COMPILED/
+static/admin/
+static/extra/
 

@@ -1,0 +1,119 @@
+@import 'variables';
+@import 'mixins';
+
+#content {
+  background: none;
+  border: none;
+}
+
+#chapter {
+  #placeholder {
+    width: 100%;
+    display: flex;
+    cursor: wait;
+    border: 3px solid $alter-bg;
+    border-radius: 5px;
+  }
+  .chapter-page {
+    display: block;
+    width: auto;
+    cursor: pointer;
+    position: relative;
+    top: 0.5em;
+    border: 3px solid $alter-bg;
+    border-radius: 5px;
+  }
+  .chapter-list {
+    float: left;
+    a {
+      display: inline-block;
+      max-width: 50vw;
+      @include truncate();
+    }
+    ul {
+      left: -1px;
+      min-width: 100%;
+      text-indent: 0.05em;
+      border-top-left-radius: 0;
+    }
+  }
+  .page-list {
+    float: right;
+    ul {
+      right: -1px;
+      width: 125%;
+      text-align: center;
+      border-top-right-radius: 0;
+    }
+  }
+  .curr-page { text-align: center }
+}
+
+#controls {
+  width: 100%;
+  display: flex;
+  margin: 2.5vh auto 1vh;
+  @include flex-direction(column);
+  span {
+    font-size: 1.25em;
+    margin: auto 0;
+  }
+  a { text-decoration: none }
+  .mi {
+    font-size: 3em;
+    margin: auto;
+  }
+  &-top, &-bottom {
+    width: 100%;
+    display: inline-flex;
+    @include justify-content(space-around);
+  }
+}
+
+.dropdown {
+  border: 1px solid $alter-bg;
+  border-radius: 5px;
+  ul {
+    border: 1px solid $alter-bg;
+    border-radius: 5px;
+  }
+}
+
+.curr-page input {
+  font-size: 1em;
+  text-align: center;
+  width: 1.75em;
+  background-color: $main-bg;
+  color: $alter-fg;
+  border: 1px solid $alter-bg;
+  border-radius: 3px;
+  line-height: 105%;
+  vertical-align: bottom;
+  position: relative;
+  bottom: 0.05em;
+}
+
+.mi-spin {
+  color: transparentize($alter-fg, 0.25);
+  margin: 25vw auto;
+  font-size: 9em;
+}
+
+@media screen and (max-width: 690px) {
+  #chapter #controls .mi { font-size: 2em }
+}
+
+@media screen and (max-width: 436px) {
+  #chapter {
+    #controls .mi { font-size: 1.5em }
+    #placeholder, .chapter-page { border-width: 2px }
+    .dropdown {
+      > a { display: none }
+      > span { display: inline-block }
+    }
+  }
+  .mi-spin {
+    color: transparentize($main-fg, 0.25)
+  }
+}
+

@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.http import Http404
 from .models import Group, Member
@@ -19,7 +18,7 @@ def group(request, g_id=0):
         raise Http404
     try:
         _group = Group.objects.prefetch_related('roles').get(id=g_id)
-    except ObjectDoesNotExist:
+    except Group.DoesNotExist:
         raise Http404
     member_ids = []
     for role in _group.roles.values('member_id').distinct():

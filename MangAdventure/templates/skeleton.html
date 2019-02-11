@@ -57,29 +57,18 @@
     <link href="/opensearch.xml" rel="search" title="{{ config.NAME }}"
           type="application/opensearchdescription+xml">
     <link href="{{ PAGE_URL }}" rel="canonical" type="text/html">
-    <link href="{% static 'styles/fontello.scss'|compile %}"
-          rel="preload stylesheet" as="style"
-          type="text/css" crossorigin="anonymous">
+    <link href="https://cdn.staticaly.com/gh/mangadventure/font/3fb3803/dist/mangadventure.css"
+          integrity="sha384-gvzBR8YebT2KB4WI7E0I9bqckI7Pbvxo+hFzts7HqwvFOBF8XUfcHUkzDIuSIvT2"
+          rel="preload stylesheet" as="style" type="text/css" crossorigin="anonymous">
     <link href="{{ config.FONT_URL }}" rel="preload stylesheet"
           as="style" type="text/css" crossorigin="anonymous">
     {% block stylesheets %}
-      <link href="{% static 'styles/style.scss'|compile %}"
-            rel="stylesheet" type="text/css">
-      <link href="{% static 'extra/style.scss'|compile %}"
-            rel="stylesheet" type="text/css">
+      <link href="{% static 'styles/style.scss'|compile %}" rel="stylesheet" type="text/css">
+      <link href="{% static 'extra/style.scss'|compile %}" rel="stylesheet" type="text/css">
       <noscript>
-        <link href="{% static 'styles/noscript.css' %}"
-              rel="stylesheet" type="text/css">
+        <link href="{% static 'styles/noscript.css' %}" rel="stylesheet" type="text/css">
       </noscript>
     {% endblock %}
-    <style type="text/css">
-      {% inlinecompile 'scss' %}
-        {% include 'scss/main.django.scss' %}
-      {% endinlinecompile %}
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"
-            integrity="sha384-qFIkRsVO/J5orlMvxK1sgAt2FXT67og+NyFTITYzvbIP1IJavVEKZM7YWczXkwpB"
-            crossorigin="anonymous" type="text/javascript"></script>
     {% block head_extras %}{% endblock %}
     <meta name="generator" content="MangAdventure v{{ MANGADV_VERSION }}">
     {% block title %}

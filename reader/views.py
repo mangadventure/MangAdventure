@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.http import Http404
 from next_prev import next_in_order, prev_in_order
@@ -17,7 +16,7 @@ def series(request, slug=None):
         _series = Series.objects.prefetch_related(
             'chapters__groups', 'artists', 'categories',
             'authors', 'aliases').get(slug=slug)
-    except ObjectDoesNotExist:
+    except Series.DoesNotExist:
         raise Http404
     if not (_series.chapters.count() or request.user.is_staff):
         return render(request, 'error.html', {
@@ -43,7 +42,7 @@ def chapter_page(request, slug=None, vol=0, num=0, page=1):
     }
     try:
         chapters['curr'] = chapters['all'].get(number=num, volume=vol)
-    except ObjectDoesNotExist:
+    except Chapter.DoesNotExist:
         raise Http404
     chapters['next'] = next_in_order(chapters['curr'])
     chapters['prev'] = prev_in_order(chapters['curr'])

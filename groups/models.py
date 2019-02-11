@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from MangAdventure.utils.storage import OverwriteStorage
 from MangAdventure.utils.uploaders import group_logo_uploader
@@ -29,7 +28,7 @@ class Group(models.Model):
     def _increment(self):
         try:
             num = Group.objects.latest('id').id + 1
-        except ObjectDoesNotExist:
+        except Group.DoesNotExist:
             num = 1
         return num
 

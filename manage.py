@@ -3,7 +3,8 @@
 from os import environ as env
 from sys import argv
 
-if __name__ == '__main__':
+
+def main():
     env.setdefault('DJANGO_SETTINGS_MODULE', 'MangAdventure.settings')
     try:
         from django.core.management import execute_from_command_line
@@ -14,4 +15,8 @@ if __name__ == '__main__':
             "forget to activate a virtual environment?"
         )
     execute_from_command_line(argv)
+
+
+if __name__ == '__main__':
+    main()
 

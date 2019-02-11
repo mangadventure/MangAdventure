@@ -43,7 +43,7 @@ class UsernameValidator(RegexValidator):
         super(UsernameValidator, self).__init__(**kwargs)
 
     def __call__(self, username):
-        if not self.regex.fullmatch(str(username)):
+        if not self.regex.match(str(username)):
             raise ValidationError(message=self.message, code=self.code)
 
 
@@ -92,7 +92,7 @@ def discord_server_validator(url):
     regex = reg(r'^(https?://)?discord\.(gg|me)/[A-Za-z0-9_%-]+$')
     message = 'Invalid Discord server URL.'
     code = 'invalid_discord_url'
-    if not regex.fullmatch(str(url)):
+    if not regex.match(str(url)):
         raise ValidationError(message, code)
 
 

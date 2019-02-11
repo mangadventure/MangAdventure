@@ -81,7 +81,7 @@ man_pages = [
 
 texinfo_documents = [
     (master_doc, 'MangAdventure', 'MangAdventure Documentation',
-     author, 'MangAdventure', 'A simple manga hosting webapp'
+     author, 'MangAdventure', 'A simple manga hosting CMS'
      ' written in Django.', 'Miscellaneous'),
 ]
 

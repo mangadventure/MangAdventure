@@ -1,14 +1,6 @@
 {% extends 'skeleton.html' %}
 {% load custom_tags %}
 {% load static %}
-{% load inlinecompile from compile_static %}
-{% block head_extras %}
-  <style type="text/css">
-    {% inlinecompile 'scss' %}
-      {% include 'scss/series.django.scss' %}
-    {% endinlinecompile %}
-  </style>
-{% endblock %}
 {% block keywords %}
   {% with tags=series.categories.all|join:',' %}
     <meta name="keywords" content="{{ config.KEYWORDS }},{{ tags }}">

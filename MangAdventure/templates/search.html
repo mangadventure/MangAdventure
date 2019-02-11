@@ -1,23 +1,16 @@
 {% extends 'skeleton.html' %}
 {% load custom_tags %}
 {% load static %}
-{% load inlinecompile from compile_static %}
+{% load compile_static %}
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="{% static 'styles/search.scss'|compile %}"
+        rel="stylesheet" type="text/css">
+{% endblock %}
 {% block head_extras %}
   <meta name="totalResults" content="{{ total }}">
-  <style type="text/css">
-    {% inlinecompile 'scss' %}
-      {% include 'scss/search.django.scss' %}
-    {% endinlinecompile %}
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.1.0/tablesort.min.js"
-          integrity="sha384-X4ygFY9D+rThZo+qYAK0a6e80aea1N6ZJT5pClZ/lFeji8fTw2MYtxHoXYkvWFA5"
-          crossorigin="anonymous" type="text/javascript"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.1.0/sorts/tablesort.number.min.js"
-          integrity="sha384-6i1Ebthcj0aIZq17cuL3wYI7KWqByGszxDcURQVUDBUq5xt9bBlF6kOPuYpkVOuN"
-          crossorigin="anonymous" type="text/javascript"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.1.0/sorts/tablesort.date.min.js"
-          integrity="sha384-FS9DiHTRu5S2IsfHVyB0DgxutdvNZ8TrlWaOXsWfdvWGjJakqS3DDT0dLLS80r2H"
-          crossorigin="anonymous" type="text/javascript"></script>
+  <script src="{% static 'vendor/tablesort.min.js' %}"
+          type="text/javascript"></script>
   <script src="{% static 'scripts/search.js' %}"
           type="text/javascript" async></script>
 {% endblock %}

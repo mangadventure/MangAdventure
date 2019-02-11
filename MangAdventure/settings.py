@@ -3,55 +3,62 @@ from django.core.management.color import color_style as style
 from os import path, mkdir, environ as env
 from re import compile as regex, IGNORECASE
 from sys import stderr, argv
-from config import CONFIG
+from config import read_config, write_config
+from .bad_bots import BOTS
 
-# From https://stackoverflow.com/questions/9626535/#36609868
-get_domain = lambda url: url.split('//')[-1].split('/')[0].split('?')[0]
 
-warn = lambda msg: print(style().WARNING('WARNING: ' + msg), file=stderr)
+def warn(msg): print(style().WARNING('WARNING: ' + msg), file=stderr)
+
+
+CONFIG = read_config()
+
+###############
+#    Basic    #
+###############
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-_settings = path.dirname(path.abspath(__file__))
-BASE_DIR = path.dirname(_settings)
+BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 
-# SECURITY WARNING: keep the secret key used in production secret!
 try:
+    # A secret key used to provide cryptographic signing.
+    # SECURITY WARNING: this must be kept secret!
     SECRET_KEY = CONFIG['secret_key']
     if not SECRET_KEY:
         raise KeyError
 except KeyError:
-    SECRET_KEY = 'm-4!(a(2a9w5q@n07#_aup4j^mox$e#+brgd51_5xdbg6u3i)x'
-    if 'generatekey' not in argv:
-        warn("You should first generate a secret key "
-             "by running the 'generatekey' command.")
+    SECRET_KEY = env.get('SECRET_KEY', ''.join(
+        __import__('random').SystemRandom().choice(
+            'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+        ) for i in range(50)
+    ))
+    write_config('secret_key', SECRET_KEY)
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# A boolean that turns debug mode on/off.
+# SECURITY WARNING: never turn this on in production!
 DEBUG = (env.get('MANGADV_DEBUG', 'false').lower() == 'true')
 
-ALLOWED_HOSTS = [
-    '127.0.0.1', '0.0.0.0',
-    'localhost', '[::1]',
-]
+# A list of host/domain names that this site can serve.
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '[::1]']
 if DEBUG:
     ALLOWED_HOSTS += ['192.168.1.%s' % i for i in range(2, 256)]
 try:
-    BASE_URL = get_domain(CONFIG['site_url'])
+    # From https://stackoverflow.com/questions/9626535/#36609868
+    BASE_URL = CONFIG['site_url'].split('//')[-1].split('/')[0].split('?')[0]
     if BASE_URL:
-        ALLOWED_HOSTS += [BASE_URL, 'www.' + BASE_URL]
+        ALLOWED_HOSTS += ['.' + BASE_URL]
     else:
         raise KeyError
 except KeyError:
-    if not {'generatekey', 'configureurl'} & set(argv):
+    if 'configureurl' not in argv:
         warn("You should configure your website's URL "
              "by running the 'configureurl' command.")
 
-DISALLOWED_USER_AGENTS = [
-    regex(r'%s' % l.strip(), IGNORECASE)
-    for l in open(path.join(_settings, 'bad-bots.txt'))
-]
+#####################
+#    Application    #
+#####################
 
-# Application definition
-
+# A list of strings designating all applications
+# that are enabled in this Django installation.
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -70,6 +77,7 @@ INSTALLED_APPS = [
     'users',
 ]
 
+# A list of middleware to use.
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -82,6 +90,7 @@ MIDDLEWARE = [
     'MangAdventure.middleware.XPBMiddleware',
 ]
 
+# A string representing the full Python import path to the root URLconf.
 ROOT_URLCONF = 'MangAdventure.urls'
 
 CONTEXT_PROCESSORS = [
@@ -95,157 +104,56 @@ CONTEXT_PROCESSORS = [
 if DEBUG:
     CONTEXT_PROCESSORS += ['django.template.context_processors.debug']
 
+# A list containing the settings for all template engines to be used.
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'OPTIONS': {'context_processors': CONTEXT_PROCESSORS},
-    'APP_DIRS': True, 'DIRS': [path.join(BASE_DIR, 'templates')],
+    'DIRS': [path.join(BASE_DIR, 'MangAdventure', 'templates')],
+    'APP_DIRS': True,
 }]
 
+# The full Python path of the WSGI application
+# object that Django’s built-in servers will use.
 WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 
-IGNORABLE_404_URLS = [
-    regex(r'^/favicon.ico'),
-    regex(r'^/robots.txt'),
-    regex(r'^/api'),
-]
+##################
+#    Database    #
+##################
 
-# Constance
-# https://django-constance.readthedocs.io/en/latest/index.html#configuration
-
-_site = 'The %s of your website.'
-_color = 'The %s color of your website.'
-_logo = 'Upload a %s-sized logo for your website.'
-
-CONSTANCE_ADDITIONAL_FIELDS = {
-    'char': ('django.forms.CharField', {}),
-    'url': ('django.forms.URLField', {}),
-    'number': ('django.forms.IntegerField', {
-        'min_value': 1
-    }),
-    'color': ('django.forms.CharField', {
-        'max_length': 20
-    }),
-    'discord': ('MangAdventure.forms.DiscordURLField', {
-        'required': False
-    }),
-    'twitter': ('MangAdventure.forms.TwitterField', {
-        'required': False
-    }),
-    'desc': ('django.forms.CharField', {
-        'max_length': 250,
-        'widget': 'django.forms.Textarea'
-    }),
-    'html': ('django.forms.CharField', {
-        'strip': False, 'required': False,
-        'widget': 'django.forms.Textarea'
-    }),
-    'logo': ('MangAdventure.forms.SVGImageField', {}),
-    'favicon': ('django.forms.ImageField', {})
-}
-CONSTANCE_CONFIG = {
-    'FOOTER': (
-        'If you liked any of the manga you read here, '
-        'consider buying the original versions to support '
-        'the authors.\nThis site was created using <a href='
-        '"https://github.com/evangelos-ch/MangAdventure"'
-        ' rel="noopener" target="_blank">MangAdventure</a>.',
-        _site % 'footer' + ' HTML allowed.', 'html'
-    ),
-    'NAME': ('MangAdventure', _site % 'name', 'char'),
-    'DESCRIPTION': (
-        'MangAdventure is a simple manga '
-        'hosting webapp written in Django',
-        'A description for your website.', 'desc'
-    ),
-    'KEYWORDS': (
-        'mangadventure,manga,scanlation,reader',
-        'A comma-separated list of keywords '
-        'that describe your website.', 'char'
-    ),
-    'DISCORD': ('', 'The Discord server of your group.', 'discord'),
-    'ABOUT': ('', 'Some general info about your group.'
-              ' HTML allowed.', 'html'),
-    'RECRUITMENT': ('', 'Recruitment instructions for your group.'
-                    ' HTML allowed.', 'html'),
-    'TWITTER': ('', 'The Twitter username of your group.', 'twitter'),
-    'FAVICON': ('', _site % 'favicon', 'favicon'),
-    'MAIN_BACKGROUND': ('#FFF', _color % 'main background', 'color'),
-    'ALTER_BACKGROUND': ('#AAA', _color % 'alternate background', 'color'),
-    'MAIN_TEXT_COLOR': ('#000', _color % 'main text', 'color'),
-    'ALTER_TEXT_COLOR': ('#555', _color % 'alternate text', 'color'),
-    'FONT_URL': (
-        'https://fonts.googleapis.com/css?family=Lato',
-        'The URL of the font to be used in your website.', 'url'
-    ),
-    'FONT_NAME': ('Lato', 'The name of the font that '
-                          'corresponds to the above URL.', 'char'),
-    'LOGO_LARGE': ('', _logo % 'large', 'logo'),
-    'LOGO_MEDIUM': ('', _logo % 'medium', 'logo'),
-    'LOGO_SMALL': ('', _logo % 'small', 'logo'),
-    'MAX_RELEASES': (10, 'The maximum number of releases '
-                         'to be shown in the main page', 'number'),
-    'MAX_CHAPTERS': (1, 'The maximum number of chapters '
-                        'to be shown for each series '
-                        'in the reader page.', 'number'),
-    'COMPRESS_PAGES': (True, 'Controls whether chapter pages '
-                             'are compressed on upload.', bool),
-}
-CONSTANCE_CONFIG_FIELDSETS = {
-    'Site Settings': (
-        'NAME', 'DESCRIPTION', 'KEYWORDS',
-        'FOOTER', 'FAVICON',
-    ),
-    'Group Settings': (
-        'ABOUT', 'RECRUITMENT',
-        'TWITTER', 'DISCORD',
-    ),
-    'Theme Settings': (
-        'MAIN_BACKGROUND', 'ALTER_BACKGROUND',
-        'MAIN_TEXT_COLOR', 'ALTER_TEXT_COLOR',
-        'FONT_URL', 'FONT_NAME',
-    ),
-    'Logo Settings': ('LOGO_LARGE', 'LOGO_MEDIUM', 'LOGO_SMALL'),
-    'Other Settings': ('MAX_RELEASES', 'MAX_CHAPTERS', 'COMPRESS_PAGES')
-}
-CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
+# Database settings dictionary.
+DATABASES = {  # TODO: add MySQL support
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
+##################################
+#    Logging & Error Handling    #
+##################################
 
-_pw_validation = 'django.contrib.auth.password_validation'
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': '%s.UserAttributeSimilarityValidator' % _pw_validation},
-    {'NAME': '%s.MinimumLengthValidator' % _pw_validation},
-    {'NAME': '%s.CommonPasswordValidator' % _pw_validation},
-    {'NAME': '%s.NumericPasswordValidator' % _pw_validation},
+# Subject prefix for email messages sent to admins/managers.
+EMAIL_SUBJECT_PREFIX = '[MangAdventure] '
+
+# URLs that should be ignored when reporting HTTP 404 errors.
+IGNORABLE_404_URLS = [
+    regex(r'^/favicon.ico'),
+    regex(r'^/robots.txt'),
+    regex(r'^/api'),
 ]
-
-# Debug and Error Logging
-# https://docs.djangoproject.com/en/dev/topics/logging/
 
 LOGS_DIR = path.join(BASE_DIR, 'logs')
 if not path.exists(LOGS_DIR):
     mkdir(LOGS_DIR)
-LOGGING = {
+
+
+# Logging configuration dictionary.
+LOGGING = {  # TODO: better logging
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        },
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue'
-        }
+        'require_debug_false': {'()': 'django.utils.log.RequireDebugFalse'},
+        'require_debug_true': {'()': 'django.utils.log.RequireDebugTrue'}
     },
     'handlers': {
         'debug': {
@@ -270,25 +178,24 @@ LOGGING = {
     }
 }
 
-# Internationalization
-# https://docs.djangoproject.com/en/2.1/topics/i18n/
+##############################
+#    Static & Media Files    #
+##############################
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_L10N = True
-USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.1/howto/static-files/
-
+# URL that handles the files served from STATIC_ROOT.
 STATIC_URL = '/static/'
+
+# Absolute filesystem path to the directory that will hold static files.
 STATIC_ROOT = path.join(BASE_DIR, 'static/')
+
+# A list of static file finder backends.
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'static_precompiler.finders.StaticPrecompilerFinder',
 ]
+
+# List of enabled compilers for django-static-precompiler.
 STATIC_PRECOMPILER_COMPILERS = [
     ('static_precompiler.compilers.libsass.SCSS', {
         'sourcemap_enabled': False,
@@ -298,32 +205,68 @@ STATIC_PRECOMPILER_COMPILERS = [
     }),
 ]
 
-# Media files
-
+# URL that handles the media served from MEDIA_ROOT.
 MEDIA_URL = '/media/'
+
+# Absolute filesystem path to the directory that will hold user-uploaded files.
 MEDIA_ROOT = path.join(BASE_DIR, 'media/')
 
-# HTTPS
-env.setdefault('HTTPS', CONFIG.get('https', 'off'))
-if env.get('HTTPS').lower() == 'on':
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    env['wsgi.url_scheme'] = 'https'
+##############################
+#    Internationalization    #
+##############################
 
+# Enable Django's translation system.
+USE_I18N = False  # TODO: enable this
 
-# Login
-LOGIN_REDIRECT_URL = '/'
+# Enable localized formatting of data.
+USE_L10N = True
+
+# Enable timezone-aware datetimes.
+USE_TZ = True
+
+# A string representing the language code for this installation.
+LANGUAGE_CODE = 'en-us'  # TODO: make this configurable
+
+# The name of the cookie to use for the language cookie.
+LANGUAGE_COOKIE_NAME = 'mangadv_lang'
+
+# A list of all available languages.
+LANGUAGES = [
+    ('en', 'English'),
+]
+
+# The time zone for this installation.
+TIME_ZONE = 'UTC'  # TODO: make this configurable
+
+#######################
+#    Users & Email    #
+#######################
+
+# A list of validators that are used to check the strength of users' passwords.
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.%sValidator' % n}
+    for n in ['UserAttributeSimilarity', 'MinimumLength',
+              'CommonPassword', 'NumericPassword']
+]
 
 try:
+    # Use a secure TLS connection when talking to the SMTP server.
     EMAIL_USE_TLS = True
+
+    # The host to use for sending email.
     EMAIL_HOST = CONFIG['smtp_host']
-    EMAIL_PORT = CONFIG['smtp_port']
+
+    # Username to use for the SMTP server defined in EMAIL_HOST.
     EMAIL_HOST_USER = CONFIG['smtp_user']
+
+    # Password to use for the SMTP server defined in EMAIL_HOST.
     EMAIL_HOST_PASSWORD = CONFIG['smtp_pass']
+
+    # Port to use for the SMTP server defined in EMAIL_HOST.
+    EMAIL_PORT = CONFIG['smtp_port']
+
+    # Default email address to use for various
+    # automated correspondence from the site manager(s).
     DEFAULT_FROM_EMAIL = CONFIG['smtp_mail']
 
     if not all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
@@ -331,7 +274,219 @@ try:
         raise KeyError
 except KeyError:
     INSTALLED_APPS.remove('users')
-    if not {'generatekey', 'configuresmtp'} & set(argv):
+    if 'configuresmtp' not in argv:
         warn("To enable the User module, you have to configure your SMTP "
              "mail server's settings via the 'configuresmtp' command.")
+
+##################
+#    Security    #
+##################
+
+# List of User-Agents that are not allowed to visit any page.
+DISALLOWED_USER_AGENTS = [regex(bot, IGNORECASE) for bot in BOTS]
+
+# Use HttpOnly flag on the CSRF cookie
+CSRF_COOKIE_HTTP_ONLY = True
+
+env.setdefault('HTTPS', CONFIG.get('https', 'on'))
+if env.get('HTTPS').lower() == 'on':
+    env['wsgi.url_scheme'] = 'https'
+
+    # HTTP header/value combination that signifies a request is secure.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    # Redirect all non-HTTPS requests to HTTPS.
+    SECURE_SSL_REDIRECT = True
+
+    # Sets the "X-XSS-Protection: 1; mode=block" header.
+    SECURE_BROWSER_XSS_FILTER = True
+
+    # Sets the "X-Content-Type-Options: nosniff" header.
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    # Expire the session when the user closes their browser.
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+    # Use a secure cookie for the session cookie.
+    SESSION_COOKIE_SECURE = True
+
+    # Use a secure cookie for the CSRF cookie.
+    CSRF_COOKIE_SECURE = True
+
+# Optional django-csp module
+try:
+    __import__('csp.middleware')
+    MIDDLEWARE.append('csp.middleware.CSPMiddleware')
+
+    # Sets the default-src directive.
+    CSP_DEFAULT_SRC = ("'none'",)
+
+    # Sets the script-src directive.
+    CSP_SCRIPT_SRC = ("'self'",)
+
+    # Sets the style-src directive.
+    CSP_STYLE_SRC = (
+        "'self'", "https://fonts.googleapis.com",
+        "https://cdn.staticaly.com/gh/mangadventure",
+    )
+
+    # Sets the font-src directive.
+    CSP_FONT_SRC = (
+        "'self'", "https://fonts.gstatic.com",
+        "https://cdn.staticaly.com/gh/mangadventure",
+    )
+
+    # Sets the img-src directive.
+    CSP_IMG_SRC = ("'self'",)
+
+    # Sets the object-src directive.
+    CSP_OBJECT_SRC = ("'self'",)
+
+    # Sets the frame-src directive.
+    CSP_FRAME_SRC = ("'self'",)
+
+    # Sets the frame-ancestors directive.
+    CSP_FRAME_ANCESTORS = ("'self'",)
+
+    # Sets the base-uri directive.
+    CSP_BASE_URI = ("'none'",)
+
+    # URLs beginning with any of these will not get the CSP headers.
+    CSP_EXCLUDE_URL_PREFIXES = ('/api', '/admin')
+except ImportError:
+    pass
+
+##########################
+#    django-constance    #
+##########################
+
+# Custom constance field types.
+CONSTANCE_ADDITIONAL_FIELDS = {
+    'char': ('django.forms.CharField', {}),
+    'url': ('django.forms.URLField', {}),
+    'color': ('MangAdventure.forms.ColorField', {}),
+    'number': ('django.forms.IntegerField', {
+        'min_value': 1,
+    }),
+    'discord': ('MangAdventure.forms.DiscordURLField', {
+        'required': False
+    }),
+    'twitter': ('MangAdventure.forms.TwitterField', {
+        'required': False
+    }),
+    'desc': ('django.forms.CharField', {
+        'max_length': 250,
+        'widget': 'django.forms.Textarea'
+    }),
+    'html': ('django.forms.CharField', {
+        'strip': False, 'required': False,
+        'widget': 'django.forms.Textarea'
+    }),
+    'logo': ('MangAdventure.forms.SVGImageField', {}),
+    'favicon': ('django.forms.ImageField', {})
+}
+
+# Constance configuration variables.
+CONSTANCE_CONFIG = {
+    'FOOTER': (
+        'If you liked any of the manga you read here, '
+        'consider buying the original versions to support '
+        'the authors.\nThis site was created using <a href='
+        '"https://github.com/mangadventure/MangAdventure"'
+        ' rel="noopener" target="_blank">MangAdventure</a>.',
+        'The footer of your website. HTML allowed.', 'html'
+    ),
+    'NAME': (
+        'MangAdventure', 'The name of your website.', 'char'
+    ),
+    'DESCRIPTION': (
+        'MangAdventure is a simple manga hosting CMS written in Django',
+        'A description for your website.', 'desc'
+    ),
+    'KEYWORDS': (
+        'mangadventure,manga,scanlation,reader',
+        'A comma-separated list of keywords that describe your website', 'char'
+    ),
+    'DISCORD': (
+        '', 'The Discord server of your group.', 'discord'
+    ),
+    'ABOUT': (
+        '', 'Some general info about your group. HTML allowed.', 'html'
+    ),
+    'RECRUITMENT': (
+        '', 'Recruitment instructions for your group. HTML allowed.', 'html'
+    ),
+    'TWITTER': (
+        '', 'The Twitter username of your group.', 'twitter'
+    ),
+    'FAVICON': (
+        '', 'The favicon of your website.', 'favicon'
+    ),
+    'MAIN_BACKGROUND': (
+        '#ffffff', 'The main background color of your website.', 'color'
+    ),
+    'ALTER_BACKGROUND': (
+        '#aaaaaa', 'The alternate background color of your website.', 'color'
+    ),
+    'MAIN_TEXT_COLOR': (
+        '#000000', 'The main text color of your website.', 'color'
+    ),
+    'ALTER_TEXT_COLOR': (
+        '#555555', 'The alternate text color of your website.', 'color'
+    ),
+    'SHADOW_COLOR': (
+        '#444444', 'The shadow color of your website.', 'color'
+    ),
+    'FONT_URL': (
+        'https://fonts.googleapis.com/css?family=Lato',
+        'The URL of the font to be used in your website.', 'url'
+    ),
+    'FONT_NAME': ('Lato', 'The name of the font that '
+                          'corresponds to the above URL.', 'char'),
+    'LOGO_LARGE': (
+        '', 'Upload a large-sized logo for your website.', 'logo'
+    ),
+    'LOGO_MEDIUM': (
+        '', 'Upload a medium-sized logo for your website.', 'logo'
+    ),
+    'LOGO_SMALL': (
+        '', 'Upload a small-sized logo for your website.', 'logo'
+    ),
+    'MAX_RELEASES': (
+        10, 'The maximum number of releases to '
+            'be shown in the main page', 'number'
+    ),
+    'MAX_CHAPTERS': (
+        1, 'The maximum number of chapters to be shown '
+           'for each series in the reader page.', 'number'
+    ),
+    'COMPRESS_PAGES': (
+        True, 'Controls whether chapter pages are compressed on upload.', bool
+    ),
+}
+
+# Constance configuration groups.
+CONSTANCE_CONFIG_FIELDSETS = {
+    'Site Settings': (
+        'NAME', 'DESCRIPTION', 'KEYWORDS', 'FOOTER', 'FAVICON',
+    ),
+    'Group Settings': (
+        'ABOUT', 'RECRUITMENT', 'TWITTER', 'DISCORD',
+    ),
+    'Theme Settings': (
+        'MAIN_BACKGROUND', 'ALTER_BACKGROUND', 'MAIN_TEXT_COLOR',
+        'ALTER_TEXT_COLOR', 'SHADOW_COLOR', 'FONT_URL', 'FONT_NAME',
+    ),
+    'Logo Settings': (
+        'LOGO_LARGE', 'LOGO_MEDIUM', 'LOGO_SMALL',
+    ),
+    'Other Settings': (
+        'MAX_RELEASES', 'MAX_CHAPTERS', 'COMPRESS_PAGES',
+    )
+}
+
+# Use the database for storing configuration.
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+del CONFIG, BOTS, IGNORECASE
 

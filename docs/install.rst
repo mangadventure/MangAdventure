@@ -24,7 +24,7 @@ First, install the dependencies. If you already have Python & `pip <https://pip.
 
    pip install -r requirements.txt
 
-Then, download and unzip the `latest release <https://github.com/evangelos-ch/MangAdventure/releases/>`_ and follow these steps to initialize the site:
+Then, download and unzip the `latest release <https://github.com/mangadventure/MangAdventure/releases/>`_ and follow these steps to initialize the site:
 
 Generate a secret key
 ^^^^^^^^^^^^^^^^^^^^^

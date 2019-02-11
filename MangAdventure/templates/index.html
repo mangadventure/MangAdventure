@@ -1,15 +1,5 @@
 {% extends 'skeleton.html' %}
 {% load custom_tags %}
-{% block head_extras %}
-  <style type="text/css">
-    @media screen and (max-width: 436px) {
-      #latest .release-info {
-        border-bottom: 2px solid {{ config.ALTER_BACKGROUND|unquote }};
-        padding-bottom: 5px;
-      }
-    }
-  </style>
-{% endblock %}
 {% block title %}
   <meta name="title" content="Latest Releases">
   <meta name="twitter:title" content="Home - {{ config.NAME }}">

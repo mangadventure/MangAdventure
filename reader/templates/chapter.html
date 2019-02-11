@@ -33,13 +33,10 @@
     {% endwith %}
   {% endwith %}
 {% endblock %}
-{% block head_extras %}
-  <style type="text/css">
-    {% inlinecompile 'scss' %}
-      {% include 'scss/chapter.django.scss' %}
-    {% endinlinecompile %}
-  </style>
-  <meta http-equiv="X-DNS-Prefetch-Control" content="on">
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="{% static 'styles/chapter.scss'|compile %}"
+        rel="stylesheet" type="text/css">
 {% endblock %}
 {% block title %}
   <meta name="title" content="{{ curr_chapter.title }}">

@@ -2,5 +2,5 @@
 
 docs/ linguist-documentation
 
-static/fontello linguist-vendored
+vendor/ linguist-vendored
 

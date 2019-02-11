@@ -1,4 +1,4 @@
-django
+django>=1.11
 django-next-prev
 django-constance[database]
 django-static-precompiler[libsass]

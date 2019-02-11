@@ -1,20 +1,26 @@
+@import 'variables';
 @import 'functions';
 @import 'mixins';
 
 body {
+  background-color: $main-bg;
+  color: $main-fg;
   margin: 0 auto;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  font-family: quote(#{$font-family}), 'Helvetica', 'Arial', sans-serif;
   @include text-size-adjust();
 }
 
 a {
+  color: $alter-fg;
   text-decoration: none;
   &:hover { text-decoration: underline }
 }
 
 h1 {
+  color: $alter-fg;
   margin: 0;
   font-size: 1.6em;
   font-weight: normal;
@@ -24,6 +30,8 @@ h1 {
 }
 
 h2 {
+  color: $alter-fg;
+  border-color: $alter-fg;
   margin: 0;
   font-size: 1.01em;
 }
@@ -57,16 +65,21 @@ thead {
 ::-moz-focus-inner { border: 0 }
 
 #header {
+  background-color: $alter-bg;
   display: flex;
   height: 45px;
   @include flex();
+  a {
+    color: $main-fg;
+    &:hover, &:active { color: $alter-fg }
+  }
+  li { border: none }
   #home {
     display: inline-block;
     position: relative;
     z-index: 1;
     span { display: inline-block }
   }
-  li { border: none }
   .logo {
     pointer-events: none;
     float: left;
@@ -121,12 +134,17 @@ thead {
 }
 
 #content {
+  background-color: $alter-bg;
+  border: 5px solid $alter-bg;
+  border-radius: 5px;
   margin: 10px auto;
   width: 95vw;
   display: table;
   @include flex(1 0 auto);
   @include box-sizing();
   article {
+    background-color: $main-bg;
+    border-radius: 5px;
     padding: 0 5px;
     margin-top: 5px;
   }
@@ -213,8 +231,6 @@ thead {
     position: relative;
     left: -5px;
     float: left;
-    height: 100%;
-    width: calc(100vw / 3);
     @include border-radius();
   }
   &-aliases, &-authors, &-artists, &-categories {
@@ -255,101 +271,6 @@ thead {
   }
 }
 
-#chapter {
-  #placeholder {
-    width: 100%;
-    display: flex;
-    cursor: wait;
-  }
-  .chapter-page {
-    display: block;
-    width: auto;
-    cursor: pointer;
-    position: relative;
-    top: 0.5em;
-  }
-  .chapter-list {
-    float: left;
-    a {
-      display: inline-block;
-      max-width: 50vw;
-      @include truncate();
-    }
-    ul {
-      left: -1px;
-      min-width: 100%;
-      text-indent: 0.05em;
-      border-top-left-radius: 0;
-    }
-  }
-  .page-list {
-    float: right;
-    ul {
-      right: -1px;
-      width: 125%;
-      text-align: center;
-      border-top-right-radius: 0;
-    }
-  }
-  .curr-page { text-align: center }
-  #controls {
-    width: 100%;
-    display: flex;
-    margin: 2.5vh auto 1vh;
-    @include flex-direction(column);
-    span {
-      font-size: 1.25em;
-      margin: auto 0;
-    }
-    a { text-decoration: none }
-    .mi {
-      font-size: 3em;
-      margin: auto;
-    }
-    &-top, &-bottom {
-      width: 100%;
-      display: inline-flex;
-      @include justify-content(space-around);
-    }
-  }
-}
-
-#search {
-  section {
-    width: 100%;
-    padding: 0.5em 0;
-  }
-  table {
-    margin: 0 auto;
-    text-align: center;
-    @include box-sizing();
-  }
-  &-options {
-    text-align: center;
-    div { margin-bottom: 0.5em }
-    input {
-      border-radius: 4px;
-      padding: 4px;
-    }
-  }
-  #category-container {
-    width: 90%;
-    margin: 0 auto 0.5em;
-    .category {
-      display: inline-block;
-      cursor: pointer;
-    }
-  }
-  .result {
-    hyphens: auto;
-    &-title a { color: inherit }
-    &-authors::after {
-      content: quote('/ ');
-      white-space: pre-line;
-    }
-  }
-}
-
 #all-groups {
   display: flex;
   @include flex(0 1 auto);
@@ -362,7 +283,6 @@ thead {
     strong {
       display: block;
       text-align: center;
-      max-width: 150px;
       @include truncate();
     }
     &-logo {
@@ -373,6 +293,7 @@ thead {
         @include size(100%, auto);
         @include align-self();
       }
+      svg { fill: $main-fg }
     }
   }
 }
@@ -381,10 +302,16 @@ thead {
   &-info {
     display: flex;
     img {
-      border-top-left-radius: 5px;
       margin-left: -5px;
       margin-right: 5px;
+      border-top-left-radius: 5px;
       @include align-self(start);
+    }
+    svg {
+      fill: $main-fg;
+      margin-right: 5px;
+      border-top-left-radius: 5px;
+      @include size(150px);
     }
     div { margin: auto 0 }
   }
@@ -395,6 +322,7 @@ thead {
     &-roles span:last-of-type {
       &::after { display: none }
     }
+    h2 { color: $alter-bg }
     div { padding-left: 0.5em }
   }
 }
@@ -416,6 +344,22 @@ thead {
       margin: 0.25em 0 0.25em 0.5em;
       span { display: inline-block }
     }
+  }
+}
+
+#result-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  @include border($alter-fg, 2px);
+  @include border-radius(3px);
+  th, td {
+    padding: 0.1em 0.2em;
+    &:not(:last-child) {
+      @include border($alter-fg, 2px, $suffix: '-right');
+    }
+  }
+  td {
+    @include border($alter-fg, 2px, $suffix: '-top');
   }
 }
 
@@ -467,6 +411,7 @@ article.user-action {
 
 .tooltip {
   position: relative;
+  &::after { background-color: $alter-bg }
   @include touch('::after') {
     content: attr(data-tooltip);
     display: inline-block;
@@ -487,6 +432,15 @@ article.user-action {
   height: auto;
   margin: auto;
   @include box-sizing();
+}
+
+.end::before {
+  content: 'END';
+  background-color: $alter-bg;
+  color: $main-bg;
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0 2px;
 }
 
 .separator {
@@ -518,6 +472,16 @@ article.user-action {
   &-ok-circle { color: limegreen }
   &-x-circle { color: tomato }
 }
+
+.main-bg { background-color: $main-bg }
+
+.alter-bg { background-color: $alter-bg }
+
+.main-fg { color: $main-fg }
+
+.alter-fg { color: $alter-fg }
+
+.text-shadow { text-shadow: shadow(2px, $shadow-color); }
 
 .no-display { display: none }
 
@@ -578,13 +542,13 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     .s-hidden { display: none }
   }
   #series { max-width: 92vw }
-  #chapter #controls .mi { font-size: 2em }
   #navig ul li { margin: -0.2em 0 -0.3em -0.2em }
   .ident { display: none }
 }
 
 
 @media screen and (max-width: 436px) {
+  article { margin-top: 0 }
   #content {
     background-color: inherit !important;
     border: none !important;
@@ -599,8 +563,13 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       @include border-radius();
     }
   }
-  article { margin-top: 0 }
-  #latest h2 { text-align: center }
+  #latest {
+    .release-info {
+      border-bottom: 2px solid $alter-bg;
+      padding-bottom: 5px;
+    }
+    h2 { text-align: center }
+  }
   #list {
     text-align: center;
     .cover { float: none }
@@ -621,7 +590,16 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       font-weight: bold;
       margin: 0.2em 0;
     }
-    > div > div { padding: 0.2em 0 }
+    > div {
+      border: 2px solid $alter-bg;
+      border-radius: 5px;
+      > div {
+        padding: 0.2em 0;
+        &:not(:last-of-type) {
+          border-bottom: 2px solid $alter-bg;
+        }
+      }
+    }
     &-title { padding-bottom: 3px !important }
     &-info {
       width: 100%;
@@ -647,8 +625,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     .cover {
       left: 0;
       margin: auto;
-      width: 100%;
-      max-width: 50vw;
+      max-width: 80vw;
     }
     .chapter {
       margin: 0;
@@ -679,15 +656,6 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       &:first-of-type { padding-top: 0.2em }
     }
     div.alias, div.author, div.artist, div.category { text-indent: 0 }
-  }
-  #chapter {
-    #controls {
-      .mi { font-size: 1.5em }
-    }
-    .dropdown {
-      > a { display: none }
-      > span { display: inline-block }
-    }
   }
   #search {
     label { display: block }

@@ -19,7 +19,7 @@ def urljoin(origin, pathname): return join(origin, pathname)
 
 
 @register.filter
-def vslice(value, var): return slice_filter(value, ':%s' % var)
+def vslice(value, var): return slice_filter(value, ':%d' % var)
 
 
 @register.filter
@@ -60,8 +60,9 @@ def get_type(link):
 
 @register.filter
 def preload_pages(pages, num):
-    preload = lambda p: p.number > num and p.number < (num + 4)
-    return list(filter(preload, pages))
+    return list(filter(
+        lambda p: p.number > num and p.number < (num + 4), pages
+    ))
 
 # Currently unused
 # @register.simple_tag

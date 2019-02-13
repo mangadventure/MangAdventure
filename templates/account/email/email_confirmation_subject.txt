@@ -1,4 +1,4 @@
 {% load custom_tags %}
 {% autoescape off %}
-{{ config.NAME }} Account activation
+{{ config.NAME }} Email verification
 {% endautoescape %}

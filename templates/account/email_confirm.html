@@ -1,0 +1,33 @@
+{% extends 'skeleton.html' %}
+{% load account %}
+{% block title %}
+  {% with title="E-Mail Verification" %}
+    <meta name="title" content="{{ title }}">
+    <meta name="twitter:title" content="{{ title }} - {{ config.NAME }}">
+    <meta name="og:title" content="{{ title }} - {{ config.NAME }}">
+    <title>{{ title }} &middot; {{ config.NAME }}</title>
+  {% endwith %}
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">E-Mail Verification</h1>
+  <article class="user-action" id="activation">
+  {% if confirmation %}
+      {% user_display confirmation.email_address.user as user_display %}
+      <p>
+        {% with email=confirmation.email_address.email %}
+        Please confirm that <a href="mailto:{{ email }}">{{ email }}</a>
+        is an e-mail address for user {{ user_display }}.
+        {% endwith %}
+      </p>
+      <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+        {% csrf_token %}
+        <button type="submit">Confirm</button>
+      </form>
+  {% else %}
+      {% url 'account_email' as email_url %}
+      <p>This e-mail confirmation link expired or is invalid.
+        Please <a href="{{ email_url }}">issue a new e-mail confirmation request</a>.
+      </p>
+  {% endif %}
+  </article>
+{% endblock %}

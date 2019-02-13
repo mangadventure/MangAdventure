@@ -332,6 +332,11 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_EMAIL_VERIFICATION = "optional"
+
 # Socialaccount Provider Customization
 # https://django-allauth.readthedocs.io/en/latest/providers.html
 SOCIALACCOUNT_PROVIDERS = {

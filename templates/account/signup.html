@@ -1,0 +1,20 @@
+{% extends 'skeleton.html' %}
+{% block title %}
+  <meta name="title" content="Register">
+  <meta name="twitter:title" content="Register - {{ config.NAME }}">
+  <meta name="og:title" content="Register - {{ config.NAME }}">
+  <title>Register &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Register</h1>
+  <article class="user-action" id="register">
+    <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      <button type="submit">Register</button>
+    </form>
+  </article>
+{% endblock %}

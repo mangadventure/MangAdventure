@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.conf import settings
+from users.views import user_logout
 from .views import index, info, search, opensearch
 
 try:
@@ -16,7 +17,8 @@ urlpatterns = [
     url(r'^api/', include('api.urls')),
     url(r'^groups/', include('groups.urls')),
     url(r'^opensearch\.xml$', opensearch, name='opensearch'),
-    url(r'^user/', include('users.urls')),
+    url(r'^accounts/logout/$', user_logout),
+    url(r'^accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:

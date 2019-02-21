@@ -1,0 +1,44 @@
+{% extends 'skeleton.html' %}
+{% load custom_tags account socialaccount %}
+{% block title %}
+  <meta name="title" content="Login">
+  <meta name="twitter:title" content="Login - {{ config.NAME }}">
+  <meta name="og:title" content="Login - {{ config.NAME }}">
+  <title>Login &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Sign in</h1>
+  <article class="user-action" id="login">
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+      <p>Please sign in with one
+        of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
+        for a {{ config.NAME }} account and sign in below:
+      </p>
+
+      <div class="socialaccount_ballot">
+        <ul class="socialaccount_providers">
+          {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+        </ul>
+        <div class="login-or">or</div>
+      </div>
+
+      {% include "socialaccount/snippets/login_extra.html" %}
+    {% else %}
+      <p>If you have not created an account yet, then please
+        <a href="{{ signup_url }}">sign up</a> first.
+      </p>
+    {% endif %}
+
+    <form class="login" method="POST" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      <a class="button secondaryAction" href="{% url 'account_reset_password' %}">Forgot Password?</a>
+      <button class="primaryAction" type="submit">Sign In</button>
+    </form>
+  </article>
+
+{% endblock %}

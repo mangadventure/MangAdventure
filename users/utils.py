@@ -18,31 +18,10 @@ def safe_mail(eml):
     return eml.replace('\r', '').replace('\n', '')
 
 
-RESET_TEMPLATE = """\
-Dear {username},
-
-You have requested to reset your password on {name}.
-To do so, please click the link below.
-If you didn't make this request, ignore this email.
-
-{scheme}://{domain}{url}
-"""
-
-ACTIVATE_TEMPLATE = """\
-Dear {username},
-
-Thank you for registering to {name}.
-Please click the following link to activate your account:
-
-{scheme}://{domain}{url}
-"""
-
 __all__ = [
     'reverse',
     'reverse_query',
     'redirect_next',
     'safe_mail',
-    'RESET_TEMPLATE',
-    'ACTIVATE_TEMPLATE',
 ]
 

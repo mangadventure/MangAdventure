@@ -1,0 +1,4 @@
+{% load custom_tags %}
+{% autoescape off %}
+{{ config.NAME }} Email verification
+{% endautoescape %}

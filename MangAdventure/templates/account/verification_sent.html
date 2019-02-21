@@ -1,0 +1,19 @@
+{% extends 'skeleton.html' %}
+{% load account %}
+{% block title %}
+  {% with title="Activation Pending" %}
+    <meta name="title" content="{{ title }}">
+    <meta name="twitter:title" content="{{ title }} - {{ config.NAME }}">
+    <meta name="og:title" content="{{ title }} - {{ config.NAME }}">
+    <title>{{ title }} &middot; {{ config.NAME }}</title>
+  {% endwith %}
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Activation Pending</h1>
+  <article class="user-action" id="activation-email">
+    <div>
+      We have sent you an activation link to the email address you provided.
+      Click that link to complete your registration.
+    </div>
+  </article>
+{% endblock %}

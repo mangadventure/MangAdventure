@@ -1,4 +1,5 @@
 from __future__ import print_function
+from . import __version__
 from django.core.management.color import color_style as style
 from os import path, mkdir, environ as env
 from re import compile as regex, IGNORECASE
@@ -66,9 +67,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'static_precompiler',
     'constance.backends.database',
     'config.apps.SettingsConfig',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.reddit',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.discord',
     'next_prev',
     'config',
     'reader',
@@ -248,6 +257,31 @@ AUTH_PASSWORD_VALIDATORS = [
     for n in ['UserAttributeSimilarity', 'MinimumLength',
               'CommonPassword', 'NumericPassword']
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_EMAIL_VERIFICATION = "optional"
+
+# Socialaccount Provider Customization
+# https://django-allauth.readthedocs.io/en/latest/providers.html
+SOCIALACCOUNT_PROVIDERS = {
+    'reddit': {
+        'AUTH_PARAMS': {'duration': 'permanent'},
+        'USER_AGENT': 'Django:MangAdventure:{} (by {})'.format(
+            __version__, "https://github.com/evangelos-ch/MangAdventure"),
+    },
+    'discord': {
+        'SCOPE': ['identity'],
+    }
+}
+
+SITE_ID = 1
 
 try:
     # Use a secure TLS connection when talking to the SMTP server.

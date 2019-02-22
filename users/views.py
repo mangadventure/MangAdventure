@@ -1,7 +1,10 @@
-from django.contrib.auth import logout
-from .utils import redirect_next
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
+from django.shortcuts import render
 
 
-def user_logout(request):
-    logout(request)
-    return redirect_next(request)
+@login_required
+@cache_control(private=True, max_age=3600)
+def profile(request):
+    return render(request, 'profile.html')
+

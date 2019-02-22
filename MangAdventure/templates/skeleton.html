@@ -2,7 +2,7 @@
 {% load static %}
 {% load custom_tags %}
 {% load compile_static %}
-<html>
+<html lang="en-us">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1">
@@ -54,11 +54,11 @@
       <link href="{{ favicon }}" rel="shortcut icon"
             type="{{ favicon|get_type }}">
     {% endwith %}
-    <link href="/opensearch.xml" rel="search" title="{{ config.NAME }}"
+    <link href="{% url 'opensearch' %}" rel="search" title="{{ config.NAME }}"
           type="application/opensearchdescription+xml">
     <link href="{{ PAGE_URL }}" rel="canonical" type="text/html">
-    <link href="https://cdn.staticaly.com/gh/mangadventure/font/3fb3803/dist/mangadventure.css"
-          integrity="sha384-gvzBR8YebT2KB4WI7E0I9bqckI7Pbvxo+hFzts7HqwvFOBF8XUfcHUkzDIuSIvT2"
+    <link href="https://cdn.staticaly.com/gh/mangadventure/font/750100b/dist/mangadventure.css"
+          integrity="sha384-dYBFNGUHvuphZFbACiTgZUTnCwftZ3ZSRrjtr47SKpAylZ1vo5P4ALQSDJ0wgGTe"
           rel="preload stylesheet" as="style" type="text/css" crossorigin="anonymous">
     <link href="{{ config.FONT_URL }}" rel="preload stylesheet"
           as="style" type="text/css" crossorigin="anonymous">
@@ -106,31 +106,31 @@
       <nav id="navig">
         <ul>
           <li>
-            <a href="/info/">
+            <a href="{% url 'info' %}">
               <i class="mi mi-info-circle"></i>
               <span class="ident">About us</span>
             </a>
           </li>
           <li>
-            <a href="/">
+            <a href="{% url 'index' %}">
               <i class="mi mi-clock"></i>
               <span class="ident">Latest releases</span>
             </a>
           </li>
           <li>
-            <a href="/reader/">
+            <a href="{% url 'reader:directory' %}">
               <i class="mi mi-library"></i>
               <span class="ident">Library</span>
             </a>
           </li>
           <li id="searchlink">
-            <a href="/search/">
+            <a href="{% url 'search' %}">
               <i class="mi mi-search"></i>
               <span class="ident">Search</span>
             </a>
           </li>
           <li>
-            <form action="/search" method="GET" accept-charset="utf-8">
+            <form action="{% url 'search' %}" method="GET">
               <input placeholder="Type a series to search for"
                      name="q" type="search" class="main-bg" id="searchbox"/>
             </form>
@@ -138,6 +138,13 @@
         </ul>
       </nav>
     </header>
+    {% if messages %}
+      <aside id="messages">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </aside>
+    {% endif %}
     <main id="content">
       {% block content %}
       {% endblock %}

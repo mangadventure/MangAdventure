@@ -1,19 +1,18 @@
 {% extends 'skeleton.html' %}
 {% load account %}
 {% block title %}
-  {% with title="Activation Pending" %}
-    <meta name="title" content="{{ title }}">
-    <meta name="twitter:title" content="{{ title }} - {{ config.NAME }}">
-    <meta name="og:title" content="{{ title }} - {{ config.NAME }}">
-    <title>{{ title }} &middot; {{ config.NAME }}</title>
-  {% endwith %}
+  <meta name="title" content="Activation Pending">
+  <meta name="twitter:title" content="Activation Pending - {{ config.NAME }}">
+  <meta name="og:title" content="Activation Pending - {{ config.NAME }}">
+  <title>Activation Pending &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
   <h1 class="text-shadow alter-bg">Activation Pending</h1>
-  <article class="user-action" id="activation-email">
+  <article class="user-action" id="activation-sent">
     <div>
-      We have sent you an activation link to the email address you provided.
-      Click that link to complete your registration.
+      We have sent you an activation link to the e-mail address you provided.
+      Please click that link to complete your registration.
     </div>
   </article>
 {% endblock %}
+

@@ -133,6 +133,14 @@ thead {
   @include border-radius(5px);
 }
 
+#messages {
+  margin: 0.25em auto;
+  font-size: 1.1em;
+  border: 2px solid $alter-bg;
+  border-radius: 5px;
+  padding: 0.5em 1em;
+}
+
 #content {
   background-color: $alter-bg;
   border: 5px solid $alter-bg;
@@ -363,16 +371,57 @@ thead {
   }
 }
 
+#oauth {
+  > div {
+    font-size: 1.2em;
+    margin-top: 5px;
+  }
+  .provider {
+    text-decoration: unset;
+    display: inline-block;
+    box-sizing: border-box;
+    border: 2px solid $alter-bg;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 7px;
+    width: 95px;
+  }
+}
+
 article.user-action {
   text-align: center;
+  &#activation-sent, &.password-reset {
+    > div:first-of-type { padding-top: 5px }
+    > div:last-of-type { padding-bottom: 5px }
+  }
   form {
     padding: 3px 0 5px;
-    button {
+    label {
+      display: block;
+      margin: 3px auto;
+    }
+    input {
+      border-radius: 3px;
+      padding: 5px;
+      background-color: $main-bg;
+      border: 1px solide $alter-bg;
+      &[type='checkbox'] {
+        display: none;
+        + label .mi::before {
+          content: quote('\f12b'); // mi-circle
+        }
+        &:checked + label .mi::before {
+          content: quote('\f129'); // mi-ok-circle
+        }
+      }
+    }
+    #forgot-password { margin-bottom: 3px }
+    .button {
       display: block;
       margin: 5px auto 0;
-      border-radius: 3px;
+      font-size: 1.05em;
+      cursor: pointer;
     }
-    input { border-radius: 3px }
   }
 }
 

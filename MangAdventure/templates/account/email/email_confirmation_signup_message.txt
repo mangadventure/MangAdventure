@@ -2,9 +2,9 @@
 {% user_display user as user_display %}
 {% autoescape off %}
 {% with site_name=current_site.name site_domain=current_site.domain %}
-Dear {{ user_display }},
+Hello, {{ user_display }},
 
-Thank you for registering to {{ site_name }}.
+Thank you for registering an account on {{ site_name }}.
 Please click the following link to activate your account:
 
 {{ activate_url }}

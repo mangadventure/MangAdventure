@@ -1,11 +1,11 @@
 from __future__ import print_function
-from . import __version__
 from django.core.management.color import color_style as style
 from os import path, mkdir, environ as env
 from re import compile as regex, IGNORECASE
 from sys import stderr, argv
 from config import read_config, write_config
 from .bad_bots import BOTS
+from . import __version__ as VERSION
 
 
 def warn(msg): print(style().WARNING('WARNING: ' + msg), file=stderr)
@@ -54,6 +54,9 @@ except KeyError:
         warn("You should configure your website's URL "
              "by running the 'configureurl' command.")
 
+# The ID of the current site.
+SITE_ID = 1
+
 #####################
 #    Application    #
 #####################
@@ -71,19 +74,11 @@ INSTALLED_APPS = [
     'static_precompiler',
     'constance.backends.database',
     'config.apps.SettingsConfig',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.reddit',
-    'allauth.socialaccount.providers.twitter',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.discord',
     'next_prev',
     'config',
     'reader',
     'api',
     'groups',
-    'users',
 ]
 
 # A list of middleware to use.
@@ -258,30 +253,53 @@ AUTH_PASSWORD_VALIDATORS = [
               'CommonPassword', 'NumericPassword']
 ]
 
+# A list of authentication backends to use when authenticating a user.
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-SOCIALACCOUNT_EMAIL_REQUIRED = False
-SOCIALACCOUNT_EMAIL_VERIFICATION = "optional"
+# The account adapter class to use.
+ACCOUNT_ADAPTER = 'users.adapters.AccountAdapter'
 
-# Socialaccount Provider Customization
-# https://django-allauth.readthedocs.io/en/latest/providers.html
+# The user is required to hand over an e-mail address when signing up.
+ACCOUNT_EMAIL_REQUIRED = True
+
+# Use either the username or the email to login.
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+
+# The user is blocked from logging in until the email address is verified.
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+# The social account adapter class to use.
+SOCIALACCOUNT_ADAPTER = 'users.adapters.SocialAccountAdapter'
+
+# An email address is not required for social accounts.
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+
+# Verifying the email address is not required for social accounts.
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
+
+# Social account provider customization.
 SOCIALACCOUNT_PROVIDERS = {
     'reddit': {
         'AUTH_PARAMS': {'duration': 'permanent'},
-        'USER_AGENT': 'Django:MangAdventure:{} (by {})'.format(
-            __version__, "https://github.com/evangelos-ch/MangAdventure"),
+        'USER_AGENT': 'Django:MangAdventure:{} ({})'.format(
+            VERSION, 'https://github.com/mangadventure/MangAdventure'),
     },
     'discord': {
-        'SCOPE': ['identity'],
+        'SCOPE': ['identify', 'email'],
     }
 }
 
-SITE_ID = 1
+# The URL where requests are redirected for login.
+LOGIN_URL = '/user/login'
+
+# The age of session cookies (1 month).
+SESSION_COOKIE_AGE = 2592000
+
+# Don't expire the session when the user closes their browser.
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 try:
     # Use a secure TLS connection when talking to the SMTP server.
@@ -306,8 +324,17 @@ try:
     if not all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                 EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL]):
         raise KeyError
+    INSTALLED_APPS += [
+        'allauth',
+        'allauth.account',
+        'allauth.socialaccount',
+        'allauth.socialaccount.providers.reddit',
+        'allauth.socialaccount.providers.twitter',
+        'allauth.socialaccount.providers.google',
+        'allauth.socialaccount.providers.discord',
+        'users',
+    ]
 except KeyError:
-    INSTALLED_APPS.remove('users')
     if 'configuresmtp' not in argv:
         warn("To enable the User module, you have to configure your SMTP "
              "mail server's settings via the 'configuresmtp' command.")
@@ -338,14 +365,14 @@ if env.get('HTTPS').lower() == 'on':
     # Sets the "X-Content-Type-Options: nosniff" header.
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
-    # Expire the session when the user closes their browser.
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
     # Use a secure cookie for the session cookie.
     SESSION_COOKIE_SECURE = True
 
     # Use a secure cookie for the CSRF cookie.
     CSRF_COOKIE_SECURE = True
+
+    # The default protocol used for when generating account URLs.
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 # Optional django-csp module
 try:
@@ -522,5 +549,5 @@ CONSTANCE_CONFIG_FIELDSETS = {
 # Use the database for storing configuration.
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
-del CONFIG, BOTS, IGNORECASE
+del CONFIG, BOTS, IGNORECASE, VERSION, CONTEXT_PROCESSORS
 

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from reader.models import Series
+from reader.models import Series, Chapter, Page
 
 
 class Bookmark(models.Model):
@@ -12,5 +12,13 @@ class Bookmark(models.Model):
         unique_together = ('series', 'user')
 
 
-__all__ = ['User', 'Bookmark']
+class Progress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='progress')
+    series = models.ForeignKey(Series, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    page = models.ForeignKey(Page, on_delete=models.CASCADE)
+
+
+__all__ = ['User', 'Bookmark', 'Progress']
 

@@ -144,12 +144,22 @@ class Chapter(models.Model):
         return '{0.series.title} - {0.volume}/' \
                '{0.number:g}: {0.title}'.format(self)
 
+    def __gt__(self, other):
+        if self.volume > other.volume:
+            return True
+        elif self.volume == other.volume:
+            return self.number > other.number
+        return False
+
 
 class Page(models.Model):
     chapter = models.ForeignKey(Chapter, related_name='pages',
                                 on_delete=models.CASCADE)
     image = models.ImageField()
     number = models.PositiveSmallIntegerField()
+
+    def __gt__(self, other):
+        return self.number > other.number
 
 
 __all__ = [

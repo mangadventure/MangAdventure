@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
 from next_prev import next_in_order, prev_in_order
-from .models import Chapter, Series
+from .models import Chapter, Series, Page
+from  users.models import Progress
 
 
 def directory(request):
@@ -49,6 +50,21 @@ def chapter_page(request, slug=None, vol=0, num=0, page=1):
     all_pages = chapters['curr'].pages.all()
     if page > len(all_pages):
         raise Http404
+
+    if request.user.is_authenticated:
+        page_obj = Page.objects.get(chapter=chapters['curr'], number=page)
+        prog, c = Progress.objects.get_or_create(user=request.user,
+                                                 series=Series.objects.get(slug=slug),
+                                                 defaults={
+                                                     'chapter': chapters['curr'],
+                                                     'page': page_obj,
+                                                 })
+        if prog.chapter < chapters['curr'] or (prog.chapter == chapters['curr']
+                                               and prog.page < page_obj):
+            prog.chapter = chapters['curr']
+            prog.page = page_obj
+            prog.save()
+
     return render(request, 'chapter.html', {
         'all_chapters': chapters['all'].reverse(),
         'curr_chapter': chapters['curr'],

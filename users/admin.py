@@ -5,7 +5,7 @@ from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import (
     SocialApp, SocialAccount, SocialToken
 )
-from .models import User
+from .models import User, Progress
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -32,4 +32,4 @@ admin.site.unregister(User)
 admin.site.unregister(Group)
 admin.site.register(User, UserAdmin)
 admin.site.register(OAuthApp)
-
+admin.site.register(Progress)

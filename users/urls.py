@@ -6,7 +6,5 @@ try:
 except ImportError:
     from django.conf.urls import url
 
-app_name = 'users'
-
-urlpatterns = [url(r'^$', profile, name='profile')] + allauth_urls
+urlpatterns = [url(r'^$', profile, name='user_profile')] + allauth_urls
 

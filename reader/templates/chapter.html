@@ -1,7 +1,5 @@
 {% extends 'skeleton.html' %}
-{% load custom_tags %}
-{% load static %}
-{% load compile_static %}
+{% load static compile_static custom_tags %}
 {% block robots %}
   <meta name="robots" content="nosnippet">
 {% endblock %}
@@ -177,18 +175,9 @@
     </section>
   </div>
   <div id="preload" class="no-display">
-    {% with pages=all_pages|preload_pages:curr_page.number %}
-      <script async>
-        {% for page in pages %}
-          new Image().src='{{ page.image.url }}';
-        {% endfor %}
-      </script>
-      <noscript>
-        {% for page in pages %}
-          <img src="{{ page.image.url }}"/>
-        {% endfor %}
-      </noscript>
-    {% endwith %}
+    {% for page in all_pages|preload_pages:curr_page.number %}
+      <img alt='preload' src="{{ page.image.url }}">
+    {% endfor %}
   </div>
 {% endblock %}
 

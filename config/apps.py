@@ -1,10 +1,11 @@
 from constance.apps import ConstanceConfig
 
 
-class SettingsConfig(ConstanceConfig):
-    verbose_name = 'Settings'
-    verbose_name_plural = 'Settings'
+class SiteConfig(ConstanceConfig):
+    verbose_name = 'Site Configuration'
+    verbose_name_plural = 'Site Configuration'
 
     def ready(self):
         __import__('config.receivers')
+        super(SiteConfig, self).ready()
 

@@ -45,8 +45,9 @@ _templates/
 # MangAdventure stuff
 config.ini
 media/
+static/
+!static/scripts
+!static/vendor
+!static/styles
 static/styles/_variables.scss
-static/COMPILED/
-static/admin/
-static/extra/
 

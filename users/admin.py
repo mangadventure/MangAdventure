@@ -23,13 +23,10 @@ class OAuthApp(SocialApp):
         return '%s (%s)' % (self.name, self.provider)
 
 
-admin.site.unregister(Site)
-admin.site.unregister(EmailAddress)
-admin.site.unregister(SocialAccount)
-admin.site.unregister(SocialToken)
-admin.site.unregister(SocialApp)
-admin.site.unregister(User)
-admin.site.unregister(Group)
+admin.site.unregister([
+    Site, EmailAddress, SocialAccount,
+    SocialToken, SocialApp, User, Group
+])
 admin.site.register(User, UserAdmin)
 admin.site.register(OAuthApp)
 

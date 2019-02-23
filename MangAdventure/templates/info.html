@@ -20,21 +20,13 @@
     {% if config.ABOUT %}
       <h2>About us</h2>
       <section id="about">
-        <div>
-          {% autoescape off %}
-            {{ config.ABOUT|linebreaks }}
-          {% endautoescape %}
-        </div>
+        <div>{{ config.ABOUT|safe|linebreaks }}</div>
       </section>
     {% endif %}
     {% if config.RECRUITMENT %}
       <h2>Recruitment</h2>
       <section id="recruitment">
-        <div>
-          {% autoescape off %}
-            {{ config.RECRUITMENT|linebreaks }}
-          {% endautoescape %}
-        </div>
+        <div>{{ config.RECRUITMENT|safe|linebreaks }}</div>
       </section>
     {% endif %}
     {% if config.TWITTER or config.DISCORD %}

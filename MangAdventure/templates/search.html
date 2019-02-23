@@ -1,12 +1,5 @@
 {% extends 'skeleton.html' %}
-{% load custom_tags %}
-{% load static %}
-{% load compile_static %}
-{% block stylesheets %}
-  {{ block.super }}
-  <link href="{% static 'styles/search.scss'|compile %}"
-        rel="stylesheet" type="text/css">
-{% endblock %}
+{% load static compile_static humanize custom_tags %}
 {% block head_extras %}
   <meta name="totalResults" content="{{ total }}">
   <script src="{% static 'vendor/tablesort.min.js' %}"
@@ -24,7 +17,7 @@
   <h1 class="text-shadow alter-bg">Search</h1>
   <article id="search">
     <section id="search-options">
-      <form action="/search" id="search-form"
+      <form action="{% url 'search' %}" id="search-form"
             method="GET" accept-charset="utf-8">
         <div id="search-title">
           <label for="query">Series Title:</label>
@@ -68,8 +61,8 @@
               </span>
             {% endfor %}
           </div>
-          <input type="text" class="no-display"
-                 id="categories" name="categories" hidden/>
+          <input type="hidden" class="no-display"
+                 id="categories" name="categories">
         </div>
         <button id="search-submit" type="submit">
           <i class="mi mi-send"></i> Submit Search
@@ -136,7 +129,7 @@
                   </td>
                   <td class="result-date s-hidden" data-sort-method="date">
                     {% if chapters %}
-                      {{ chapters.latest.uploaded|date:'N d, Y - H:i' }}
+                      {{ chapters.latest.uploaded|naturaltime }}
                     {% else %}
                       N/A
                     {% endif %}

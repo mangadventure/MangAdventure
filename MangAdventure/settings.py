@@ -81,6 +81,15 @@ INSTALLED_APPS = [
     'reader',
     'api',
     'groups',
+] + [
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.reddit',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.discord',
+    'users',
 ]
 
 # A list of middleware to use.
@@ -264,6 +273,9 @@ AUTHENTICATION_BACKENDS = [
 # The account adapter class to use.
 ACCOUNT_ADAPTER = 'users.adapters.AccountAdapter'
 
+# A callable that returns the display name of the user.
+ACCOUNT_USER_DISPLAY = 'users.utils.user_display'
+
 # The user is required to hand over an e-mail address when signing up.
 ACCOUNT_EMAIL_REQUIRED = True
 
@@ -327,16 +339,6 @@ try:
     if not all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                 EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL]):
         raise KeyError
-    INSTALLED_APPS += [
-        'allauth',
-        'allauth.account',
-        'allauth.socialaccount',
-        'allauth.socialaccount.providers.reddit',
-        'allauth.socialaccount.providers.twitter',
-        'allauth.socialaccount.providers.google',
-        'allauth.socialaccount.providers.discord',
-        'users',
-    ]
 except KeyError:
     if 'configuresmtp' not in argv:
         warn("To enable the User module, you have to configure your SMTP "

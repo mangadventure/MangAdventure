@@ -1,9 +1,26 @@
 {% extends 'skeleton.html' %}
-{# TODO: add title #}
+{% load account %}
+{% user_display request.user as user_display %}
+{% block robots %}
+  <meta name="robots" content="nosnippet">
+{% endblock %}
+{% with user=user_display %}
+  {% block title %}
+    <meta name="title" content="User profile">
+    <meta name="twitter:title"
+          content="User profile &middot; {{ config.NAME }}">
+    <meta property="og:title"
+          content="User profile &middot; {{ config.NAME }}">
+    <title>{{ user }} &middot; {{ config.NAME }}</title>
+  {% endblock %}
+{% endwith %}
 {% block content %}
   <h1 class="text-shadow alter-bg">My Profile</h1>
   <article id="user-profile">
-    {# TODO: add details #}
+    <div>{{ request.user.email }}</div>
+    <div>{{ request.user.username }}</div>
+    <div>{{ request.user.first_name }}</div>
+    <div>{{ request.user.last_name }}</div>
   </article>
 {% endblock %}
 

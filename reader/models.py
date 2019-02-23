@@ -51,24 +51,30 @@ class Category(models.Model):
 
 class Series(models.Model):
     _validator = validators.FileSizeValidator(max_mb=2)
-    title = models.CharField(max_length=250,
-                             help_text='The title of the series.')
-    description = models.TextField(blank=True,
-                                   help_text='The description of the series.')
-    cover = models.ImageField(storage=storage.OverwriteStorage(),
-                              upload_to=uploaders.cover_uploader,
-                              help_text='Upload a cover image for the series.'
-                                        ' Its size must not exceed 2 MBs.',
-                              validators=[_validator])
+    title = models.CharField(
+        max_length=250, help_text='The title of the series.'
+    )
+    description = models.TextField(
+        blank=True, help_text='The description of the series.'
+    )
+    cover = models.ImageField(
+        storage=storage.OverwriteStorage(),
+        upload_to=uploaders.cover_uploader,
+        help_text='Upload a cover image for the series. Its size '
+                  'must not exceed %d MBs.' % _validator.max_mb,
+        validators=[_validator]
+    )
     authors = models.ManyToManyField(Author, blank=True)
     artists = models.ManyToManyField(Artist, blank=True)
-    slug = models.SlugField(primary_key=True, blank=True,
-                            verbose_name='Custom URL',
-                            help_text='A custom URL for the series. Must be '
-                                      'unique and cannot be changed once set.')
+    slug = models.SlugField(
+        primary_key=True, blank=True, verbose_name='Custom URL',
+        help_text='A custom URL for the series. Must be '
+                  'unique and cannot be changed once set.'
+    )
     categories = models.ManyToManyField(Category, blank=True)
-    completed = models.BooleanField(default=False,
-                                    help_text='Is the series completed?')
+    completed = models.BooleanField(
+        default=False, help_text='Is the series completed?'
+    )
     modified = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -110,19 +116,26 @@ class Chapter(models.Model):
     title = models.CharField(max_length=250, help_text=_help % 'title')
     number = models.FloatField(default=0, help_text=_help % 'number')
     volume = models.PositiveSmallIntegerField(default=0, help_text=_vol_help)
-    series = models.ForeignKey(Series, on_delete=models.CASCADE,
-                               related_name='chapters',
-                               help_text='The series this chapter belongs to.')
-    file = models.FileField(help_text=' '.join(_file_help),
-                            blank=True, validators=[
-                                validators.FileSizeValidator(max_mb=50),
-                                validators.zipfile_validator])
-    final = models.BooleanField(default=False,
-                                help_text='Is this the final chapter?')
+    series = models.ForeignKey(
+        Series, on_delete=models.CASCADE,
+        related_name='chapters',
+        help_text='The series this chapter belongs to.'
+    )
+    file = models.FileField(
+        help_text=' '.join(_file_help), validators=[
+            validators.FileSizeValidator(max_mb=50),
+            validators.zipfile_validator
+        ], blank=True
+    )
+    final = models.BooleanField(
+        default=False, help_text='Is this the final chapter?'
+    )
     url = models.FilePathField(auto_created=True)
     uploaded = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    groups = models.ManyToManyField(Group, blank=True, related_name='releases')
+    groups = models.ManyToManyField(
+        Group, blank=True, related_name='releases'
+    )
 
     class Meta:
         unique_together = ('series', 'volume', 'number')
@@ -146,8 +159,9 @@ class Chapter(models.Model):
 
 
 class Page(models.Model):
-    chapter = models.ForeignKey(Chapter, related_name='pages',
-                                on_delete=models.CASCADE)
+    chapter = models.ForeignKey(
+        Chapter, related_name='pages', on_delete=models.CASCADE
+    )
     image = models.ImageField()
     number = models.PositiveSmallIntegerField()
 

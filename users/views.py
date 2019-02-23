@@ -8,6 +8,6 @@ from .models import UserProfile
 @cache_control(private=True, max_age=3600)
 def profile(request):
     return render(request, 'profile.html', {
-        'profile': UserProfile.objects.get(user=request.user)
+        'profile': UserProfile.objects.get_or_create(user=request.user)
     })
 

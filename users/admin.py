@@ -1,11 +1,10 @@
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.contrib.sites.models import Site
 from django.contrib import admin
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import (
     SocialApp, SocialAccount, SocialToken
 )
-from .models import User
 
 
 class UserAdmin(admin.ModelAdmin):

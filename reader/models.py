@@ -1,5 +1,10 @@
+from django.utils.functional import cached_property
+from django.utils.encoding import iri_to_uri
+from django.utils.http import http_date
 from django.utils.text import slugify
+from django.shortcuts import reverse
 from django.db import models
+from time import mktime
 from MangAdventure.models import (
     Alias, AliasKeyField, AliasField
 )
@@ -15,29 +20,33 @@ def _alias_help(name, identifier='name'):
 
 
 class Author(models.Model):
-    name = models.CharField(max_length=100,
-                            help_text="The author's full name.")
+    name = models.CharField(
+        max_length=100, help_text="The author's full name."
+    )
 
     def __str__(self): return self.name
 
 
 class Artist(models.Model):
-    name = models.CharField(max_length=100,
-                            help_text="The artist's full name.")
+    name = models.CharField(
+        max_length=100, help_text="The artist's full name."
+    )
 
     def __str__(self): return self.name
 
 
 class Category(models.Model):
-    id = models.CharField(primary_key=True, default='',
-                          max_length=25, auto_created=True)
-    name = models.CharField(max_length=25, unique=True,
-                            help_text='The name of the category.'
-                                      ' Must be unique and cannot'
-                                      ' be changed once set.')
-    description = models.CharField(max_length=250,
-                                   help_text='A description for'
-                                             ' the category.')
+    id = models.CharField(
+        primary_key=True, default='', max_length=25, auto_created=True
+    )
+    name = models.CharField(
+        max_length=25, unique=True,
+        help_text='The name of the category. Must be '
+                  'unique and cannot be changed once set.'
+    )
+    description = models.CharField(
+        max_length=250, help_text='A description for the category.'
+    )
 
     class Meta:
         verbose_name_plural = 'categories'
@@ -77,6 +86,10 @@ class Series(models.Model):
     )
     modified = models.DateTimeField(auto_now=True)
 
+    @cached_property
+    def get_absolute_url(self):
+        return reverse('reader:series', args=[self.slug])
+
     class Meta:
         verbose_name_plural = 'series'
         get_latest_by = 'modified'
@@ -101,8 +114,9 @@ class ArtistAlias(Alias):
 
 class SeriesAlias(Alias):
     series = AliasKeyField(Series)
-    alias = AliasField(help_text=_alias_help('series', 'title'),
-                       max_length=250)
+    alias = AliasField(
+        max_length=250, help_text=_alias_help('series', 'title')
+    )
 
 
 class Chapter(models.Model):
@@ -130,7 +144,6 @@ class Chapter(models.Model):
     final = models.BooleanField(
         default=False, help_text='Is this the final chapter?'
     )
-    url = models.FilePathField(auto_created=True)
     uploaded = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     groups = models.ManyToManyField(
@@ -143,8 +156,6 @@ class Chapter(models.Model):
         get_latest_by = ('uploaded', 'modified')
 
     def save(self, *args, **kwargs):
-        self.url = '/reader/{0.series.slug}/' \
-                   '{0.volume}/{0.number:g}/'.format(self)
         super(Chapter, self).save(*args, **kwargs)
         if self.file:
             validators.zipfile_validator(self.file)
@@ -153,9 +164,33 @@ class Chapter(models.Model):
         self.series.completed = self.final
         self.series.save()
 
+    @cached_property
+    def get_uploaded_date(self):
+        return http_date(mktime(self.uploaded.timetuple()))
+
+    @cached_property
+    def get_modified_date(self):
+        return http_date(mktime(self.modified.timetuple()))
+
+    @cached_property
+    def get_absolute_url(self):
+        return reverse('reader:chapter', args=[
+            self.series.slug, self.volume, self.number
+        ])
+
     def __str__(self):
         return '{0.series.title} - {0.volume}/' \
                '{0.number:g}: {0.title}'.format(self)
+
+    def __gt__(self, other):
+        if self.volume == other.volume:
+            return self.number > other.number
+        return self.volume > other.volume
+
+    def __lt__(self, other):
+        if self.volume == other.volume:
+            return self.number < other.number
+        return self.volume < other.volume
 
 
 class Page(models.Model):
@@ -164,6 +199,26 @@ class Page(models.Model):
     )
     image = models.ImageField()
     number = models.PositiveSmallIntegerField()
+
+    @cached_property
+    def get_file_name(self):
+        return self.image.name.split('/')[-1]
+
+    @cached_property
+    def get_absolute_url(self):
+        return reverse('reader:page', args=[
+            self.chapter.series, self.chapter.volume,
+            self.chapter.number, self.number
+        ])
+
+    def __str__(self):
+        return '{0.series.title} - {0.volume}/{0.number} [{1}]'.format(
+            self.chapter, self.get_file_name
+        )
+
+    def __gt__(self, other): return self.number > other.number
+
+    def __lt__(self, other): return self.number < other.number
 
 
 __all__ = [

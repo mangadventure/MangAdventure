@@ -72,7 +72,7 @@
               {% if chapter == curr_chapter %}
                 data-current="true"
               {% endif %}>
-              <a href="{{ chapter.url }}" title="{{ chapter.title }}"
+              <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
                        {% if chapter.final %}class="end"{% endif %}>
                 {% with vol=chapter.volume num=chapter.number %}
                   V{{ vol }} / C{{ num|floatformat }}: {{ chapter.title }}
@@ -110,13 +110,13 @@
                data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
                {% if curr_page.number == all_pages.count %}
                  {% if next_chapter %}
-                   data-next="{{ next_chapter.url }}"
+                   data-next="{{ next_chapter.get_absolute_url }}"
                  {% else %}
                    data-next="{{ series_url }}"
                  {% endif %}
               {% elif curr_page.number == 1 %}
                  {% if prev_chapter %}
-                   data-prev="{{ prev_chapter.url }}"
+                   data-prev="{{ prev_chapter.get_absolute_url }}"
                  {% else %}
                    data-prev="{{ series_url }}"
                  {% endif %}
@@ -138,7 +138,7 @@
           </a>
           {% if prev == 0 %}
             {% if prev_chapter %}
-              <a href="{{ prev_chapter.url }}" title="Previous chapter">
+              <a href="{{ prev_chapter.get_absolute_url }}" title="Previous chapter">
             {% else %}
               <a href="/reader/{{ curr_chapter.series_id }}/"
                  title="No previous chapters">
@@ -156,7 +156,7 @@
             </span>
             {% if next > max %}
               {% if next_chapter %}
-                <a href="{{ next_chapter.url }}" title="Next chapter">
+                <a href="{{ next_chapter.get_absolute_url }}" title="Next chapter">
               {% else %}
                 <a href="/reader/{{ curr_chapter.series_id }}/"
                    title="No more chapters">

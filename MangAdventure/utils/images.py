@@ -55,6 +55,7 @@ def unzip(obj):
                    quality=100, optimize=config.COMPRESS_PAGES)
         obj.pages.create(number=counter, image=file_path)
     zip_file.close()
+    obj.file.close()
     # TODO: option to keep zip file
     remove(obj.file.path)
     obj.file.delete(save=True)

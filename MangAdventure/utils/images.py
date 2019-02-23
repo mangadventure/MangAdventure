@@ -1,7 +1,6 @@
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 from os import path, remove, makedirs
-from constance import config
 from zipfile import ZipFile
 from shutil import rmtree
 from sys import getsizeof
@@ -51,8 +50,7 @@ def unzip(obj):
         filename = '%03d%s' % (counter, path.splitext(name)[-1])
         file_path = path.join(dir_path, filename)
         image = Image.open(BytesIO(data))
-        image.save(path.join(full_path, filename),
-                   quality=100, optimize=config.COMPRESS_PAGES)
+        image.save(path.join(full_path, filename), quality=100)
         obj.pages.create(number=counter, image=file_path)
     zip_file.close()
     # TODO: option to keep zip file

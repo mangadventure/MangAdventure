@@ -71,9 +71,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.flatpages',
+    'django.contrib.humanize',
     'static_precompiler',
     'constance.backends.database',
-    'config.apps.SettingsConfig',
+    'config.apps.SiteConfig',
     'next_prev',
     'config',
     'reader',
@@ -117,7 +119,7 @@ TEMPLATES = [{
 }]
 
 # The full Python path of the WSGI application
-# object that Django’s built-in servers will use.
+# object that Django's built-in servers will use.
 WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 
 ##################
@@ -137,7 +139,7 @@ DATABASES = {  # TODO: add MySQL support
 ##################################
 
 # Subject prefix for email messages sent to admins/managers.
-EMAIL_SUBJECT_PREFIX = '[MangAdventure] '
+EMAIL_SUBJECT_PREFIX = '[%s] ' % CONFIG.get('site_url', 'MangAdventure')
 
 # URLs that should be ignored when reporting HTTP 404 errors.
 IGNORABLE_404_URLS = [
@@ -285,7 +287,8 @@ SOCIALACCOUNT_PROVIDERS = {
     'reddit': {
         'AUTH_PARAMS': {'duration': 'permanent'},
         'USER_AGENT': 'Django:MangAdventure:{} ({})'.format(
-            VERSION, 'https://github.com/mangadventure/MangAdventure'),
+            VERSION, 'https://github.com/mangadventure/MangAdventure'
+        ),
     },
     'discord': {
         'SCOPE': ['identify', 'email'],
@@ -387,14 +390,12 @@ try:
 
     # Sets the style-src directive.
     CSP_STYLE_SRC = (
-        "'self'", "https://fonts.googleapis.com",
-        "https://cdn.staticaly.com/gh/mangadventure",
+        "'self'", "https://fonts.googleapis.com", "https://cdn.staticaly.com",
     )
 
     # Sets the font-src directive.
     CSP_FONT_SRC = (
-        "'self'", "https://fonts.gstatic.com",
-        "https://cdn.staticaly.com/gh/mangadventure",
+        "'self'", "https://fonts.gstatic.com", "https://cdn.staticaly.com",
     )
 
     # Sets the img-src directive.
@@ -436,12 +437,7 @@ CONSTANCE_ADDITIONAL_FIELDS = {
         'required': False
     }),
     'desc': ('django.forms.CharField', {
-        'max_length': 250,
-        'widget': 'django.forms.Textarea'
-    }),
-    'html': ('django.forms.CharField', {
-        'strip': False, 'required': False,
-        'widget': 'django.forms.Textarea'
+        'max_length': 250, 'widget': 'django.forms.Textarea'
     }),
     'logo': ('MangAdventure.forms.SVGImageField', {}),
     'favicon': ('django.forms.ImageField', {})
@@ -449,14 +445,6 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 
 # Constance configuration variables.
 CONSTANCE_CONFIG = {
-    'FOOTER': (
-        'If you liked any of the manga you read here, '
-        'consider buying the original versions to support '
-        'the authors.\nThis site was created using <a href='
-        '"https://github.com/mangadventure/MangAdventure"'
-        ' rel="noopener" target="_blank">MangAdventure</a>.',
-        'The footer of your website. HTML allowed.', 'html'
-    ),
     'NAME': (
         'MangAdventure', 'The name of your website.', 'char'
     ),
@@ -470,12 +458,6 @@ CONSTANCE_CONFIG = {
     ),
     'DISCORD': (
         '', 'The Discord server of your group.', 'discord'
-    ),
-    'ABOUT': (
-        '', 'Some general info about your group. HTML allowed.', 'html'
-    ),
-    'RECRUITMENT': (
-        '', 'Recruitment instructions for your group. HTML allowed.', 'html'
     ),
     'TWITTER': (
         '', 'The Twitter username of your group.', 'twitter'
@@ -502,8 +484,10 @@ CONSTANCE_CONFIG = {
         'https://fonts.googleapis.com/css?family=Lato',
         'The URL of the font to be used in your website.', 'url'
     ),
-    'FONT_NAME': ('Lato', 'The name of the font that '
-                          'corresponds to the above URL.', 'char'),
+    'FONT_NAME': (
+        'Lato', 'The name of the font that '
+        'corresponds to the above URL.', 'char'
+    ),
     'LOGO_LARGE': (
         '', 'Upload a large-sized logo for your website.', 'logo'
     ),
@@ -515,24 +499,22 @@ CONSTANCE_CONFIG = {
     ),
     'MAX_RELEASES': (
         10, 'The maximum number of releases to '
-            'be shown in the main page', 'number'
+        'be shown in the main page', 'number'
     ),
     'MAX_CHAPTERS': (
         1, 'The maximum number of chapters to be shown '
-           'for each series in the reader page.', 'number'
+        'for each series in the reader page.', 'number'
     ),
-    'COMPRESS_PAGES': (
-        True, 'Controls whether chapter pages are compressed on upload.', bool
-    ),
+    'SHOW_CREDITS': (
+        True, "Credit MangAdventure in the site's footer.", bool
+    )
 }
 
 # Constance configuration groups.
 CONSTANCE_CONFIG_FIELDSETS = {
     'Site Settings': (
-        'NAME', 'DESCRIPTION', 'KEYWORDS', 'FOOTER', 'FAVICON',
-    ),
-    'Group Settings': (
-        'ABOUT', 'RECRUITMENT', 'TWITTER', 'DISCORD',
+        'NAME', 'DESCRIPTION', 'KEYWORDS',
+        'FAVICON', 'TWITTER', 'DISCORD',
     ),
     'Theme Settings': (
         'MAIN_BACKGROUND', 'ALTER_BACKGROUND', 'MAIN_TEXT_COLOR',
@@ -542,7 +524,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'LOGO_LARGE', 'LOGO_MEDIUM', 'LOGO_SMALL',
     ),
     'Other Settings': (
-        'MAX_RELEASES', 'MAX_CHAPTERS', 'COMPRESS_PAGES',
+        'MAX_RELEASES', 'MAX_CHAPTERS', 'SHOW_CREDITS',
     )
 }
 

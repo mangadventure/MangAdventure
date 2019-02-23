@@ -1,6 +1,5 @@
 {% extends 'skeleton.html' %}
-{% load custom_tags %}
-{% load static %}
+{% load static custom_tags %}
 {% block keywords %}
   {% with tags=series.categories.all|join:',' %}
     <meta name="keywords" content="{{ config.KEYWORDS }},{{ tags }}">

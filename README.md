@@ -38,6 +38,7 @@ server on `127.0.0.1:8000` (or any other address you specify).
 
 * Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
 * Search results are sorted using [tristen/tablesort](https://github.com/tristen/tablesort)
+* Info pages use the [TinyMCE editor](https://www.tiny.cloud/)
 * Browser logos from [alrra/browser-logos](https://github.com/alrra/browser-logos)
 
 ## License

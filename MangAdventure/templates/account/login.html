@@ -2,7 +2,7 @@
 {% load account socialaccount user_tags %}
 {% block head_extras %}
   {% if request.user.is_authenticated %}
-    <meta http-equiv="Refresh" content="1; url={% url 'user_profile' %}">
+    <meta http-equiv="Refresh" content="1; url={% url 'users:profile' %}">
   {% endif %}
 {% endblock %}
 {% block title %}

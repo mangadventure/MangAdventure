@@ -23,18 +23,15 @@ def thumbnail(obj, max_size=100):
     buff = BytesIO()
     img.save(buff, format=img.format, quality=100)
     buff.seek(0)
-    return InMemoryUploadedFile(buff, 'ImageField',
-                                obj.name, mime,
-                                getsizeof(buff), None)
+    return InMemoryUploadedFile(
+        buff, 'ImageField', obj.name, mime, getsizeof(buff), None
+    )
 
 
 def unzip(obj):
     counter = 0
     dir_path = path.join(
-        'series',
-        obj.series.slug,
-        str(obj.volume),
-        '%g' % obj.number
+        'series', obj.series.slug, str(obj.volume), '%g' % obj.number
     )
     full_path = path.join(settings.MEDIA_ROOT, dir_path)
     if path.exists(full_path):
@@ -53,6 +50,7 @@ def unzip(obj):
         image.save(path.join(full_path, filename), quality=100)
         obj.pages.create(number=counter, image=file_path)
     zip_file.close()
+    obj.file.close()
     # TODO: option to keep zip file
     remove(obj.file.path)
     obj.file.delete(save=True)

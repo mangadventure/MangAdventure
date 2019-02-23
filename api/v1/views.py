@@ -1,10 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import last_modified
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.http import http_date
 from django.conf import settings
-from django.urls import reverse
-from time import mktime
 from reader.models import Chapter, Series, Author, Artist, Category
 from api.response import JsonVaryAllowResponse, JsonError
 from MangAdventure.utils.search import get_response
@@ -12,16 +9,15 @@ from groups.models import Group, Member
 
 
 def _chapter_response(request, _chapter, json=True):
-    url = request.build_absolute_uri(_chapter.url)
+    url = request.build_absolute_uri(_chapter.get_absolute_url)
     response = {
         'title': _chapter.title,
         'url': url,
         'pages_root': url.replace(
             '/reader', '%s%s' % (settings.MEDIA_URL, 'series')
         ),
-        'pages_list': [p.image.url.split('/')[-1]
-                       for p in _chapter.pages.all()],
-        'date': http_date(mktime(_chapter.uploaded.timetuple())),
+        'pages_list': [p.image.get_file_name for p in _chapter.pages.all()],
+        'date': _chapter.get_uploaded_date,
         'final': _chapter.final,
         'groups': []
     }
@@ -40,7 +36,8 @@ def _volume_response(request, _series, vol, json=True):
         return JsonError('Not found', 404)
     for _chapter in chapters:
         response['%g' % _chapter.number] = _chapter_response(
-            request, _chapter, json=False)
+            request, _chapter, json=False
+        )
     return JsonVaryAllowResponse(response) if json else response
 
 
@@ -49,9 +46,7 @@ def _series_response(request, _series, json=True):
         'slug': _series.slug,
         'title': _series.title,
         'aliases': [a.alias for a in _series.aliases.all()],
-        'url': request.build_absolute_uri(
-            reverse('reader:series', args={_series.slug})
-        ),
+        'url': request.build_absolute_uri(_series.get_absolute_url),
         'description': _series.description,
         'authors': [],
         'artists': [],
@@ -162,8 +157,7 @@ def all_releases(request):
         series_res = {
             'slug': s.slug,
             'title': s.title,
-            'url': request.build_absolute_uri(
-                reverse('reader:series', args={s.slug})),
+            'url': request.build_absolute_uri(s.get_absolute_url),
             'cover': request.build_absolute_uri(s.cover.url),
             'latest_chapter': {},
         }
@@ -173,7 +167,7 @@ def all_releases(request):
                 'title': last_chapter.title,
                 'volume': last_chapter.volume,
                 'number': last_chapter.number,
-                'date': http_date(last_chapter.uploaded.timestamp()),
+                'date': last_chapter.get_uploaded_date,
             }
         except ObjectDoesNotExist:
             pass

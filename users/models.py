@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from reader.models import Series
+from reader.models import Series, Chapter, Page
 from MangAdventure.utils import storage, uploaders, validators
 
 
@@ -16,7 +16,9 @@ class Bookmark(models.Model):
 
 class UserProfile(models.Model):
     _validator = validators.FileSizeValidator(max_mb=2)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='profile'
+    )
     bio = models.TextField(
         blank=True, verbose_name='biography',
         help_text="The user's biography."
@@ -29,14 +31,29 @@ class UserProfile(models.Model):
         validators=[_validator], blank=True
     )
     bookmarks = models.ManyToManyField(
-        Bookmark, related_name='bookmarks', blank=True,
+        Bookmark, related_name='profile', blank=True,
         help_text="The user's bookmarked series."
     )
-    
+
     def __str__(self): return str(self.user)
 
 
 # TODO: add user preferences
 
-__all__ = ['Bookmark', 'UserProfile']
+class Progress(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='progress'
+    )
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    last_update = models.DateTimeField(auto_now=True)
+
+    def save(self, **kwargs):
+        # Delete old progress before saving
+        Progress.objects.filter(
+            user_id=self.user.id, chapter__series_id=self.chapter.series.slug
+        ).delete()
+        super(Progress, self).save(kwargs)
+
+
+__all__ = ['UserProfile', 'Bookmark', 'Progress']
 

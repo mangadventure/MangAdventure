@@ -1,5 +1,5 @@
 {% extends 'skeleton.html' %}
-{% load custom_tags %}
+{% load custom_tags humanize %}
 {% block title %}
   <meta name="title" content="Series List">
   <meta name="twitter:title" content="Series List - {{ config.NAME }}">
@@ -13,7 +13,7 @@
       {% if series.chapters.all %}
         <section>
           <h2 class="series-title">
-            <a href="/reader/{{ series.slug }}/"
+            <a href="{{ series.get_absolute_url }}"
                title="{{ series.title }}">
               {{ series.title }}
             </a>
@@ -37,30 +37,32 @@
               {% for chapter in chapters|vslice:config.MAX_CHAPTERS %}
                 {% with vol=chapter.volume num=chapter.number %}
                   <div class="series-chapter">
-                    <a href="{{ chapter.url }}" title="{{ chapter.title }}"
-                       {% if chapter.final %}class="end"{% endif %}>
-                      Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ chapter.title }}
+                    <a href="{{ chapter.get_absolute_url }}"
+                       {% if chapter.final %}class="end"{% endif %}
+                       title="{{ chapter.title }}">
+                      {% if vol > 0 %} Vol. {{ vol }},{% endif %}
+                      Ch. {{ num|floatformat }}: {{ chapter.title }}
                     </a>
                     <div class="chapter-metadata">
                       {% with groups=chapter.groups.all %}
                         <span class="divider" title="{{ groups|join:', ' }}">
                         </span>
-                        <span class="chapter-groups" title="{{ groups|join:', ' }}">
+                        <span class="chapter-groups"
+                              title="{{ groups|join:', ' }}">
                           {% for group in groups %}
                             <a href="/groups/{{ group.id }}"
-                               title="{{ group.name }}"
-                              {% if not forloop.last %}class="comma"{% endif %}>
+                              {% if not forloop.last %}class="comma"{% endif %}
+                               title="{{ group.name }}">
                               {{ group.name }}</a>
                           {% endfor %}
                       {% endwith %}
                       </span>
-                      <span class="divider"
-                            title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
-                      </span>
-                      <span class="chapter-date"
-                            title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
-                        {{ chapter.uploaded|date:'N d, Y - H:i' }}
-                      </span>
+                      {% with date=chapter.uploaded|naturaltime %}
+                        <span class="divider" title="{{ date }}"></span>
+                        <span class="chapter-date" title="{{ date }}">
+                          {{ date }}
+                        </span>
+                      {% endwith %}
                     </div>
                   </div>
                 {% endwith %}

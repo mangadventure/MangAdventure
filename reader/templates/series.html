@@ -103,7 +103,7 @@
         {% for chapter in chapters %}
           <div class="chapter">
             {% with vol=chapter.volume num=chapter.number %}
-              <a href="{{ chapter.url }}"
+              <a href="{{ chapter.get_absolute_url }}"
                  {% if chapter.final %}class="end"{% endif %}
                  title="{{ chapter.title }}">
                 Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ chapter.title }}

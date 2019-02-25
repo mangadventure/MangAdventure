@@ -6,7 +6,10 @@ from shutil import rmtree
 from sys import getsizeof
 from io import BytesIO
 from PIL import Image
-from . import is_dir, sort
+from . import sort
+
+
+def _is_dir(f): return f.filename[-1] == '/'
 
 
 def thumbnail(obj, max_size=100):
@@ -40,7 +43,7 @@ def unzip(obj):
     zip_file = ZipFile(obj.file)
     name_list = zip_file.namelist()
     for name in sort.natural_sort(name_list):
-        if is_dir(zip_file.getinfo(name)):
+        if _is_dir(zip_file.getinfo(name)):
             continue
         counter += 1
         data = zip_file.read(name)

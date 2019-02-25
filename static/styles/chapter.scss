@@ -46,6 +46,15 @@
       border-top-right-radius: 0;
     }
   }
+  .dropdown {
+    border: 1px solid $alter-bg;
+    border-radius: 5px;
+    ul {
+      border: 1px solid $alter-bg;
+      border-radius: 5px;
+    }
+    > span { display: none }
+  }
   .curr-page { text-align: center }
 }
 
@@ -67,15 +76,6 @@
     width: 100%;
     display: inline-flex;
     @include justify-content(space-around);
-  }
-}
-
-.dropdown {
-  border: 1px solid $alter-bg;
-  border-radius: 5px;
-  ul {
-    border: 1px solid $alter-bg;
-    border-radius: 5px;
   }
 }
 

@@ -46,4 +46,7 @@ class Migration(migrations.Migration):
                 ('user', models.OneToOneField(on_delete=models.deletion.CASCADE, related_name='profile', to=settings.AUTH_USER_MODEL)),
             ],
         ),
+        migrations.DeleteModel(
+            name='OAuthApp',
+        ),
     ]

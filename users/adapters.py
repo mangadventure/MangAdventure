@@ -7,10 +7,10 @@ class AccountAdapter(DefaultAccountAdapter):
         return request.GET.get('next', '/user')
 
     def get_logout_redirect_url(self, request):
-        return request.GET.get('next', '/')
+        return request.POST.get('next', '/')
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
     def get_connect_redirect_url(self, request, social_account):
-        return request.GET.get('next', '/user')
+        return request.POST.get('next', '/user')
 

@@ -81,15 +81,6 @@ INSTALLED_APPS = [
     'reader',
     'api',
     'groups',
-] + [
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.reddit',
-    'allauth.socialaccount.providers.twitter',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.discord',
-    'users',
 ]
 
 # A list of middleware to use.
@@ -339,6 +330,16 @@ try:
     if not all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                 EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL]):
         raise KeyError
+    INSTALLED_APPS += [
+        'allauth',
+        'allauth.account',
+        'allauth.socialaccount',
+        'allauth.socialaccount.providers.reddit',
+        'allauth.socialaccount.providers.twitter',
+        'allauth.socialaccount.providers.google',
+        'allauth.socialaccount.providers.discord',
+        'users',
+    ]
 except KeyError:
     if 'configuresmtp' not in argv:
         warn("To enable the User module, you have to configure your SMTP "

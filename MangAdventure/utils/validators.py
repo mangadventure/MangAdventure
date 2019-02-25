@@ -5,7 +5,9 @@ from re import compile as reg
 from io import BytesIO
 from PIL import Image
 from os import remove
-from . import is_dir
+
+
+def _is_dir(f): return f.filename[-1] == '/'
 
 
 def _remove_file(_file):
@@ -67,7 +69,7 @@ def zipfile_validator(_file):
         )
     first_folder = True
     for f in zip_file.namelist():
-        if is_dir(zip_file.getinfo(f)):
+        if _is_dir(zip_file.getinfo(f)):
             if first_folder:
                 first_folder = False
                 continue

@@ -69,7 +69,7 @@ thead {
   display: flex;
   height: 45px;
   @include flex();
-  a {
+  .navig-link {
     color: $main-fg;
     &:hover, &:active { color: $alter-fg }
   }
@@ -92,12 +92,7 @@ thead {
   position: absolute;
   right: 0;
   top: 0;
-  a {
-    display: inline-block;
-    padding: 8px;
-    &:hover { text-decoration: none }
-  }
-  ul {
+  .navig-list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -106,6 +101,40 @@ thead {
       float: left;
       margin: 0.25em 0;
       @include border-radius(3px);
+    }
+  }
+  .navig-link {
+    display: inline-block;
+    padding: 8px;
+    &:hover { text-decoration: none }
+  }
+  .dropdown {
+    ul {
+      right: 2%;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 2px solid $alter-bg;
+      background-color: $main-bg;
+    }
+    li {
+      float: right;
+      margin: 0.1em 0;
+      @include touch() {
+        color: $alter-fg;
+      }
+    }
+    a {
+      color: inherit;
+      text-decoration: unset;
+    }
+    &-title { padding: 4px }
+    .logout-btn {
+      font-size: 1em;
+      background-color: inherit;
+      color: inherit;
+      border: none;
+      cursor: pointer;
+      padding: 0;
     }
   }
 }
@@ -371,6 +400,29 @@ thead {
   }
 }
 
+#user {
+  &-profile {
+    span:first-child {
+      font-weight: bold;
+    }
+  }
+  &-info {
+    display: flex;
+    align-items: center;
+  }
+  &-avatar img {
+    max-width: 150px;
+    height: auto;
+    margin-right: 10px;
+  }
+  &-edit .helptext {
+    display: block;
+    font-size: 0.8em;
+    margin-bottom: 5px;
+  }
+  &-bio div { text-indent: 1em }
+}
+
 #oauth {
   > div {
     font-size: 1.2em;
@@ -388,6 +440,24 @@ thead {
   }
 }
 
+#user-edit .field {
+  input, textarea {
+    width: 270px;
+  }
+}
+
+#sign-in .input {
+  width: 270px;
+}
+
+%field {
+  border-radius: 3px;
+  padding: 5px;
+  color: $main-fg;
+  background-color: $main-bg;
+  border: 2px solid $alter-bg;
+}
+
 article.user-action {
   text-align: center;
   &#activation-sent, &.password-reset {
@@ -401,10 +471,7 @@ article.user-action {
       margin: 3px auto;
     }
     input {
-      border-radius: 3px;
-      padding: 5px;
-      background-color: $main-bg;
-      border: 1px solide $alter-bg;
+      @extend %field;
       &[type='checkbox'] {
         display: none;
         + label .mi::before {
@@ -415,6 +482,7 @@ article.user-action {
         }
       }
     }
+    textarea { @extend %field; }
     #forgot-password { margin-bottom: 3px }
     .button {
       display: block;
@@ -443,10 +511,8 @@ article.user-action {
     overflow-y: auto;
     li { @include truncate(); }
   }
-  > span {
-    display: none;
-    cursor: pointer;
-  }
+  > span { cursor: pointer }
+  a[href='#'] { text-decoration: unset }
   @include touch() {
     border-bottom: none;
     border-bottom-left-radius: 0;
@@ -490,6 +556,12 @@ article.user-action {
   display: inline-block;
   border-radius: 3px;
   padding: 0 2px;
+}
+
+.error {
+  color: #F04747;
+  font-weight: bold;
+  .field & { font-size: 0.9em }
 }
 
 .separator {
@@ -649,7 +721,13 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     .s-hidden { display: none }
   }
   #series { max-width: 92vw }
-  #navig ul li { margin: -0.2em 0 -0.3em -0.2em }
+  #navig {
+    .navig-list > li {
+      margin: -0.2em 0 -0.3em -0.2em;
+      &.dropdown { margin: -0.1em 0 -0.1em -0.3em }
+    }
+    .dropdown ul { top: 97.5% }
+  }
   .ident { display: none }
 }
 
@@ -784,11 +862,16 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     &-desc div { text-indent: 0 }
     .member, .member div { padding-left: 0 }
   }
+  #user-profile section {
+    display: block;
+    text-align: center;
+    span:first-child { display: block }
+  }
   #info {
     text-align: center;
     &-header { display: none !important }
-    #links .link { margin-left: 0 }
     section div { text-indent: 0 }
   }
+  #links .link span { display: none }
 }
 

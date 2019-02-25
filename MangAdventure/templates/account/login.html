@@ -20,34 +20,26 @@
         Click <a href="{% url 'account_logout' %}">here</a> to logout.
       </div>
     {% else %}
+      {% for error in form.non_field_errors %}
+        <div class="error">{{ error }}</div>
+      {% endfor %}
       <form method="POST" action="{% url 'account_login' %}">
         {% csrf_token %}
-        {% if form.errors %}
-          {% for field in form %}
-            {% for error in field.errors %}
-              <p class="error">{{ error|escape }}</p>
-            {% endfor %}
-          {% endfor %}
-        {% endif %}
         <div class="field">
-          <label for="login">{{ form.login.label }}</label>
+          <label for="login">{{ form.login.label }}:</label>
           <input placeholder="{{ form.login.field.widget.attrs.placeholder }}"
                  type="text" name="login" id="login" class="input" required>
-          {% if form.login.errors %}
-            {% for error in form.login.errors %}
-              <p class="error">{{ error|escape }}</p>
-            {% endfor %}
-          {% endif %}
+          {% for error in form.login.errors %}
+            <div class="error">{{ error|escape }}</div>
+          {% endfor %}
         </div>
         <div class="field">
-          <label for="password">{{ form.password.label }}</label>
+          <label for="password">{{ form.password.label }}:</label>
           <input placeholder="{{ form.password.field.widget.attrs.placeholder }}"
                  type="password" name="password" id="password" class="input" required>
-          {% if form.password.errors %}
-            {% for error in form.password.errors %}
-              <p class="error">{{ error|escape }}</p>
-            {% endfor %}
-          {% endif %}
+          {% for error in form.password.errors %}
+            <div class="error">{{ error|escape }}</div>
+          {% endfor %}
         </div>
         <span class="field">
           <input type="checkbox" class="input" name="remember" id="remember">

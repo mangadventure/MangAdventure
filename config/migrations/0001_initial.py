@@ -12,6 +12,11 @@ def create_info_pages(apps, schema_editor):
         page.sites.set(site.objects.filter(pk=1))
 
 
+def remove_info_pages(apps, schema_editor):
+    flatpage = apps.get_model('flatpages', 'FlatPage')
+    flatpage.objects.all().delete()
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -20,7 +25,27 @@ class Migration(migrations.Migration):
         ('flatpages', '0001_initial'),
     ]
 
+    replaces = [
+        ('constance', '0001_initial')
+    ]
+
     operations = [
-        migrations.RunPython(create_info_pages)
+        migrations.CreateModel(
+            name='InfoPage',
+            fields=[
+            ],
+            options={
+                'verbose_name': 'Info Page',
+                'proxy': True,
+                'indexes': [],
+            },
+            bases=('flatpages.flatpage',),
+        ),
+        migrations.RunPython(
+            create_info_pages, reverse_code=remove_info_pages
+        ),
+        migrations.DeleteModel(
+            name='InfoPage',
+        ),
     ]
 

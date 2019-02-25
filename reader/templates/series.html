@@ -1,5 +1,5 @@
 {% extends 'skeleton.html' %}
-{% load static custom_tags %}
+{% load static humanize custom_tags %}
 {% block keywords %}
   {% with tags=series.categories.all|join:',' %}
     <meta name="keywords" content="{{ config.KEYWORDS }},{{ tags }}">
@@ -122,11 +122,11 @@
                   </span>
                 {% endwith %}
                 <span class="divider"
-                      title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
+                      title="{{ chapter.uploaded|naturaltime }}">
                 </span>
                  <span class="chapter-date"
-                      title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
-                  {{ chapter.uploaded|date:'N d, Y - H:i' }}
+                      title="{{ chapter.uploaded|naturaltime }}">
+                  {{ chapter.uploaded|naturaltime }}
                 </span>
               </div>
             {% endwith %}

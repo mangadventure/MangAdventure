@@ -34,6 +34,7 @@ class UserProfile(models.Model):
         Bookmark, related_name='profile', blank=True,
         help_text="The user's bookmarked series."
     )
+    # TODO: add links and let users choose whether to display their e-mail
 
     def __str__(self): return str(self.user)
 

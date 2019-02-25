@@ -1,5 +1,4 @@
 from django.utils.functional import cached_property
-from django.utils.encoding import iri_to_uri
 from django.utils.http import http_date
 from django.utils.text import slugify
 from django.shortcuts import reverse

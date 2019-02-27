@@ -6,7 +6,7 @@ import MangAdventure
 
 
 def read(fname):
-    with open(join(dirname(__file__), fname), 'r') as f:
+    with open(join(dirname(__file__), fname)) as f:
         return f.read()
 
 
@@ -23,15 +23,11 @@ setup(
     keywords=['manga', 'scanlation', 'reader'],
     packages=find_packages(),
     python_requires='>=2.7',
-    install_requires=[
-        'django>=1.11',
-        'django-next-prev',
-        'django-constance[database]',
-        'django-static-precompiler[libsass]',
-        'Pillow',
-    ],
+    install_requires=read('requirements.txt').splitlines(),
     extras_require={
         'csp': 'django-csp',
+        'uwsgi': 'uwsgi',
+        'gunicorn': 'gunicorn'
     },
     entry_points={
         'console_scripts': ['mangadventure = manage:main']

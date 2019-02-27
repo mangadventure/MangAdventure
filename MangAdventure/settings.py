@@ -7,11 +7,17 @@ from config import read_config, write_config
 from .bad_bots import BOTS
 from . import __version__ as VERSION
 
+try:
+    from . import user_settings
+
+    def get_config(key, default=None):
+        return getattr(user_settings, key, default) or default
+except ImportError:
+    def get_config(_, default=None): return default
+
 
 def warn(msg): print(style().WARNING('WARNING: ' + msg), file=stderr)
 
-
-CONFIG = read_config()
 
 ###############
 #    Basic    #
@@ -23,7 +29,7 @@ BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 try:
     # A secret key used to provide cryptographic signing.
     # SECURITY WARNING: this must be kept secret!
-    SECRET_KEY = CONFIG['secret_key']
+    SECRET_KEY = read_config()['secret_key']
     if not SECRET_KEY:
         raise KeyError
 except KeyError:
@@ -42,17 +48,15 @@ DEBUG = (env.get('MANGADV_DEBUG', 'false').lower() == 'true')
 ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '[::1]']
 if DEBUG:
     ALLOWED_HOSTS += ['192.168.1.%s' % i for i in range(2, 256)]
-try:
-    # From https://stackoverflow.com/questions/9626535/#36609868
-    BASE_URL = CONFIG['site_url'].split('//')[-1].split('/')[0].split('?')[0]
-    if BASE_URL:
-        ALLOWED_HOSTS += ['.' + BASE_URL]
-    else:
-        raise KeyError
-except KeyError:
-    if 'configureurl' not in argv:
-        warn("You should configure your website's URL "
-             "by running the 'configureurl' command.")
+BASE_URL = get_config('SITE_URL')
+if BASE_URL:
+    ALLOWED_HOSTS.append(
+        # From https://stackoverflow.com/questions/9626535/#36609868
+        '.' + BASE_URL.split('//')[-1].split('/')[0].split('?')[0]
+    )
+elif 'configure' not in argv:
+    warn("You should configure your website's URL"
+         " by running the 'configure' command.")
 
 # The ID of the current site.
 SITE_ID = 1
@@ -139,7 +143,7 @@ DATABASES = {  # TODO: add MySQL support
 ##################################
 
 # Subject prefix for email messages sent to admins/managers.
-EMAIL_SUBJECT_PREFIX = '[%s] ' % CONFIG.get('site_url', 'MangAdventure')
+EMAIL_SUBJECT_PREFIX = '[%s] ' % get_config('SITE_URL', 'MangAdventure')
 
 # URLs that should be ignored when reporting HTTP 404 errors.
 IGNORABLE_404_URLS = [
@@ -231,7 +235,7 @@ USE_L10N = True
 USE_TZ = True
 
 # A string representing the language code for this installation.
-LANGUAGE_CODE = 'en-us'  # TODO: make this configurable
+LANGUAGE_CODE = get_config('LANG_CODE', 'en-us')
 
 # The name of the cookie to use for the language cookie.
 LANGUAGE_COOKIE_NAME = 'mangadv_lang'
@@ -242,11 +246,11 @@ LANGUAGES = [
 ]
 
 # The time zone for this installation.
-TIME_ZONE = 'UTC'  # TODO: make this configurable
+TIME_ZONE = get_config('TIME_ZONE', 'UTC')
 
-#######################
-#    Users & Email    #
-#######################
+#########################
+#    Users & E-mails    #
+#########################
 
 # A list of validators that are used to check the strength of users' passwords.
 AUTH_PASSWORD_VALIDATORS = [
@@ -256,10 +260,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # A list of authentication backends to use when authenticating a user.
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
 # The account adapter class to use.
 ACCOUNT_ADAPTER = 'users.adapters.AccountAdapter'
@@ -289,8 +290,8 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
 SOCIALACCOUNT_PROVIDERS = {
     'reddit': {
         'AUTH_PARAMS': {'duration': 'permanent'},
-        'USER_AGENT': 'Django:MangAdventure:{} ({})'.format(
-            VERSION, 'https://github.com/mangadventure/MangAdventure'
+        'USER_AGENT': 'Django:MangAdventure:{} (by {})'.format(
+            VERSION, 'https://github.com/mangadventure'
         ),
     },
     'discord': {
@@ -307,29 +308,26 @@ SESSION_COOKIE_AGE = 2592000
 # Don't expire the session when the user closes their browser.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-try:
-    # Use a secure TLS connection when talking to the SMTP server.
-    EMAIL_USE_TLS = True
+# Use a secure TLS connection when talking to the SMTP server.
+EMAIL_USE_TLS = True
 
-    # The host to use for sending email.
-    EMAIL_HOST = CONFIG['smtp_host']
+# The host to use for sending e-mails.
+EMAIL_HOST = get_config('SMTP_HOST')
 
-    # Username to use for the SMTP server defined in EMAIL_HOST.
-    EMAIL_HOST_USER = CONFIG['smtp_user']
+# Username to use for the SMTP server defined in EMAIL_HOST.
+EMAIL_HOST_USER = get_config('SMTP_USER')
 
-    # Password to use for the SMTP server defined in EMAIL_HOST.
-    EMAIL_HOST_PASSWORD = CONFIG['smtp_pass']
+# Password to use for the SMTP server defined in EMAIL_HOST.
+EMAIL_HOST_PASSWORD = get_config('SMTP_PASS')
 
-    # Port to use for the SMTP server defined in EMAIL_HOST.
-    EMAIL_PORT = CONFIG['smtp_port']
+# Port to use for the SMTP server defined in EMAIL_HOST.
+EMAIL_PORT = get_config('SMTP_PORT')
 
-    # Default email address to use for various
-    # automated correspondence from the site manager(s).
-    DEFAULT_FROM_EMAIL = CONFIG['smtp_mail']
+# The default e-mail address of the site.
+DEFAULT_FROM_EMAIL = get_config('SMTP_MAIL')
 
-    if not all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
-                EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL]):
-        raise KeyError
+if all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
+        EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL]):
     INSTALLED_APPS += [
         'allauth',
         'allauth.account',
@@ -340,10 +338,12 @@ try:
         'allauth.socialaccount.providers.discord',
         'users',
     ]
-except KeyError:
-    if 'configuresmtp' not in argv:
-        warn("To enable the User module, you have to configure your SMTP "
-             "mail server's settings via the 'configuresmtp' command.")
+    AUTHENTICATION_BACKENDS.append(
+        'allauth.account.auth_backends.AuthenticationBackend'
+    )
+elif 'configure' not in argv:
+    warn("To enable the users module, you have to configure your SMTP"
+         " mail server's settings via the 'configure' command.")
 
 ##################
 #    Security    #
@@ -355,7 +355,7 @@ DISALLOWED_USER_AGENTS = [regex(bot, IGNORECASE) for bot in BOTS]
 # Use HttpOnly flag on the CSRF cookie
 CSRF_COOKIE_HTTP_ONLY = True
 
-env.setdefault('HTTPS', CONFIG.get('https', 'on'))
+env.setdefault('HTTPS', get_config('HTTPS', 'on'))
 if env.get('HTTPS').lower() == 'on':
     env['wsgi.url_scheme'] = 'https'
 
@@ -534,5 +534,5 @@ CONSTANCE_CONFIG_FIELDSETS = {
 # Use the database for storing configuration.
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
-del CONFIG, BOTS, IGNORECASE, VERSION, CONTEXT_PROCESSORS
+del BOTS, IGNORECASE, VERSION, CONTEXT_PROCESSORS
 

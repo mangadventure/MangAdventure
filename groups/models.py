@@ -4,7 +4,7 @@ from MangAdventure.utils.uploaders import group_logo_uploader
 from MangAdventure.utils.validators import FileSizeValidator
 from MangAdventure.utils.images import thumbnail
 from MangAdventure.models import (
-    TwitterField, DiscordURLField, DiscordNameField
+    TwitterField, DiscordURLField, DiscordNameField, RedditField
 )
 
 
@@ -12,22 +12,29 @@ class Group(models.Model):
     _help = "The group's %s."
     id = models.SmallIntegerField(primary_key=True, auto_created=True)
     name = models.CharField(max_length=100, help_text=_help % 'name')
-    website = models.URLField(help_text=_help % 'website')
+    website = models.URLField(blank=True, help_text=_help % 'website')
+    description = models.TextField(
+        blank=True, help_text='A description for the group.'
+    )
     email = models.EmailField(blank=True, help_text=_help % 'E-mail address')
     discord = DiscordURLField(blank=True, help_text=_help % 'Discord link')
     twitter = TwitterField(blank=True, help_text=_help % 'Twitter username')
-    description = models.TextField(blank=True,
-                                   help_text='A description for the group.')
-    logo = models.ImageField(blank=True, storage=OverwriteStorage(),
-                             upload_to=group_logo_uploader,
-                             help_text="Upload the group's logo."
-                                       " Its size must not exceed 2 MBs.",
-                             validators=[FileSizeValidator(max_mb=2)])
+    irc = models.CharField(max_length=63, blank=True, help_text=_help % 'IRC')
+    reddit = RedditField(
+        max_length=24, blank=True,
+        help_text="The group's Reddit username or "
+                  "subreddit. (Include /u/ or /r/)"
+    )
+    logo = models.ImageField(
+        blank=True, upload_to=group_logo_uploader,
+        storage=OverwriteStorage(), validators=[FileSizeValidator(max_mb=2)],
+        help_text="Upload the group's logo. Its size must not exceed 2 MBs.",
+    )
 
     @property
     def _increment(self):
         try:
-            num = Group.objects.latest('id').id + 1
+            num = Group.objects.only('id').last().id + 1
         except Group.DoesNotExist:
             num = 1
         return num
@@ -46,9 +53,15 @@ class Member(models.Model):
     _help = "The member's %s."
     name = models.CharField(max_length=100, help_text=_help % 'name')
     twitter = TwitterField(blank=True, help_text=_help % 'Twitter username')
-    discord = DiscordNameField(blank=True,
-                               help_text=_help % 'Discord username '
-                                                 'and discriminator')
+    discord = DiscordNameField(
+        blank=True, help_text=_help % 'Discord username and discriminator'
+    )
+    irc = models.CharField(
+        max_length=63, blank=True, help_text=_help % 'IRC username'
+    )
+    reddit = RedditField(
+        blank=True, help_text=_help % 'Reddit username'
+    )
 
     def __str__(self): return self.name
 
@@ -64,10 +77,12 @@ class Role(models.Model):
         ('RP', 'Raw Provider'),
         ('QC', 'Quality Checker')
     ]
-    member = models.ForeignKey(Member, on_delete=models.CASCADE,
-                               related_name='roles')
-    group = models.ForeignKey(Group, on_delete=models.CASCADE,
-                              related_name='roles')
+    member = models.ForeignKey(
+        Member, on_delete=models.CASCADE, related_name='roles'
+    )
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name='roles'
+    )
     role = models.CharField(blank=False, max_length=2, choices=ROLES)
 
     class Meta:

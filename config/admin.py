@@ -54,6 +54,7 @@ class InfoPageAdmin(FlatPageAdmin):
 class InfoPage(FlatPage):
     class Meta:
         proxy = True
+        auto_created = True
         app_label = 'constance'
         verbose_name = 'Info Page'
 

@@ -25,27 +25,9 @@ class Migration(migrations.Migration):
         ('flatpages', '0001_initial'),
     ]
 
-    replaces = [
-        ('constance', '0001_initial')
-    ]
-
     operations = [
-        migrations.CreateModel(
-            name='InfoPage',
-            fields=[
-            ],
-            options={
-                'verbose_name': 'Info Page',
-                'proxy': True,
-                'indexes': [],
-            },
-            bases=('flatpages.flatpage',),
-        ),
         migrations.RunPython(
             create_info_pages, reverse_code=remove_info_pages
-        ),
-        migrations.DeleteModel(
-            name='InfoPage',
         ),
     ]
 

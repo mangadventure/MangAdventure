@@ -6,48 +6,62 @@ Installation
    This project is still in an experimental state and may be unstable.
    Proceed at your own risk.
 
-Dependencies
-^^^^^^^^^^^^
+.. note::
+
+   This tutorial assumes you are using Linux and plan on
+   installing MangAdventure under ``/var/www/my-site.com/``.
+   The instructions are similar for Windows and MacOS.
+
+Install the project
+^^^^^^^^^^^^^^^^^^^
+
+First, install the following prerequisites:
 
 * `Python <https://www.python.org/downloads/>`_
-* `Django <https://www.djangoproject.com/download/>`_
-* `Django Next-Prev <https://pypi.org/project/django-next-prev/>`_
-* `Django Constance <https://django-constance.readthedocs.io/en/latest/#installation>`_
-* `Django Picklefield <https://pypi.org/project/django-picklefield/>`_
-* `Django Static Precompiler <https://django-static-precompiler.readthedocs.io/en/stable/installation.html>`_
-* `LibSass <https://sass.github.io/libsass-python/#install>`_
-* `Pillow <https://pillow.readthedocs.io/en/latest/installation.html#basic-installation>`_
+* `pip <https://pip.pypa.io/en/stable/installing/>`_
+* `virtualenv <https://virtualenv.pypa.io/en/latest/installation/>`_
 
-First, install the dependencies. If you already have Python & `pip <https://pip.pypa.io/en/stable/installing/>`_\ , you can install all the required Python modules with:
+Afterwards, set up a virtualenv for MangAdventure with the following commands:
 
 .. code-block:: shell
 
-   pip install -r requirements.txt
+   # This will install a virtualenv under /var/www/my-site.com/
+   python -m virtualenv /var/www/my-site.com/
 
-Then, download and unzip the `latest release <https://github.com/mangadventure/MangAdventure/releases/>`_ and follow these steps to initialize the site:
+   # This will activate the virtualenv
+   source /var/www/my-site.com/bin/activate
 
-Generate a secret key
-^^^^^^^^^^^^^^^^^^^^^
+Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   python manage.py generatekey
+   pip install -e git+https://github.com/mangadventure/MangAdventure@v0.5.0#egg=MangAdventure
 
-Configure the site URL
+Configure the settings
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Replace ``<URL>`` with the URL of your website.
+Before proceeding, there are some settings you will need to configure.
+The following command will open a text editor for you to do so:
 
 .. code-block:: shell
 
-   python manage.py configureurl <URL>
+   mangadventure configure
+
+You can also specify the editor to use:
+
+.. code-block:: shell
+
+   mangadventure configure --editor /usr/bin/emacs
 
 Create the database
 ^^^^^^^^^^^^^^^^^^^
 
+This command will create an SQLite database for your site. If it fails,
+you might need to install `SQLite <https://www.sqlite.org/index.html>`_.
+
 .. code-block:: shell
 
-   python manage.py migrate
+   mangadventure migrate
 
 Collect the static files
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -56,8 +70,8 @@ These commands will compile and collect the static files (CSS, JS, etc).
 
 .. code-block:: shell
 
-   python manage.py compilestatic
-   python manage.py collectstatic --noinput
+   mangadventure compilestatic
+   mangadventure collectstatic --noinput
 
 Create an administrator account
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -68,73 +82,99 @@ You can create multiple administrator accounts.
 
 .. code-block:: shell
 
-   python manage.py createsuperuser
+   mangadventure createsuperuser
 
-Enable HTTPS
-^^^^^^^^^^^^
 
-If you want to enable HTTPS, run this command:
+Migrate from FoolSlide2
+^^^^^^^^^^^^^^^^^^^^^^^
+
+| You can import your data from a FoolSlide2 installation.
+| If you weren't using FoolSlide2 before, feel free to
+   skip to the `next section <#set-up-the-server>`_.
+
+.. admonition:: Limitations
+   :class: warning
+
+   * Series will be imported without authors & artists.
+   * Users & team members will not be imported.
+   * Chapters with multiple teams will be imported without the teams.
+   * Languages are not yet supported and thus cannot be imported.
+   * This has only been tested with FoolSlide2 v2.3.3 using a MySQL database.
+
+First, export the data from FoolSlide2:
+
+* Visit your site's phpMyAdmin page.
+* Click on your FoolSlide2 database.
+* Go to the ``Export`` tab.
+* In ``Format:`` select ``XML`` and click ``Go``.
+* Save the generated file somewhere and copy its path.
+
+Next, import the data into MangAdventure:
+
+* Replace ``{root}`` with the path to your FoolSlide2 installation.
+* Replace ``{data}`` with the path to the XML file you exported.
 
 .. code-block:: shell
 
-   python manage.py https on
+   mangadventure fs2import {root} {data}
 
-To disable it, run:
+Set up the server
+^^^^^^^^^^^^^^^^^
 
-.. code-block:: shell
-
-   python manage.py https off
-
-Finally, set up the server
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To set up the server you will need Apache, Nginx or any other web server that supports Django.
-Make sure the web server has the necessary permissions to access all the relevant files.
-Also, create the ``media`` and ``log`` directories beforehand to avoid possible errors.
+To set up the server you will need Apache, Nginx,
+or any other web server that supports Django.
+Make sure the user running the web server and ``uwsgi``
+has the necessary permissions to access all the relevant files.
+Also, create the ``media`` and ``log`` directories
+beforehand to avoid possible permission errors.
 
 Apache example
 ~~~~~~~~~~~~~~
 
-Apache requires `mod_wsgi <https://modwsgi.rtfd.io/en/latest/>`_ to be installed.
+Apache requires `mod_wsgi <https://modwsgi.rtfd.io/en/latest/>`_.
 
 .. literalinclude:: examples/apache.conf
    :language: apache
-   :lines: 1-25
+   :end-before: # vim
 
 Nginx example
 ~~~~~~~~~~~~~
 
-Nginx requires `uwsgi <https://uwsgi-docs.rtfd.io/en/latest/>`_ to be installed.
+Nginx requires `uwsgi <https://uwsgi-docs.rtfd.io/en/latest/>`_.
 
 .. literalinclude:: examples/nginx.conf
    :language: nginx
-   :lines: 1-24
+   :end-before: # vim
 
-Don't forget to run uwsgi:
+Don't forget to run ``uwsgi`` after setting up the server:
 
 .. code-block:: shell
 
    uwsgi --socket 127.0.0.1:25432 --chdir /var/www/my-site.com/ --module MangAdventure.wsgi
 
+For more details, check the uWSGI `docs <https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django>`_.
+
 Updating
 --------
 
-First, install any new or updated dependencies:
+First, install the latest release from GitHub:
 
 .. code-block:: shell
 
-   pip install -U -r requirements.txt
+   # Replace {tag} with the latest release tag from
+   # https://github.com/mangadventure/MangAdventure/releases/latest
+   pip install -U git+https://github.com/mangadventure/MangAdventure@{tag}#egg=MangAdventure
 
 Then, compile and collect the static files:
 
 .. code-block:: shell
 
-   python manage.py compilestatic
-   python manage.py collectstatic --noinput
+   mangadventure compilestatic
+   mangadventure collectstatic --noinput
 
 Finally, update the database:
 
 .. code-block:: shell
 
-   python manage.py migrate
+   mangadventure migrate
 

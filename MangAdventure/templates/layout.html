@@ -61,10 +61,13 @@
     <link href="{{ config.FONT_URL }}" rel="preload stylesheet"
           as="style" type="text/css" crossorigin="anonymous">
     {% block stylesheets %}
-      <link href="{% static 'styles/style.scss'|compile %}" rel="stylesheet" type="text/css">
-      <link href="{% static 'extra/style.scss'|compile %}" rel="stylesheet" type="text/css">
+      <link href="{% static 'styles/style.scss'|compile %}"
+            rel="stylesheet" type="text/css">
+      <link href="{% static 'extra/style.scss'|compile %}"
+            rel="stylesheet" type="text/css">
       <noscript>
-        <link href="{% static 'styles/noscript.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'styles/noscript.css' %}"
+              rel="stylesheet" type="text/css">
       </noscript>
     {% endblock %}
     {% block head_extras %}{% endblock %}
@@ -127,46 +130,48 @@
                      name="q" type="search" class="main-bg" id="searchbox"/>
             </form>
           </li>
-          <li class="dropdown" aria-haspopup="true">
-            <span class="navig-link dropdown-title" aria-label="User">
-              <i class="mi mi-user" aria-hidden="true"></i>
-            </span>
-            <ul>
-              {% if request.user.is_authenticated %}
-                <li>
-                  <a href="{% url 'user_profile' %}">
-                    <span>View Profile</span>
-                    <i class="mi mi-user" aria-hidden="true"></i>
-                  </a>
-                </li>
-                <li>
-                  <a href="{% url 'user_edit' %}">
-                    <span>Edit Profile</span>
-                    <i class="mi mi-cog" aria-hidden="true"></i>
-                  </a>
-                </li>
-                <li>
-                  <form action="{% url 'account_logout' %}" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ PAGE_URL }}">
-                    <button type="submit" class="logout-btn">
-                      <span>Logout</span>
-                      <i class="mi mi-logout" aria-hidden="true"></i>
-                    </button>
-                  </form>
-                </li>
-              {% else %}
-                <li>
-                  {% with next=request.path|urlencode %}
-                    <a href="{% url 'account_login' %}?next={{ next }}">
-                      <span>Login</span>
-                      <i class="mi mi-login" aria-hidden="true"></i>
+          {% if USERS_ENABLED %}
+            <li class="dropdown" aria-haspopup="true">
+              <span class="navig-link dropdown-title" aria-label="User">
+                <i class="mi mi-user" aria-hidden="true"></i>
+              </span>
+              <ul>
+                {% if request.user.is_authenticated %}
+                  <li>
+                    <a href="{% url 'user_profile' %}">
+                      <span>View Profile</span>
+                      <i class="mi mi-user" aria-hidden="true"></i>
                     </a>
-                  {% endwith %}
-                </li>
-              {% endif %}
-            </ul>
-          </li>
+                  </li>
+                  <li>
+                    <a href="{% url 'user_edit' %}">
+                      <span>Edit Profile</span>
+                      <i class="mi mi-cog" aria-hidden="true"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <form action="{% url 'account_logout' %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ PAGE_URL }}">
+                      <button type="submit" class="logout-btn">
+                        <span>Logout</span>
+                        <i class="mi mi-logout" aria-hidden="true"></i>
+                      </button>
+                    </form>
+                  </li>
+                {% else %}
+                  <li>
+                    {% with next=request.path|urlencode %}
+                      <a href="{% url 'account_login' %}?next={{ next }}">
+                        <span>Login</span>
+                        <i class="mi mi-login" aria-hidden="true"></i>
+                      </a>
+                    {% endwith %}
+                  </li>
+                {% endif %}
+              </ul>
+            </li>
+          {% endif %}
         </ul>
       </nav>
     </header>

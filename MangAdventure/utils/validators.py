@@ -115,9 +115,18 @@ def discord_name_validator(username):
     ).__call__(username)
 
 
+def reddit_name_validator(reddit_name):
+    return UsernameValidator(
+        regex=r'^(/[ur]/)?[\w\d-]{3,21}$',
+        message='Invalid Reddit username or subreddit name.',
+        code='invalid_reddit_name'
+    ).__call__(reddit_name)
+
+
 __all__ = [
     'FileSizeValidator', 'UsernameValidator',
     'discord_server_validator', 'zipfile_validator',
-    'twitter_name_validator', 'discord_name_validator'
+    'twitter_name_validator', 'discord_name_validator',
+    'reddit_name_validator'
 ]
 

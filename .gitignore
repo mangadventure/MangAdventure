@@ -43,6 +43,7 @@ _templates/
 *~
 
 # MangAdventure stuff
+user_settings.py
 config.ini
 media/
 static/

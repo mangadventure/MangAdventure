@@ -33,13 +33,13 @@ v0.4.x
 v0.5.x
 ^^^^^^
 
-| |u| User registration:
-|    |u| Allow Google/Twitter/Reddit sign-in.
+| |c| User registration:
+|    |c| Allow Google/Twitter/Reddit sign-in.
 |    |u| Allow users to bookmark series.
-|    |u| Password reset form.
+|    |c| Password reset form.
 | |u| Comments (custom/Disqus/Commento).
-| |u| Cookie consent.
-|    |u| Add to information page.
+| |u| Privacy page & cookie consent.
+| |c| Migration from FoolSlide2.
 
 v0.6.x
 ^^^^^^

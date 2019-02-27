@@ -4,7 +4,6 @@ import os
 import sys
 import django
 import sphinx_rtd_theme
-import MangAdventure
 
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.dirname(__file__))
@@ -12,6 +11,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MangAdventure.settings')
 django.setup()
 
 # -- Project information --
+
+import MangAdventure
 
 project = MangAdventure.__name__
 author = MangAdventure.__author__

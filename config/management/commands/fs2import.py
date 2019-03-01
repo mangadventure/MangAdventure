@@ -63,7 +63,8 @@ class Command(BaseCommand):
         for s in elements['series']:
             slug = _get_column(s, 'stub')
             series = Series(
-                slug=slug, title=_get_column(s, 'name'),
+                id=_get_column(s, 'id'), slug=slug,
+                title=_get_column(s, 'name'),
                 description=_get_column(s, 'description'),
             )
             thumb = _get_column(s, 'thumbnail')
@@ -73,11 +74,11 @@ class Command(BaseCommand):
             cover = join(series_dir, 'thumb_%s' % thumb)
             with open(cover, 'rb') as f:
                 series.cover.save(thumb, File(f), save=False)
-            all_series.append((_get_column(s, 'id'), series))
+            all_series.append(series)
             directories['series'].append(
                 (_get_column(s, 'id'), series_dir)
             )
-        Series.objects.bulk_create([t[1] for t in all_series])
+        Series.objects.bulk_create(all_series)
 
         all_chapters = []
         chapter_groups = []
@@ -85,14 +86,13 @@ class Command(BaseCommand):
         for c in elements['chapters']:
             cid = _get_column(c, 'id')
             sid = _get_column(c, 'comic_id')
-            slug = next(s[1] for s in all_series if s[0] == sid).slug
             number = float('%s.%s' % (
                 _get_column(c, 'chapter') or '0',
                 _get_column(c, 'subchapter') or '0'
             ))
             volume = int(_get_column(c, 'volume') or '0')
             chapter = Chapter(
-                id=cid, series_id=slug,
+                id=cid, series_id=sid,
                 title=_get_column(c, 'name'),
                 volume=volume, number=number
             )

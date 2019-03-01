@@ -105,8 +105,9 @@
         </ul>
       </div>
     </section>
-    {% with series_url='/reader/'|add:curr_chapter.series_id|add:'/' %}
-      <section id="placeholder" class="main-bg" data-num="{{ curr_page.number }}"
+    {% with series_url=chapter.series.get_absolute_url %}
+      <section id="placeholder" class="main-bg"
+               data-num="{{ curr_page.number }}"
                data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
                {% if curr_page.number == all_pages.count %}
                  {% if next_chapter %}
@@ -158,7 +159,7 @@
               {% if next_chapter %}
                 <a href="{{ next_chapter.get_absolute_url }}" title="Next chapter">
               {% else %}
-                <a href="/reader/{{ curr_chapter.series_id }}/"
+                <a href="{{ curr.series.get_absolute_url }}/"
                    title="No more chapters">
               {% endif %}
             {% else %}

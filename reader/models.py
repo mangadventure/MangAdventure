@@ -1,3 +1,4 @@
+from django.contrib.redirects.models import Redirect
 from django.utils.functional import cached_property
 from django.utils.http import http_date
 from django.utils.text import slugify
@@ -12,6 +13,18 @@ from MangAdventure.utils import (
     uploaders, images
 )
 from groups.models import Group
+from os.path import join
+from shutil import move
+
+
+def _move(old, new):
+    try:
+        move(old.get_directory, new.get_directory)
+    except OSError as e:
+        if e.errno == 2:
+            pass
+        else:
+            raise
 
 
 def _alias_help(name, identifier='name'):
@@ -59,8 +72,13 @@ class Category(models.Model):
 
 class Series(models.Model):
     _validator = validators.FileSizeValidator(max_mb=2)
+    id = models.AutoField(primary_key=True)
     title = models.CharField(
         max_length=250, help_text='The title of the series.'
+    )
+    slug = models.SlugField(
+        blank=True, unique=True, verbose_name='Custom slug',
+        help_text='The unique slug of the series. Will be used in the URL.'
     )
     description = models.TextField(
         blank=True, help_text='The description of the series.'
@@ -74,20 +92,17 @@ class Series(models.Model):
     )
     authors = models.ManyToManyField(Author, blank=True)
     artists = models.ManyToManyField(Artist, blank=True)
-    slug = models.SlugField(
-        primary_key=True, blank=True, verbose_name='Custom URL',
-        help_text='A custom URL for the series. Must be '
-                  'unique and cannot be changed once set.'
-    )
     categories = models.ManyToManyField(Category, blank=True)
     completed = models.BooleanField(
         default=False, help_text='Is the series completed?'
     )
     modified = models.DateTimeField(auto_now=True)
 
-    @cached_property
     def get_absolute_url(self):
         return reverse('reader:series', args=[self.slug])
+
+    def get_directory(self):
+        return join('series', self.slug)
 
     class Meta:
         verbose_name_plural = 'series'
@@ -95,7 +110,8 @@ class Series(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.slug or self.title)
-        self.cover = images.thumbnail(self.cover, 300)
+        if self.cover:
+            self.cover = images.thumbnail(self.cover, 300)
         super(Series, self).save(*args, **kwargs)
 
     def __str__(self): return self.title
@@ -130,8 +146,7 @@ class Chapter(models.Model):
     number = models.FloatField(default=0, help_text=_help % 'number')
     volume = models.PositiveSmallIntegerField(default=0, help_text=_vol_help)
     series = models.ForeignKey(
-        Series, on_delete=models.CASCADE,
-        related_name='chapters',
+        Series, on_delete=models.CASCADE, related_name='chapters',
         help_text='The series this chapter belongs to.'
     )
     file = models.FileField(
@@ -171,11 +186,15 @@ class Chapter(models.Model):
     def get_modified_date(self):
         return http_date(mktime(self.modified.timetuple()))
 
-    @cached_property
     def get_absolute_url(self):
         return reverse('reader:chapter', args=[
-            self.series.slug, self.volume, self.number
+            self.series.slug, self.volume, '%g' % self.number
         ])
+
+    def get_directory(self):
+        return join(
+            self.series.get_directory(), str(self.volume), '%g' % self.number
+        )
 
     def __str__(self):
         return '{0.series.title} - {0.volume}/' \
@@ -199,11 +218,9 @@ class Page(models.Model):
     image = models.ImageField()
     number = models.PositiveSmallIntegerField()
 
-    @cached_property
     def get_file_name(self):
         return self.image.name.split('/')[-1]
 
-    @cached_property
     def get_absolute_url(self):
         return reverse('reader:page', args=[
             self.chapter.series, self.chapter.volume,

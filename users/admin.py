@@ -14,6 +14,7 @@ class UserAdmin(admin.ModelAdmin):
 class OAuthApp(SocialApp):
     class Meta:
         proxy = True
+        auto_created = True
         app_label = User._meta.app_label
         verbose_name = 'OAuth App'
         verbose_name_plural = 'OAuth Apps'

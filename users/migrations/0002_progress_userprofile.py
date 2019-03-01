@@ -16,18 +16,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='OAuthApp',
-            fields=[
-            ],
-            options={
-                'verbose_name': 'OAuth App',
-                'verbose_name_plural': 'OAuth Apps',
-                'proxy': True,
-                'indexes': [],
-            },
-            bases=('socialaccount.socialapp',),
-        ),
-        migrations.CreateModel(
             name='Progress',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -45,8 +33,5 @@ class Migration(migrations.Migration):
                 ('bookmarks', models.ManyToManyField(blank=True, help_text="The user's bookmarked series.", related_name='profile', to='users.Bookmark')),
                 ('user', models.OneToOneField(on_delete=models.deletion.CASCADE, related_name='profile', to=settings.AUTH_USER_MODEL)),
             ],
-        ),
-        migrations.DeleteModel(
-            name='OAuthApp',
         ),
     ]

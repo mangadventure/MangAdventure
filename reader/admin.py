@@ -1,14 +1,22 @@
+from django.forms import ModelForm, CheckboxSelectMultiple
 from django.contrib import admin
 from constance import config
 from .models import (
-    Series, SeriesAlias,
-    Author, AuthorAlias,
-    Artist, ArtistAlias,
-    Chapter, Category
+    Series, SeriesAlias, Author, AuthorAlias,
+    Artist, ArtistAlias, Chapter, Category
 )
 
-admin.site.site_header = '{} {}'.format(
-    config.NAME, 'Administration')
+admin.site.site_header = config.NAME + ' Administration'
+
+
+class SeriesAdminForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(SeriesAdminForm, self).__init__(*args, **kwargs)
+        self.fields['categories'].widget.widget = CheckboxSelectMultiple()
+
+    class Meta:
+        model = Series
+        fields = '__all__'
 
 
 class SeriesAliasInline(admin.StackedInline):
@@ -28,9 +36,7 @@ class ArtistAliasInline(admin.StackedInline):
 
 class SeriesAdmin(admin.ModelAdmin):
     inlines = [SeriesAliasInline]
-
-    def get_readonly_fields(self, request, obj=None):
-        return ['slug'] if obj else []
+    form = SeriesAdminForm
 
 
 class AuthorAdmin(admin.ModelAdmin):
@@ -41,10 +47,6 @@ class ArtistAdmin(admin.ModelAdmin):
     inlines = [ArtistAliasInline]
 
 
-class ChapterAdmin(admin.ModelAdmin):
-    exclude = ['url']
-
-
 class CategoryAdmin(admin.ModelAdmin):
     exclude = ['id']
 
@@ -52,9 +54,9 @@ class CategoryAdmin(admin.ModelAdmin):
         return ['name'] if obj else []
 
 
+admin.site.register(Chapter)
 admin.site.register(Series, SeriesAdmin)
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Artist, ArtistAdmin)
-admin.site.register(Chapter, ChapterAdmin)
 admin.site.register(Category, CategoryAdmin)
 

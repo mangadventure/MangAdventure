@@ -11,7 +11,7 @@ if 'users' in settings.INSTALLED_APPS:
         if user.is_authenticated and page == 1:
             Progress.objects.create(user=user, chapter=chapter)
 else:
-    def _update_progress(*args, **kwargs): pass
+    def _update_progress(*_): pass
 
 
 def directory(request):
@@ -44,15 +44,14 @@ def chapter_page(request, slug, vol, num, page):
     if page == 0:
         raise Http404
     chapters = {
-        'all': Chapter.objects.prefetch_related(
-            'series__categories', 'pages'
-        ).filter(series_id=slug),
+        'all': Chapter.objects.filter(series__slug=slug),
         'curr': None,
         'prev': None,
         'next': None
     }
     try:
-        chapters['curr'] = chapters['all'].get(number=num, volume=vol)
+        chapters['curr'] = chapters['all'] \
+            .prefetch_related('pages').get(number=num, volume=vol)
     except Chapter.DoesNotExist:
         raise Http404
     chapters['next'] = next_in_order(chapters['curr'], qs=chapters['all'])
@@ -74,7 +73,5 @@ def chapter_page(request, slug, vol, num, page):
 
 
 def chapter_redirect(request, slug, vol, num):
-    return redirect(
-        'reader:page', slug, vol, num, 1, permanent=True
-    )
+    return redirect('reader:page', slug, vol, num, 1, permanent=True)
 

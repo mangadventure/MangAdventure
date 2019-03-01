@@ -51,6 +51,7 @@ class Command(BaseCommand):
                 " Please use '--editor' to specify it."
             ))
             exit(2)
+        return editor
 
     def add_arguments(self, parser):
         parser.add_argument(

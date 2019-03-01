@@ -12,8 +12,9 @@ def _error_context(msg, status=500):
 
 def index(request):
     return render(request, 'index.html', {
-        'latest_releases': Chapter.objects.prefetch_related(
-            'groups', 'series').order_by('-uploaded')[:config.MAX_RELEASES:1]
+        'latest_releases': Chapter.objects
+                  .prefetch_related('groups', 'series')
+                  .order_by('-uploaded')[:config.MAX_RELEASES:1]
     })
 
 

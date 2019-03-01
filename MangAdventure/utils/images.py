@@ -13,12 +13,18 @@ def _is_dir(f): return f.filename[-1] == '/'
 
 
 def thumbnail(obj, max_size=100):
-    img = Image.open(obj)
+    try:
+        img = Image.open(obj)
+    except OSError as e:
+        if e.errno == 2:
+            return obj
+        else:
+            raise
     # Convert grayscale images to RGB for better downsampling
-    if img.mode in ["1", "L", "P"]:
-        img = img.convert("RGB")
+    if img.mode in ['1', 'L', 'P']:
+        img = img.convert('RGB')
         img.thumbnail((max_size, max_size), Image.ANTIALIAS)
-        img = img.convert("P", dither=Image.NONE, palette=Image.ADAPTIVE)
+        img = img.convert('P', dither=Image.NONE, palette=Image.ADAPTIVE)
     else:
         img.thumbnail((max_size, max_size), Image.ANTIALIAS)
     Image.MIME.setdefault('ICO', 'image/x-icon')

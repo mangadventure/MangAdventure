@@ -51,7 +51,7 @@ class Progress(models.Model):
     def save(self, **kwargs):
         # Delete old progress before saving
         Progress.objects.filter(
-            user_id=self.user.id, chapter__series_id=self.chapter.series.slug
+            user_id=self.user.id, chapter__series_id=self.chapter.series.id
         ).delete()
         super(Progress, self).save(kwargs)
 

@@ -12,14 +12,14 @@
     {% for release in latest_releases %}
       <section class="release">
         <h2>
-          <a href="/reader/{{ release.series_id }}/"
+          <a href="{{ release.series.get_absolute_url }}"
              title="{{ release.series }}">
             {{ release.series }}
           </a>
         </h2>
         <div class="release-info">
           {% with vol=release.volume num=release.number %}
-            <a href="{{ release.url }}" title="{{ release.title }}"
+            <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
                {% if release.final %}class="end"{% endif %}>
               Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ release.title }}
             </a>

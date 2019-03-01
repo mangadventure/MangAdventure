@@ -2,17 +2,18 @@
 
 MangAdventure, aka MangADV, is a simple manga hosting CMS.
 
-It is fully written in Django, SCSS and Vanilla JS.
-No PHP, no Node.js, no Bootstrap, no jQuery.
+It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
 
 ## Features
 
-* Open source.
-* Includes JSON API.
-* Simple and configurable.
-* Upload chapters as zip files.
-* Search for series.
-* More features coming.
+* [x] Is open source.
+* [x] Is fully configurable.
+* [x] Includes JSON API.
+* [x] Works even without JavaScript.
+* [x] Supports searching for series.
+* [x] Supports users. <!--(comments & bookmarks too) soon-->
+* [x] Allows for migration from FoolSlide2.
+* [ ] More features coming soon...
 
 ## Documentation
 
@@ -20,19 +21,19 @@ The documentation is available on [Read the Docs](https://mangadventure.rtfd.io)
 
 ## Configuration
 
-You can configure the site via the admin panel
-If you want to overwrite the styling of the site,
-you can write some SCSS (or regular CSS) in the
-`static/extra/styles.scss` file.
+You can configure the site via the admin panel.
+
+To override the styling of the site, you can write some
+SCSS (or regular CSS) in the `static/extra/styles.scss` file.
 
 ## Development
 
-To debug the server set the environment variable `MANGADV_DEBUG`
+To debug the app set the environment variable `MANGADV_DEBUG`
 to `true`. **Don't do this in production.**
 
-You shouldn't use the production server during development.
 You can use Django's `runserver` command to run a development
 server on `127.0.0.1:8000` (or any other address you specify).
+You shouldn't use the development server during production.
 
 ## Credits
 

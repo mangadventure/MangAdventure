@@ -9,14 +9,14 @@ from groups.models import Group, Member
 
 
 def _chapter_response(request, _chapter, json=True):
-    url = request.build_absolute_uri(_chapter.get_absolute_url)
+    url = request.build_absolute_uri(_chapter.get_absolute_url())
     response = {
         'title': _chapter.title,
         'url': url,
         'pages_root': url.replace(
             '/reader', '%s%s' % (settings.MEDIA_URL, 'series')
         ),
-        'pages_list': [p.image.get_file_name for p in _chapter.pages.all()],
+        'pages_list': [p.get_file_name() for p in _chapter.pages.all()],
         'date': _chapter.get_uploaded_date,
         'final': _chapter.final,
         'groups': []
@@ -46,7 +46,7 @@ def _series_response(request, _series, json=True):
         'slug': _series.slug,
         'title': _series.title,
         'aliases': [a.alias for a in _series.aliases.all()],
-        'url': request.build_absolute_uri(_series.get_absolute_url),
+        'url': request.build_absolute_uri(_series.get_absolute_url()),
         'description': _series.description,
         'authors': [],
         'artists': [],
@@ -157,7 +157,7 @@ def all_releases(request):
         series_res = {
             'slug': s.slug,
             'title': s.title,
-            'url': request.build_absolute_uri(s.get_absolute_url),
+            'url': request.build_absolute_uri(s.get_absolute_url()),
             'cover': request.build_absolute_uri(s.cover.url),
             'latest_chapter': {},
         }
@@ -178,15 +178,15 @@ def all_releases(request):
 def _latest(request, slug=None, vol=None, num=None):
     try:
         if slug is None:
-            return Series.objects.latest().modified
+            return Series.objects.only('modified').latest().modified
         if vol is None:
-            return Series.objects.get(slug=slug).modified
+            return Series.objects.only('modified').get(slug=slug).modified
         if num is None:
-            return Chapter.objects.filter(
-                series_id=slug, volume=vol
+            return Chapter.objects.only('modified').filter(
+                series__slug=slug, volume=vol
             ).latest().modified
-        return Chapter.objects.filter(
-            series_id=slug, volume=vol, number=num
+        return Chapter.objects.only('modified').filter(
+            series__slug=slug, volume=vol, number=num
         ).latest().modified
     except ObjectDoesNotExist:
         return None
@@ -244,7 +244,7 @@ def chapter(request, slug, vol, num):
         if vol < 0 or num < 0:
             raise ValueError
         _chapter = Chapter.objects.prefetch_related('pages') \
-            .get(series_id=slug, volume=vol, number=num)
+            .get(series__slug=slug, volume=vol, number=num)
     except (ValueError, TypeError):
         return JsonError('Bad request', 400)
     except ObjectDoesNotExist:

@@ -17,7 +17,7 @@ def group(request, g_id=0):
     if g_id == 0:
         raise Http404
     try:
-        _group = Group.objects.prefetch_related('roles').get(id=g_id)
+        _group = Group.objects.get(id=g_id)
     except Group.DoesNotExist:
         raise Http404
     member_ids = []

@@ -5,8 +5,8 @@ from subprocess import call
 
 
 USER_SETTINGS = """\
-# The URL of your website.
-SITE_URL = ''
+# The domain of your website.
+SITE_DOMAIN = ''
 
 # Set this to 'on' to enable HTTPS or 'off' to disable it
 HTTPS = 'on'
@@ -42,7 +42,7 @@ class Command(BaseCommand):
         if system == 'Linux':
             editor = 'xdg-open'  # could also use 'editor'
         elif system.startswith(('Windows', 'CYGWIN_NT')):
-            editor = 'edit'
+            editor = 'start'
         elif system == 'Darwin':
             editor = 'open'
         else:
@@ -67,6 +67,6 @@ class Command(BaseCommand):
         if not path.exists(file_path):
             with open(file_path, 'w+') as f:
                 f.write(USER_SETTINGS)
+        self.stdout.write(self.style.SUCCESS('Opening your editor...'))
         call([editor, file_path])
-        self.stdout.write(self.style.SUCCESS('Check your editor.'))
 

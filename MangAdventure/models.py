@@ -60,8 +60,7 @@ class Alias(models.Model):
 
 
 __all__ = [
-    'TwitterField', 'DiscordNameField',
-    'DiscordURLField', 'RedditField',
-    'AliasField', 'AliasKeyField', 'Alias'
+    'TwitterField', 'DiscordNameField', 'DiscordURLField',
+    'RedditField', 'AliasField', 'AliasKeyField', 'Alias'
 ]
 

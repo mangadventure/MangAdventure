@@ -8,6 +8,7 @@ import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.dirname(__file__))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MangAdventure.settings')
+os.environ['MANGADV_IGNORE_CONFIG'] = 'true'
 django.setup()
 
 # -- Project information --

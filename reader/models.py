@@ -223,8 +223,8 @@ class Page(models.Model):
 
     def get_absolute_url(self):
         return reverse('reader:page', args=[
-            self.chapter.series, self.chapter.volume,
-            self.chapter.number, self.number
+            self.chapter.series.slug, self.chapter.volume,
+            '%g' % self.chapter.number, self.number
         ])
 
     def __str__(self):

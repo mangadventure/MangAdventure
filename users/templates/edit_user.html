@@ -6,16 +6,14 @@
 {% endblock %}
 {% with user=user_display %}
   {% block title %}
-    <meta name="title" content="Edit profile">
-    <meta name="twitter:title"
-          content="Edit profile &middot; {{ config.NAME }}">
-    <meta property="og:title"
-          content="Edit profile &middot; {{ config.NAME }}">
-    <title>{{ user }} &middot; {{ config.NAME }}</title>
+    <meta name="title" content="Settings">
+    <meta name="twitter:title" content="Settings ~ {{ config.NAME }}">
+    <meta property="og:title" content="Settings ~ {{ config.NAME }}">
+    <title>{{ user }} ~ {{ config.NAME }}</title>
   {% endblock %}
 {% endwith %}
 {% block content %}
-  <h1 class="text-shadow alter-bg">Edit Profile</h1>
+  <h1 class="text-shadow alter-bg">Settings</h1>
   <article class="user-action" id="user-edit">
     {% for error in form.non_field_errors %}
       <div class="error">{{ error }}</div>

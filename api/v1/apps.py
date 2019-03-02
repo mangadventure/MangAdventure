@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ApiConfig(AppConfig):
-    name = 'api'
+class ApiV1Config(AppConfig):
+    name = 'api.v1'
 

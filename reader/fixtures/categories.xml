@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: https://www.mangaupdates.com/genres.html -->
+<django-objects version="1.0">
+  <object model="reader.Category" pk="4-koma">
+    <field name="name" type="CharField">4-Koma</field>
+    <field name="description" type="CharField">A comic-strip format, generally consists of gag comic strips within four panels of equal size ordered from top to bottom.</field>
+  </object>
+  <object model="reader.Category" pk="action">
+    <field name="name" type="CharField">Action</field>
+    <field name="description" type="CharField">A work typically depicting fighting, violence, chaos, and fast paced motion.</field>
+  </object>
+  <object model="reader.Category" pk="adventure">
+    <field name="name" type="CharField">Adventure</field>
+    <field name="description" type="CharField">If a character in the story goes on a trip or along that line, your best bet is that it is an adventure manga. Otherwise, it's up to your personal prejudice on this case.</field>
+  </object>
+  <object model="reader.Category" pk="comedy">
+    <field name="name" type="CharField">Comedy</field>
+    <field name="description" type="CharField">A dramatic work that is light and often humorous or satirical in tone and that usually contains a happy resolution of the thematic conflict.</field>
+  </object>
+  <object model="reader.Category" pk="doujinshi">
+    <field name="name" type="CharField">Doujinshi</field>
+    <field name="description" type="CharField">Fan based work inspired by official anime or manga.</field>
+  </object>
+  <object model="reader.Category" pk="drama">
+    <field name="name" type="CharField">Drama</field>
+    <field name="description" type="CharField">A work meant to bring on an emotional response, such as instilling sadness or tension.</field>
+  </object>
+  <object model="reader.Category" pk="ecchi">
+    <field name="name" type="CharField">Ecchi</field>
+    <field name="description" type="CharField">Possibly the line between hentai and non-hentai, ecchi usually refers to fanservice put in to attract a certain group of fans.</field>
+  </object>
+  <object model="reader.Category" pk="fantasy">
+    <field name="name" type="CharField">Fantasy</field>
+    <field name="description" type="CharField">Anything that involves, but not limited to, magic, dream world, and fairy tales.</field>
+  </object>
+  <object model="reader.Category" pk="gender bender">
+    <field name="name" type="CharField">Gender Bender</field>
+    <field name="description" type="CharField">Girls dressing up as guys, guys dressing up as girls... Guys turning into girls, girls turning into guys... I think you get the picture.</field>
+  </object>
+  <object model="reader.Category" pk="harem">
+    <field name="name" type="CharField">Harem</field>
+    <field name="description" type="CharField">A series involving one male character and many female characters (usually attracted to the male character). A Reverse Harem is when the genders are reversed.</field>
+  </object>
+  <object model="reader.Category" pk="hentai">
+    <field name="name" type="CharField">Hentai</field>
+    <field name="description" type="CharField">Adult sexual content in an illustrated form where the FOCUS of the manga is placed on sexually graphic acts.</field>
+  </object>
+  <object model="reader.Category" pk="historical">
+    <field name="name" type="CharField">Historical</field>
+    <field name="description" type="CharField">Having to do with old or ancient times.</field>
+  </object>
+  <object model="reader.Category" pk="horror">
+    <field name="name" type="CharField">Horror</field>
+    <field name="description" type="CharField">A painful emotion of fear, dread, and abhorrence&#59; a shuddering with terror and detestation&#59; the feeling inspired by something frightful and shocking.</field>
+  </object>
+  <object model="reader.Category" pk="josei">
+    <field name="name" type="CharField">Josei</field>
+    <field name="description" type="CharField">Literally &#34;Woman&#34;. Targets women 18-30. Female equivalent to seinen. Unlike shoujo the romance is more realistic and less idealized. The storytelling is more explicit and mature.</field>
+  </object>
+  <object model="reader.Category" pk="martial arts">
+    <field name="name" type="CharField">Martial Arts</field>
+    <field name="description" type="CharField">As the name suggests, anything martial arts related. Any of several arts of combat or self-defense, such as aikido, karate, judo, or tae kwon do, kendo, fencing, and so on and so forth.</field>
+  </object>
+  <object model="reader.Category" pk="mecha">
+    <field name="name" type="CharField">Mecha</field>
+    <field name="description" type="CharField">A work involving and usually concentrating on all types of large robotic machines.</field>
+  </object>
+  <object model="reader.Category" pk="mystery">
+    <field name="name" type="CharField">Mystery</field>
+    <field name="description" type="CharField">Usually an unexplained event occurs, and the main protagonist attempts to find out what caused it.</field>
+  </object>
+  <object model="reader.Category" pk="psychological">
+    <field name="name" type="CharField">Psychological</field>
+    <field name="description" type="CharField">Usually deals with the philosophy of a state of mind, in most cases detailing abnormal psychology.</field>
+  </object>
+  <object model="reader.Category" pk="romance">
+    <field name="name" type="CharField">Romance</field>
+    <field name="description" type="CharField">Any love related story. We will define love as between man and woman in this case. Other than that, it is up to your own imagination of what love is.</field>
+  </object>
+  <object model="reader.Category" pk="school life">
+    <field name="name" type="CharField">School Life</field>
+    <field name="description" type="CharField">Having a major setting of the story deal with some type of school.</field>
+  </object>
+  <object model="reader.Category" pk="sci-fi">
+    <field name="name" type="CharField">Sci-Fi</field>
+    <field name="description" type="CharField">Short for science fiction, these works involve twists on technology and other science related phenomena which are contrary or stretches of the modern day scientific world.</field>
+  </object>
+  <object model="reader.Category" pk="seinen">
+    <field name="name" type="CharField">Seinen</field>
+    <field name="description" type="CharField">Seinen means &#34;Young Man&#34;. Manga that specifically target young adult males around the ages of 18 to 25 are seinen titles. The stories in seinen works appeal to university students and those in the working world. Typically the story lines deal with the issues of adulthood.</field>
+  </object>
+  <object model="reader.Category" pk="shoujo">
+    <field name="name" type="CharField">Shoujo</field>
+    <field name="description" type="CharField">A work intended and primarily written for females. Usually involves a lot of romance and strong character development.</field>
+  </object>
+  <object model="reader.Category" pk="shoujo ai">
+    <field name="name" type="CharField">Shoujo Ai</field>
+    <field name="description" type="CharField">Often synonymous with yuri, this can be thought of as somewhat less extreme. &#34;Girl's Love&#34;, so to speak.</field>
+  </object>
+  <object model="reader.Category" pk="shounen">
+    <field name="name" type="CharField">Shounen</field>
+    <field name="description" type="CharField">A work intended and primarily written for males. These works usually involve fighting and/or violence.</field>
+  </object>
+  <object model="reader.Category" pk="shounen ai">
+    <field name="name" type="CharField">Shounen Ai</field>
+    <field name="description" type="CharField">Often synonymous with yaoi, this can be thought of as somewhat less extreme. &#34;Boy's Love&#34;, so to speak.</field>
+  </object>
+  <object model="reader.Category" pk="slice of life">
+    <field name="name" type="CharField">Slice of Life</field>
+    <field name="description" type="CharField">As the name suggests, this genre represents day-to-day tribulations of one/many character(s). These challenges/events could technically happen in real life and are often&#8212;if not all the time&#8212;set in the present timeline in a world that mirrors our own.</field>
+  </object>
+  <object model="reader.Category" pk="smut">
+    <field name="name" type="CharField">Smut</field>
+    <field name="description" type="CharField">Deals with series that are considered profane or offensive, particularly with regards to sexual content.</field>
+  </object>
+  <object model="reader.Category" pk="sports">
+    <field name="name" type="CharField">Sports</field>
+    <field name="description" type="CharField">As the name suggests, anything sports related. Baseball, basketball, hockey, soccer, golf, and racing just to name a few.</field>
+  </object>
+  <object model="reader.Category" pk="supernatural">
+    <field name="name" type="CharField">Supernatural</field>
+    <field name="description" type="CharField">Usually entails amazing and unexplained powers or events which defy the laws of physics.</field>
+  </object>
+  <object model="reader.Category" pk="tragedy">
+    <field name="name" type="CharField">Tragedy</field>
+    <field name="description" type="CharField">Contains events resulting in great loss and misfortune.</field>
+  </object>
+  <object model="reader.Category" pk="yaoi">
+    <field name="name" type="CharField">Yaoi</field>
+    <field name="description" type="CharField">This work usually involves intimate relationships between men.</field>
+  </object>
+  <object model="reader.Category" pk="yuri">
+    <field name="name" type="CharField">Yuri</field>
+    <field name="description" type="CharField">This work usually involves intimate relationships between women.</field>
+  </object>
+</django-objects>
+

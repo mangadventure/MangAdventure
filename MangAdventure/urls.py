@@ -15,11 +15,9 @@ urlpatterns = [
     url(r'^reader/', include('reader.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^groups/', include('groups.urls')),
+    url(r'^user/', include('users.urls')),
     url(r'^opensearch\.xml$', opensearch, name='opensearch'),
 ]
-
-if 'users' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'^user/', include('users.urls')))
 
 if settings.DEBUG:
     from django.conf.urls.static import static

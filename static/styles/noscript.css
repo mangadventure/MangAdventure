@@ -1,17 +1,17 @@
-.__NoScript_PlaceHolder__ { display: none !important }
-#home object.logo { display: none }
-#home .mi-home { font-size: 45px }
-#chapter #placeholder { display: none }
-#chapter #dropdowns, #chapter #controls { display: block }
-#search #search-categories { display: none }
+.__NoScript_PlaceHolder__ { display: none !important; }
+#home object.logo { display: none !important; }
+#chapter #placeholder { display: none !important; }
+#search #search-categories { display: none !important; }
+#chapter #dropdowns, #chapter #controls { display: block !important; }
+#home .mi-home { font-size: 45px; }
 
 @media screen and (max-width: 1024px) {
-  #home span.mi { font-size: 38px }
+  #home .mi-home { font-size: 38px; }
 }
 
 @media screen and (max-width: 690px) {
-  #home span.mi { font-size: 27px }
-  #search .s-hidden { display: inline }
-  #search table { border-right-style: solid }
+  #home .mi-home { font-size: 27px; }
+  #search .s-hidden { display: inline !important; }
+  #search table { border-right-style: solid; }
 }
 

@@ -91,29 +91,17 @@
                   {% else %}
                     <i class="mi mi-book-o" title="Ongoing"></i>
                   {% endif %}
-                  <a href="/reader/{{ series.slug }}"
+                  <a href="{{ series.get_absolute_url }}"
                      title="{{ series.title }}">
                     {{ series.title }}
                   </a>
                 </td>
                 <td class="result-people s-hidden">
                   <span class="result-authors">
-                    {% with authors=series.authors.all %}
-                      {% if authors %}
-                        {{ authors|join:' & ' }}
-                      {% else %}
-                        N/A
-                      {% endif %}
-                    {% endwith %}
+                    {{ series.authors.all|join:' & '|default:'N/A' }}
                   </span>
                   <span class="result-artists">
-                    {% with artists=series.artists.all  %}
-                      {% if artists %}
-                        {{ artists|join:' & ' }}
-                      {% else %}
-                        N/A
-                      {% endif %}
-                    {% endwith %}
+                    {{ series.artists.all|join:' & '|default:'N/A' }}
                   </span>
                 </td>
                 <td class="result-desc s-hidden">

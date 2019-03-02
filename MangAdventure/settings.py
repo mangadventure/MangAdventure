@@ -1,8 +1,7 @@
 from __future__ import print_function
-from django.core.management.color import color_style as style
 from os import path, mkdir, environ as env
 from re import compile as regex, IGNORECASE
-from sys import stderr, argv
+from sys import argv
 from config import read_config, write_config
 from .bad_bots import BOTS
 from . import __version__ as VERSION
@@ -16,7 +15,17 @@ except ImportError:
     def get_config(_, default=None): return default
 
 
-def warn(msg): print(style().WARNING('WARNING: ' + msg), file=stderr)
+if env.get('MANGADV_IGNORE_CONFIG') or 'configure' in argv:
+    def missing_config(): return
+else:
+    def missing_config():
+        from django.core.management.color import color_style
+        from sys import stderr
+        print(color_style().ERROR(
+            "ERROR: You must run the 'configure'"
+            " command to configure your site."
+        ), file=stderr)
+        exit(3)
 
 
 ###############
@@ -48,15 +57,13 @@ DEBUG = (env.get('MANGADV_DEBUG', 'false').lower() == 'true')
 ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '[::1]']
 if DEBUG:
     ALLOWED_HOSTS += ['192.168.1.%s' % i for i in range(2, 256)]
-BASE_URL = get_config('SITE_URL')
-if BASE_URL:
-    ALLOWED_HOSTS.append(
-        # From https://stackoverflow.com/questions/9626535/#36609868
-        '.' + BASE_URL.split('//')[-1].split('/')[0].split('?')[0]
-    )
-elif 'configure' not in argv:
-    warn("You should configure your website's URL"
-         " by running the 'configure' command.")
+SITE_DOMAIN = get_config('SITE_DOMAIN')
+if SITE_DOMAIN:
+    # From https://stackoverflow.com/questions/9626535/#36609868
+    SITE_DOMAIN = SITE_DOMAIN.split('//')[-1].split('/')[0].split('?')[0]
+    ALLOWED_HOSTS.append('.' + SITE_DOMAIN)
+else:
+    missing_config()
 
 # The ID of the current site.
 SITE_ID = 1
@@ -78,7 +85,15 @@ INSTALLED_APPS = [
     'django.contrib.redirects',
     'django.contrib.flatpages',
     'django.contrib.humanize',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.reddit',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.discord',
     'static_precompiler',
+    'tinymce',
     'constance.backends.database',
     'config.apps.SiteConfig',
     'next_prev',
@@ -86,6 +101,7 @@ INSTALLED_APPS = [
     'reader',
     'api',
     'groups',
+    'users',
 ]
 
 # A list of middleware to use.
@@ -145,7 +161,7 @@ DATABASES = {  # TODO: add MySQL support
 ##################################
 
 # Subject prefix for email messages sent to admins/managers.
-EMAIL_SUBJECT_PREFIX = '[%s] ' % get_config('SITE_URL', 'MangAdventure')
+EMAIL_SUBJECT_PREFIX = '[%s] ' % get_config('SITE_DOMAIN', 'MangAdventure')
 
 # URLs that should be ignored when reporting HTTP 404 errors.
 IGNORABLE_404_URLS = [
@@ -262,7 +278,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # A list of authentication backends to use when authenticating a user.
-AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+]
 
 # The account adapter class to use.
 ACCOUNT_ADAPTER = 'users.adapters.AccountAdapter'
@@ -328,24 +347,9 @@ EMAIL_PORT = get_config('SMTP_PORT')
 # The default e-mail address of the site.
 DEFAULT_FROM_EMAIL = get_config('SMTP_MAIL')
 
-if all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
-        EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL]):
-    INSTALLED_APPS += [
-        'allauth',
-        'allauth.account',
-        'allauth.socialaccount',
-        'allauth.socialaccount.providers.reddit',
-        'allauth.socialaccount.providers.twitter',
-        'allauth.socialaccount.providers.google',
-        'allauth.socialaccount.providers.discord',
-        'users',
-    ]
-    AUTHENTICATION_BACKENDS.append(
-        'allauth.account.auth_backends.AuthenticationBackend'
-    )
-elif 'configure' not in argv:
-    warn("To enable the users module, you have to configure your SMTP"
-         " mail server's settings via the 'configure' command.")
+if not all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
+            EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL]):
+    missing_config()
 
 ##################
 #    Security    #
@@ -535,6 +539,15 @@ CONSTANCE_CONFIG_FIELDSETS = {
 
 # Use the database for storing configuration.
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+
+#################
+#    TinyMCE    #
+#################
+
+# The URL to the TinyMCE JS file.
+TINYMCE_JS = 'https://cdnjs.cloudflare.com/ajax/' \
+             'libs/tinymce/4.9.3/tinymce.min.js'
 
 del BOTS, IGNORECASE, VERSION, CONTEXT_PROCESSORS
 

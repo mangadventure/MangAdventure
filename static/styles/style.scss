@@ -604,6 +604,8 @@ article.user-action {
 
 .text-shadow { text-shadow: shadow(2px, $shadow-color); }
 
+.flatpage { margin-bottom: -1em }
+
 .no-display { display: none }
 
 .divider::before { content: quote('\00a0|\00a0') }

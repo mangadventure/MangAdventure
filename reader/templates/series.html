@@ -114,7 +114,7 @@
                   </span>
                   <span class="chapter-groups" title="{{ groups|join:', ' }}">
                     {% for group in groups %}
-                      <a href="/groups/{{ group.id }}"
+                      <a href="{{ group.get_absolute_url }}"
                          title="{{ group.name }}"
                          {% if not forloop.last %}class="comma"{% endif %}>
                         {{ group.name }}</a>

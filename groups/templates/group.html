@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static custom_tags %}
+{% load cache static custom_tags %}
 {% block description %}
   <meta name="twitter:description" content="{{ group.description }}">
   <meta property="og:description" content="{{ group.description }}">
@@ -25,100 +25,132 @@
   <title>{{ group }} &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
-  <h1>{{ group.name }}</h1>
-  <article id="group">
-    <section id="group-info">
-      {% if group.logo %}
-        <img src="{{ group.logo.url }}" alt="Logo">
-      {% else %}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" height="150" width="150">
-          <metadata>Source: https://github.com/reduxframework/elusive-iconfont, License: SIL</metadata>
-          <path d="M596.847 188.488c-103.344 0-187.12 97.81-187.12 218.465 0 83.678 40.295 156.352 99.468 193.047l-68.617 31.801-182.6 84.688c-17.64 8.821-26.443 23.779-26.443 44.947v201.102c1.45 25.143 16.536 48.577 40.995 48.974h649.62c27.924-2.428 42.05-24.92 42.326-48.974V761.436c0-21.168-8.804-36.126-26.444-44.947l-175.988-84.688-73.138-34.65c56.745-37.522 95.06-108.625 95.06-190.198 0-120.655-83.776-218.465-187.12-218.465zm-301.824 76.824c-44.473 1.689-79.719 20.932-106.497 51.595-29.62 36.918-44.06 80.75-44.339 124.354 1.82 64.478 30.669 125.519 82.029 157.447L21.163 693.997C7.05 699.289 0 711.636 0 731.04V892.44c1.102 21.406 12.216 39.394 33.055 39.704h136.284V761.436c2.255-45.64 23.687-82.53 62.196-100.532l136.246-64.817c10.584-6.175 20.731-14.568 30.433-25.152-56.176-86.676-63.977-190.492-27.773-281.801-23.546-14.41-50.009-23.671-75.418-23.823zm608.587 0c-29.084.608-55.96 11.318-78.04 26.443 35.217 92.138 25.503 196.017-26.482 276.52 11.467 13.23 23.404 23.378 35.752 30.433l130.965 62.197c39.899 21.88 60.47 59.097 60.867 100.531v170.707h140.235c23.063-1.99 32.893-20.387 33.093-39.703V731.042c0-17.64-7.05-29.987-21.163-37.045L976.406 597.38c52.498-38.708 78.86-96.72 79.369-156.117-1.395-47.012-15.756-90.665-44.339-124.354-29.866-32.4-66.91-51.253-107.827-51.596z"></path>
-        </svg>
-      {% endif %}
-      <div>
-        <div class="group-site">
-          <strong>Website:</strong>
-          {% if group.website %}
-            <a href="{{ group.website }}"
-              rel="noopener" target="_blank">
-              {{ group.website }}
-            </a>
-          {% else %}
-            <span>N/A</span>
-          {% endif %}
+  {% cache 86400 group_info group members %}
+    <h1>{{ group.name }}</h1>
+    <article id="group">
+      <section id="group-info">
+        {% if group.logo %}
+          <img src="{{ group.logo.url }}" alt="Logo">
+        {% else %}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" height="150" width="150">
+            <metadata>Source: https://github.com/reduxframework/elusive-iconfont, License: SIL</metadata>
+            <path d="M596.847 188.488c-103.344 0-187.12 97.81-187.12 218.465 0 83.678 40.295 156.352 99.468 193.047l-68.617 31.801-182.6 84.688c-17.64 8.821-26.443 23.779-26.443 44.947v201.102c1.45 25.143 16.536 48.577 40.995 48.974h649.62c27.924-2.428 42.05-24.92 42.326-48.974V761.436c0-21.168-8.804-36.126-26.444-44.947l-175.988-84.688-73.138-34.65c56.745-37.522 95.06-108.625 95.06-190.198 0-120.655-83.776-218.465-187.12-218.465zm-301.824 76.824c-44.473 1.689-79.719 20.932-106.497 51.595-29.62 36.918-44.06 80.75-44.339 124.354 1.82 64.478 30.669 125.519 82.029 157.447L21.163 693.997C7.05 699.289 0 711.636 0 731.04V892.44c1.102 21.406 12.216 39.394 33.055 39.704h136.284V761.436c2.255-45.64 23.687-82.53 62.196-100.532l136.246-64.817c10.584-6.175 20.731-14.568 30.433-25.152-56.176-86.676-63.977-190.492-27.773-281.801-23.546-14.41-50.009-23.671-75.418-23.823zm608.587 0c-29.084.608-55.96 11.318-78.04 26.443 35.217 92.138 25.503 196.017-26.482 276.52 11.467 13.23 23.404 23.378 35.752 30.433l130.965 62.197c39.899 21.88 60.47 59.097 60.867 100.531v170.707h140.235c23.063-1.99 32.893-20.387 33.093-39.703V731.042c0-17.64-7.05-29.987-21.163-37.045L976.406 597.38c52.498-38.708 78.86-96.72 79.369-156.117-1.395-47.012-15.756-90.665-44.339-124.354-29.866-32.4-66.91-51.253-107.827-51.596z"></path>
+          </svg>
+        {% endif %}
+        <div>
+          <div class="group-site">
+            <strong>Website:</strong>
+            {% if group.website %}
+              <a href="{{ group.website }}"
+                rel="noopener" target="_blank">
+                {{ group.website }}
+              </a>
+            {% else %}
+              <span>N/A</span>
+            {% endif %}
+          </div>
+          <div class="group-discord">
+            <strong>Discord:</strong>
+            {% if group.discord %}
+              <a href="{{ group.discord }}"
+                 rel="noopener" target="_blank">
+                {{ group.discord }}
+              </a>
+            {% else %}
+              <span>N/A</span>
+            {% endif %}
+          </div>
+          <div class="group-twitter">
+            <strong>Twitter:</strong>
+            {% if group.twitter %}
+              <a href="https://twitter.com/{{ group.twitter }}"
+                 rel="noopener" target="_blank">
+                @{{ group.twitter }}
+              </a>
+            {% else %}
+              <span>N/A</span>
+            {% endif %}
+          </div>
+          <div class="group-reddit">
+            <strong>Reddit:</strong>
+            {% if group.reddit %}
+              <a href="https://reddit.com/r/{{ group.reddit }}"
+                 rel="noopener" target="_blank">
+                /r/{{ group.reddit }}
+              </a>
+            {% else %}
+              <span>N/A</span>
+            {% endif %}
+          </div>
+          <div class="group-irc">
+            <strong>IRC:</strong>
+            <span>{{ group.irc|default:'N/A' }}</span>
+          </div>
         </div>
-        <div class="group-discord">
-          <strong>Discord:</strong>
-          {% if group.discord %}
-            <a href="{{ group.discord }}"
-               rel="noopener" target="_blank">
-              {{ group.discord }}
-            </a>
-          {% else %}
-            <span>N/A</span>
-          {% endif %}
-        </div>
-        <div class="group-twitter">
-          <strong>Twitter:</strong>
-          {% if group.twitter %}
-            <a href="https://twitter.com/{{ group.twitter }}"
-               rel="noopener" target="_blank">
-              @{{ group.twitter }}
-            </a>
-          {% else %}
-            <span>N/A</span>
-          {% endif %}
-        </div>
-      </div>
-    </section>
-    {% if group.description %}
-      <section id="group-desc">
-        <h3 class="alter-fg">Description:</h3>
-        <div>{{ group.description }}</div>
       </section>
-    {% endif %}
-    {% if members %}
-      <section id="group-members">
-        <h3 class="alter-fg">Members:</h3>
-        {% for member in members %}
-          <div class="member">
-            <h2 class="member-name">{{ member.name }}</h2>
-            <div class="member-discord">
-              <strong>Discord:</strong>
-              <span class="member-discord">
-                {{ member.discord|default:'N/A' }}
-              </span>
-            </div>
-            <div class="member-twitter">
-              <strong>Twitter:</strong>
-              {% if member.twitter %}
-                <a href="https://twitter.com/{{ member.twitter }}"
-                   rel="noopener" target="_blank">
-                  @{{ member.twitter }}
-                </a>
-              {% else %}
-                <span>N/A</span>
-              {% endif %}
-            </div>
-            <div class="member-roles">
-              <strong>Roles:</strong>
-              {% with member_roles=member.roles.all  %}
-                {% if member_roles %}
-                  {% for role in member_roles %}
-                    {% if role.group == group %}
-                      <span class="comma">{{ role.get_role_display }}</span>
-                    {% endif %}
-                  {% endfor %}
+      {% if group.description %}
+        <section id="group-desc">
+          <h3 class="alter-fg">Description:</h3>
+          <div>{{ group.description }}</div>
+        </section>
+      {% endif %}
+      {% if members %}
+        <section id="group-members">
+          <h3 class="alter-fg">Members:</h3>
+          {% for member in members %}
+            <div class="member">
+              <h2 class="member-name">{{ member.name }}</h2>
+              <div class="member-discord">
+                <strong>Discord:</strong>
+                <span class="member-discord">
+                  {{ member.discord|default:'N/A' }}
+                </span>
+              </div>
+              <div class="member-twitter">
+                <strong>Twitter:</strong>
+                {% if member.twitter %}
+                  <a href="https://twitter.com/{{ member.twitter }}"
+                     rel="noopener" target="_blank">
+                    @{{ member.twitter }}
+                  </a>
                 {% else %}
                   <span>N/A</span>
                 {% endif %}
-              {% endwith %}
+              </div>
+              <div class="member-reddit">
+                <strong>Reddit:</strong>
+                {% if member.reddit %}
+                  <a href="https://reddit.com/{{ member.reddit }}"
+                     rel="noopener" target="_blank">
+                    {{ member.reddit }}
+                  </a>
+                {% else %}
+                  <span>N/A</span>
+                {% endif %}
+              </div>
+              <div class="member-irc">
+                <strong>IRC:</strong>
+                <span>{{ member.irc|default:'N/A' }}</span>
+              </div>
+              <div class="member-roles">
+                <strong>Roles:</strong>
+                {% with member_roles=member.roles.all  %}
+                  {% if member_roles %}
+                    {% for role in member_roles %}
+                      {% if role.group == group %}
+                        <span class="comma">{{ role.get_role_display }}</span>
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    <span>N/A</span>
+                  {% endif %}
+                {% endwith %}
+              </div>
             </div>
-          </div>
-        {% endfor %}
-      </section>
-    {% endif %}
-  </article>
+          {% endfor %}
+        </section>
+      {% endif %}
+    </article>
+  {% endcache %}
 {% endblock %}
 

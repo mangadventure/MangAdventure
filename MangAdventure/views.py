@@ -1,9 +1,10 @@
+from django.views.decorators.cache import cache_control
 from django.shortcuts import render
 from django.conf import settings
 from constance import config
 from reader.models import Category, Chapter
 from api.response import JsonError
-from .utils import search as s
+from .utils.search import query, parse
 
 
 def _error_context(msg, status=500):
@@ -18,14 +19,11 @@ def index(request):
     })
 
 
-def info(request): return render(request, 'info.html', {})
-
-
 def search(request):
     results = None
-    params = s.parse(request)
+    params = parse(request)
     if any(p in ('q', 'author', 'status') for p in request.GET):
-        results = s.query(params)
+        results = query(params)
         if len(results) == 1 and not results.first().chapters.count():
             results = None
     return render(request, 'search.html', {
@@ -39,32 +37,40 @@ def search(request):
     })
 
 
+@cache_control(public=True, max_age=2628000)
 def opensearch(request):
-    host = request.get_host()
-    icon = request.build_absolute_uri(
-        settings.MEDIA_URL + config.FAVICON)
-    return render(request, 'opensearch.xml', context={
-        'host': host, 'name': config.NAME, 'icon': icon,
-        'url': '%s://%s' % (request.scheme, host)
-    }, content_type='application/opesearchdescription+xml')
+    _icon = request.build_absolute_uri(
+        settings.MEDIA_URL + config.FAVICON
+    )
+    _search = request.build_absolute_uri('/search/')
+    _self = request.build_absolute_uri('/opensearch.xml')
+    return render(
+        request, 'opensearch.xml', context={
+            'search': _search, 'self': _self, 'icon': _icon,
+        }, content_type='application/opesearchdescription+xml'
+    )
 
 
 def handler400(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
         return JsonError('Bad request', 400)
-    context = _error_context('The server could not '
-                             'understand the request.', 400)
-    return render(request, template_name=template_name,
-                  context=context, status=400)
+    context = _error_context(
+        'The server could not understand the request.', 400
+    )
+    return render(
+        request, template_name=template_name, context=context, status=400
+    )
 
 
 def handler403(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
         return JsonError('Forbidden', 403)
-    context = _error_context("You don't have permission "
-                             "to access this page.", 403)
-    return render(request, template_name=template_name,
-                  context=context, status=403)
+    context = _error_context(
+        'You do not have permission to access this page.', 403
+    )
+    return render(
+        request, template_name=template_name, context=context, status=403
+    )
 
 
 def handler404(request, exception=None, template_name='error.html'):
@@ -77,18 +83,23 @@ def handler404(request, exception=None, template_name='error.html'):
 
 def handler500(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
-        return JsonError('Internal server error', 500)
-    context = _error_context('Whoops! Something went wrong.'
-                             ' &macr;&#8726;_(&#12484;)_/&macr;')  # Shrug
-    return render(request, template_name=template_name,
-                  context=context, status=500)
+        return JsonError('Internal server error')
+    context = _error_context(  # Shrug
+        'Whoops! Something went wrong. &macr;&#8726;_(&#12484;)_/&macr;'
+    )
+    return render(
+        request, template_name=template_name, context=context, status=500
+    )
 
 
 def handler503(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
         return JsonError('Service unavailable', 503)
-    context = _error_context('The server is currently under maintenance.'
-                             ' Please try again later.', 503)
-    return render(request, template_name=template_name,
-                  context=context, status=503)
+    context = _error_context(
+        'The server is currently under maintenance.'
+        ' Please try again later.', 503
+    )
+    return render(
+        request, template_name=template_name, context=context, status=503
+    )
 

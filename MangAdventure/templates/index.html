@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load humanize custom_tags %}
+{% load cache humanize custom_tags %}
 {% block title %}
   <meta name="title" content="Latest Releases">
   <meta name="twitter:title" content="Home - {{ config.NAME }}">
@@ -7,47 +7,49 @@
   <title>Home &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
-  <h1 class="text-shadow alter-bg">Latest Releases</h1>
-  <article id="latest">
-    {% for release in latest_releases %}
-      <section class="release">
-        <h2>
-          <a href="{{ release.series.get_absolute_url }}"
-             title="{{ release.series }}">
-            {{ release.series }}
-          </a>
-        </h2>
-        <div class="release-info">
-          {% with vol=release.volume num=release.number %}
-            <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
-               {% if release.final %}class="end"{% endif %}>
-              Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ release.title }}
+  {% cache 86400 releases latest_releases %}
+    <h1 class="text-shadow alter-bg">Latest Releases</h1>
+    <article id="latest">
+      {% for release in latest_releases %}
+        <section class="release">
+          <h2>
+            <a href="{{ release.series.get_absolute_url }}"
+               title="{{ release.series }}">
+              {{ release.series }}
             </a>
-          {% endwith %}
-          <div class="chapter-metadata">
-            {% with groups=release.groups.all  %}
-              <span class="divider" title="{{ groups|join:', ' }}">
-              </span>
-              <span class="chapter-groups" title="{{ groups|join:', ' }}">
-                {% for group in groups %}
-                  <a href="/groups/{{ group.id }}"
-                     title="{{ group.name }}"
-                    {% if not forloop.last %}class="comma"{% endif %}>
-                    {{ group.name }}</a>
-                {% endfor %}
+          </h2>
+          <div class="release-info">
+            {% with vol=release.volume num=release.number %}
+              <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
+                 {% if release.final %}class="end"{% endif %}>
+                Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ release.title }}
+              </a>
             {% endwith %}
-            </span>
-            <span class="divider"
-                  title="{{ release.uploaded|naturaltime }}">
-            </span>
-            <span class="chapter-date"
-                  title="{{ release.uploaded|naturaltime }}">
-              {{ release.uploaded|naturaltime }}
-            </span>
+            <div class="chapter-metadata">
+              {% with groups=release.groups.all  %}
+                <span class="divider" title="{{ groups|join:', ' }}">
+                </span>
+                <span class="chapter-groups" title="{{ groups|join:', ' }}">
+                  {% for group in groups %}
+                    <a href="{{ group.get_absolute_url }}"
+                       title="{{ group.name }}"
+                      {% if not forloop.last %}class="comma"{% endif %}>
+                      {{ group.name }}</a>
+                  {% endfor %}
+              {% endwith %}
+              </span>
+              <span class="divider"
+                    title="{{ release.uploaded|naturaltime }}">
+              </span>
+              <span class="chapter-date"
+                    title="{{ release.uploaded|naturaltime }}">
+                {{ release.uploaded|naturaltime }}
+              </span>
+            </div>
           </div>
-        </div>
-      </section>
-    {% endfor %}
-  </article>
+        </section>
+      {% endfor %}
+    </article>
+  {% endcache %}
 {% endblock %}
 

@@ -1,3 +1,4 @@
+from django.shortcuts import reverse
 from django.db import models
 from MangAdventure.utils.storage import OverwriteStorage
 from MangAdventure.utils.uploaders import group_logo_uploader
@@ -30,6 +31,9 @@ class Group(models.Model):
         storage=OverwriteStorage(), validators=[FileSizeValidator(max_mb=2)],
         help_text="Upload the group's logo. Its size must not exceed 2 MBs.",
     )
+
+    def get_absolute_url(self):
+        return reverse('groups:group', args=[self.id])
 
     @property
     def _increment(self):

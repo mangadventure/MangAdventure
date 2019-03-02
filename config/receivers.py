@@ -5,12 +5,6 @@ from constance.signals import config_updated
 from sass import compile as sassc
 from os.path import join, exists
 
-try:
-    from user_settings import SITE_URL
-    SITE_URL = SITE_URL.split('//')[-1].split('/')[0].split('?')[0]
-except ImportError:
-    SITE_URL = 'example.com'
-
 
 SCSS_KEYS = [
     'MAIN_BACKGROUND',
@@ -53,7 +47,7 @@ def _generate_variables(func):
 def constance_updated(sender, key, old_value, new_value, **kwargs):
     if key == 'NAME':
         site = Site.objects.get_or_create(pk=1)[0]
-        site.domain = site.domain or SITE_URL
+        site.domain = site.domain or settings.SITE_DOMAIN or 'example.com'
         site.name = new_value
         site.save()
     elif key in SCSS_KEYS:

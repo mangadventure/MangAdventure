@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-{% load static compile_static custom_tags %}
+{% load cache static compile_static custom_tags %}
 <html lang="en-us">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% cache 604800 meta MANGADV_VERSION %}
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="generator" content="MangAdventure v{{ MANGADV_VERSION }}">
+    {% endcache %}
     {% block color %}
       <meta name="theme-color" content="{{ config.ALTER_BACKGROUND }}">
       <meta name="msapplication-navbutton-color"
@@ -24,8 +27,6 @@
     {% if config.TWITTER %}
       <meta name="twitter:site" content="@{{ config.TWITTER }}">
     {% endif %}
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site_name" content="{{ config.NAME }}">
     {% block description %}
       <meta name="twitter:description" content="{{ config.DESCRIPTION }}">
       <meta property="og:description" content="{{ config.DESCRIPTION }}">
@@ -45,33 +46,38 @@
       <meta name="url" content="{{ PAGE_URL }}">
       <meta property="og:url" content="{{ PAGE_URL }}">
     {% endblock %}
-    <meta property="og:determiner" content="">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="{{ config.NAME }}">
-    {% with favicon=MEDIA_URL|urljoin:config.FAVICON %}
-      <link href="{{ favicon }}" rel="shortcut icon"
-            type="{{ favicon|get_type }}">
-    {% endwith %}
-    <link href="{% url 'opensearch' %}" rel="search" title="{{ config.NAME }}"
-          type="application/opensearchdescription+xml">
+    {% cache 604800 links config.FONT_URL config.FAVICON config.NAME %}
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:site_name" content="{{ config.NAME }}">
+      <meta property="og:determiner" content="">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="{{ config.NAME }}">
+      {% with favicon=MEDIA_URL|urljoin:config.FAVICON %}
+        <link href="{{ favicon }}" rel="shortcut icon"
+              type="{{ favicon|get_type }}">
+      {% endwith %}
+      <link href="{% url 'opensearch' %}" rel="search" title="{{ config.NAME }}"
+            type="application/opensearchdescription+xml">
+      <link href="https://cdn.staticaly.com/gh/mangadventure/font/d52735e/dist/mangadventure.css"
+            integrity="sha384-jk63AhjtXaWDpFlExaupwzfXCqZfUczm+m9+7Z/aJ/pcxrNDFAv6vGDfxSB8PtPA"
+            rel="preload stylesheet" as="style" type="text/css" crossorigin="anonymous">
+      <link href="{{ config.FONT_URL }}" rel="preload stylesheet"
+            as="style" type="text/css" crossorigin="anonymous">
+    {% endcache %}
     <link href="{{ PAGE_URL }}" rel="canonical" type="text/html">
-    <link href="https://cdn.staticaly.com/gh/mangadventure/font/d52735e/dist/mangadventure.css"
-          integrity="sha384-jk63AhjtXaWDpFlExaupwzfXCqZfUczm+m9+7Z/aJ/pcxrNDFAv6vGDfxSB8PtPA"
-          rel="preload stylesheet" as="style" type="text/css" crossorigin="anonymous">
-    <link href="{{ config.FONT_URL }}" rel="preload stylesheet"
-          as="style" type="text/css" crossorigin="anonymous">
     {% block stylesheets %}
-      <link href="{% static 'styles/style.scss'|compile %}"
-            rel="stylesheet" type="text/css">
-      <link href="{% static 'extra/style.scss'|compile %}"
-            rel="stylesheet" type="text/css">
-      <noscript>
-        <link href="{% static 'styles/noscript.css' %}"
+      {% cache 604800 styles %}
+        <link href="{% static 'styles/style.scss'|compile %}"
               rel="stylesheet" type="text/css">
-      </noscript>
+        <link href="{% static 'extra/style.scss'|compile %}"
+              rel="stylesheet" type="text/css">
+        <noscript>
+          <link href="{% static 'styles/noscript.css' %}"
+                rel="stylesheet" type="text/css">
+        </noscript>
+      {% endcache %}
     {% endblock %}
     {% block head_extras %}{% endblock %}
-    <meta name="generator" content="MangAdventure v{{ MANGADV_VERSION }}">
     {% block title %}
       <meta name="twitter:title" content="{{ config.NAME }}">
       <meta property="og:title" content="{{ config.NAME }}">
@@ -81,97 +87,96 @@
   </head>
   <body>
     <header id="header">
-      <a id="home" href="/">
+      <a id="home" href="{% url 'index' %}">
         <span>
           <noscript>
-            <span title="{{ config.NAME }}" class="mi mi-home">
-            </span>
+            <i title="{{ config.NAME }}" class="main-fg mi mi-home"></i>
           </noscript>
-          {% with logo=MEDIA_URL|urljoin:config.LOGO_LARGE %}
-            <object class="logo" type="{{ logo|get_type }}"
-                    data="{{ logo }}" height="45">
-            </object>
-          {% endwith %}
-          {% with logo=MEDIA_URL|urljoin:config.LOGO_MEDIUM %}
-            <object class="logo" type="{{ logo|get_type }}"
-                    data="{{ logo }}" height="38">
-            </object>
-          {% endwith %}
-          {% with logo=MEDIA_URL|urljoin:config.LOGO_SMALL %}
-            <object class="logo" type="{{ logo|get_type }}"
-                    data="{{ logo }}" height="27">
-            </object>
-          {% endwith %}
+          {% cache 604800 logo config.LOGO_LARGE config.LOGO_MEDIUM config.LOGO_SMALL %}
+            {% with logo=MEDIA_URL|urljoin:config.LOGO_LARGE %}
+              <object class="logo" type="{{ logo|get_type }}"
+                      data="{{ logo }}" height="45">
+              </object>
+            {% endwith %}
+            {% with logo=MEDIA_URL|urljoin:config.LOGO_MEDIUM %}
+              <object class="logo" type="{{ logo|get_type }}"
+                      data="{{ logo }}" height="38">
+              </object>
+            {% endwith %}
+            {% with logo=MEDIA_URL|urljoin:config.LOGO_SMALL %}
+              <object class="logo" type="{{ logo|get_type }}"
+                      data="{{ logo }}" height="27">
+              </object>
+            {% endwith %}
+          {% endcache %}
         </span>
       </a>
       <nav id="navig">
         <ul class="navig-list">
-          <li>
-            <a class="navig-link" href="{% url 'index' %}">
-              <i class="mi mi-clock"></i>
-              <span class="ident">Latest</span>
-            </a>
-          </li>
-          <li>
-            <a class="navig-link" href="{% url 'reader:directory' %}">
-              <i class="mi mi-library"></i>
-              <span class="ident">Library</span>
-            </a>
-          </li>
-          <li id="searchlink">
-            <a class="navig-link" href="{% url 'search' %}">
-              <i class="mi mi-search"></i>
-              <span class="ident">Search</span>
-            </a>
-          </li>
-          <li>
-            <form action="{% url 'search' %}" method="GET">
-              <input placeholder="Type a series to search for"
-                     name="q" type="search" class="main-bg" id="searchbox"/>
-            </form>
-          </li>
-          {% if USERS_ENABLED %}
-            <li class="dropdown" aria-haspopup="true">
-              <span class="navig-link dropdown-title" aria-label="User">
-                <i class="mi mi-user" aria-hidden="true"></i>
-              </span>
-              <ul>
-                {% if request.user.is_authenticated %}
-                  <li>
-                    <a href="{% url 'user_profile' %}">
-                      <span>View Profile</span>
-                      <i class="mi mi-user" aria-hidden="true"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="{% url 'user_edit' %}">
-                      <span>Edit Profile</span>
-                      <i class="mi mi-cog" aria-hidden="true"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <form action="{% url 'account_logout' %}" method="POST">
-                      {% csrf_token %}
-                      <input type="hidden" name="next" value="{{ PAGE_URL }}">
-                      <button type="submit" class="logout-btn">
-                        <span>Logout</span>
-                        <i class="mi mi-logout" aria-hidden="true"></i>
-                      </button>
-                    </form>
-                  </li>
-                {% else %}
-                  <li>
-                    {% with next=request.path|urlencode %}
-                      <a href="{% url 'account_login' %}?next={{ next }}">
-                        <span>Login</span>
-                        <i class="mi mi-login" aria-hidden="true"></i>
-                      </a>
-                    {% endwith %}
-                  </li>
-                {% endif %}
-              </ul>
+          {% cache 604800 nav %}
+            <li>
+              <a class="navig-link" href="{% url 'index' %}">
+                <i class="mi mi-clock"></i>
+                <span class="ident">Latest</span>
+              </a>
             </li>
-          {% endif %}
+            <li>
+              <a class="navig-link" href="{% url 'reader:directory' %}">
+                <i class="mi mi-library"></i>
+                <span class="ident">Library</span>
+              </a>
+            </li>
+            <li id="searchlink">
+              <a class="navig-link" href="{% url 'search' %}">
+                <i class="mi mi-search"></i>
+                <span class="ident">Search</span>
+              </a>
+            </li>
+            <li>
+              <form action="{% url 'search' %}" method="GET">
+                <input placeholder="Type a series to search for"
+                       name="q" type="search" class="main-bg" id="searchbox"/>
+              </form>
+            </li>
+          {% endcache %}
+          <li class="dropdown" aria-haspopup="true">
+            <span class="navig-link dropdown-title" aria-label="User">
+              <i class="mi mi-user" aria-hidden="true"></i>
+            </span>
+            <ul>{% if request.user.is_authenticated %}
+              <li>
+                <a href="{% url 'user_profile' %}">
+                  <span>Profile</span>
+                  <i class="mi mi-user" aria-hidden="true"></i>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'user_edit' %}">
+                  <span>Settings</span>
+                  <i class="mi mi-cog" aria-hidden="true"></i>
+                </a>
+              </li>
+              <li>
+                <form action="{% url 'account_logout' %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ PAGE_URL }}">
+                  <button type="submit" class="logout-btn">
+                    <span>Logout</span>
+                    <i class="mi mi-logout" aria-hidden="true"></i>
+                  </button>
+                </form>
+              </li>
+            {% else %}
+              <li>
+                {% with next=request.path|urlencode %}
+                  <a href="{% url 'account_login' %}?next={{ next }}">
+                    <span>Login</span>
+                    <i class="mi mi-login" aria-hidden="true"></i>
+                  </a>
+                {% endwith %}
+              </li>
+            {% endif %}</ul>
+          </li>
         </ul>
       </nav>
     </header>
@@ -186,34 +191,36 @@
       {% block content %}
       {% endblock %}
     </main>
-    <footer id="footer">
-      <div id="links">
-        <a href="{% url 'info' %}" class="link" title="About us">
-          <i class="mi mi-info-circle"></i><span>About us</span>
-        </a>
-        <a href="{% url 'privacy' %}" class="link" title="Privacy">
-          <i class="mi mi-lock"></i><span>Privacy</span>
-        </a>
-        {% if config.TWITTER %}
-          <a href="https://twitter.com/{{ config.TWITTER }}"
-             class="link" title="Twitter">
-            <i class="mi mi-twitter"></i><span>Twitter</span>
+    {% cache 604800 footer config.DISCORD config.TWITTER config.SHOW_CREDITS %}
+      <footer id="footer">
+        <div id="links">
+          <a href="{% url 'info' %}" class="link" title="About us">
+            <i class="mi mi-info-circle"></i><span>About us</span>
           </a>
-        {% endif %}
-        {% if config.DISCORD %}
-          <a href="{{ config.DISCORD }}" class="link" title="Discord">
-            <i class="mi mi-discord"></i><span>Discord</span>
+          <a href="{% url 'privacy' %}" class="link" title="Privacy">
+            <i class="mi mi-lock"></i><span>Privacy</span>
           </a>
-        {% endif %}
-      </div>
-      {% if config.SHOW_CREDITS %}
-        <div id="credits">
-          This site was created using
-          <a href="https://github.com/mangadventure/MangAdventure"
-             rel="noopener" target="_blank">MangAdventure</a>.
+          {% if config.TWITTER %}
+            <a href="https://twitter.com/{{ config.TWITTER }}"
+               class="link" title="Twitter">
+              <i class="mi mi-twitter"></i><span>Twitter</span>
+            </a>
+          {% endif %}
+          {% if config.DISCORD %}
+            <a href="{{ config.DISCORD }}" class="link" title="Discord">
+              <i class="mi mi-discord"></i><span>Discord</span>
+            </a>
+          {% endif %}
         </div>
-      {% endif %}
-    </footer>
+        {% if config.SHOW_CREDITS %}
+          <div id="credits">
+            This site was created using
+            <a href="https://github.com/mangadventure/MangAdventure"
+               rel="noopener" target="_blank">MangAdventure</a>.
+          </div>
+        {% endif %}
+      </footer>
+    {% endcache %}
   </body>
 </html>
 

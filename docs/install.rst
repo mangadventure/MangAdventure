@@ -35,7 +35,7 @@ Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   pip install -e git+https://github.com/mangadventure/MangAdventure@v0.5.0#egg=MangAdventure
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.5.0#egg=MangAdventure"
 
 Configure the settings
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -51,7 +51,7 @@ You can also specify the editor to use:
 
 .. code-block:: shell
 
-   mangadventure configure --editor /usr/bin/emacs
+   mangadventure configure --editor "/usr/bin/emacs"
 
 Create the database
 ^^^^^^^^^^^^^^^^^^^
@@ -116,17 +116,33 @@ Next, import the data into MangAdventure:
 
 .. code-block:: shell
 
-   mangadventure fs2import {root} {data}
+   mangadventure fs2import "{root}" "{data}"
+
+Load Categories
+^^^^^^^^^^^^^^^
+
+If you want to load an initial set of manga categories imported from
+`MangaUpdates <https://www.mangaupdates.com/genres.html>`_, run this command:
+
+.. code-block:: shell
+
+   mangadventure loaddata categories
 
 Set up the server
 ^^^^^^^^^^^^^^^^^
 
-To set up the server you will need Apache, Nginx,
-or any other web server that supports Django.
-Make sure the user running the web server and ``uwsgi``
-has the necessary permissions to access all the relevant files.
-Also, create the ``media`` and ``log`` directories
-beforehand to avoid possible permission errors.
+| To set up the server you will need Apache, Nginx,
+   or any other web server that supports Django.
+| Make sure the user running the web server and ``uwsgi``
+   has the necessary permissions to access all the relevant files.
+| Also, create the ``media`` and ``log`` directories
+   beforehand to avoid possible permission errors.
+| Lastly, don't forget to run ``uwsgi`` after setting up the server:
+| (For more details, check the uWSGI `docs <https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django>`_.)
+
+.. code-block:: shell
+
+   uwsgi --socket "127.0.0.1:25432" --chdir "/var/www/my-site.com/" --module "MangAdventure.wsgi"
 
 Apache example
 ~~~~~~~~~~~~~~
@@ -146,24 +162,15 @@ Nginx requires `uwsgi <https://uwsgi-docs.rtfd.io/en/latest/>`_.
    :language: nginx
    :end-before: # vim
 
-Don't forget to run ``uwsgi`` after setting up the server:
-
-.. code-block:: shell
-
-   uwsgi --socket 127.0.0.1:25432 --chdir /var/www/my-site.com/ --module MangAdventure.wsgi
-
-For more details, check the uWSGI `docs <https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django>`_.
-
 Updating
 --------
 
-First, install the latest release from GitHub:
+| First, install the latest release from GitHub:
+| (Replace ``{tag}`` with the latest `release tag <https://github.com/mangadventure/MangAdventure/releases/latest>`_.)
 
 .. code-block:: shell
 
-   # Replace {tag} with the latest release tag from
-   # https://github.com/mangadventure/MangAdventure/releases/latest
-   pip install -U git+https://github.com/mangadventure/MangAdventure@{tag}#egg=MangAdventure
+   pip install -U "git+https://github.com/mangadventure/MangAdventure@{tag}#egg=MangAdventure"
 
 Then, compile and collect the static files:
 

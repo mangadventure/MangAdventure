@@ -25,6 +25,9 @@ setup(
     python_requires='>=2.7',
     install_requires=read('requirements.txt').splitlines(),
     extras_require={
+        'dev': [
+            'sphinx',
+        ],
         'csp': 'django-csp',
         'uwsgi': 'uwsgi',
         'gunicorn': 'gunicorn'

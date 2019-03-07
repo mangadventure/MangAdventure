@@ -46,9 +46,6 @@ _templates/
 user_settings.py
 config.ini
 media/
-static/
-!static/scripts
-!static/vendor
-!static/styles
+static/extra/style.scss
 static/styles/_variables.scss
 

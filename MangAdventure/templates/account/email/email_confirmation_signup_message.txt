@@ -1,0 +1,13 @@
+{% load account %}
+{% user_display user as user_display %}
+{% autoescape off %}
+{% with site_name=current_site.name site_domain=current_site.domain %}
+Hello, {{ user_display }},
+
+Thank you for registering an account on {{ site_name }}.
+Please click the following link to activate your account:
+
+{{ activate_url }}
+{% endwith %}
+{% endautoescape %}
+

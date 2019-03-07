@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% load socialaccount user_tags %}
+{% block title %}
+  <meta name="title" content="Sign up">
+  <meta name="twitter:title" content="Sign up - {{ config.NAME }}">
+  <meta name="og:title" content="Sign up - {{ config.NAME }}">
+  <title>Sign up &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Sign up</h1>
+  <article class="user-action" id="sign-up">
+    <form method="POST" action="{% url 'account_signup' %}">
+      {% csrf_token %}
+      {% for item in form %}
+        <div class="field">
+          <label for="{{ item.name }}">{{ item.label }}</label>
+          <input type="{{ item.field.widget.input_type }}" class="input"
+                 placeholder="{{ item.field.widget.attrs.placeholder }}"
+                 name="{{ item.name }}" id="{{ item.name }}" required>
+          {% if item.errors %}
+            {% for error in item.errors %}
+              <p class="error">{{ error|escape }}</p>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endfor %}
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}"
+               value="{{ redirect_field_value }}">
+      {% endif %}
+      <input class="button" type="submit" value="Register">
+    </form>
+    <section id="oauth">
+      <div>Or, sign up with:</div>
+      {% get_providers as socialaccount_providers %}
+      {% for provider in socialaccount_providers|available %}
+        <a title="{{ provider.name }}" class="provider"
+           href="{% provider_login_url provider.id scope=scope auth_params=auth_params %}">
+          <i class="mi mi-{{ provider.id }}"></i>
+          <span>{{ provider.name }}</span>
+        </a>
+      {% endfor %}
+    </section>
+  </article>
+{% endblock %}
+

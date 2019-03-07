@@ -16,5 +16,9 @@ def group_logo_uploader(obj, filename):
     return _uploader(filename, 'logo', ['groups', str(obj.id)])
 
 
-__all__ = ['cover_uploader', 'group_logo_uploader']
+def avatar_uploader(obj, filename):
+    return _uploader(filename, 'avatar', ['users', str(obj.id)])
+
+
+__all__ = ['cover_uploader', 'group_logo_uploader', 'avatar_uploader']
 

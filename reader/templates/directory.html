@@ -1,5 +1,5 @@
-{% extends 'skeleton.html' %}
-{% load custom_tags %}
+{% extends 'layout.html' %}
+{% load cache custom_tags humanize %}
 {% block title %}
   <meta name="title" content="Series List">
   <meta name="twitter:title" content="Series List - {{ config.NAME }}">
@@ -7,70 +7,74 @@
   <title>Series List &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
-  <h1 class="text-shadow alter-bg">Series List</h1>
-  <article id="list">
-    {% for series in all_series %}
-      {% if series.chapters.all %}
-        <section>
-          <h2 class="series-title">
-            <a href="/reader/{{ series.slug }}/"
-               title="{{ series.title }}">
-              {{ series.title }}
-            </a>
-          </h2>
-          <div class="cover-container">
-            <img src="{{ MEDIA_URL|add:series.cover.name }}"
-                 alt="{{ series }} Cover" class="cover">
-          </div>
-          <div class="series-info">
-            {#<div class="series-desc">#}
-            {#  {{ series.description }}#}
-            {#</div>#}
-            <strong>
-              {% if config.MAX_CHAPTERS > 1 %}
-                Latest Chapters:
-              {% else %}
-                Latest Chapter:
-              {% endif %}
-            </strong>
-            {% with chapters=series.chapters|order_by:'-uploaded' %}
-              {% for chapter in chapters|vslice:config.MAX_CHAPTERS %}
-                {% with vol=chapter.volume num=chapter.number %}
-                  <div class="series-chapter">
-                    <a href="{{ chapter.url }}" title="{{ chapter.title }}"
-                       {% if chapter.final %}class="end"{% endif %}>
-                      Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ chapter.title }}
-                    </a>
-                    <div class="chapter-metadata">
-                      {% with groups=chapter.groups.all %}
-                        <span class="divider" title="{{ groups|join:', ' }}">
+  {% cache 86400 series_list all_series config.MAX_CHAPTERS %}
+    <h1 class="text-shadow alter-bg">Series List</h1>
+    <article id="list">
+      {% for series in all_series %}
+        {% if series.chapters.all %}
+          <section>
+            <h2 class="series-title">
+              <a href="{{ series.get_absolute_url }}"
+                 title="{{ series.title }}">
+                {{ series.title }}
+              </a>
+            </h2>
+            <div class="cover-container">
+              <img src="{{ MEDIA_URL|add:series.cover.name }}"
+                   alt="{{ series }} Cover" class="cover">
+            </div>
+            <div class="series-info">
+              {#<div class="series-desc">#}
+              {#  {{ series.description }}#}
+              {#</div>#}
+              <strong>
+                {% if config.MAX_CHAPTERS > 1 %}
+                  Latest Chapters:
+                {% else %}
+                  Latest Chapter:
+                {% endif %}
+              </strong>
+              {% with chapters=series.chapters|order_by:'-uploaded' %}
+                {% for chapter in chapters|vslice:config.MAX_CHAPTERS %}
+                  {% with vol=chapter.volume num=chapter.number %}
+                    <div class="series-chapter">
+                      <a href="{{ chapter.get_absolute_url }}"
+                         {% if chapter.final %}class="end"{% endif %}
+                         title="{{ chapter.title }}">
+                        {% if vol > 0 %} Vol. {{ vol }},{% endif %}
+                        Ch. {{ num|floatformat }}: {{ chapter.title }}
+                      </a>
+                      <div class="chapter-metadata">
+                        {% with groups=chapter.groups.all %}
+                          <span class="divider" title="{{ groups|join:', ' }}">
+                          </span>
+                          <span class="chapter-groups"
+                                title="{{ groups|join:', ' }}">
+                            {% for group in groups %}
+                              <a href="{{ group.get_absolute_url }}"
+                                {% if not forloop.last %}class="comma"{% endif %}
+                                 title="{{ group.name }}">
+                                {{ group.name }}</a>
+                            {% endfor %}
+                        {% endwith %}
                         </span>
-                        <span class="chapter-groups" title="{{ groups|join:', ' }}">
-                          {% for group in groups %}
-                            <a href="/groups/{{ group.id }}"
-                               title="{{ group.name }}"
-                              {% if not forloop.last %}class="comma"{% endif %}>
-                              {{ group.name }}</a>
-                          {% endfor %}
-                      {% endwith %}
-                      </span>
-                      <span class="divider"
-                            title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
-                      </span>
-                      <span class="chapter-date"
-                            title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
-                        {{ chapter.uploaded|date:'N d, Y - H:i' }}
-                      </span>
+                        {% with date=chapter.uploaded|naturaltime %}
+                          <span class="divider" title="{{ date }}"></span>
+                          <span class="chapter-date" title="{{ date }}">
+                            {{ date }}
+                          </span>
+                        {% endwith %}
+                      </div>
                     </div>
-                  </div>
-                {% endwith %}
-              {% endfor %}
-            {% endwith %}
-          </div>
-        </section>
-        <span class="alter-bg separator"></span>
-      {% endif %}
-    {% endfor %}
-  </article>
+                  {% endwith %}
+                {% endfor %}
+              {% endwith %}
+            </div>
+          </section>
+          <span class="alter-bg separator"></span>
+        {% endif %}
+      {% endfor %}
+    </article>
+  {% endcache %}
 {% endblock %}
 

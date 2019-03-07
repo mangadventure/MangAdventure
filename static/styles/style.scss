@@ -1,20 +1,26 @@
+@import 'variables';
 @import 'functions';
 @import 'mixins';
 
 body {
+  background-color: $main-bg;
+  color: $main-fg;
   margin: 0 auto;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  font-family: quote(#{$font-family}), 'Helvetica', 'Arial', sans-serif;
   @include text-size-adjust();
 }
 
 a {
+  color: $alter-fg;
   text-decoration: none;
   &:hover { text-decoration: underline }
 }
 
 h1 {
+  color: $alter-fg;
   margin: 0;
   font-size: 1.6em;
   font-weight: normal;
@@ -24,6 +30,8 @@ h1 {
 }
 
 h2 {
+  color: $alter-fg;
+  border-color: $alter-fg;
   margin: 0;
   font-size: 1.01em;
 }
@@ -57,16 +65,21 @@ thead {
 ::-moz-focus-inner { border: 0 }
 
 #header {
+  background-color: $alter-bg;
   display: flex;
   height: 45px;
   @include flex();
+  .navig-link {
+    color: $main-fg;
+    &:hover, &:active { color: $alter-fg }
+  }
+  li { border: none }
   #home {
     display: inline-block;
     position: relative;
     z-index: 1;
     span { display: inline-block }
   }
-  li { border: none }
   .logo {
     pointer-events: none;
     float: left;
@@ -79,12 +92,7 @@ thead {
   position: absolute;
   right: 0;
   top: 0;
-  a {
-    display: inline-block;
-    padding: 8px;
-    &:hover { text-decoration: none }
-  }
-  ul {
+  .navig-list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -93,6 +101,40 @@ thead {
       float: left;
       margin: 0.25em 0;
       @include border-radius(3px);
+    }
+  }
+  .navig-link {
+    display: inline-block;
+    padding: 8px;
+    &:hover { text-decoration: none }
+  }
+  .dropdown {
+    ul {
+      right: 2%;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 2px solid $alter-bg;
+      background-color: $main-bg;
+    }
+    li {
+      float: right;
+      margin: 0.1em 0;
+      @include touch() {
+        color: $alter-fg;
+      }
+    }
+    a {
+      color: inherit;
+      text-decoration: unset;
+    }
+    &-title { padding: 4px }
+    .logout-btn {
+      font-size: 1em;
+      background-color: inherit;
+      color: inherit;
+      border: none;
+      cursor: pointer;
+      padding: 0;
     }
   }
 }
@@ -120,13 +162,26 @@ thead {
   @include border-radius(5px);
 }
 
+#messages {
+  margin: 0.25em auto;
+  font-size: 1.1em;
+  border: 2px solid $alter-bg;
+  border-radius: 5px;
+  padding: 0.5em 1em;
+}
+
 #content {
+  background-color: $alter-bg;
+  border: 5px solid $alter-bg;
+  border-radius: 5px;
   margin: 10px auto;
   width: 95vw;
   display: table;
   @include flex(1 0 auto);
   @include box-sizing();
   article {
+    background-color: $main-bg;
+    border-radius: 5px;
     padding: 0 5px;
     margin-top: 5px;
   }
@@ -213,8 +268,6 @@ thead {
     position: relative;
     left: -5px;
     float: left;
-    height: 100%;
-    width: calc(100vw / 3);
     @include border-radius();
   }
   &-aliases, &-authors, &-artists, &-categories {
@@ -255,101 +308,6 @@ thead {
   }
 }
 
-#chapter {
-  #placeholder {
-    width: 100%;
-    display: flex;
-    cursor: wait;
-  }
-  .chapter-page {
-    display: block;
-    width: auto;
-    cursor: pointer;
-    position: relative;
-    top: 0.5em;
-  }
-  .chapter-list {
-    float: left;
-    a {
-      display: inline-block;
-      max-width: 50vw;
-      @include truncate();
-    }
-    ul {
-      left: -1px;
-      min-width: 100%;
-      text-indent: 0.05em;
-      border-top-left-radius: 0;
-    }
-  }
-  .page-list {
-    float: right;
-    ul {
-      right: -1px;
-      width: 125%;
-      text-align: center;
-      border-top-right-radius: 0;
-    }
-  }
-  .curr-page { text-align: center }
-  #controls {
-    width: 100%;
-    display: flex;
-    margin: 2.5vh auto 1vh;
-    @include flex-direction(column);
-    span {
-      font-size: 1.25em;
-      margin: auto 0;
-    }
-    a { text-decoration: none }
-    .mi {
-      font-size: 3em;
-      margin: auto;
-    }
-    &-top, &-bottom {
-      width: 100%;
-      display: inline-flex;
-      @include justify-content(space-around);
-    }
-  }
-}
-
-#search {
-  section {
-    width: 100%;
-    padding: 0.5em 0;
-  }
-  table {
-    margin: 0 auto;
-    text-align: center;
-    @include box-sizing();
-  }
-  &-options {
-    text-align: center;
-    div { margin-bottom: 0.5em }
-    input {
-      border-radius: 4px;
-      padding: 4px;
-    }
-  }
-  #category-container {
-    width: 90%;
-    margin: 0 auto 0.5em;
-    .category {
-      display: inline-block;
-      cursor: pointer;
-    }
-  }
-  .result {
-    hyphens: auto;
-    &-title a { color: inherit }
-    &-authors::after {
-      content: quote('/ ');
-      white-space: pre-line;
-    }
-  }
-}
-
 #all-groups {
   display: flex;
   @include flex(0 1 auto);
@@ -362,7 +320,6 @@ thead {
     strong {
       display: block;
       text-align: center;
-      max-width: 150px;
       @include truncate();
     }
     &-logo {
@@ -373,6 +330,7 @@ thead {
         @include size(100%, auto);
         @include align-self();
       }
+      svg { fill: $main-fg }
     }
   }
 }
@@ -381,10 +339,16 @@ thead {
   &-info {
     display: flex;
     img {
-      border-top-left-radius: 5px;
       margin-left: -5px;
       margin-right: 5px;
+      border-top-left-radius: 5px;
       @include align-self(start);
+    }
+    svg {
+      fill: $main-fg;
+      margin-right: 5px;
+      border-top-left-radius: 5px;
+      @include size(150px);
     }
     div { margin: auto 0 }
   }
@@ -395,6 +359,7 @@ thead {
     &-roles span:last-of-type {
       &::after { display: none }
     }
+    h2 { color: $alter-bg }
     div { padding-left: 0.5em }
   }
 }
@@ -409,26 +374,122 @@ thead {
     padding-bottom: 0.5em;
     div { text-indent: 0.5em }
   }
-  #links {
-    .link {
-      display: block;
-      color: inherit;
-      margin: 0.25em 0 0.25em 0.5em;
-      span { display: inline-block }
+}
+
+#links {
+  .link {
+    display: inline-block;
+    margin: 0.25em 0 0.25em 0.5em;
+    text-decoration: unset;
+  }
+}
+
+#result-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  @include border($alter-fg, 2px);
+  @include border-radius(3px);
+  th, td {
+    padding: 0.1em 0.2em;
+    &:not(:last-child) {
+      @include border($alter-fg, 2px, $suffix: '-right');
     }
   }
+  td {
+    @include border($alter-fg, 2px, $suffix: '-top');
+  }
+}
+
+#user {
+  &-profile {
+    span:first-child {
+      font-weight: bold;
+    }
+  }
+  &-info {
+    display: flex;
+    align-items: center;
+  }
+  &-avatar img {
+    max-width: 150px;
+    height: auto;
+    margin-right: 10px;
+  }
+  &-edit .helptext {
+    display: block;
+    font-size: 0.8em;
+    margin-bottom: 5px;
+  }
+  &-bio div { text-indent: 1em }
+}
+
+#oauth {
+  > div {
+    font-size: 1.2em;
+    margin-top: 5px;
+  }
+  .provider {
+    text-decoration: unset;
+    display: inline-block;
+    box-sizing: border-box;
+    border: 2px solid $alter-bg;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 7px;
+    width: 95px;
+  }
+}
+
+#user-edit .field {
+  input, textarea {
+    width: 270px;
+  }
+}
+
+#sign-in .input {
+  width: 270px;
+}
+
+%field {
+  border-radius: 3px;
+  padding: 5px;
+  color: $main-fg;
+  background-color: $main-bg;
+  border: 2px solid $alter-bg;
 }
 
 article.user-action {
   text-align: center;
+  &#activation-sent, &.password-reset {
+    > div:first-of-type { padding-top: 5px }
+    > div:last-of-type { padding-bottom: 5px }
+  }
   form {
     padding: 3px 0 5px;
-    button {
+    label {
+      display: block;
+      margin: 3px auto;
+    }
+    input {
+      @extend %field;
+      &[type='checkbox'] {
+        display: none;
+        + label .mi::before {
+          content: quote('\f12b'); // mi-circle
+        }
+        &:checked + label .mi::before {
+          content: quote('\f129'); // mi-ok-circle
+        }
+      }
+    }
+    textarea { @extend %field; }
+    #forgot-password { margin-bottom: 3px }
+    .button {
       display: block;
       margin: 5px auto 0;
-      border-radius: 3px;
+      font-size: 1.05em;
+      cursor: pointer;
     }
-    input { border-radius: 3px }
   }
 }
 
@@ -450,10 +511,8 @@ article.user-action {
     overflow-y: auto;
     li { @include truncate(); }
   }
-  > span {
-    display: none;
-    cursor: pointer;
-  }
+  > span { cursor: pointer }
+  a[href='#'] { text-decoration: unset }
   @include touch() {
     border-bottom: none;
     border-bottom-left-radius: 0;
@@ -467,6 +526,7 @@ article.user-action {
 
 .tooltip {
   position: relative;
+  &::after { background-color: $alter-bg }
   @include touch('::after') {
     content: attr(data-tooltip);
     display: inline-block;
@@ -487,6 +547,21 @@ article.user-action {
   height: auto;
   margin: auto;
   @include box-sizing();
+}
+
+.end::before {
+  content: 'END';
+  background-color: $alter-bg;
+  color: $main-bg;
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.error {
+  color: #F04747;
+  font-weight: bold;
+  .field & { font-size: 0.9em }
 }
 
 .separator {
@@ -519,6 +594,18 @@ article.user-action {
   &-x-circle { color: tomato }
 }
 
+.main-bg { background-color: $main-bg }
+
+.alter-bg { background-color: $alter-bg }
+
+.main-fg { color: $main-fg }
+
+.alter-fg { color: $alter-fg }
+
+.text-shadow { text-shadow: shadow(2px, $shadow-color); }
+
+.flatpage { margin-bottom: -1em }
+
 .no-display { display: none }
 
 .divider::before { content: quote('\00a0|\00a0') }
@@ -529,7 +616,65 @@ article.user-action {
 
 #dropdowns { height: 30px }
 
-#searchlink { display: none }
+#search {
+  section {
+    width: 100%;
+    padding: 0.5em 0;
+  }
+  table {
+    margin: 0 auto;
+    text-align: center;
+    @include box-sizing();
+  }
+  &-options {
+    text-align: center;
+    div { margin-bottom: 0.5em }
+    input {
+      background-color: $main-bg;
+      border: 2px solid $alter-bg;
+      border-radius: 4px;
+      padding: 4px;
+      &:focus { border-color: $alter-fg }
+      &[type='radio'] {
+        display: none;
+        + label {
+          display: inline-block;
+          cursor: pointer;
+          padding: 2px 4px;
+          border: 2px solid $alter-bg;
+          @include border-radius(3px);
+        }
+        &:checked + label {
+          border-color: $alter-fg;
+        }
+      }
+    }
+    button {
+      padding: 3px 5px;
+      border: 2px solid $alter-bg;
+      @include border-radius(3px);
+      &:focus { border-color: $alter-fg }
+    }
+  }
+  .result {
+    hyphens: auto;
+    &-title a { color: inherit }
+    &-authors::after {
+      content: quote('/ ');
+      white-space: pre-line;
+    }
+  }
+  &link { display: none }
+}
+
+#category-container {
+  width: 90%;
+  margin: 0 auto 0.5em;
+  .category {
+    display: inline-block;
+    cursor: pointer;
+  }
+}
 
 i[data-pcount='100+'] { padding: 0 0.5em }
 
@@ -578,13 +723,19 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     .s-hidden { display: none }
   }
   #series { max-width: 92vw }
-  #chapter #controls .mi { font-size: 2em }
-  #navig ul li { margin: -0.2em 0 -0.3em -0.2em }
+  #navig {
+    .navig-list > li {
+      margin: -0.2em 0 -0.3em -0.2em;
+      &.dropdown { margin: -0.1em 0 -0.1em -0.3em }
+    }
+    .dropdown ul { top: 97.5% }
+  }
   .ident { display: none }
 }
 
 
 @media screen and (max-width: 436px) {
+  article { margin-top: 0 }
   #content {
     background-color: inherit !important;
     border: none !important;
@@ -599,8 +750,13 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       @include border-radius();
     }
   }
-  article { margin-top: 0 }
-  #latest h2 { text-align: center }
+  #latest {
+    .release-info {
+      border-bottom: 2px solid $alter-bg;
+      padding-bottom: 5px;
+    }
+    h2 { text-align: center }
+  }
   #list {
     text-align: center;
     .cover { float: none }
@@ -621,7 +777,16 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       font-weight: bold;
       margin: 0.2em 0;
     }
-    > div > div { padding: 0.2em 0 }
+    > div {
+      border: 2px solid $alter-bg;
+      border-radius: 5px;
+      > div {
+        padding: 0.2em 0;
+        &:not(:last-of-type) {
+          border-bottom: 2px solid $alter-bg;
+        }
+      }
+    }
     &-title { padding-bottom: 3px !important }
     &-info {
       width: 100%;
@@ -647,8 +812,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     .cover {
       left: 0;
       margin: auto;
-      width: 100%;
-      max-width: 50vw;
+      max-width: 80vw;
     }
     .chapter {
       margin: 0;
@@ -680,15 +844,6 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     }
     div.alias, div.author, div.artist, div.category { text-indent: 0 }
   }
-  #chapter {
-    #controls {
-      .mi { font-size: 1.5em }
-    }
-    .dropdown {
-      > a { display: none }
-      > span { display: inline-block }
-    }
-  }
   #search {
     label { display: block }
     &-status {
@@ -709,11 +864,16 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     &-desc div { text-indent: 0 }
     .member, .member div { padding-left: 0 }
   }
+  #user-profile section {
+    display: block;
+    text-align: center;
+    span:first-child { display: block }
+  }
   #info {
     text-align: center;
     &-header { display: none !important }
-    #links .link { margin-left: 0 }
     section div { text-indent: 0 }
   }
+  #links .link span { display: none }
 }
 

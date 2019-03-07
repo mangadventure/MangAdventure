@@ -1,7 +1,10 @@
 Compatibility
 -------------
 
-If you find that MangAdventure is incompatible with any Python or browser version listed as compatible, or compatible with any version listed as incompatible or untested, please submit an `issue <https://github.com/evangelos-ch/MangAdventure/issues/new?label=compatibility&template=compatibility.md>`_.
+If you find that MangAdventure is incompatible with any Python
+or browser version listed as compatible, or compatible with any
+version listed as incompatible or untested, please submit an
+`issue <https://github.com/mangadventure/MangAdventure/issues/new?labels=Type%3A+Compatibility&template=compatibility.md>`_.
 
 Python
 ^^^^^^

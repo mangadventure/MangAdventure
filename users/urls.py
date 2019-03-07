@@ -1,17 +1,14 @@
-from . import views
+from allauth.urls import urlpatterns as allauth_urls
+from .views import profile, edit_user, PostOnlyLogoutView
 
 try:
     from django.urls import re_path as url
 except ImportError:
     from django.conf.urls import url
 
-app_name = 'users'
-
 urlpatterns = [
-    url(r'^register/$', views.register, name='register'),
-    url(r'^login/$', views.user_login, name='login'),
-    url(r'^activate/$', views.activate, name='activate'),
-    url(r'^logout$', views.user_logout, name='logout'),
-    url(r'^reset/$', views.pass_reset, name='reset'),
-]
+    url(r'^$', profile, name='user_profile'),
+    url(r'^edit/', edit_user, name='user_edit'),
+    url(r'^logout/$', PostOnlyLogoutView.as_view(), name='account_logout')
+] + allauth_urls
 

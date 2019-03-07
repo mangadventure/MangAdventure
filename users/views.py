@@ -1,164 +1,57 @@
-from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.auth import authenticate, login, logout
-from django.core.mail import EmailMessage
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
+from django.contrib.messages import error, info as message
+from django.db import IntegrityError
 from django.shortcuts import render
-from django.conf import settings
-from constance import config
-from .tokens import (
-    activation_token, make_token,
-    InvalidTokenError, parse_token
-)
-from .forms import (
-    RegistrationForm, LoginForm,
-    PassResetForm, SetPassForm
-)
-from .utils import (
-    reverse_query, safe_mail, redirect_next,
-    RESET_TEMPLATE, ACTIVATE_TEMPLATE
-)
-from .models import User
+from django.http import Http404
+from allauth.account.models import EmailAddress
+from allauth.account.views import LogoutView
+from .models import UserProfile
+from .forms import UserProfileForm
 
 
-def register(request):
-    form = RegistrationForm()
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-            email = form.cleaned_data['email']
-            EmailMessage(
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                subject='[%s] Account activation' % config.NAME,
-                body=ACTIVATE_TEMPLATE.format(
-                    username=user.username or 'user',
-                    name=config.NAME or 'our site',
-                    scheme='https' if request.is_secure() else 'http',
-                    domain=get_current_site(request).domain,
-                    url=reverse_query('users:activate', query={
-                        'token': make_token(user), 'uid': user.pk
-                    })
-                ),
-                to=[safe_mail(email)],
-            ).send()
-            response = ' '.join[
-                'We have sent you an activation link to',
-                'the email address you provided. Click',
-                'that link to complete your registration.']
-            return render(request, 'activate.html', {
-                'title': 'Activation Pending',
-                'response': response
-            })
-    return render(request, 'register.html', {'form': form})
-
-
-def user_login(request):
-    form = LoginForm()
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect_next(request)
-    return render(request, 'login.html', {'form': form})
-
-
-def activate(request):
+@login_required
+@cache_control(private=True, max_age=3600)
+def profile(request):
+    uid = request.GET.get('id', request.user.id)
     try:
-        uid = request.GET.get('uid')
-        token = parse_token(request.GET.get('token'))
-        user = User.objects.get(pk=uid)
-        if not activation_token.check_token(user, token):
-            raise InvalidTokenError
-    except(TypeError, ValueError,
-           User.DoesNotExist,
-           InvalidTokenError):
-        response = 'Error: You seem to have ' \
-            'followed an invalid activation link.'
+        prof = UserProfile.objects.get_or_create(user_id=uid)[0]
+        if uid != request.user.id and prof.user.is_superuser:
+            raise Http404  # hide superuser profile from other users
+    except IntegrityError:
+        raise Http404
+    return render(request, 'profile.html', {'profile': prof})
+
+
+@login_required
+@cache_control(private=True, max_age=0)
+def edit_user(request):
+    uid = request.user.id
+    prof = UserProfile.objects.get_or_create(user_id=uid)[0]
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            email = form.cleaned_data['email']
+            if request.user.email != email:
+                EmailAddress.objects.add_email(
+                    request, request.user, email, confirm=True
+                )
+                message(request, 'Please confirm your new e-mail address.')
+        else:
+            error(request, 'Error: please check the fields and try again.')
     else:
-        user.is_active = True
-        user.save()
-        login(request, user)
-        response = 'Your account has been successfully activated.'
-    return render(request, 'activate.html', {
-        'title': 'Account Activation',
-        'response': response
-    })
+        form = UserProfileForm(
+            user_id=uid, email=prof.user.email,
+            username=prof.user.username,
+            first_name=prof.user.first_name,
+            last_name=prof.user.last_name,
+            bio=prof.bio, avatar=prof.avatar
+        )
+    return render(request, 'edit_user.html', {'form': form})
 
 
-def user_logout(request):
-    logout(request)
-    return redirect_next(request)
-
-
-def pass_reset(request):
-    form = PassResetForm()
-    if request.method == 'POST':
-        if request.POST.get('uid'):
-            return pass_new(request)
-        form = PassResetForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                return render(request, 'pass_reset.html', {
-                    'form': None, 'email': email, 'exists': False
-                })
-            else:
-                EmailMessage(
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    subject='[%s] Password reset' % config.NAME,
-                    body=RESET_TEMPLATE.format(
-                        username=user.username or 'user',
-                        name=config.NAME or 'our site',
-                        scheme='https' if request.is_secure() else 'http',
-                        domain=get_current_site(request).domain,
-                        url=reverse_query('users:reset', query={
-                            'token': make_token(user), 'uid': user.pk
-                        })
-                    ),
-                    to=[safe_mail(email)],
-                ).send()
-                return render(request, 'pass_reset.html', {
-                    'form': None, 'email': email, 'exists': True
-                })
-    if {'uid', 'token'} <= set(request.GET):
-        return pass_new(request)
-    return render(request, 'pass_reset.html', {
-        'form': form, 'email': None
-    })
-
-
-def pass_new(request):
-    form = SetPassForm()
-    valid = True
-    if request.method == 'POST':
-        form = SetPassForm(request.POST)
-        uid = request.POST.get('uid')
-        if form.is_valid():
-            password = form.cleaned_data['password1']
-            user = User.objects.get(pk=uid)
-            user.set_password(password)
-            user.save()
-            return render(request, 'pass_reset.html', {
-                'form': None, 'email': None
-            })
-    try:
-        uid = request.GET.get('uid')
-        token = parse_token(request.GET.get('token'))
-        user = User.objects.get(pk=uid)
-        if not activation_token.check_token(user, token):
-            raise InvalidTokenError
-    except(TypeError, ValueError,
-           User.DoesNotExist,
-           InvalidTokenError):
-        valid = False
-        form = None
-    return render(request, 'pass_new.html', {
-        'form': form, 'valid': valid
-    })
+class PostOnlyLogoutView(LogoutView):
+    def get(self, *args, **kwargs):
+        raise Http404
 

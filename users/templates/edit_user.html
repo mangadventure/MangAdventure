@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% load account custom_tags %}
+{% user_display request.user as user_display %}
+{% block robots %}
+  <meta name="robots" content="nosnippet">
+{% endblock %}
+{% with user=user_display %}
+  {% block title %}
+    <meta name="title" content="Settings">
+    <meta name="twitter:title" content="Settings ~ {{ config.NAME }}">
+    <meta property="og:title" content="Settings ~ {{ config.NAME }}">
+    <title>{{ user }} ~ {{ config.NAME }}</title>
+  {% endblock %}
+{% endwith %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Settings</h1>
+  <article class="user-action" id="user-edit">
+    {% for error in form.non_field_errors %}
+      <div class="error">{{ error }}</div>
+    {% endfor %}
+    <form action="{% url 'user_edit' %}" method="POST"
+          enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+      {% for field in form.visible_fields %}
+        <div class="field">
+          {{ field.label_tag }} {{ field }}
+          {% if field.help_text %}
+            <span class="helptext">{{ field.help_text|safe }}</span>
+          {% endif %}
+          {% for error in field.errors %}
+            <div class="error">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <input class="button" type="submit" value="Save">
+    </form>
+  </article>
+{% endblock %}
+

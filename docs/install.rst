@@ -37,6 +37,14 @@ Finally, install MangAdventure inside the activated virtualenv:
 
    pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.5.0#egg=MangAdventure"
 
+MangAdventure also optionally provides `Content-Security-Policy <https://mdn.io/CSP>`_
+configuration via the `django-csp <https://github.com/mozilla/django-csp>`_ package.
+You can install it if you'd like some extra security:
+
+.. code-block:: shell
+
+   pip install django-csp
+
 Configure the settings
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -62,16 +70,6 @@ you might need to install `SQLite <https://www.sqlite.org/index.html>`_.
 .. code-block:: shell
 
    mangadventure migrate
-
-Collect the static files
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-These commands will compile and collect the static files (CSS, JS, etc).
-
-.. code-block:: shell
-
-   mangadventure compilestatic
-   mangadventure collectstatic --noinput
 
 Create an administrator account
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

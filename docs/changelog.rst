@@ -4,7 +4,31 @@ Changelog
 v0.5.0
 ^^^^^^
 
-TBA
+* Added support for users (registration, login, OAuth, profile, settings)
+* Switched to `custom icon font <https://github.com/mangadventure/font>`_
+  made with `fontello <http://fontello.com/>`_
+  & replaced ``group.png`` with an SVG image
+* Improved reader page design
+* Fixed thumbnail downsampling for grayscale images
+* Moved templates to ``MangAdventure`` directory
+  & renamed ``skeleton.html`` to ``layout.html``
+* Converted bad bots list to a python file
+* Configured autogeneration of a secret key
+* Added ``ColorField`` for constance
+* Added constance hook to generate ``_variables.scss`` & removed inline SCSS
+* Added ``setup.py`` & ``MANIFEST.in`` for setuptools
+* Added optional configuration for django-csp
+* Compressed tablesort into a single vendored file
+* Converted info page to a flatpage with
+  `TinyMCE <https://www.tiny.cloud/docs-4x/>`_ editor
+  & added privacy policy page
+* Added IRC & Reddit links to groups & members
+* Removed configuration commands and added a ``configure`` command
+  that lets users edit a configuration file with an editor
+* Added support for migration from FoolSlide2
+* Added `MangaUpdates <https://www.mangaupdates.com/genres.html>`_
+  categories fixture
+* Made series slugs editable & added a signal to move directories on change
 
 v0.4.5
 ^^^^^^

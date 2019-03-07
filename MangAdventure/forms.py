@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.utils.six import reraise
-from django.forms import ImageField, CharField, URLField
+from django.forms import ImageField, CharField, URLField, widgets
 from MangAdventure.utils import validators
 from xml.etree import cElementTree as et
 from sys import exc_info
@@ -74,6 +74,15 @@ class SVGImageField(ImageField):
         return tag == '{http://www.w3.org/2000/svg}svg'
 
 
+class ColorField(CharField):
+    def __init__(self, *args, **kwargs):
+        self.min_length = 7
+        self.max_length = 20
+        self.strip = True
+        super(CharField, self).__init__(*args, **kwargs)
+        self.widget = widgets.TextInput({'type': 'color'})
+
+
 class TwitterField(CharField):
     default_validators = [validators.twitter_name_validator]
 
@@ -88,5 +97,5 @@ class DiscordURLField(URLField):
         super(DiscordURLField, self).__init__(**kwargs)
 
 
-__all__ = ['SVGImageField', 'TwitterField', 'DiscordURLField']
+__all__ = ['SVGImageField', 'TwitterField', 'DiscordURLField', 'ColorField']
 

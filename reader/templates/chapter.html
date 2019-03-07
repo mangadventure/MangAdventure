@@ -1,7 +1,5 @@
-{% extends 'skeleton.html' %}
-{% load custom_tags %}
-{% load static %}
-{% load compile_static %}
+{% extends 'layout.html' %}
+{% load static compile_static custom_tags reader_tags %}
 {% block robots %}
   <meta name="robots" content="nosnippet">
 {% endblock %}
@@ -33,13 +31,10 @@
     {% endwith %}
   {% endwith %}
 {% endblock %}
-{% block head_extras %}
-  <style type="text/css">
-    {% inlinecompile 'scss' %}
-      {% include 'scss/chapter.django.scss' %}
-    {% endinlinecompile %}
-  </style>
-  <meta http-equiv="X-DNS-Prefetch-Control" content="on">
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="{% static 'styles/chapter.scss'|compile %}"
+        rel="stylesheet" type="text/css">
 {% endblock %}
 {% block title %}
   <meta name="title" content="{{ curr_chapter.title }}">
@@ -52,7 +47,9 @@
 {% block content %}
   {% with vol=curr_chapter.volume num=curr_chapter.number %}
     <h1>
-      <a href="../../..">{{ curr_chapter.series }}</a>
+      <a href="{{ curr_chapter.series.get_absolute_url }}">
+        {{ curr_chapter.series.title }}
+      </a>
       <br>V{{ vol }} / C{{ num|floatformat }}
     </h1>
   {% endwith %}
@@ -77,7 +74,7 @@
               {% if chapter == curr_chapter %}
                 data-current="true"
               {% endif %}>
-              <a href="{{ chapter.url }}" title="{{ chapter.title }}"
+              <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
                        {% if chapter.final %}class="end"{% endif %}>
                 {% with vol=chapter.volume num=chapter.number %}
                   V{{ vol }} / C{{ num|floatformat }}: {{ chapter.title }}
@@ -103,25 +100,26 @@
                 data-current="true"
               {% endif %}>
               {% with num=page.number|stringformat:'02d' %}
-                <a href="../{{ page.number }}">Page {{ num }}</a>
+                <a href="{{ page.get_absolute_url }}">Page {{ num }}</a>
               {% endwith %}
             </li>
           {% endfor %}
         </ul>
       </div>
     </section>
-    {% with series_url='/reader/'|add:curr_chapter.series_id|add:'/' %}
-      <section id="placeholder" class="main-bg" data-num="{{ curr_page.number }}"
+    {% with series_url=chapter.series.get_absolute_url %}
+      <section id="placeholder" class="main-bg"
+               data-num="{{ curr_page.number }}"
                data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
                {% if curr_page.number == all_pages.count %}
                  {% if next_chapter %}
-                   data-next="{{ next_chapter.url }}"
+                   data-next="{{ next_chapter.get_absolute_url }}"
                  {% else %}
                    data-next="{{ series_url }}"
                  {% endif %}
               {% elif curr_page.number == 1 %}
                  {% if prev_chapter %}
-                   data-prev="{{ prev_chapter.url }}"
+                   data-prev="{{ prev_chapter.get_absolute_url }}"
                  {% else %}
                    data-prev="{{ series_url }}"
                  {% endif %}
@@ -138,14 +136,14 @@
     <section id="controls" class="no-display">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
         <div id="controls-top">
-          <a href="../{{ all_pages.first.number }}/" title="First page">
+          <a href="{{ all_pages.first.get_absolute_url }}" title="First page">
             <i class="mi mi-rewind"></i>
           </a>
           {% if prev == 0 %}
             {% if prev_chapter %}
-              <a href="{{ prev_chapter.url }}" title="Previous chapter">
+              <a href="{{ prev_chapter.get_absolute_url }}" title="Previous chapter">
             {% else %}
-              <a href="/reader/{{ curr_chapter.series_id }}/"
+              <a href="{{ curr_chapter.series.get_absolute_url }}"
                  title="No previous chapters">
             {% endif %}
           {% else %}
@@ -161,9 +159,10 @@
             </span>
             {% if next > max %}
               {% if next_chapter %}
-                <a href="{{ next_chapter.url }}" title="Next chapter">
+                <a href="{{ next_chapter.get_absolute_url }}"
+                   title="Next chapter">
               {% else %}
-                <a href="/reader/{{ curr_chapter.series_id }}/"
+                <a href="{{ curr_chapter.series.get_absolute_url }}"
                    title="No more chapters">
               {% endif %}
             {% else %}
@@ -171,7 +170,7 @@
             {% endif %}
               <i class="mi mi-right"></i>
             </a>
-            <a href="../{{ all_pages.last.number }}/" title="Last page">
+            <a href="{{ all_pages.last.get_absolute_url }}" title="Last page">
               <i class="mi mi-forward"></i>
             </a>
           {% endwith %}
@@ -180,18 +179,9 @@
     </section>
   </div>
   <div id="preload" class="no-display">
-    {% with pages=all_pages|preload_pages:curr_page.number %}
-      <script async>
-        {% for page in pages %}
-          new Image().src='{{ page.image.url }}';
-        {% endfor %}
-      </script>
-      <noscript>
-        {% for page in pages %}
-          <img src="{{ page.image.url }}"/>
-        {% endfor %}
-      </noscript>
-    {% endwith %}
+    {% for page in all_pages|preload_pages:curr_page.number %}
+      <img alt='preload' src="{{ page.image.url }}">
+    {% endfor %}
   </div>
 {% endblock %}
 

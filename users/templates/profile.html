@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+{% load cache account custom_tags %}
+{% user_display request.user as user_display %}
+{% block robots %}
+  <meta name="robots" content="nosnippet">
+{% endblock %}
+{% with user=user_display %}
+  {% block title %}
+    <meta name="title" content="User profile">
+    <meta name="twitter:title" content="User profile ~ {{ config.NAME }}">
+    <meta property="og:title" content="User profile ~ {{ config.NAME }}">
+    <title>{{ user }} ~ {{ config.NAME }}</title>
+  {% endblock %}
+{% endwith %}
+{% block content %}
+  {% cache 86400 user_profile profile %}
+    <h1 class="text-shadow alter-bg">Profile</h1>
+    <article id="user-profile">
+      <section id="user-info">
+        <div id="user-avatar">
+          {% if profile.avatar %}
+            <img src="{{ MEDIA_URL|urljoin:profile.avatar.url }}"
+                 alt="{{ user_display }}">
+          {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"  version="1.2" viewBox="0 0 24 24">
+              <metadata>Source: https://github.com/stephenhutchings/typicons.font, License: CC-BY-SA</metadata>
+              <path d="M17 9c0-1.381-.56-2.631-1.464-3.535C14.631 4.56 13.381 4 12 4s-2.631.56-3.536 1.465C7.56 6.369 7 7.619 7 9s.56 2.631 1.464 3.535C9.369 13.44 10.619 14 12 14s2.631-.56 3.536-1.465A4.984 4.984 0 0 0 17 9zM6 19c0 1 2.25 2 6 2 3.518 0 6-1 6-2 0-2-2.354-4-6-4-3.75 0-6 2-6 4z"></path>
+            </svg>
+          {% endif %}
+        </div>
+        <div id="user-details">
+          {% with user=profile.user %}
+            {% if user == request.user %}
+              <div>
+                <span>E-mail:</span>
+                <span>{{ user.email }}</span>
+              </div>
+            {% endif %}
+            {% if user.username %}
+              <div>
+                <span>Username:</span>
+                <span>{{ user.username }}</span>
+              </div>
+            {% endif %}
+            {% if user.first_name %}
+              <div>
+                <span>First name:</span>
+                <span>{{ user.first_name }}</span>
+              </div>
+            {% endif %}
+            {% if user.last_name %}
+              <div>
+                <span>Last name:</span>
+                <span>{{ last_name }}</span>
+              </div>
+            {% endif %}
+          </div>
+        {% endwith %}
+      </section>
+      {% if profile.bio %}
+        <section id="user-bio">
+          <span>About:</span>
+          <div>{{ profile.bio }}</div>
+        </section>
+      {% endif %}
+    </article>
+  {% endcache %}
+{% endblock %}
+

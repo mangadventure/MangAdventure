@@ -1,14 +1,5 @@
-{% extends 'skeleton.html' %}
-{% load custom_tags %}
-{% load static %}
-{% load inlinecompile from compile_static %}
-{% block head_extras %}
-  <style type="text/css">
-    {% inlinecompile 'scss' %}
-      {% include 'scss/series.django.scss' %}
-    {% endinlinecompile %}
-  </style>
-{% endblock %}
+{% extends 'layout.html' %}
+{% load static humanize custom_tags %}
 {% block keywords %}
   {% with tags=series.categories.all|join:',' %}
     <meta name="keywords" content="{{ config.KEYWORDS }},{{ tags }}">
@@ -112,7 +103,7 @@
         {% for chapter in chapters %}
           <div class="chapter">
             {% with vol=chapter.volume num=chapter.number %}
-              <a href="{{ chapter.url }}"
+              <a href="{{ chapter.get_absolute_url }}"
                  {% if chapter.final %}class="end"{% endif %}
                  title="{{ chapter.title }}">
                 Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ chapter.title }}
@@ -123,7 +114,7 @@
                   </span>
                   <span class="chapter-groups" title="{{ groups|join:', ' }}">
                     {% for group in groups %}
-                      <a href="/groups/{{ group.id }}"
+                      <a href="{{ group.get_absolute_url }}"
                          title="{{ group.name }}"
                          {% if not forloop.last %}class="comma"{% endif %}>
                         {{ group.name }}</a>
@@ -131,11 +122,11 @@
                   </span>
                 {% endwith %}
                 <span class="divider"
-                      title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
+                      title="{{ chapter.uploaded|naturaltime }}">
                 </span>
                  <span class="chapter-date"
-                      title="{{ chapter.uploaded|date:'N d, Y - H:i' }}">
-                  {{ chapter.uploaded|date:'N d, Y - H:i' }}
+                      title="{{ chapter.uploaded|naturaltime }}">
+                  {{ chapter.uploaded|naturaltime }}
                 </span>
               </div>
             {% endwith %}

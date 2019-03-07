@@ -1,23 +1,32 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.http import Http404
 from next_prev import next_in_order, prev_in_order
 from .models import Chapter, Series
+from django.conf import settings
+
+if 'users' in settings.INSTALLED_APPS:
+    from users.models import Progress
+
+    def _update_progress(user, page, chapter):
+        if user.is_authenticated and page == 1:
+            Progress.objects.create(user=user, chapter=chapter)
+else:
+    def _update_progress(*_): pass
 
 
 def directory(request):
     return render(request, 'directory.html', {
-        'all_series': Series.objects.prefetch_related(
-            'chapters').order_by('title')
+        'all_series':
+            Series.objects.prefetch_related('chapters').order_by('title')
     })
 
 
-def series(request, slug=None):
+def series(request, slug):
     try:
         _series = Series.objects.prefetch_related(
-            'chapters__groups', 'artists', 'categories',
-            'authors', 'aliases').get(slug=slug)
-    except ObjectDoesNotExist:
+            'chapters__groups', 'artists', 'categories', 'authors', 'aliases'
+        ).get(slug=slug)
+    except Series.DoesNotExist:
         raise Http404
     if not (_series.chapters.count() or request.user.is_staff):
         return render(request, 'error.html', {
@@ -27,7 +36,7 @@ def series(request, slug=None):
     return render(request, 'series.html', {'series': _series})
 
 
-def chapter_page(request, slug=None, vol=0, num=0, page=1):
+def chapter_page(request, slug, vol, num, page):
     try:
         vol, num, page = int(vol), float(num), int(page)
     except (ValueError, TypeError):
@@ -35,21 +44,24 @@ def chapter_page(request, slug=None, vol=0, num=0, page=1):
     if page == 0:
         raise Http404
     chapters = {
-        'all': Chapter.objects.prefetch_related(
-            'series__categories', 'pages').filter(series_id=slug),
+        'all': Chapter.objects.filter(series__slug=slug),
         'curr': None,
         'prev': None,
         'next': None
     }
     try:
-        chapters['curr'] = chapters['all'].get(number=num, volume=vol)
-    except ObjectDoesNotExist:
+        chapters['curr'] = chapters['all'] \
+            .prefetch_related('pages').get(number=num, volume=vol)
+    except Chapter.DoesNotExist:
         raise Http404
-    chapters['next'] = next_in_order(chapters['curr'])
-    chapters['prev'] = prev_in_order(chapters['curr'])
+    chapters['next'] = next_in_order(chapters['curr'], qs=chapters['all'])
+    chapters['prev'] = prev_in_order(chapters['curr'], qs=chapters['all'])
     all_pages = chapters['curr'].pages.all()
     if page > len(all_pages):
         raise Http404
+
+    _update_progress(request.user, page, chapters['curr'])
+
     return render(request, 'chapter.html', {
         'all_chapters': chapters['all'].reverse(),
         'curr_chapter': chapters['curr'],
@@ -60,7 +72,6 @@ def chapter_page(request, slug=None, vol=0, num=0, page=1):
     })
 
 
-def chapter_redirect(request, slug=None, vol=0, num=0):
-    return redirect('reader:page', permanent=True,
-                    slug=slug, vol=vol, num=num, page=1)
+def chapter_redirect(request, slug, vol, num):
+    return redirect('reader:page', slug, vol, num, 1, permanent=True)
 

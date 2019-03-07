@@ -5,7 +5,9 @@ from re import compile as reg
 from io import BytesIO
 from PIL import Image
 from os import remove
-from . import is_dir
+
+
+def _is_dir(f): return f.filename[-1] == '/'
 
 
 def _remove_file(_file):
@@ -43,7 +45,7 @@ class UsernameValidator(RegexValidator):
         super(UsernameValidator, self).__init__(**kwargs)
 
     def __call__(self, username):
-        if not self.regex.fullmatch(str(username)):
+        if not self.regex.match(str(username)):
             raise ValidationError(message=self.message, code=self.code)
 
 
@@ -67,7 +69,7 @@ def zipfile_validator(_file):
         )
     first_folder = True
     for f in zip_file.namelist():
-        if is_dir(zip_file.getinfo(f)):
+        if _is_dir(zip_file.getinfo(f)):
             if first_folder:
                 first_folder = False
                 continue
@@ -92,7 +94,7 @@ def discord_server_validator(url):
     regex = reg(r'^(https?://)?discord\.(gg|me)/[A-Za-z0-9_%-]+$')
     message = 'Invalid Discord server URL.'
     code = 'invalid_discord_url'
-    if not regex.fullmatch(str(url)):
+    if not regex.match(str(url)):
         raise ValidationError(message, code)
 
 
@@ -113,9 +115,18 @@ def discord_name_validator(username):
     ).__call__(username)
 
 
+def reddit_name_validator(reddit_name):
+    return UsernameValidator(
+        regex=r'^(/[ur]/)?[\w\d-]{3,21}$',
+        message='Invalid Reddit username or subreddit name.',
+        code='invalid_reddit_name'
+    ).__call__(reddit_name)
+
+
 __all__ = [
     'FileSizeValidator', 'UsernameValidator',
     'discord_server_validator', 'zipfile_validator',
-    'twitter_name_validator', 'discord_name_validator'
+    'twitter_name_validator', 'discord_name_validator',
+    'reddit_name_validator'
 ]
 

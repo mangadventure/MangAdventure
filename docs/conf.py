@@ -8,16 +8,17 @@ import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.dirname(__file__))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MangAdventure.settings')
+os.environ['MANGADV_IGNORE_CONFIG'] = 'true'
 django.setup()
 
 # -- Project information --
 
-project = 'MangAdventure'
-copyright = '2018, Evangelos Ch - MIT License'
-author = 'evangelos-ch, ObserverOfTime'
+import MangAdventure
 
-from MangAdventure import __version__ as version
-release = version
+project = MangAdventure.__name__
+author = MangAdventure.__author__
+release = MangAdventure.__version__
+copyright = MangAdventure.__copyright__
 
 
 # -- General configuration --
@@ -31,8 +32,9 @@ templates_path = ['_templates']
 source_suffix = '.rst'
 master_doc = 'index'
 language = 'en'
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store',
-                    'desktop.ini', '.directory']
+exclude_patterns = [
+    '_build', 'Thumbs.db', '.DS_Store', 'desktop.ini', '.directory'
+]
 pygments_style = 'manni'
 
 
@@ -55,33 +57,30 @@ html_static_path = ['_static']
 
 # -- Options for HTMLHelp output --
 
-htmlhelp_basename = 'MangAdventureDoc'
+htmlhelp_basename = '%sDoc' % project
 
 
 # -- Options for LaTeX output --
 
 latex_elements = {}
-latex_documents = [
-    (master_doc, 'MangAdventure.tex',
-     'MangAdventure Documentation',
-     'evangelos-ch, ObserverOfTime', 'manual'),
-]
+latex_documents = [(
+    master_doc, '%s.tex' % project,
+    '%s Documentation' % project, author, 'manual'
+)]
 
 
 # -- Options for manual page output --
 
-man_pages = [
-    (master_doc, 'mangadventure',
-     'MangAdventure Documentation',
-     [author], 7)
-]
+man_pages = [(
+    master_doc, project.lower(),
+    '%s Documentation' % project, [author], 7
+)]
 
 
 # -- Options for Texinfo output --
 
-texinfo_documents = [
-    (master_doc, 'MangAdventure', 'MangAdventure Documentation',
-     author, 'MangAdventure', 'A simple manga hosting webapp'
-     ' written in Django.', 'Miscellaneous'),
-]
+texinfo_documents = [(
+    master_doc, project, '%s Documentation' % project,
+    author, project, MangAdventure.__doc__, 'Miscellaneous'
+)]
 

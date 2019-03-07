@@ -18,6 +18,14 @@ class DiscordNameField(models.CharField):
         super(DiscordNameField, self).__init__(*args, **kwargs)
 
 
+class RedditField(models.CharField):
+    default_validators = [validators.reddit_name_validator]
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('max_length', 21)
+        super(RedditField, self).__init__(*args, **kwargs)
+
+
 class DiscordURLField(models.URLField):
     default_validators = [validators.discord_server_validator]
 
@@ -52,8 +60,7 @@ class Alias(models.Model):
 
 
 __all__ = [
-    'TwitterField', 'DiscordNameField',
-    'DiscordURLField', 'AliasField',
-    'AliasKeyField', 'Alias'
+    'TwitterField', 'DiscordNameField', 'DiscordURLField',
+    'RedditField', 'AliasField', 'AliasKeyField', 'Alias'
 ]
 

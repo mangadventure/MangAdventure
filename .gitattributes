@@ -1,6 +1,10 @@
 * text=auto
 
-docs/ linguist-documentation
+docs/* linguist-documentation
 
-static/fontello linguist-vendored
+static/vendor/* linguist-vendored
+static/admin/* linguist-vendored
+static/django_tinymce/* linguist-vendored
+
+static/COMPILED/* linguist-generated
 

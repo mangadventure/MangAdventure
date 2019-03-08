@@ -76,8 +76,9 @@ class UserProfileForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).count() > 0:
-            raise forms.ValidationError("This username is already taken!")
+        users = User.objects.filter(username=username)
+        if users.exclude(id=self.user.id).count() > 0:
+            raise forms.ValidationError('This username is already taken!')
         return username
 
     def clean_new_password2(self):
@@ -90,7 +91,7 @@ class UserProfileForm(forms.ModelForm):
     def clean_curr_password(self):
         password = self.cleaned_data.get('curr_password')
         if not self.user.check_password(password):
-            raise forms.ValidationError("Wrong password!")
+            raise forms.ValidationError('Wrong password!')
         return password
 
     def save(self, commit=True):

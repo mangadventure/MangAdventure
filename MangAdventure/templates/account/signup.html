@@ -34,8 +34,8 @@
       <div>Or, sign up with:</div>
       {% get_providers as socialaccount_providers %}
       {% for provider in socialaccount_providers|available %}
-        <a title="{{ provider.name }}" class="provider"
-           href="{% provider_login_url provider.id scope=scope auth_params=auth_params %}">
+        <a title="{{ provider.name }}" class="provider main-fg"
+           href="{% provider_login_url provider.id %}">
           <i class="mi mi-{{ provider.id }}"></i>
           <span>{{ provider.name }}</span>
         </a>

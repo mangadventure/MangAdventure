@@ -1,0 +1,27 @@
+{
+  "name": "MangAdventure",
+  "description": "A simple manga hosting CMS written in Django.",
+  "repository": {
+    "url": "https://github.com/mangadventure/MangAdventure.git",
+    "license": "MIT",
+    "type": "git"
+  },
+  "participate": {
+    "home": "https://github.com/mangadventure/MangAdventure",
+    "docs": "https://mangadventure.readthedocs.io/en/latest/"
+  },
+  "bugs": {
+    "list": "https://github.com/mangadventure/MangAdventure/issues",
+    "report": "https://github.com/mangadventure/MangAdventure/issues/new/choose"
+  },
+  "keywords": [
+    "python",
+    "django",
+    "scss",
+    "html5",
+    "vanillajs",
+    "manga",
+    "reader"
+  ]
+}
+

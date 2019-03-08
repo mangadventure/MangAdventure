@@ -170,13 +170,6 @@ Updating
 
    pip install -U "git+https://github.com/mangadventure/MangAdventure@{tag}#egg=MangAdventure"
 
-Then, compile and collect the static files:
-
-.. code-block:: shell
-
-   mangadventure compilestatic
-   mangadventure collectstatic --noinput
-
 Finally, update the database:
 
 .. code-block:: shell

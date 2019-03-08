@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% load account %}
+{% block title %}
+  <meta name="title" content="Inactive account">
+  <meta name="twitter:title" content="Inactive account - {{ config.NAME }}">
+  <meta name="og:title" content="Inactive account - {{ config.NAME }}">
+  <title>Inactive account &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Inactive account</h1>
+  <article id="inactive-account">This account is inactive.</article>
+{% endblock %}
+

@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
 from django.shortcuts import render
 from django.conf import settings
@@ -45,10 +46,20 @@ def opensearch(request):
     _search = request.build_absolute_uri('/search/')
     _self = request.build_absolute_uri('/opensearch.xml')
     return render(
-        request, 'opensearch.xml', context={
+        request, 'opensearch.xml', {
             'search': _search, 'self': _self, 'icon': _icon,
-        }, content_type='application/opesearchdescription+xml'
+        }, 'application/opesearchdescription+xml'
     )
+
+
+@cache_control(public=True, max_age=31536000)
+def contribute(request):
+    return render(request, 'contribute.json', {}, 'application/json')
+
+
+@cache_control(public=True, max_age=31536000)
+def robots(request):
+    return HttpResponse('User-agent: *\nDisallow:', 'text/plain')
 
 
 def handler400(request, exception=None, template_name='error.html'):
@@ -57,9 +68,7 @@ def handler400(request, exception=None, template_name='error.html'):
     context = _error_context(
         'The server could not understand the request.', 400
     )
-    return render(
-        request, template_name=template_name, context=context, status=400
-    )
+    return render(request, template_name, context, status=400)
 
 
 def handler403(request, exception=None, template_name='error.html'):
@@ -68,17 +77,14 @@ def handler403(request, exception=None, template_name='error.html'):
     context = _error_context(
         'You do not have permission to access this page.', 403
     )
-    return render(
-        request, template_name=template_name, context=context, status=403
-    )
+    return render(request, template_name, context, status=403)
 
 
 def handler404(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
         return JsonError('Invalid API endpoint', 501)
     context = _error_context("Sorry. This page doesn't exist.", 404)
-    return render(request, template_name=template_name,
-                  context=context, status=404)
+    return render(request, template_name, context, status=404)
 
 
 def handler500(request, exception=None, template_name='error.html'):
@@ -87,19 +93,15 @@ def handler500(request, exception=None, template_name='error.html'):
     context = _error_context(  # Shrug
         'Whoops! Something went wrong. &macr;&#8726;_(&#12484;)_/&macr;'
     )
-    return render(
-        request, template_name=template_name, context=context, status=500
-    )
+    return render(request, template_name, context, status=500)
 
 
 def handler503(request, exception=None, template_name='error.html'):
     if request.path.startswith('/api'):
         return JsonError('Service unavailable', 503)
     context = _error_context(
-        'The server is currently under maintenance.'
+        'The site is currently under maintenance.'
         ' Please try again later.', 503
     )
-    return render(
-        request, template_name=template_name, context=context, status=503
-    )
+    return render(request, template_name, context, status=503)
 

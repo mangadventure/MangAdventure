@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.conf import settings
-from .views import index, search, opensearch
+from .views import index, search, opensearch, contribute, robots
 
 try:
     from django.urls import include, re_path as url
@@ -17,6 +17,8 @@ urlpatterns = [
     url(r'^groups/', include('groups.urls')),
     url(r'^user/', include('users.urls')),
     url(r'^opensearch\.xml$', opensearch, name='opensearch'),
+    url(r'^contribute\.json$', contribute, name='contribute'),
+    url(r'^robots\.txt$', robots, name='robots')
 ]
 
 if settings.DEBUG:

@@ -180,26 +180,49 @@ LOGGING = {  # TODO: better logging
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
-        'require_debug_false': {'()': 'django.utils.log.RequireDebugFalse'},
         'require_debug_true': {'()': 'django.utils.log.RequireDebugTrue'}
+    },
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {pathname}'
+                      ' {funcName}:{lineno} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{asctime} {module} {funcName} {message}',
+            'style': '{'
+        },
     },
     'handlers': {
         'debug': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filters': ['require_debug_true'],
-            'filename': path.join(LOGS_DIR, 'debug.log')
+            'filename': path.join(LOGS_DIR, 'debug.log'),
+            'formatter': 'verbose',
         },
         'error': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filters': ['require_debug_false'],
-            'filename': path.join(LOGS_DIR, 'errors.log')
+            'filename': path.join(LOGS_DIR, 'errors.log'),
+            'formatter': 'simple',
         },
+        'query': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filters': ['require_debug_true'],
+            'filename': path.join(LOGS_DIR, 'queries.log'),
+            'formatter': 'simple'
+        }
     },
     'loggers': {
         'django': {
             'handlers': ['debug', 'error'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'django.db.backends': {
+            'handlers': ['query'],
             'level': 'DEBUG',
             'propagate': False
         }
@@ -309,6 +332,10 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 # Social account provider customization.
 SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'}
+    },
     'reddit': {
         'AUTH_PARAMS': {'duration': 'permanent'},
         'USER_AGENT': 'Django:MangAdventure:{} (by {})'.format(

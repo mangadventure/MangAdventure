@@ -29,6 +29,7 @@ v0.5.0
 * Added `MangaUpdates <https://www.mangaupdates.com/genres.html>`_
   categories fixture
 * Made series slugs editable & added a signal to move directories on change
+* Added ``contribute.json`` & ``robots.txt``
 
 v0.4.5
 ^^^^^^

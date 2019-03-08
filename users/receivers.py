@@ -1,12 +1,6 @@
 from django.dispatch import receiver
 from allauth.account.models import EmailAddress
-from allauth.account.signals import email_confirmed, user_signed_up
-
-
-@receiver(user_signed_up)
-def set_user_inactive(sender, request, user, **kwargs):
-    user.is_active = False
-    user.save()
+from allauth.account.signals import email_confirmed
 
 
 @receiver(email_confirmed)
@@ -20,5 +14,5 @@ def update_user_email(sender, request, email_address, **kwargs):
     ).exclude(primary=True).delete()
 
 
-__all__ = ['set_user_inactive', 'update_user_email']
+__all__ = ['update_user_email']
 

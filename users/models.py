@@ -41,6 +41,7 @@ class UserProfile(models.Model):
 
 # TODO: add user preferences
 
+# Might be utilised for progress tracking in the future
 class Progress(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='progress'

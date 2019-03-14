@@ -1,5 +1,9 @@
 {% extends 'layout.html' %}
 {% load static humanize custom_tags %}
+{% block head_extras %}
+  <script src="{% static 'scripts/bookmark.js' %}"
+          type="text/javascript" async></script>
+{% endblock %}
 {% block keywords %}
   {% with tags=series.categories.all|join:',' %}
     <meta name="keywords" content="{{ config.KEYWORDS }},{{ tags }}">
@@ -96,6 +100,10 @@
         <h3 class="alter-fg">Description:</h3>
         <div>{{ series.description|linebreaks }}</div>
       </div>
+    {% endif %}
+    {% if user.is_authenticated %}
+      {# TODO Adapt iniital state to whether or not the user has bookmarkekd series #}
+      <a class="mi mi-bookmark-o bookmark-btn" data-series="{{ series.slug }}" href="#"></a>
     {% endif %}
     <div id="series-chapters">
       <h3 class="alter-fg">Chapters:</h3>

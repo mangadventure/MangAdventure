@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+{% load static custom_tags %}
+{% block head_extras %}
+  <script src="{% static 'scripts/bookmark.js' %}"
+          type="text/javascript" async></script>
+{% endblock %}
+{% block robots %}
+  <meta name="robots" content="nosnippet">
+{% endblock %}
+{% block title %}
+  <meta name="title" content="User bookmarks">
+  <meta name="twitter:title" content="User bookmarks ~ {{ config.NAME }}">
+  <meta property="og:title" content="User bookmarks ~ {{ config.NAME }}">
+  <title>{{ user }}'s Bookmarks ~ {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Bookmarks</h1>
+  <article id="user-bookmarks">
+    {% for bookmark in user.bookmarks.all %}
+      <section class="bookmark">
+        <h2 class="series-title">
+          <a href="{{ bookmark.series.get_absolute_url }}"
+             title="{{ bookmark.series }}">
+            {{ bookmark.series.title }}
+          </a>
+        </h2>
+        <div class="cover-container">
+          <img src="{{ MEDIA_URL|add:bookmark.series.cover.name }}"
+               alt="{{ bookmark.series }} Cover" class="cover">
+        </div>
+        <div class="series-info">
+          <strong>Latest Chapter:</strong>
+          {% with bookmark.series.chapters|order_by:'-uploaded'|first as chapter %}
+          <a href="{{ chapter.get_absolute_url }}"
+             {% if chapter.final %}class="end"{% endif %}
+             title="{{ chapter.title }}">
+            {% if vol > 0 %} Vol. {{ vol }},{% endif %}
+            Ch. {{ num|floatformat }}: {{ chapter.title }}
+          </a>
+          {% endwith %}
+        </div>
+        <a class="mi mi-bookmark bookmark-btn"
+         data-series="{{ bookmark.series.slug }}" href="#"></a>
+      </section>
+    {% endfor %}
+  </article>
+{% endblock %}
+

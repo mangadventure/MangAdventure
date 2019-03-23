@@ -68,3 +68,8 @@ def bookmark(request):
     except Bookmark.DoesNotExist:
         request.user.bookmarks.create(user=request.user, series=series)
     return HttpResponse()
+
+
+@login_required
+def bookmarks(request):
+    return render(request, 'bookmarks.html')

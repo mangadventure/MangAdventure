@@ -23,7 +23,9 @@ def series(request, slug):
             'error_message': 'Sorry. This series is not yet available.',
             'error_status': 403
         }, status=403)
-    return render(request, 'series.html', {'series': _series})
+    marked = request.user.is_authenticated and \
+        request.user.bookmarks.filter(series=_series).exists()
+    return render(request, 'series.html', {'series': _series, 'marked': marked})
 
 
 def chapter_page(request, slug, vol, num, page):

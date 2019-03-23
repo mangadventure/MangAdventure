@@ -30,12 +30,8 @@
           'application/x-www-form-urlencoded; charset=UTF-8');
         xhr.onload = function () {
           if(xhr.status === 200) {
-            // TODO If the button itself knows the correct initial state
-            // just toggle instead of parsing JSON
-            btn.classList.remove("mi-bookmark-o");
-            btn.classList.remove("mi-bookmark");
-            btn.classList.add(
-              JSON.parse(xhr.responseText)['class']);
+            btn.classList.toggle("mi-bookmark-o");
+            btn.classList.toggle("mi-bookmark");
           }
         };
         var data = {

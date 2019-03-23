@@ -4,7 +4,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.messages import error, info as message
 from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse
 from allauth.account.models import EmailAddress
 from allauth.account.views import LogoutView
 from reader.models import Series
@@ -65,9 +65,6 @@ def bookmark(request):
     series = get_object_or_404(Series, slug=slug)
     try:
         request.user.bookmarks.get(series=series).delete()
-        icon_class = 'mi-bookmark-o'
     except Bookmark.DoesNotExist:
         request.user.bookmarks.create(user=request.user, series=series)
-        icon_class = 'mi-bookmark'
-
-    return JsonResponse({'class': icon_class})
+    return HttpResponse()

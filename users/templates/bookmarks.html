@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% load humanize %}
+{% block robots %}
+  <meta name="robots" content="nosnippet">
+{% endblock %}
+{% block title %}
+  <meta name="title" content="User bookmarks">
+  <meta name="twitter:title" content="User bookmarks ~ {{ config.NAME }}">
+  <meta property="og:title" content="User bookmarks ~ {{ config.NAME }}">
+  <title>{{ user }}'s Bookmarks ~ {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Bookmarks</h1>
+  <article id="bookmarks">
+    {% for release in releases %}
+        <section class="bookmark">
+          <img class="cover" src="{{ release.series.cover.url }}">
+          <div class="bookmark-release">
+            <h2 class="bookmark-series">
+              <a href="{{ release.series.get_absolute_url }}"
+                 title="{{ release.series }}">
+                {{ release.series }}
+              </a>
+            </h2>
+            {% with vol=release.volume num=release.number %}
+              <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
+                 {% if release.final %}class="end"{% endif %}>
+                Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ release.title }}
+              </a>
+            {% endwith %}
+            <span class="divider" title="{{ release.uploaded|naturaltime }}"></span>
+            <span class="chapter-date" title="{{ release.uploaded|naturaltime }}">
+              {{ release.uploaded|naturaltime }}
+            </span>
+          </div>
+        </section>
+        <span class="alter-bg separator"></span>
+    {% endfor %}
+  </article>
+{% endblock %}
+

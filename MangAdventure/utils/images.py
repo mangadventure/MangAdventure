@@ -32,6 +32,7 @@ def thumbnail(obj, max_size=100):
     buff = BytesIO()
     img.save(buff, format=img.format, quality=100)
     buff.seek(0)
+    obj.close()
     return InMemoryUploadedFile(
         buff, 'ImageField', obj.name, mime, getsizeof(buff), None
     )

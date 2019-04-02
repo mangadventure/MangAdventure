@@ -39,7 +39,7 @@ class Group(models.Model):
     def _increment(self):
         try:
             num = Group.objects.only('id').last().id + 1
-        except Group.DoesNotExist:
+        except (Group.DoesNotExist, AttributeError):
             num = 1
         return num
 

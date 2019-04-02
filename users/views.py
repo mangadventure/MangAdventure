@@ -3,10 +3,11 @@ from django.views.decorators.cache import cache_control
 from django.contrib.messages import error, info as message
 from django.db import IntegrityError
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from allauth.account.models import EmailAddress
 from allauth.account.views import LogoutView
-from .models import UserProfile
+from reader.models import Chapter
+from .models import UserProfile, Bookmark
 from .forms import UserProfileForm
 
 
@@ -54,4 +55,27 @@ def edit_user(request):
 class PostOnlyLogoutView(LogoutView):
     def get(self, *args, **kwargs):
         raise Http404
+
+
+@login_required
+def bookmarks(request):
+    uid = request.user.id
+    if request.method == 'POST':
+        sid = request.POST.get('series', 0)
+        try:
+            Bookmark.objects.get(user_id=uid, series_id=sid).delete()
+            return HttpResponse(status=204)
+        except Bookmark.DoesNotExist:
+            Bookmark.objects.create(user_id=uid, series_id=sid)
+            return HttpResponse('Created bookmark')
+    else:
+        series = Bookmark.objects.filter(
+            user_id=uid
+        ).values_list('series', flat=True)
+        chapters = Chapter.objects.filter(
+            series_id__in=series
+        ).order_by('-uploaded')
+        return render(request, 'bookmarks.html', {
+            'releases': chapters
+        })
 

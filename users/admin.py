@@ -10,6 +10,9 @@ from allauth.socialaccount.models import (
 class UserAdmin(admin.ModelAdmin):
     exclude = ['password', 'groups']
 
+    def has_add_permission(self, request):
+        return False
+
 
 class OAuthApp(SocialApp):
     class Meta:

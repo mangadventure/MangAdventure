@@ -1,9 +1,5 @@
 {% extends 'layout.html' %}
-{% load static custom_tags %}
-{% block head_extras %}
-  <script src="{% static 'scripts/bookmark.js' %}"
-          type="text/javascript" async></script>
-{% endblock %}
+{% load humanize %}
 {% block robots %}
   <meta name="robots" content="nosnippet">
 {% endblock %}
@@ -15,33 +11,30 @@
 {% endblock %}
 {% block content %}
   <h1 class="text-shadow alter-bg">Bookmarks</h1>
-  <article id="user-bookmarks">
-    {% for bookmark in user.bookmarks.all %}
-      <section class="bookmark">
-        <h2 class="series-title">
-          <a href="{{ bookmark.series.get_absolute_url }}"
-             title="{{ bookmark.series }}">
-            {{ bookmark.series.title }}
-          </a>
-        </h2>
-        <div class="cover-container">
-          <img src="{{ MEDIA_URL|add:bookmark.series.cover.name }}"
-               alt="{{ bookmark.series }} Cover" class="cover">
-        </div>
-        <div class="series-info">
-          <strong>Latest Chapter:</strong>
-          {% with bookmark.series.chapters|order_by:'-uploaded'|first as chapter %}
-          <a href="{{ chapter.get_absolute_url }}"
-             {% if chapter.final %}class="end"{% endif %}
-             title="{{ chapter.title }}">
-            {% if vol > 0 %} Vol. {{ vol }},{% endif %}
-            Ch. {{ num|floatformat }}: {{ chapter.title }}
-          </a>
-          {% endwith %}
-        </div>
-        <a class="mi mi-bookmark bookmark-btn"
-         data-series="{{ bookmark.series.slug }}" href="#"></a>
-      </section>
+  <article id="bookmarks">
+    {% for release in releases %}
+        <section class="bookmark">
+          <img class="cover" src="{{ release.series.cover.url }}">
+          <div class="bookmark-release">
+            <h2 class="bookmark-series">
+              <a href="{{ release.series.get_absolute_url }}"
+                 title="{{ release.series }}">
+                {{ release.series }}
+              </a>
+            </h2>
+            {% with vol=release.volume num=release.number %}
+              <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
+                 {% if release.final %}class="end"{% endif %}>
+                Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ release.title }}
+              </a>
+            {% endwith %}
+            <span class="divider" title="{{ release.uploaded|naturaltime }}"></span>
+            <span class="chapter-date" title="{{ release.uploaded|naturaltime }}">
+              {{ release.uploaded|naturaltime }}
+            </span>
+          </div>
+        </section>
+        <span class="alter-bg separator"></span>
     {% endfor %}
   </article>
 {% endblock %}

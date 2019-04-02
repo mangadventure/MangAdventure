@@ -1,6 +1,15 @@
 Changelog
 ---------
 
+v0.5.1
+^^^^^^
+
+* Fixed group addition edge case.
+* Fixed chapter cover images not being closed.
+* Implemented series bookmarking.
+* Added bookmarks feed page.
+* Removed permission to add users from admin interface.
+
 v0.5.0
 ^^^^^^
 

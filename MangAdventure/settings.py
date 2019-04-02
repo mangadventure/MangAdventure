@@ -421,6 +421,9 @@ try:
     # Sets the default-src directive.
     CSP_DEFAULT_SRC = ("'none'",)
 
+    # Sets the connect-src directive.
+    CSP_CONNECT_SRC = ("'self'",)
+
     # Sets the script-src directive.
     CSP_SCRIPT_SRC = ("'self'",)
 
@@ -439,6 +442,9 @@ try:
 
     # Sets the object-src directive.
     CSP_OBJECT_SRC = ("'self'",)
+
+    # Sets the form-action directive.
+    CSP_FORM_ACTION = ("'self'",)
 
     # Sets the frame-src directive.
     CSP_FRAME_SRC = ("'self'",)

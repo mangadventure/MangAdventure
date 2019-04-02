@@ -35,7 +35,7 @@ v0.5.x
 
 | |c| User registration:
 |    |c| Allow Google/Twitter/Reddit sign-in.
-|    |u| Allow users to bookmark series.
+|    |c| Allow users to bookmark series.
 |    |c| Password reset form.
 | |u| Comments (custom/Disqus/Commento).
 | |u| Privacy page & cookie consent.

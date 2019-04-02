@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% load static humanize custom_tags %}
 {% block head_extras %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <script src="{% static 'scripts/bookmark.js' %}"
           type="text/javascript" async></script>
 {% endblock %}
@@ -33,6 +34,15 @@
   <article id="series">
     <img src="{{ MEDIA_URL|urljoin:series.cover.name }}"
          alt="{{ series }} Cover" class="cover">
+    {% if user.is_authenticated %}
+      {% if marked %}
+        <i class="mi mi-bookmark bookmark-btn"
+           title="Unbookmark" data-series="{{ series.id }}"></i>
+      {% else %}
+        <i class="mi mi-bookmark-o bookmark-btn"
+           title="Bookmark" data-series="{{ series.id }}"></i>
+      {% endif %}
+    {% endif %}
     <div id="series-info">
       {% with aliases=series.aliases.all %}
         {% if aliases %}
@@ -100,10 +110,6 @@
         <h3 class="alter-fg">Description:</h3>
         <div>{{ series.description|linebreaks }}</div>
       </div>
-    {% endif %}
-    {% if user.is_authenticated %}
-      <a class="mi {{ marked|yesno:"mi-bookmark,mi-bookmark-o" }} bookmark-btn"
-         data-series="{{ series.slug }}" href="#"></a>
     {% endif %}
     <div id="series-chapters">
       <h3 class="alter-fg">Chapters:</h3>

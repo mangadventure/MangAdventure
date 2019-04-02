@@ -126,6 +126,7 @@ thead {
     a {
       color: inherit;
       text-decoration: unset;
+      line-height: 1.15em;
     }
     &-title { padding: 4px }
     .logout-btn {
@@ -266,9 +267,16 @@ thead {
   }
   .cover {
     position: relative;
-    left: -5px;
+    left: -0.3em;
     float: left;
     @include border-radius();
+  }
+  .bookmark-btn {
+    color: $alter-fg;
+    width: 0;
+    margin-right: 0.75em;
+    font-size: 1.25em;
+    cursor: pointer;
   }
   &-aliases, &-authors, &-artists, &-categories {
     max-width: 55vw;
@@ -395,8 +403,25 @@ thead {
       @include border($alter-fg, 2px, $suffix: '-right');
     }
   }
-  td {
-    @include border($alter-fg, 2px, $suffix: '-top');
+  td { @include border($alter-fg, 2px, $suffix: '-top'); }
+}
+
+#bookmarks {
+  .bookmark {
+    display: flex;
+    padding: 0.5em;
+    @include flex-wrap();
+    &-release {
+      display: block;
+      max-width: 60vw;
+      margin-left: 0.2em;
+    }
+    .cover {
+      display: block;
+      max-width: 30vw;
+      width: auto;
+      height: 6em;
+    }
   }
 }
 
@@ -733,7 +758,6 @@ i[data-pcount='100+'] { padding: 0 0.5em }
   .ident { display: none }
 }
 
-
 @media screen and (max-width: 436px) {
   article { margin-top: 0 }
   #content {
@@ -842,6 +866,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       }
       &:first-of-type { padding-top: 0.2em }
     }
+    .bookmark-btn { margin: 0.2em 0 -0.2em 50% }
     div.alias, div.author, div.artist, div.category { text-indent: 0 }
   }
   #search {

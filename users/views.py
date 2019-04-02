@@ -1,13 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
-from django.views.decorators.http import require_POST
 from django.contrib.messages import error, info as message
 from django.db import IntegrityError
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.http import Http404, HttpResponse
 from allauth.account.models import EmailAddress
 from allauth.account.views import LogoutView
-from reader.models import Series
+from reader.models import Chapter
 from .models import UserProfile, Bookmark
 from .forms import UserProfileForm
 
@@ -59,17 +58,24 @@ class PostOnlyLogoutView(LogoutView):
 
 
 @login_required
-@require_POST
-def bookmark(request):
-    slug = request.POST.get('slug', None)
-    series = get_object_or_404(Series, slug=slug)
-    try:
-        request.user.bookmarks.get(series=series).delete()
-    except Bookmark.DoesNotExist:
-        request.user.bookmarks.create(user=request.user, series=series)
-    return HttpResponse()
-
-
-@login_required
 def bookmarks(request):
-    return render(request, 'bookmarks.html')
+    uid = request.user.id
+    if request.method == 'POST':
+        sid = request.POST.get('series', 0)
+        try:
+            Bookmark.objects.get(user_id=uid, series_id=sid).delete()
+            return HttpResponse(status=204)
+        except Bookmark.DoesNotExist:
+            Bookmark.objects.create(user_id=uid, series_id=sid)
+            return HttpResponse('Created bookmark')
+    else:
+        series = Bookmark.objects.filter(
+            user_id=uid
+        ).values_list('series', flat=True)
+        chapters = Chapter.objects.filter(
+            series_id__in=series
+        ).order_by('-uploaded')
+        return render(request, 'bookmarks.html', {
+            'releases': chapters
+        })
+

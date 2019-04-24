@@ -1,4 +1,5 @@
 # MangAdventure [![release](https://img.shields.io/github/release/mangadventure/MangAdventure/all.svg)](https://github.com/mangadventure/MangAdventure/releases)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmangadventure%2FMangAdventure.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmangadventure%2FMangAdventure?ref=badge_shield)
 
 MangAdventure, aka MangADV, is a simple manga hosting CMS.
 
@@ -47,3 +48,6 @@ You shouldn't use the development server during production.
 [MIT](LICENSE)
 
 
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmangadventure%2FMangAdventure.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmangadventure%2FMangAdventure?ref=badge_large)

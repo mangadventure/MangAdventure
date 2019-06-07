@@ -1,5 +1,5 @@
-from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.conf import settings
 from constance import config
@@ -13,11 +13,9 @@ def _error_context(msg, status=500):
 
 
 def index(request):
-    return render(request, 'index.html', {
-        'latest_releases': Chapter.objects
-                  .prefetch_related('groups', 'series')
-                  .order_by('-uploaded')[:config.MAX_RELEASES:1]
-    })
+    latest = Chapter.objects.prefetch_related('groups', 'series') \
+        .order_by('-uploaded')[:config.MAX_RELEASES:1]
+    return render(request, 'index.html', {'latest_releases': latest})
 
 
 def search(request):

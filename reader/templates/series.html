@@ -1,9 +1,11 @@
 {% extends 'layout.html' %}
 {% load static humanize custom_tags %}
 {% block head_extras %}
-  <meta name="csrf-token" content="{{ csrf_token }}">
-  <script src="{% static 'scripts/bookmark.js' %}"
-          type="text/javascript" async></script>
+  {% if request.user.is_authenticated %}
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <script src="{% static 'scripts/bookmark.js' %}"
+            type="application/javascript" async></script>
+  {% endif %}
 {% endblock %}
 {% block keywords %}
   {% with tags=series.categories.all|join:',' %}

@@ -35,7 +35,7 @@ Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.5.0#egg=MangAdventure"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.5.2#egg=MangAdventure"
 
 MangAdventure also optionally provides `Content-Security-Policy <https://mdn.io/CSP>`_
 configuration via the `django-csp <https://github.com/mozilla/django-csp>`_ package.
@@ -75,13 +75,12 @@ Create an administrator account
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You will be prompted for a name, email, and password.
-This account is needed to access the ``/admin`` page.
+This account is needed to access the ``/admin-panel/`` page.
 You can create multiple administrator accounts.
 
 .. code-block:: shell
 
    mangadventure createsuperuser
-
 
 Migrate from FoolSlide2
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -101,7 +100,7 @@ Migrate from FoolSlide2
 
 First, export the data from FoolSlide2:
 
-* Visit your site's phpMyAdmin page.
+* Visit your site's ``phpMyAdmin`` page.
 * Click on your FoolSlide2 database.
 * Go to the ``Export`` tab.
 * In ``Format:`` select ``XML`` and click ``Go``.

@@ -1,6 +1,21 @@
 Changelog
 ---------
 
+v0.5.2
+^^^^^^
+
+* Moved ``/admin`` page to ``/admin-panel``
+* Fixed missing fields in series API response
+* Disabled autocomplete in password inputs
+* Added ``PreloadMiddleware`` for HTTP/2 push
+* Added more blocked user agents & image types
+* Replaced ``JsonVaryAllowResponse`` with ``require_methods_api``
+* Moved ``redirects`` & ``sites`` admin pages under ``constance``
+* Fixed ``configure`` editor command
+* Updated ``LICENSE`` info
+* Added ``CODE_OF_CONDUCT.md`` & ``SECURITY.md``
+* Added ``django-debug-toolbar`` to dev requirements
+
 v0.5.1
 ^^^^^^
 

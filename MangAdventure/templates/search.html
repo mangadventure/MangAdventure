@@ -3,9 +3,9 @@
 {% block head_extras %}
   <meta name="totalResults" content="{{ total }}">
   <script src="{% static 'vendor/tablesort.min.js' %}"
-          type="text/javascript"></script>
+          type="application/javascript" async></script>
   <script src="{% static 'scripts/search.js' %}"
-          type="text/javascript" async></script>
+          type="application/javascript" async></script>
 {% endblock %}
 {% block title %}
   <meta name="title" content="Search {{ config.NAME }}">

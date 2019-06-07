@@ -1,6 +1,7 @@
 BOTS = [
     r'(auto)?emailspider',
     r'(Contact|LMQueue)Bot',
+    r'^$',  # empty UA
     r'^\w?(Browse|Surf|Eval)',
     r'^\w?Surf15a',
     r'Advanced Email Extractor',
@@ -10,7 +11,6 @@ BOTS = [
     r'Boston Project',
     r'bwh3_user_agent',
     r'China Local Browse',
-    r'ContactBot',
     r'ContentSmartz',
     r'DataCha0s',
     r'del\.icio\.us-thumbnails',
@@ -44,6 +44,7 @@ BOTS = [
     r'MVAClient',
     r'NameOfAgent \(CMS Spider\)',
     r'NASA Search',
+    r'netcraft\.com',
     r'NEWT ActiveX',
     r'Nsauditor',
     r'Port Huron Labs',
@@ -52,6 +53,7 @@ BOTS = [
     r'psycheclone',
     r'scan4mail',
     r'searchbot',
+    r'SemrushBot',
     r'ShablastBot',
     r'SiteSucker',
     r'snap\.com beta crawler',

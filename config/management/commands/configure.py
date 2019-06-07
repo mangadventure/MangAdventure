@@ -40,7 +40,7 @@ class Command(BaseCommand):
     def _get_editor(self):
         system = __import__('platform').system()
         if system == 'Linux':
-            editor = 'xdg-open'  # could also use 'editor'
+            editor = 'editor'
         elif system.startswith(('Windows', 'CYGWIN_NT')):
             editor = 'start'
         elif system == 'Darwin':
@@ -60,13 +60,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         editor = options.get('editor') or \
-                 env.get('EDITOR', self._get_editor())
+            env.get('EDITOR', self._get_editor())
         file_path = path.join(
             settings.BASE_DIR, 'MangAdventure', 'user_settings.py'
         )
         if not path.exists(file_path):
             with open(file_path, 'w+') as f:
                 f.write(USER_SETTINGS)
-        self.stdout.write(self.style.SUCCESS('Opening your editor...'))
-        call([editor, file_path])
+        self.stdout.write('Opening your editor...')
+        exit(call((editor, file_path)))
 

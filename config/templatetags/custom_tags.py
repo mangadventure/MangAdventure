@@ -33,19 +33,22 @@ def get_type(link):
             return response.info().get_content_type()
     except Exception:
         return {
-            '.png': 'image/png',
-            '.jpg': 'image/jpeg',
-            '.jpeg': 'image/jpeg',
-            '.webp': 'image/webp',
-            '.svg': 'image/svg+xml',
+            '.apng': 'image/png',
+            '.bmp': 'image/bmp',
+            '.gif': 'image/gif',
             '.ico': 'image/x-icon',
             '.icon': 'image/x-icon',
-            '.apng': 'image/apng',
-            '.gif': 'image/gif',
-            '.bmp': 'image/bmp',
+            '.j2k': 'image/jp2',
+            '.jp2': 'image/jp2',
+            '.jpeg': 'image/jpeg',
+            '.jpf': 'image/jpx',
+            '.jpg': 'image/jpeg',
+            '.jpm': 'image/jpx',
+            '.jpx': 'image/jpx',
+            '.png': 'image/png',
+            '.svg': 'image/svg+xml',
             '.tif': 'image/tiff',
             '.tiff': 'image/tiff',
-            '.pic': 'image/pict',
-            '.pict': 'image/pict'
+            '.webp': 'image/webp'
         }.get(splitext(link.lower())[-1], 'image/jpeg')
 

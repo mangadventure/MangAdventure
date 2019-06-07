@@ -68,7 +68,7 @@
     {% block stylesheets %}
       {% cache 604800 styles %}
         <link href="{% static 'styles/style.scss'|compile %}"
-              rel="stylesheet" type="text/css">
+              rel="preload stylesheet" as="style" type="text/css">
         <link href="{% static 'extra/style.scss'|compile %}"
               rel="stylesheet" type="text/css">
         <noscript>

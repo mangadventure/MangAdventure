@@ -34,7 +34,7 @@
 {% block stylesheets %}
   {{ block.super }}
   <link href="{% static 'styles/chapter.scss'|compile %}"
-        rel="stylesheet" type="text/css">
+        rel="stylesheet preload" type="text/css" as="style">
 {% endblock %}
 {% block title %}
   <meta name="title" content="{{ curr_chapter.title }}">
@@ -128,10 +128,12 @@
       </section>
     {% endwith %}
     <script src="{% static 'scripts/chapter.js' %}"
-            type="text/javascript"></script>
+            rel="preload" as="script" type="application/javascript">
+    </script>
     <noscript>
       <img src="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
-           alt="Page {{ curr_page.number }}" class="chapter-page">
+           rel="preload" as="image" class="chapter-page"
+           alt="Page {{ curr_page.number }}">
     </noscript>
     <section id="controls" class="no-display">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}

@@ -9,4 +9,5 @@ API
    authors/index
    artists/index
    groups/index
+   categories
 

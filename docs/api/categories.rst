@@ -13,7 +13,7 @@ Example request
    curl -i http://example.com/api/v1/categories \
         -H 'If-None-Match: be534a1d37be8db1c3c57177e1305f6c'
 
-.. include:: ../includes/headers-etag.rst
+.. include:: includes/headers-etag.rst
    :end-before: Response
 
 Example response

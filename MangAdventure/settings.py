@@ -55,8 +55,6 @@ DEBUG = (env.get('MANGADV_DEBUG', 'false').lower() == 'true')
 
 # A list of host/domain names that this site can serve.
 ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '[::1]']
-if DEBUG:
-    ALLOWED_HOSTS += ['192.168.1.%s' % i for i in range(2, 256)]
 SITE_DOMAIN = get_config('SITE_DOMAIN')
 if SITE_DOMAIN:
     # From https://stackoverflow.com/questions/9626535/#36609868
@@ -109,13 +107,14 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.http.ConditionalGetMiddleware',
+    'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     'MangAdventure.middleware.XPBMiddleware',
+    'MangAdventure.middleware.PreloadMiddleware',
 ]
 
 # A string representing the full Python import path to the root URLconf.
@@ -129,8 +128,6 @@ CONTEXT_PROCESSORS = [
     'django.contrib.messages.context_processors.messages',
     'config.context_processors.extra_settings',
 ]
-if DEBUG:
-    CONTEXT_PROCESSORS += ['django.template.context_processors.debug']
 
 # A list containing the settings for all template engines to be used.
 TEMPLATES = [{
@@ -296,8 +293,8 @@ TIME_ZONE = get_config('TIME_ZONE', 'UTC')
 # A list of validators that are used to check the strength of users' passwords.
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.%sValidator' % n}
-    for n in ['UserAttributeSimilarity', 'MinimumLength',
-              'CommonPassword', 'NumericPassword']
+    for n in ('UserAttributeSimilarity', 'MinimumLength',
+              'CommonPassword', 'NumericPassword')
 ]
 
 # A list of authentication backends to use when authenticating a user.
@@ -353,6 +350,9 @@ LOGIN_URL = '/user/login'
 # The age of session cookies (1 month).
 SESSION_COOKIE_AGE = 2592000
 
+# Use HttpOnly flag on the session cookie.
+SESSION_COOKIE_HTTPONLY = True
+
 # Don't expire the session when the user closes their browser.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
@@ -385,7 +385,7 @@ if not all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
 # List of User-Agents that are not allowed to visit any page.
 DISALLOWED_USER_AGENTS = [regex(bot, IGNORECASE) for bot in BOTS]
 
-# Use HttpOnly flag on the CSRF cookie
+# Use HttpOnly flag on the CSRF cookie.
 CSRF_COOKIE_HTTP_ONLY = True
 
 env.setdefault('HTTPS', get_config('HTTPS', 'on'))
@@ -456,7 +456,7 @@ try:
     CSP_BASE_URI = ("'none'",)
 
     # URLs beginning with any of these will not get the CSP headers.
-    CSP_EXCLUDE_URL_PREFIXES = ('/api', '/admin')
+    CSP_EXCLUDE_URL_PREFIXES = ('/api', '/admin-panel')
 except ImportError:
     pass
 
@@ -581,6 +581,21 @@ CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 # The URL to the TinyMCE JS file.
 TINYMCE_JS = 'https://cdnjs.cloudflare.com/ajax/' \
              'libs/tinymce/4.9.3/tinymce.min.js'
+
+###############
+#    Debug    #
+###############
+
+if DEBUG:
+    INTERNAL_IPS = env.get('MANGADV_IPS', '').split(',') + ['127.0.0.1']
+    ALLOWED_HOSTS += ['192.168.1.%s' % i for i in range(2, 256)]
+    try:
+        __import__('debug_toolbar')
+        INSTALLED_APPS.append('debug_toolbar')
+        MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+        CONTEXT_PROCESSORS.append('django.template.context_processors.debug')
+    except ImportError:
+        pass
 
 del BOTS, IGNORECASE, VERSION, CONTEXT_PROCESSORS
 

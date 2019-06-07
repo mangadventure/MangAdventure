@@ -13,7 +13,7 @@ django.setup()
 
 # -- Project information --
 
-import MangAdventure
+import MangAdventure  # noqa: E402
 
 project = MangAdventure.__name__
 author = MangAdventure.__author__
@@ -40,7 +40,8 @@ pygments_style = 'manni'
 
 # -- Custom CSS --
 
-def setup(app): app.add_stylesheet('css/style.css')
+def setup(app):
+    app.add_stylesheet('css/style.css')
 
 
 # -- Options for HTML output --
@@ -48,10 +49,12 @@ def setup(app): app.add_stylesheet('css/style.css')
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_theme_options = {
+    'logo_only': True,
     'display_version': False,
     'collapse_navigation': True,
 }
 html_static_path = ['_static']
+html_logo = '_static/logo.png'
 # html_sidebars = {}
 
 

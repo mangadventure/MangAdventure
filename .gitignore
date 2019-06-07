@@ -42,10 +42,20 @@ _templates/
 *.swp
 *~
 
+# Server stuff
+.htaccess
+*.log
+*.ini
+*.pid
+*.sock
+*.gz
+*.br
+
 # MangAdventure stuff
 user_settings.py
 config.ini
 media/
 static/extra/style.scss
 static/styles/_variables.scss
+static/debug_toolbar/
 

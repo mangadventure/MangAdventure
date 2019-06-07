@@ -1,14 +1,14 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import last_modified
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from api.response import require_methods_api, JsonResponse, JsonError
 from reader.models import Chapter, Series, Author, Artist, Category
-from api.response import JsonVaryAllowResponse, JsonError
 from MangAdventure.utils.search import get_response
 from groups.models import Group, Member
 
 
-def _chapter_response(request, _chapter, json=True):
+def _chapter_response(request, _chapter):
     url = request.build_absolute_uri(_chapter.get_absolute_url())
     response = {
         'title': _chapter.title,
@@ -26,22 +26,21 @@ def _chapter_response(request, _chapter, json=True):
             'id': _group.id,
             'name': _group.name,
         })
-    return JsonVaryAllowResponse(response) if json else response
+    return response
 
 
-def _volume_response(request, _series, vol, json=True):
+def _volume_response(request, _series, vol):
     response = {}
     chapters = _series.chapters.filter(volume=vol)
     if chapters.count() == 0:
         return JsonError('Not found', 404)
     for _chapter in chapters:
-        response['%g' % _chapter.number] = _chapter_response(
-            request, _chapter, json=False
-        )
-    return JsonVaryAllowResponse(response) if json else response
+        response['%g' % _chapter.number] = \
+            _chapter_response(request, _chapter)
+    return response
 
 
-def _series_response(request, _series, json=True):
+def _series_response(request, _series):
     response = {
         'slug': _series.slug,
         'title': _series.title,
@@ -57,62 +56,51 @@ def _series_response(request, _series, json=True):
     }
     for _chapter in _series.chapters.all():
         if _chapter.volume not in response['volumes']:
-            response['volumes'][_chapter.volume] = _volume_response(
-                request, _series, _chapter.volume, json=False
-            )
+            response['volumes'][_chapter.volume] = \
+                _volume_response(request, _series, _chapter.volume)
     for _author in _series.authors.all():
-        names = [_author.name]
-        for alias in _author.aliases.all():
-            names.append(alias.alias)
+        names = [a.alias for a in _author.aliases.all()]
+        names.insert(0, _author.name)
         response['authors'].append(names)
     for _artist in _series.artists.all():
-        names = [_artist.name]
-        for alias in _artist.aliases.all():
-            names.append(alias.alias)
+        names = [a.alias for a in _artist.aliases.all()]
+        names.insert(0, _artist.name)
         response['artists'].append(names)
     for _category in _series.categories.all():
         response['categories'].append({
             'name': _category.name,
             'description': _category.description
         })
-    return JsonVaryAllowResponse(response) if json else response
+    return response
 
 
-def _person_response(request, _person, json=True):
+def _person_response(request, _person):
     response = {
         'id': _person.id,
         'name': _person.name,
-        'aliases': [],
+        'aliases': [a.alias for a in _person.aliases.all()],
         'series': [],
     }
-    for alias in _person.aliases.all():
-        response['aliases'].append(alias.alias)
     for _series in _person.series_set.all():
-        aliases = []
-        for alias in _series.aliases.all():
-            aliases.append(alias.alias)
         response['series'].append({
             'slug': _series.slug,
             'title': _series.title,
-            'aliases': aliases,
+            'aliases': [a.alias for a in _series.aliases.all()],
         })
-    return JsonVaryAllowResponse(response) if json else response
+    return response
 
 
-def _member_response(request, _member, json=True):
-    response = {
+def _member_response(request, _member):
+    return {
         'id': _member.id,
         'name': _member.name,
-        'roles': [],
+        'roles': [r.get_role_display() for r in _member.roles.all()],
         'twitter': _member.twitter,
         'discord': _member.discord,
     }
-    for role in _member.roles.all():
-        response['roles'].append(role.get_role_display())
-    return JsonVaryAllowResponse(response) if json else response
 
 
-def _group_response(request, _group, json=True):
+def _group_response(request, _group):
     logo = ''
     if _group.logo:
         logo = request.build_absolute_uri(_group.logo.url)
@@ -127,30 +115,29 @@ def _group_response(request, _group, json=True):
         'members': [],
         'series': [],
     }
-    for role in _group.roles.values('member_id').distinct():
-        _member = Member.objects.get(id=role['member_id'])
-        response['members'].append(
-            _member_response(request, _member, json=False)
-        )
+    member_ids = _group.roles.values_list(
+        'member_id', flat=True
+    ).distinct()
+    for m_id in member_ids:
+        response['members'].append(_member_response(
+            request, Member.objects.get(id=m_id)
+        ))
     _series = []
     for _chapter in _group.releases.all():
-        if _chapter.series.title not in _series:
+        if _chapter.series.id not in _series:
             response['series'].append({
                 'slug': _chapter.series.slug,
                 'title': _chapter.series.title,
-                'aliases': [],
+                'aliases': [a.alias for a in _chapter.series.aliases.all()]
             })
-            for alias in _chapter.series.aliases.all():
-                response['series'][-1]['aliases'].append(alias.alias)
-            _series.append(_chapter.series.title)
-    return JsonVaryAllowResponse(response) if json else response
+            _series.append(_chapter.series.id)
+    return response
 
 
 @csrf_exempt
+@require_methods_api()
 @last_modified(lambda request: Series.objects.latest().modified)
 def all_releases(request):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
     _series = Series.objects.prefetch_related('chapters').all()
     response = []
     for s in _series:
@@ -172,7 +159,7 @@ def all_releases(request):
         except ObjectDoesNotExist:
             pass
         response.append(series_res)
-    return JsonVaryAllowResponse(response, safe=False)
+    return JsonResponse(response, safe=False)
 
 
 def _latest(request, slug=None, vol=None, num=None):
@@ -193,34 +180,31 @@ def _latest(request, slug=None, vol=None, num=None):
 
 
 @csrf_exempt
+@require_methods_api()
 @last_modified(_latest)
 def all_series(request):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
-    response = []
-    for s in get_response(request):
-        response.append(_series_response(request, s, json=False))
-    return JsonVaryAllowResponse(response, safe=False)
+    response = [
+        _series_response(request, s)
+        for s in get_response(request)
+    ]
+    return JsonResponse(response, safe=False)
 
 
 @csrf_exempt
+@require_methods_api()
 @last_modified(_latest)
 def series(request, slug):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
-    prefetch = ('aliases', 'authors', 'artists', 'categories')
     try:
-        _series = Series.objects.prefetch_related(*prefetch).get(slug=slug)
+        _series = Series.objects.get(slug=slug)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    return _series_response(request, _series)
+    return JsonResponse(_series_response(request, _series))
 
 
 @csrf_exempt
+@require_methods_api()
 @last_modified(_latest)
 def volume(request, slug, vol):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
     try:
         vol = int(vol)
         if vol < 0:
@@ -231,14 +215,13 @@ def volume(request, slug, vol):
         return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    return _volume_response(request, _series, vol)
+    return JsonResponse(_volume_response(request, _series, vol))
 
 
 @csrf_exempt
+@require_methods_api()
 @last_modified(_latest)
 def chapter(request, slug, vol, num):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
     try:
         vol, num = int(vol), float(num)
         if vol < 0 or num < 0:
@@ -249,7 +232,7 @@ def chapter(request, slug, vol, num):
         return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    return _chapter_response(request, _chapter)
+    return JsonResponse(_chapter_response(request, _chapter))
 
 
 def _is_author(request):
@@ -257,22 +240,18 @@ def _is_author(request):
 
 
 @csrf_exempt
+@require_methods_api()
 def all_people(request):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
     prefetch = ('aliases', 'series_set__aliases')
     _type = Author if _is_author(request) else Artist
     people = _type.objects.prefetch_related(*prefetch).all()
-    response = []
-    for _person in people:
-        response.append(_person_response(request, _person, json=False))
-    return JsonVaryAllowResponse(response, safe=False)
+    response = [_person_response(request, p) for p in people]
+    return JsonResponse(response, safe=False)
 
 
 @csrf_exempt
+@require_methods_api()
 def person(request, p_id):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
     prefetch = ('aliases', 'series_set__aliases')
     try:
         p_id = int(p_id)
@@ -284,25 +263,21 @@ def person(request, p_id):
         return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    return _person_response(request, _person)
+    return JsonResponse(_person_response(request, _person))
 
 
 @csrf_exempt
+@require_methods_api()
 def all_groups(request):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
     prefetch = ('releases__series', 'roles__member')
     _groups = Group.objects.prefetch_related(*prefetch).all()
-    response = []
-    for g in _groups:
-        response.append(_group_response(request, g, json=False))
-    return JsonVaryAllowResponse(response, safe=False)
+    response = [_group_response(request, g) for g in _groups]
+    return JsonResponse(response, safe=False)
 
 
 @csrf_exempt
+@require_methods_api()
 def group(request, g_id):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
     prefetch = ('releases__series', 'roles__member')
     try:
         g_id = int(g_id)
@@ -313,20 +288,18 @@ def group(request, g_id):
         return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    return _group_response(request, _group)
+    return JsonResponse(_group_response(request, _group))
 
 
 @csrf_exempt
+@require_methods_api()
 def categories(request):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
     values = list(Category.objects.values())
-    return JsonVaryAllowResponse(values, safe=False)
+    return JsonResponse(values, safe=False)
 
 
 @csrf_exempt
+@require_methods_api()
 def invalid_endpoint(request):
-    if request.method not in ['GET', 'HEAD']:
-        return JsonError('Method not allowed', 405)
     return JsonError('Invalid API endpoint', 501)
 

@@ -1,8 +1,9 @@
+from django.contrib.messages import get_messages, add_message
 from django.contrib.flatpages.admin import FlatPageAdmin
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.flatpages.forms import FlatpageForm
+from django.contrib import admin, sites, redirects
 from django.forms import ModelForm
-from django.contrib import admin
 from constance.admin import Config, ConstanceAdmin
 from tinymce.widgets import TinyMCE
 
@@ -37,9 +38,6 @@ class InfoPageAdmin(FlatPageAdmin):
     change_list_form = ModelForm
     form = InfoPageForm
     list_filter = []
-    fieldsets = [
-        (None, {'fields': ('url', 'title', 'content')}),
-    ]
 
     def get_readonly_fields(self, request, obj=None):
         return ['url']
@@ -56,7 +54,35 @@ class InfoPage(FlatPage):
         proxy = True
         auto_created = True
         app_label = 'constance'
-        verbose_name = 'Info Page'
+        verbose_name = 'info page'
+
+
+class Site(sites.models.Site):
+    class Meta:
+        proxy = True
+        auto_created = True
+        app_label = 'constance'
+
+
+class SiteAdmin(sites.admin.SiteAdmin):
+    change_list_template = 'admin/change_list.html'
+    change_list_form = ModelForm
+
+    def has_delete_permission(self, request, obj=None):
+        return getattr(obj, 'pk', 0) != 1 and \
+            super(SiteAdmin, self).has_delete_permission(request, obj)
+
+
+class Redirect(redirects.models.Redirect):
+    class Meta:
+        proxy = True
+        auto_created = True
+        app_label = 'constance'
+
+
+class RedirectAdmin(redirects.admin.RedirectAdmin):
+    change_list_template = 'admin/change_list.html'
+    change_list_form = ModelForm
 
 
 class Settings(Config):
@@ -66,7 +92,13 @@ class Settings(Config):
     _meta = Meta()
 
 
-admin.site.unregister([FlatPage, Config])
-admin.site.register([Settings], ConstanceAdmin)
+admin.site.unregister([
+    FlatPage, Config,
+    sites.models.Site,
+    redirects.models.Redirect
+])
+admin.site.register(Site, SiteAdmin)
+admin.site.register(Redirect, RedirectAdmin)
 admin.site.register(InfoPage, InfoPageAdmin)
+admin.site.register([Settings], ConstanceAdmin)
 

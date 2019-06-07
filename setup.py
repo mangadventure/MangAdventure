@@ -27,6 +27,8 @@ setup(
     extras_require={
         'dev': [
             'sphinx',
+            'sphinx-rtd-theme',
+            'django-debug-toolbar',
         ],
         'csp': 'django-csp',
         'uwsgi': 'uwsgi',

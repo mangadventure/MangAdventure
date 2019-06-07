@@ -36,7 +36,8 @@
         <div class="field">
           <label for="password">{{ form.password.label }}:</label>
           <input placeholder="{{ form.password.field.widget.attrs.placeholder }}"
-                 type="password" name="password" id="password" class="input" required>
+                 type="password" name="password" id="password"
+                 class="input" autocomplete="off" required>
           {% for error in form.password.errors %}
             <div class="error">{{ error|escape }}</div>
           {% endfor %}

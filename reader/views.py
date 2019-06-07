@@ -5,10 +5,8 @@ from .models import Chapter, Series
 
 
 def directory(request):
-    return render(request, 'directory.html', {
-        'all_series':
-            Series.objects.prefetch_related('chapters').order_by('title')
-    })
+    _series = Series.objects.prefetch_related('chapters').order_by('title')
+    return render(request, 'directory.html', {'all_series': _series})
 
 
 def series(request, slug):

@@ -1,4 +1,4 @@
-<!-- Please check https://github.com/evangelos-ch/MangAdventure/issues/new/choose first. -->
+<!-- Please check https://github.com/mangadventure/MangAdventure/issues/new/choose first. -->
 <!-- If your issue doesn't fall into one of those categories, proceed here. -->
 
 ## Description

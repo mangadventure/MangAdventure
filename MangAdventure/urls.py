@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'^', include('config.urls')),
     url(r'^search/$', search, name='search'),
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin-panel/', admin.site.urls),
     url(r'^reader/', include('reader.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^groups/', include('groups.urls')),
@@ -26,6 +26,11 @@ if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
     )
+    try:
+        from debug_toolbar import urls as debug_urls
+        urlpatterns.append(url(r'^__debug__/', include(debug_urls)))
+    except ImportError:
+        pass
 
 handler404 = 'MangAdventure.views.handler404'
 handler500 = 'MangAdventure.views.handler500'

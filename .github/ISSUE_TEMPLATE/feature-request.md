@@ -22,4 +22,3 @@ about: Do you want something changed or implemented?
 * Python version:
 * Web server and version:
 * Browser type and version:
-

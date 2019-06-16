@@ -12,15 +12,16 @@ db.sqlite3
 *.pyc
 
 # Environment stuff
-.env/
 .venv/
 env/
 venv/
 .python-version
+.env
 
 # Setuptools stuff
 build/
 dist/
+.eggs/
 PKG-INFO
 *.egg-info
 *.egg-link
@@ -58,4 +59,3 @@ media/
 static/extra/style.scss
 static/styles/_variables.scss
 static/debug_toolbar/
-

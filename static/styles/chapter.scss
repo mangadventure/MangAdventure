@@ -7,13 +7,6 @@
 }
 
 #chapter {
-  #placeholder {
-    width: 100%;
-    display: flex;
-    cursor: wait;
-    border: 3px solid $alter-bg;
-    border-radius: 5px;
-  }
   .chapter-page {
     display: block;
     width: auto;
@@ -25,12 +18,12 @@
   }
   .chapter-list {
     float: left;
-    a {
+    .dropdown-element {
       display: inline-block;
       max-width: 50vw;
       @include truncate();
     }
-    ul {
+    .dropdown-list {
       left: -1px;
       min-width: 100%;
       text-indent: 0.05em;
@@ -39,7 +32,7 @@
   }
   .page-list {
     float: right;
-    ul {
+    .dropdown-list {
       right: -1px;
       width: 125%;
       text-align: center;
@@ -50,13 +43,21 @@
     border: 1px solid $alter-bg;
     border-radius: 5px;
     display: inline-flex;
-    ul {
+    &-list {
       border: 1px solid $alter-bg;
       border-radius: 5px;
     }
-    > span { display: none }
+    &-title { display: none }
   }
   .curr-page { text-align: center }
+}
+
+#placeholder {
+  width: 100%;
+  display: flex;
+  cursor: wait;
+  border: 3px solid $alter-bg;
+  border-radius: 5px;
 }
 
 #controls {
@@ -64,11 +65,11 @@
   display: flex;
   margin: 2.5vh auto 1vh;
   @include flex-direction(column);
-  span {
+  .curr-page {
     font-size: 1.25em;
     margin: auto 0;
   }
-  a { text-decoration: none }
+  .control { text-decoration: none }
   .mi {
     font-size: 3em;
     margin: auto;
@@ -101,20 +102,17 @@
 }
 
 @media screen and (max-width: 690px) {
-  #chapter #controls .mi { font-size: 2em }
+  #controls .mi { font-size: 2em }
 }
 
 @media screen and (max-width: 436px) {
   #chapter {
-    #controls .mi { font-size: 1.5em }
-    #placeholder, .chapter-page { border-width: 2px }
     .dropdown {
-      > a { display: none }
-      > span { display: inline-block }
+      .faux-link { display: none }
+      &-title { display: inline-block }
     }
   }
-  .mi-spin {
-    color: transparentize($main-fg, 0.25)
-  }
+  #placeholder, .chapter-page { border-width: 2px }
+  #controls .mi { font-size: 1.5em }
+  .mi-spin { color: transparentize($main-fg, 0.25) }
 }
-

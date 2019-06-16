@@ -9,18 +9,12 @@
         document.querySelector('meta[name="csrf-token"]').content);
       xhr.onload = function() {
         switch(xhr.status) {
-          case 200:
-            btn.className = 'mi mi-bookmark bookmark-btn';
-            break;
-          case 204:
-            btn.className = 'mi mi-bookmark-o bookmark-btn';
-            break;
-          default:
-            console.error(xhr.statusText);
+          case 200: btn.className = 'mi mi-bookmark bookmark-btn'; break;
+          case 204: btn.className = 'mi mi-bookmark-o bookmark-btn'; break;
+          default: console.error(xhr.statusText);
         }
       };
       xhr.send('series=' + btn.getAttribute('data-series'));
     });
   });
 })(document.querySelectorAll('.bookmark-btn'));
-

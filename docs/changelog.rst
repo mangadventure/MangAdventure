@@ -4,17 +4,19 @@ Changelog
 v0.5.2
 ^^^^^^
 
-* Moved ``/admin`` page to ``/admin-panel``
 * Fixed missing fields in series API response
-* Disabled autocomplete in password inputs
-* Added ``PreloadMiddleware`` for HTTP/2 push
+* Fixed ``OSError`` in ``zipfile_validator``
 * Added more blocked user agents & image types
+* Added ability to search by slug (for Tachiyomi)
+* Added ``PreloadMiddleware`` for HTTP/2 push
+* Disabled ``XPBMiddleware``
+* Disabled autocomplete in password inputs
 * Replaced ``JsonVaryAllowResponse`` with ``require_methods_api``
+* Replaced logo ``object`` with ``img``
+* Moved ``/admin`` page to ``/admin-panel``
 * Moved ``redirects`` & ``sites`` admin pages under ``constance``
-* Fixed ``configure`` editor command
-* Updated ``LICENSE`` info
-* Added ``CODE_OF_CONDUCT.md`` & ``SECURITY.md``
-* Added ``django-debug-toolbar`` to dev requirements
+* Moved configuration to ``.env``
+* Removed ``configure`` command
 
 v0.5.1
 ^^^^^^
@@ -147,4 +149,3 @@ v0.1.0
 ^^^^^^
 
 * Initial release
-

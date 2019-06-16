@@ -5,4 +5,3 @@ Status Codes
   - No error.
 * `304 Not Modified <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/304>`_
   - The request was conditional and the content hasn't been modified.
-

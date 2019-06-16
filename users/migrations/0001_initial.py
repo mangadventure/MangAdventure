@@ -14,13 +14,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Bookmark',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True,
-                                        serialize=False, verbose_name='ID')),
-                ('series', models.ForeignKey(on_delete=models.deletion.CASCADE,
-                                             to='reader.Series')),
-                ('user', models.ForeignKey(on_delete=models.deletion.CASCADE,
-                                           related_name='bookmarks',
-                                           to=settings.AUTH_USER_MODEL)),
+                ('id', models.AutoField(
+                    auto_created=True, primary_key=True,
+                    serialize=False, verbose_name='ID'
+                )),
+                ('series', models.ForeignKey(
+                    on_delete=models.deletion.CASCADE, to='reader.Series'
+                )),
+                ('user', models.ForeignKey(
+                    on_delete=models.deletion.CASCADE,
+                    related_name='bookmarks', to=settings.AUTH_USER_MODEL
+                )),
             ],
         ),
         migrations.AlterUniqueTogether(
@@ -28,4 +32,3 @@ class Migration(migrations.Migration):
             unique_together={('series', 'user')},
         ),
     ]
-

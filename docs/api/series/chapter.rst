@@ -69,4 +69,3 @@ The response body is a JSON object containing the following:
   - The requested series, volume, or chapter doesn't exist.
 * `400 Bad Request <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400>`_
   - The volume or chapter parameter was invalid.
-

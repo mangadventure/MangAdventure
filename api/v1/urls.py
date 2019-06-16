@@ -28,4 +28,3 @@ urlpatterns = [
     url('%s/(?P<g_id>[^/]+)/?$' % _groups, views.group, name='group'),
     url('^categories/?$', views.categories, name='categories'),
 ]
-

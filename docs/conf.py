@@ -2,13 +2,27 @@
 
 import os
 import sys
+
 import django
+
 import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath('..'))
-sys.path.append(os.path.dirname(__file__))
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MangAdventure.settings')
-os.environ['MANGADV_IGNORE_CONFIG'] = 'true'
+docs = os.path.dirname(__file__)
+
+os.environ.setdefault(
+    'DJANGO_SETTINGS_MODULE', 'MangAdventure.settings'
+)
+
+# dummy .env file
+with open(os.path.join(docs, '.env'), 'w') as env:
+    env.writelines([
+        'DB_URL=sqlite://:memory:\n',
+        'EMAIL_URL=console:\n',
+        'EMAIL_ADDRESS=""\n',
+        'SITE_DOMAIN=""\n'
+    ])
+
 django.setup()
 
 # -- Project information --

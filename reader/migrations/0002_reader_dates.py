@@ -1,6 +1,8 @@
-from django.utils import timezone
-from django.db import migrations, models
 from datetime import datetime
+
+from django.db import migrations, models
+from django.utils import timezone
+
 from MangAdventure.utils import validators
 
 
@@ -13,11 +15,17 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='chapter',
-            options={'get_latest_by': ('uploaded', 'modified'), 'ordering': ('series', 'volume', 'number')},
+            options={
+                'get_latest_by': ('uploaded', 'modified'),
+                'ordering': ('series', 'volume', 'number')
+            },
         ),
         migrations.AlterModelOptions(
             name='series',
-            options={'get_latest_by': 'modified', 'verbose_name_plural': 'series'},
+            options={
+                'get_latest_by': 'modified',
+                'verbose_name_plural': 'series'
+            },
         ),
         migrations.RemoveField(
             model_name='chapter',
@@ -56,19 +64,29 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='chapter',
             name='file',
-            field=models.FileField(blank=True,
-                                   help_text='Upload a zip or cbz file containing the chapter pages. Its size cannot exceed 50 MBs and it must not contain more than 1 subfolder.',
-                                   upload_to='', validators=[validators.FileSizeValidator(max_mb=50),
-                                                             validators.zipfile_validator]),
+            field=models.FileField(
+                blank=True, help_text='Upload a zip or cbz file containing'
+                ' the chapter pages. Its size cannot exceed 50 MBs and'
+                ' it must not contain more than 1 subfolder.',
+                upload_to='', validators=[
+                    validators.FileSizeValidator(max_mb=50),
+                    validators.zipfile_validator
+                ]
+            ),
         ),
         migrations.AlterField(
             model_name='chapter',
             name='number',
-            field=models.PositiveSmallIntegerField(default=0, help_text='The number of the chapter.'),
+            field=models.PositiveSmallIntegerField(
+                default=0, help_text='The number of the chapter.'
+            ),
         ),
         migrations.AlterField(
             model_name='chapter',
             name='volume',
-            field=models.PositiveSmallIntegerField(default=0, help_text='The volume of the chapter. Leave as 0 if the series has no volumes.'),
+            field=models.PositiveSmallIntegerField(
+                default=0, help_text='The volume of the chapter.'
+                ' Leave as 0 if the series has no volumes.'
+            ),
         ),
     ]

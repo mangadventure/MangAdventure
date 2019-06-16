@@ -64,4 +64,3 @@ Each object contains the following:
    * **aliases** (*array of string*) - Other names for the series.
 
 .. include:: ../includes/status.rst
-

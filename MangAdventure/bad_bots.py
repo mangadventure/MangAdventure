@@ -31,6 +31,7 @@ BOTS = [
     r'jaja-jak-globusy\.com',
     r'Jo(Bo|C Web Spider)',
     r'LetsCrawl\.com',
+    r'LightspeedSystemsCrawler',
     r'Lincoln State Web Browser',
     r'LWP::Simple',
     r'Mac Finder',
@@ -71,4 +72,3 @@ BOTS = [
     r'WebVulnCrawl',
     r'Wysigot'
 ]
-

@@ -77,4 +77,3 @@ v0.8.x
 
 .. _comics-manifest: https://github.com/HadrienGardeur/comics-manifest
 .. _app.json: https://devcenter.heroku.com/articles/app-json-schema
-

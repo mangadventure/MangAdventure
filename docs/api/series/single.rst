@@ -94,4 +94,3 @@ The response body is a JSON object containing the following:
 
 * `404 Not Found <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404>`_
   - The requested series doesn't exist.
-

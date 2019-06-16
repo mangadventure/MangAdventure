@@ -134,4 +134,3 @@
     <field name="description" type="CharField">This work usually involves intimate relationships between women.</field>
   </object>
 </django-objects>
-

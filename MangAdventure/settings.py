@@ -1,67 +1,36 @@
-from __future__ import print_function
-from os import path, mkdir, environ as env
-from re import compile as regex, IGNORECASE
+from os import mkdir, path
+from re import IGNORECASE, compile as regex
 from sys import argv
-from config import read_config, write_config
-from .bad_bots import BOTS
+
+from yaenv.core import Env
+
 from . import __version__ as VERSION
+from .bad_bots import BOTS
 
-try:
-    from . import user_settings
+# Build paths inside the project like this: path.join(BASE_DIR, ...)
+BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 
-    def get_config(key, default=None):
-        return getattr(user_settings, key, default) or default
-except ImportError:
-    def get_config(_, default=None): return default
-
-
-if env.get('MANGADV_IGNORE_CONFIG') or 'configure' in argv:
-    def missing_config(): return
-else:
-    def missing_config():
-        from django.core.management.color import color_style
-        from sys import stderr
-        print(color_style().ERROR(
-            "ERROR: You must run the 'configure'"
-            " command to configure your site."
-        ), file=stderr)
-        exit(3)
-
+# Load environment variables from .env file.
+env = Env('.env')
 
 ###############
 #    Basic    #
 ###############
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
-
-try:
-    # A secret key used to provide cryptographic signing.
-    # SECURITY WARNING: this must be kept secret!
-    SECRET_KEY = read_config()['secret_key']
-    if not SECRET_KEY:
-        raise KeyError
-except KeyError:
-    SECRET_KEY = env.get('SECRET_KEY', ''.join(
-        __import__('random').SystemRandom().choice(
-            'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-        ) for i in range(50)
-    ))
-    write_config('secret_key', SECRET_KEY)
+# A list of host/domain names that this site can serve.
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [
+    '127.0.0.1', '0.0.0.0', 'localhost', '[::1]',
+    # From https://stackoverflow.com/questions/9626535/#36609868
+    env['SITE_DOMAIN'].split('//')[-1].split('/')[0].split('?')[0]
+])
 
 # A boolean that turns debug mode on/off.
 # SECURITY WARNING: never turn this on in production!
-DEBUG = (env.get('MANGADV_DEBUG', 'false').lower() == 'true')
+DEBUG = env.bool('MANGADV_DEBUG', False)
 
-# A list of host/domain names that this site can serve.
-ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '[::1]']
-SITE_DOMAIN = get_config('SITE_DOMAIN')
-if SITE_DOMAIN:
-    # From https://stackoverflow.com/questions/9626535/#36609868
-    SITE_DOMAIN = SITE_DOMAIN.split('//')[-1].split('/')[0].split('?')[0]
-    ALLOWED_HOSTS.append('.' + SITE_DOMAIN)
-else:
-    missing_config()
+# A secret key used to provide cryptographic signing.
+# SECURITY WARNING: this must be kept secret!
+SECRET_KEY = env.secret('SECRET_KEY')
 
 # The ID of the current site.
 SITE_ID = 1
@@ -113,26 +82,23 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
-    'MangAdventure.middleware.XPBMiddleware',
     'MangAdventure.middleware.PreloadMiddleware',
 ]
 
 # A string representing the full Python import path to the root URLconf.
 ROOT_URLCONF = 'MangAdventure.urls'
 
-CONTEXT_PROCESSORS = [
-    'constance.context_processors.config',
-    'django.template.context_processors.request',
-    'django.contrib.auth.context_processors.auth',
-    'django.template.context_processors.media',
-    'django.contrib.messages.context_processors.messages',
-    'config.context_processors.extra_settings',
-]
-
 # A list containing the settings for all template engines to be used.
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'OPTIONS': {'context_processors': CONTEXT_PROCESSORS},
+    'OPTIONS': {'context_processors': [
+        'constance.context_processors.config',
+        'django.template.context_processors.request',
+        'django.contrib.auth.context_processors.auth',
+        'django.template.context_processors.media',
+        'django.contrib.messages.context_processors.messages',
+        'config.context_processors.extra_settings',
+    ]},
     'DIRS': [path.join(BASE_DIR, 'MangAdventure', 'templates')],
     'APP_DIRS': True,
 }]
@@ -146,19 +112,14 @@ WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 ##################
 
 # Database settings dictionary.
-DATABASES = {  # TODO: add MySQL support
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+DATABASES = {'default': env.db('DB_URL', 'sqlite:///db.sqlite3')}
 
 ##################################
 #    Logging & Error Handling    #
 ##################################
 
 # Subject prefix for email messages sent to admins/managers.
-EMAIL_SUBJECT_PREFIX = '[%s] ' % get_config('SITE_DOMAIN', 'MangAdventure')
+EMAIL_SUBJECT_PREFIX = '[%s] ' % env['SITE_DOMAIN']
 
 # URLs that should be ignored when reporting HTTP 404 errors.
 IGNORABLE_404_URLS = [
@@ -168,9 +129,7 @@ IGNORABLE_404_URLS = [
 ]
 
 LOGS_DIR = path.join(BASE_DIR, 'logs')
-if not path.exists(LOGS_DIR):
-    mkdir(LOGS_DIR)
-
+if not path.exists(LOGS_DIR): mkdir(LOGS_DIR)
 
 # Logging configuration dictionary.
 LOGGING = {  # TODO: better logging
@@ -273,7 +232,7 @@ USE_L10N = True
 USE_TZ = True
 
 # A string representing the language code for this installation.
-LANGUAGE_CODE = get_config('LANG_CODE', 'en-us')
+LANGUAGE_CODE = env.get('LANG_CODE', 'en-us')
 
 # The name of the cookie to use for the language cookie.
 LANGUAGE_COOKIE_NAME = 'mangadv_lang'
@@ -284,7 +243,7 @@ LANGUAGES = [
 ]
 
 # The time zone for this installation.
-TIME_ZONE = get_config('TIME_ZONE', 'UTC')
+TIME_ZONE = env.get('TIME_ZONE', 'UTC')
 
 #########################
 #    Users & E-mails    #
@@ -356,27 +315,11 @@ SESSION_COOKIE_HTTPONLY = True
 # Don't expire the session when the user closes their browser.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-# Use a secure TLS connection when talking to the SMTP server.
-EMAIL_USE_TLS = True
-
-# The host to use for sending e-mails.
-EMAIL_HOST = get_config('SMTP_HOST')
-
-# Username to use for the SMTP server defined in EMAIL_HOST.
-EMAIL_HOST_USER = get_config('SMTP_USER')
-
-# Password to use for the SMTP server defined in EMAIL_HOST.
-EMAIL_HOST_PASSWORD = get_config('SMTP_PASS')
-
-# Port to use for the SMTP server defined in EMAIL_HOST.
-EMAIL_PORT = get_config('SMTP_PORT')
+# Sets up the e-mail server URL.
+vars().update(env.email('EMAIL_URL'))
 
 # The default e-mail address of the site.
-DEFAULT_FROM_EMAIL = get_config('SMTP_MAIL')
-
-if not all([EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
-            EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL]):
-    missing_config()
+DEFAULT_FROM_EMAIL = env['EMAIL_ADDRESS']
 
 ##################
 #    Security    #
@@ -388,9 +331,8 @@ DISALLOWED_USER_AGENTS = [regex(bot, IGNORECASE) for bot in BOTS]
 # Use HttpOnly flag on the CSRF cookie.
 CSRF_COOKIE_HTTP_ONLY = True
 
-env.setdefault('HTTPS', get_config('HTTPS', 'on'))
-if env.get('HTTPS').lower() == 'on':
-    env['wsgi.url_scheme'] = 'https'
+if env.bool('HTTPS', True):
+    env.ENV['wsgi.url_scheme'] = 'https'
 
     # HTTP header/value combination that signifies a request is secure.
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -410,14 +352,16 @@ if env.get('HTTPS').lower() == 'on':
     # Use a secure cookie for the CSRF cookie.
     CSRF_COOKIE_SECURE = True
 
-    # The default protocol used for when generating account URLs.
+    # The default protocol used when generating account URLs.
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 # Optional django-csp module
 try:
     __import__('csp.middleware')
     MIDDLEWARE.append('csp.middleware.CSPMiddleware')
-
+except ImportError:
+    pass
+else:
     # Sets the default-src directive.
     CSP_DEFAULT_SRC = ("'none'",)
 
@@ -457,8 +401,6 @@ try:
 
     # URLs beginning with any of these will not get the CSP headers.
     CSP_EXCLUDE_URL_PREFIXES = ('/api', '/admin-panel')
-except ImportError:
-    pass
 
 ##########################
 #    django-constance    #
@@ -587,15 +529,16 @@ TINYMCE_JS = 'https://cdnjs.cloudflare.com/ajax/' \
 ###############
 
 if DEBUG:
-    INTERNAL_IPS = env.get('MANGADV_IPS', '').split(',') + ['127.0.0.1']
+    INTERNAL_IPS = env.list('INTERNAL_IPS', ['127.0.0.1'])
     ALLOWED_HOSTS += ['192.168.1.%s' % i for i in range(2, 256)]
     try:
         __import__('debug_toolbar')
         INSTALLED_APPS.append('debug_toolbar')
         MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
-        CONTEXT_PROCESSORS.append('django.template.context_processors.debug')
+        TEMPLATES[0]['OPTIONS']['context_processors'].append(
+            'django.template.context_processors.debug'
+        )
     except ImportError:
         pass
 
-del BOTS, IGNORECASE, VERSION, CONTEXT_PROCESSORS
-
+del BASE_DIR, BOTS, IGNORECASE, VERSION

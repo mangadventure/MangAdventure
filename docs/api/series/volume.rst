@@ -71,4 +71,3 @@ The value is an object containing the info of the chapter:
   - The requested series or volume doesn't exist.
 * `400 Bad Request <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400>`_
   - The volume parameter was invalid.
-

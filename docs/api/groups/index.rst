@@ -10,4 +10,3 @@ Groups
    :maxdepth: 2
 
    single
-

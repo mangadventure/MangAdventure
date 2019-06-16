@@ -12,8 +12,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='chapter',
             name='groups',
-            field=models.ManyToManyField(blank=True, related_name='releases',
-                                         to='groups.Group'),
+            field=models.ManyToManyField(
+                blank=True, related_name='releases', to='groups.Group'
+            ),
         ),
     ]
-

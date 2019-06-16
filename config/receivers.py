@@ -1,10 +1,11 @@
-from django.contrib.sites.models import Site
+from os.path import exists, join
+
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.dispatch import receiver
+
 from constance.signals import config_updated
 from sass import compile as sassc
-from os.path import join, exists
-
 
 SCSS_KEYS = [
     'MAIN_BACKGROUND',
@@ -66,4 +67,3 @@ if not exists(_variables):
 
 
 __all__ = ['constance_updated']
-

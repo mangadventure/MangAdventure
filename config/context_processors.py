@@ -6,4 +6,3 @@ def extra_settings(request):
         'MANGADV_VERSION': version,
         'PAGE_URL': request.build_absolute_uri(),
     }
-

@@ -1,9 +1,8 @@
-from django.contrib.auth.models import Group, User
 from django.contrib import admin
+from django.contrib.auth.models import Group, User
+
 from allauth.account.models import EmailAddress
-from allauth.socialaccount.models import (
-    SocialApp, SocialAccount, SocialToken
-)
+from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -30,4 +29,3 @@ admin.site.unregister([
 ])
 admin.site.register(User, UserAdmin)
 admin.site.register(OAuthApp)
-

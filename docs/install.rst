@@ -49,23 +49,12 @@ Configure the settings
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Before proceeding, there are some settings you will need to configure.
-The following command will open a text editor for you to do so:
-
-.. code-block:: shell
-
-   mangadventure configure
-
-You can also specify the editor to use:
-
-.. code-block:: shell
-
-   mangadventure configure --editor "/usr/bin/emacs"
+To configure them, copy the ``.env.example`` file into ``.env`` and edit it.
 
 Create the database
 ^^^^^^^^^^^^^^^^^^^
 
-This command will create an SQLite database for your site. If it fails,
-you might need to install `SQLite <https://www.sqlite.org/index.html>`_.
+This command will set up the database for your site.
 
 .. code-block:: shell
 
@@ -169,9 +158,10 @@ Updating
 
    pip install -U "git+https://github.com/mangadventure/MangAdventure@{tag}#egg=MangAdventure"
 
+Then, check ``.env.example`` for new variables. If there are any, set them in ``.env``.
+
 Finally, update the database:
 
 .. code-block:: shell
 
    mangadventure migrate
-

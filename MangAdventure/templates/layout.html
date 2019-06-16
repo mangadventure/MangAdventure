@@ -53,16 +53,14 @@
       <meta property="og:type" content="website">
       <meta property="og:site_name" content="{{ config.NAME }}">
       {% with favicon=MEDIA_URL|urljoin:config.FAVICON %}
-        <link href="{{ favicon }}" rel="shortcut icon"
-              type="{{ favicon|get_type }}">
+        <link href="{{ favicon }}" rel="shortcut icon" type="{{ favicon|get_type }}">
       {% endwith %}
       <link href="{% url 'opensearch' %}" rel="search" title="{{ config.NAME }}"
             type="application/opensearchdescription+xml">
       <link href="https://cdn.staticaly.com/gh/mangadventure/font/d52735e/dist/mangadventure.css"
             integrity="sha384-jk63AhjtXaWDpFlExaupwzfXCqZfUczm+m9+7Z/aJ/pcxrNDFAv6vGDfxSB8PtPA"
-            rel="preload stylesheet" as="style" type="text/css" crossorigin="anonymous">
-      <link href="{{ config.FONT_URL }}" rel="preload stylesheet"
-            as="style" type="text/css" crossorigin="anonymous">
+            rel="stylesheet" type="text/css" crossorigin="anonymous">
+      <link href="{{ config.FONT_URL }}" rel="stylesheet" type="text/css" crossorigin="anonymous">
     {% endcache %}
     <link href="{{ PAGE_URL }}" rel="canonical" type="text/html">
     {% block stylesheets %}
@@ -87,30 +85,19 @@
   </head>
   <body>
     <header id="header">
-      <a id="home" href="{% url 'index' %}">
-        <span>
-          <noscript>
-            <i title="{{ config.NAME }}" class="main-fg mi mi-home"></i>
-          </noscript>
-          {% cache 604800 logo config.LOGO_LARGE config.LOGO_MEDIUM config.LOGO_SMALL %}
+      {% cache 604800 logo config.LOGO_LARGE config.LOGO_MEDIUM config.LOGO_SMALL %}
+        <a id="home" href="{% url 'index' %}">
             {% with logo=MEDIA_URL|urljoin:config.LOGO_LARGE %}
-              <object class="logo" type="{{ logo|get_type }}"
-                      data="{{ logo }}" height="45">
-              </object>
+              <img class="logo" src="{{ logo }}" height="45"></img>
             {% endwith %}
             {% with logo=MEDIA_URL|urljoin:config.LOGO_MEDIUM %}
-              <object class="logo" type="{{ logo|get_type }}"
-                      data="{{ logo }}" height="38">
-              </object>
+              <img class="logo" src="{{ logo }}" height="38"></img>
             {% endwith %}
             {% with logo=MEDIA_URL|urljoin:config.LOGO_SMALL %}
-              <object class="logo" type="{{ logo|get_type }}"
-                      data="{{ logo }}" height="27">
-              </object>
+              <img class="logo" src="{{ logo }}" height="27"></img>
             {% endwith %}
-          {% endcache %}
-        </span>
-      </a>
+        </a>
+      {% endcache %}
       <nav id="navig">
         <ul class="navig-list">
           {% cache 604800 nav %}
@@ -143,26 +130,26 @@
             <span class="navig-link dropdown-title" aria-label="User">
               <i class="mi mi-user" aria-hidden="true"></i>
             </span>
-            <ul>{% if request.user.is_authenticated %}
-              <li>
+            <ul class="dropdown-list">{% if request.user.is_authenticated %}
+              <li class="dropdown-element">
                 <a href="{% url 'user_profile' %}">
                   <span>Profile</span>
                   <i class="mi mi-user" aria-hidden="true"></i>
                 </a>
               </li>
-              <li>
+              <li class="dropdown-element">
                 <a href="{% url 'user_bookmarks' %}">
                   <span>Bookmarks</span>
                   <i class="mi mi-bookmark" aria-hidden="true"></i>
                 </a>
               </li>
-              <li>
+              <li class="dropdown-element">
                 <a href="{% url 'user_edit' %}">
                   <span>Settings</span>
                   <i class="mi mi-cog" aria-hidden="true"></i>
                 </a>
               </li>
-              <li>
+              <li class="dropdown-element">
                 <form action="{% url 'account_logout' %}" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="next" value="{{ PAGE_URL }}">
@@ -173,7 +160,7 @@
                 </form>
               </li>
             {% else %}
-              <li>
+              <li class="dropdown-element">
                 {% with next=request.path|urlencode %}
                   <a href="{% url 'account_login' %}?next={{ next }}">
                     <span>Login</span>
@@ -229,4 +216,3 @@
     {% endcache %}
   </body>
 </html>
-

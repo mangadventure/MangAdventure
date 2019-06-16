@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.auth.models import User
-from reader.models import Series, Chapter, Page
+from django.db import models
+
 from MangAdventure.utils import storage, uploaders, validators
+from reader.models import Chapter, Series
 
 
 class Bookmark(models.Model):
@@ -58,4 +59,3 @@ class Progress(models.Model):
 
 
 __all__ = ['UserProfile', 'Bookmark', 'Progress']
-

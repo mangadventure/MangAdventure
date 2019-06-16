@@ -7,4 +7,3 @@ This project adheres to No Code of Conduct:
 * Nothing else matters.
 
 For more information please visit the [No Code of Conduct](https://github.com/domgetter/NCoC) homepage.
-

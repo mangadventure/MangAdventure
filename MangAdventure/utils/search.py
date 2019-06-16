@@ -1,7 +1,6 @@
 from django.db.models.query import Q
-from reader.models import (
-    Series, SeriesAlias, AuthorAlias, ArtistAlias
-)
+
+from reader.models import ArtistAlias, AuthorAlias, Series, SeriesAlias
 
 
 def parse(request):
@@ -58,8 +57,11 @@ def query(params):
         .distinct().exclude(categories__in=exclude)
 
 
-def get_response(request): return query(parse(request))
+def get_response(request):
+    slug = request.GET.get('slug')
+    if slug:
+        return Series.objects.filter(slug=slug)
+    return query(parse(request))
 
 
 __all__ = ['parse', 'qsfilter', 'query', 'get_response']
-

@@ -12,7 +12,7 @@
     <article id="list">
       {% for series in all_series %}
         {% if series.chapters.all %}
-          <section>
+          <section class="series">
             <h2 class="series-title">
               <a href="{{ series.get_absolute_url }}"
                  title="{{ series.title }}">
@@ -24,9 +24,6 @@
                    alt="{{ series }} Cover" class="cover">
             </div>
             <div class="series-info">
-              {#<div class="series-desc">#}
-              {#  {{ series.description }}#}
-              {#</div>#}
               <strong>
                 {% if config.MAX_CHAPTERS > 1 %}
                   Latest Chapters:
@@ -77,4 +74,3 @@
     </article>
   {% endcache %}
 {% endblock %}
-

@@ -1,17 +1,8 @@
-.__NoScript_PlaceHolder__ { display: none !important; }
-#home object.logo { display: none !important; }
-#chapter #placeholder { display: none !important; }
-#search #search-categories { display: none !important; }
-#chapter #dropdowns, #chapter #controls { display: block !important; }
-#home .mi-home { font-size: 45px; }
-
-@media screen and (max-width: 1024px) {
-  #home .mi-home { font-size: 38px; }
-}
+#search-categories { display: none !important; }
+#placeholder { display: none !important; }
+#dropdowns, #controls { display: block !important; }
 
 @media screen and (max-width: 690px) {
-  #home .mi-home { font-size: 27px; }
   #search .s-hidden { display: inline !important; }
-  #search table { border-right-style: solid; }
+  #result-table { border-right-style: solid; }
 }
-

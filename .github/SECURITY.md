@@ -16,4 +16,3 @@ During the beta phase, we will only patch security vulnerabilities in the [lates
 [advisories]: https://help.github.com/en/articles/about-maintainer-security-advisories
 
 <!-- vim:set wrap brk=\ !*-+;,? lbr: -->
-

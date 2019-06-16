@@ -14,4 +14,3 @@
 * Python version:
 * Web server and version:
 * Browser type and version:
-

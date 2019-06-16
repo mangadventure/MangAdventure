@@ -1,7 +1,9 @@
+from django import forms
 from django.contrib.auth.models import User
 from django.utils.six import iteritems
-from django import forms
+
 from MangAdventure.utils.validators import FileSizeValidator
+
 from .models import UserProfile
 
 
@@ -36,7 +38,7 @@ class UserProfileForm(forms.ModelForm):
     username = forms.CharField(
         min_length=1, label='Username',
         widget=forms.TextInput(attrs={
-          'placeholder': 'Username'
+            'placeholder': 'Username'
         })
     )
     first_name = forms.CharField(
@@ -119,4 +121,3 @@ class UserProfileForm(forms.ModelForm):
 
 
 __all__ = ['UserProfileForm']
-

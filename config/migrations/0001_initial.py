@@ -30,4 +30,3 @@ class Migration(migrations.Migration):
             create_info_pages, reverse_code=remove_info_pages
         ),
     ]
-

@@ -1,4 +1,5 @@
 from django.dispatch import receiver
+
 from allauth.account.models import EmailAddress
 from allauth.account.signals import email_confirmed
 
@@ -15,4 +16,3 @@ def update_user_email(sender, request, email_address, **kwargs):
 
 
 __all__ = ['update_user_email']
-

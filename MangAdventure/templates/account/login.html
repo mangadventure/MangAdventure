@@ -63,7 +63,7 @@
         Click <a href="{{ signup_url }}">here</a> to sign up.
       </section>
       <section id="oauth">
-        <div>Or, sign in with:</div>
+        <div id="oauth-or">Or, sign in with:</div>
         {% get_providers as socialaccount_providers %}
         {% for provider in socialaccount_providers|available %}
           <a title="{{ provider.name }}" class="provider main-fg"
@@ -76,4 +76,3 @@
     {% endif %}
   </article>
 {% endblock %}
-

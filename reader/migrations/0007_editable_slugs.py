@@ -1,4 +1,5 @@
 from django.db import migrations, models
+
 from MangAdventure.models import AliasKeyField
 
 
@@ -49,7 +50,7 @@ class Migration(migrations.Migration):
                 field=models.SlugField(
                     blank=True, unique=True, verbose_name='Custom slug',
                     help_text='The unique slug of the series.'
-                              ' Will be used in the URL.'
+                    ' Will be used in the URL.'
                 )
             ),
             migrations.RunPython(self.populate_m2m_fields),
@@ -115,4 +116,3 @@ class Migration(migrations.Migration):
                 categories(series_id=s, category_id=c)
                 for c in fields['categories']
             ])
-

@@ -1,7 +1,8 @@
-from django.views.decorators.vary import vary_on_headers
-from django.utils.log import log_response
-from django.http import JsonResponse
 from functools import wraps
+
+from django.http import JsonResponse
+from django.utils.log import log_response
+from django.views.decorators.vary import vary_on_headers
 
 
 class JsonError(JsonResponse):
@@ -34,4 +35,3 @@ def require_methods_api(allowed_methods=('GET', 'HEAD')):
 
 
 __all__ = ['require_methods_api', 'JsonError', 'JsonResponse']
-

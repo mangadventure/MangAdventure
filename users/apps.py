@@ -7,4 +7,3 @@ class UsersConfig(AppConfig):
     def ready(self):
         __import__('users.receivers')
         super(UsersConfig, self).ready()
-

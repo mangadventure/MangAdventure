@@ -1,8 +1,16 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
-from os.path import join, dirname
+from os.path import dirname, join
+
+from setuptools import find_packages, setup
+
 import MangAdventure
+
+try:
+    from isort.settings import default
+    default['known_django'] = 'django'
+except ImportError:
+    pass
 
 
 def read(fname):
@@ -26,9 +34,13 @@ setup(
     install_requires=read('requirements.txt').splitlines(),
     extras_require={
         'dev': [
+            'django-debug-toolbar',
+            'flake8',
+            'isort',
+        ],
+        'docs': [
             'sphinx',
             'sphinx-rtd-theme',
-            'django-debug-toolbar',
         ],
         'csp': 'django-csp',
         'uwsgi': 'uwsgi',
@@ -41,8 +53,8 @@ setup(
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django :: 1.11',
-        'Framework :: Django :: 2.0',
         'Framework :: Django :: 2.1',
+        'Framework :: Django :: 2.2',
         'Intended Audience :: Other Audience',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
@@ -56,4 +68,3 @@ setup(
         'Dynamic Content :: Content Management System',
     ]
 )
-

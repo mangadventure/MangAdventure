@@ -8,4 +8,3 @@ class SiteConfig(ConstanceConfig):
     def ready(self):
         __import__('config.receivers')
         super(SiteConfig, self).ready()
-

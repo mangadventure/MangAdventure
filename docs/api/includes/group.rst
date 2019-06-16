@@ -21,4 +21,3 @@
    * **slug** (*slug*) - The slug of the series.
    * **title** (*string*) - The title of the series.
    * **aliases** (*array of string*) - Other names for the series.
-

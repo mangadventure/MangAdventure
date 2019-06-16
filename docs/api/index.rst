@@ -10,4 +10,3 @@ API
    artists/index
    groups/index
    categories
-

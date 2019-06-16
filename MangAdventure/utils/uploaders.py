@@ -1,4 +1,4 @@
-from os.path import splitext, join
+from os.path import join, splitext
 
 
 def _rename_file(old, new): return new + splitext(old)[-1]
@@ -21,4 +21,3 @@ def avatar_uploader(obj, filename):
 
 
 __all__ = ['cover_uploader', 'group_logo_uploader', 'avatar_uploader']
-

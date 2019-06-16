@@ -13,4 +13,3 @@
    * **pages_root** (*array of string*) - The root URl of the pages.
    * **date** (*string*) - The date the chapter was uploaded.
    * **final** (*boolean*) - Whether the chapter is the finale of the series.
-

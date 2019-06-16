@@ -1,10 +1,12 @@
+from os.path import dirname, join
+from shutil import move
+
+from django.conf import settings
 from django.contrib.redirects.models import Redirect
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.conf import settings
-from os.path import join, dirname
-from shutil import move
-from .models import Series, Chapter
+
+from .models import Chapter, Series
 
 
 def _move(old_dir, new_dir):
@@ -14,10 +16,8 @@ def _move(old_dir, new_dir):
             join(settings.MEDIA_ROOT, new_dir)
         )
     except OSError as e:
-        if e.errno == 2:
-            pass
-        else:
-            raise
+        if e.errno == 2: pass
+        else: raise e
 
 
 @receiver(pre_save, sender=Series)
@@ -67,4 +67,3 @@ def redirect_chapter(sender, instance, **kwargs):
                     current.get_directory(), instance.get_directory()
                 )
                 page.save()
-

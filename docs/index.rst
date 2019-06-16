@@ -13,4 +13,3 @@ MangAdventure
    compatibility
    changelog
    roadmap
-

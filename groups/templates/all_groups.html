@@ -13,7 +13,7 @@
       {% for group in groups %}
         <section class="group">
           <a href="{{ group.get_absolute_url }}" title="{{ group.name }}">
-            <strong>{{ group.name }}</strong>
+            <strong class="group-name">{{ group.name }}</strong>
             <div class="group-logo">
               {% if group.logo %}
                 <img src="{{ group.logo.url }}" alt="Logo">
@@ -30,4 +30,3 @@
     </article>
   {% endcache %}
 {% endblock %}
-

@@ -1,11 +1,14 @@
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.conf import settings
-from os import path, remove, makedirs
-from zipfile import ZipFile
+from io import BytesIO
+from os import makedirs, path, remove
 from shutil import rmtree
 from sys import getsizeof
-from io import BytesIO
+from zipfile import ZipFile
+
+from django.conf import settings
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
 from PIL import Image
+
 from . import sort
 
 
@@ -16,12 +19,10 @@ def thumbnail(obj, max_size=100):
     try:
         img = Image.open(obj)
     except OSError as e:
-        if e.errno == 2:
-            return obj
-        else:
-            raise
+        if e.errno == 2: return obj
+        else: raise e
     # Convert grayscale images to RGB for better downsampling
-    if img.mode in ['1', 'L', 'P']:
+    if img.mode in ('1', 'L', 'P'):
         img = img.convert('RGB')
         img.thumbnail((max_size, max_size), Image.ANTIALIAS)
         img = img.convert('P', dither=Image.NONE, palette=Image.ADAPTIVE)
@@ -67,4 +68,3 @@ def unzip(obj):
 
 
 __all__ = ['thumbnail', 'unzip']
-

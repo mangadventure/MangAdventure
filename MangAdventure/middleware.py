@@ -1,4 +1,4 @@
-from re import findall, search, MULTILINE
+from re import MULTILINE, findall, search
 
 
 class XPBMiddleware:
@@ -45,4 +45,3 @@ class PreloadMiddleware:
 
 
 __all__ = ['XPBMiddleware', 'PreloadMiddleware']
-

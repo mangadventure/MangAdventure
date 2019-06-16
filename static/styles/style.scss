@@ -69,23 +69,21 @@ thead {
   display: flex;
   height: 45px;
   @include flex();
+  li { border: none }
   .navig-link {
     color: $main-fg;
     &:hover, &:active { color: $alter-fg }
   }
-  li { border: none }
-  #home {
-    display: inline-block;
-    position: relative;
-    z-index: 1;
-    span { display: inline-block }
-  }
   .logo {
-    pointer-events: none;
     float: left;
     position: relative;
-    z-index: -1;
   }
+}
+
+#home {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
 }
 
 #navig {
@@ -109,26 +107,11 @@ thead {
     &:hover { text-decoration: none }
   }
   .dropdown {
-    ul {
-      right: 2%;
-      padding: 2px 5px;
-      border-radius: 4px;
-      border: 2px solid $alter-bg;
-      background-color: $main-bg;
-    }
-    li {
-      float: right;
-      margin: 0.1em 0;
-      @include touch() {
-        color: $alter-fg;
-      }
-    }
     a {
       color: inherit;
       text-decoration: unset;
       line-height: 1.15em;
     }
-    &-title { padding: 4px }
     .logout-btn {
       font-size: 1em;
       background-color: inherit;
@@ -137,6 +120,21 @@ thead {
       cursor: pointer;
       padding: 0;
     }
+    &-list {
+      right: 2%;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 2px solid $alter-bg;
+      background-color: $main-bg;
+    }
+    &-element {
+      float: right;
+      margin: 0.1em 0;
+      @include touch() {
+        color: $alter-fg;
+      }
+    }
+    &-title { padding: 4px }
   }
 }
 
@@ -203,12 +201,12 @@ thead {
       @include flex(1);
       @include justify-content(space-between);
       .chapter-metadata { max-width: 40vw }
-      > a {
-        color: inherit;
-        margin-left: 0.5em;
-        max-width: 50vw;
-        @include truncate();
-      }
+    }
+    &-link {
+      color: inherit;
+      margin-left: 0.5em;
+      max-width: 50vw;
+      @include truncate();
     }
   }
 }
@@ -217,7 +215,7 @@ thead {
   display: flex;
   @include justify-content(flex-start);
   @include flex-direction(column);
-  section {
+  .series {
     margin-bottom: 3px;
     padding: 10px 0 0;
     width: 100%;
@@ -227,44 +225,43 @@ thead {
       float: left;
       &-container { max-width: calc(100vw / 3) }
     }
-    .series-info {
+    &-info {
       display: block;
       vertical-align: top;
       position: relative;
       left: 0.3em;
-      .series-chapter {
-        display: flex;
-        max-width: 90vw;
-        padding: 0 0.5em;
-        @include flex(1);
-        .chapter-metadata { width: 50% }
-        > a {
-          width: 50%;
-          @include truncate();
-        }
+    }
+    &-chapter {
+      display: flex;
+      max-width: 90vw;
+      padding: 0 0.5em;
+      @include flex(1);
+      .chapter-metadata { width: 50% }
+      > a {
+        width: 50%;
+        @include truncate();
       }
     }
-  }
-  .series-title {
-    text-align: center;
-    font-size: large;
-    width: 95%;
-    border-bottom: 2px solid;
-    margin: 0 auto 3px;
+    &-title {
+      text-align: center;
+      font-size: large;
+      width: 95%;
+      border-bottom: 2px solid;
+      margin: 0 auto 3px;
+    }
   }
 }
 
 #series {
   display: flex;
   @include flex-wrap();
-  &-info {
-    padding: 3px;
-    max-width: 60vw;
+  div {
+    &.alias, &.author, &.artist, &.category {
+      text-indent: 0.5em;
+      @include truncate();
+    }
   }
-  &-title {
-    text-transform: none;
-    padding: 0 !important;
-  }
+  h3 { margin: 0.5em 0 }
   .cover {
     position: relative;
     left: -0.3em;
@@ -278,19 +275,20 @@ thead {
     font-size: 1.25em;
     cursor: pointer;
   }
+  &-info {
+    padding: 3px;
+    max-width: 60vw;
+  }
+  &-title {
+    text-transform: none;
+    padding: 0 !important;
+  }
   &-aliases, &-authors, &-artists, &-categories {
     max-width: 55vw;
     @include truncate();
   }
-  div {
-    &.alias, &.author, &.artist, &.category {
-      text-indent: 0.5em;
-      @include truncate();
-    }
-  }
   &-desc {
     width: 100%;
-    h3 { margin: 0.5em 0 }
     p {
       max-width: 90vw;
       margin: 0;
@@ -301,7 +299,6 @@ thead {
   }
   &-chapters {
     width: 100%;
-    h3 { margin: 0.5em 0 }
     .chapter {
       padding: 0 0 0.5em;
       margin: 0 0.5em;
@@ -325,7 +322,7 @@ thead {
   @include justify-content(space-around);
   .group {
     padding: 0.25em;
-    strong {
+    &-name {
       display: block;
       text-align: center;
       @include truncate();
@@ -358,29 +355,17 @@ thead {
       border-top-left-radius: 5px;
       @include size(150px);
     }
-    div { margin: auto 0 }
   }
+  &-links { margin: auto 0 }
   &-desc div { text-indent: 0.5em }
   .member {
     padding-left: 0.5em;
     padding-bottom: 1em;
-    &-roles span:last-of-type {
+    &-roles .comma:last-of-type {
       &::after { display: none }
     }
-    h2 { color: $alter-bg }
+    &-name { color: $alter-bg }
     div { padding-left: 0.5em }
-  }
-}
-
-#info {
-  h2 {
-    font-size: large;
-    text-transform: uppercase;
-    &:first-of-type { padding-top: 0.5em }
-  }
-  section {
-    padding-bottom: 0.5em;
-    div { text-indent: 0.5em }
   }
 }
 
@@ -393,8 +378,11 @@ thead {
 }
 
 #result-table {
+  margin: 0 auto;
+  text-align: center;
   border-collapse: separate;
   border-spacing: 0;
+  @include box-sizing();
   @include border($alter-fg, 2px);
   @include border-radius(3px);
   th, td {
@@ -411,26 +399,21 @@ thead {
     display: flex;
     padding: 0.5em;
     @include flex-wrap();
-    &-release {
-      display: block;
-      max-width: 60vw;
-      margin-left: 0.2em;
-    }
     .cover {
       display: block;
       max-width: 30vw;
       width: auto;
       height: 6em;
     }
+    &-release {
+      display: block;
+      max-width: 60vw;
+      margin-left: 0.2em;
+    }
   }
 }
 
 #user {
-  &-profile {
-    span:first-child {
-      font-weight: bold;
-    }
-  }
   &-info {
     display: flex;
     align-items: center;
@@ -449,10 +432,6 @@ thead {
 }
 
 #oauth {
-  > div {
-    font-size: 1.2em;
-    margin-top: 5px;
-  }
   .provider {
     text-decoration: unset;
     display: inline-block;
@@ -462,6 +441,10 @@ thead {
     padding: 5px;
     margin: 7px;
     width: 95px;
+  }
+  &-or {
+    font-size: 1.2em;
+    margin-top: 5px;
   }
 }
 
@@ -483,7 +466,7 @@ thead {
   border: 2px solid $alter-bg;
 }
 
-article.user-action {
+.user-action {
   text-align: center;
   &#activation-sent, &.password-reset {
     > div:first-of-type { padding-top: 5px }
@@ -508,7 +491,6 @@ article.user-action {
       }
     }
     textarea { @extend %field; }
-    #forgot-password { margin-bottom: 3px }
     .button {
       display: block;
       margin: 5px auto 0;
@@ -524,7 +506,18 @@ article.user-action {
   line-height: 1.1em;
   position: relative;
   @include box-sizing();
-  ul {
+  @include touch() {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    &-list {
+      z-index: 10;
+      display: block;
+    }
+  }
+  a[href='#'] { text-decoration: unset }
+  > span { cursor: pointer }
+  &-list {
     display: none;
     margin: 0;
     padding: 3px;
@@ -534,19 +527,8 @@ article.user-action {
     max-width: 90vw;
     max-height: 50vh;
     overflow-y: auto;
-    li { @include truncate(); }
   }
-  > span { cursor: pointer }
-  a[href='#'] { text-decoration: unset }
-  @include touch() {
-    border-bottom: none;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    ul {
-      z-index: 10;
-      display: block;
-    }
-  }
+  &-element { @include truncate(); }
 }
 
 .tooltip {
@@ -639,19 +621,14 @@ article.user-action {
 
 .logo { &[height='27'], &[height='38'] { display: none } }
 
+#forgot-password { margin-bottom: 3px }
+
 #dropdowns { height: 30px }
 
 #search {
-  section {
+  &-options {
     width: 100%;
     padding: 0.5em 0;
-  }
-  table {
-    margin: 0 auto;
-    text-align: center;
-    @include box-sizing();
-  }
-  &-options {
     text-align: center;
     div { margin-bottom: 0.5em }
     input {
@@ -674,19 +651,23 @@ article.user-action {
         }
       }
     }
-    button {
-      padding: 3px 5px;
-      border: 2px solid $alter-bg;
-      @include border-radius(3px);
-      &:focus { border-color: $alter-fg }
-    }
   }
-  .result {
-    hyphens: auto;
-    &-title a { color: inherit }
-    &-authors::after {
-      content: quote('/ ');
-      white-space: pre-line;
+  &-submit {
+    padding: 3px 5px;
+    border: 2px solid $alter-bg;
+    @include border-radius(3px);
+    &:focus { border-color: $alter-fg }
+  }
+  &-results {
+    width: 100%;
+    padding: 0.5em 0;
+    .result {
+      hyphens: auto;
+      &-title a { color: inherit }
+      &-authors::after {
+        content: quote('/ ');
+        white-space: pre-line;
+      }
     }
   }
   &link { display: none }
@@ -732,20 +713,17 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       &[height='27'] { display: inline-block }
     }
   }
-  #search {
-    table {
-      margin: auto;
-      border-right-style: none;
+  #search .result-info {
+    .mi { margin: 0 }
+    .mi-people { margin-right: 0.3em }
+    &:nth-last-child(-n+2) {
+      display: inline-block;
+      .mi-clock { margin-left: 0.75em }
     }
-    .result-info {
-      i { margin: 0 }
-      .mi-people { margin-right: 0.3em }
-      &:nth-last-child(-n+2) {
-        display: inline-block;
-        .mi-clock { margin-left: 0.75em }
-      }
-    }
-    .s-hidden { display: none }
+  }
+  #result-table {
+    margin: auto;
+    border-right-style: none;
   }
   #series { max-width: 92vw }
   #navig {
@@ -753,9 +731,9 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       margin: -0.2em 0 -0.3em -0.2em;
       &.dropdown { margin: -0.1em 0 -0.1em -0.3em }
     }
-    .dropdown ul { top: 97.5% }
+    .dropdown-list { top: 97.5% }
   }
-  .ident { display: none }
+  .ident, .s-hidden { display: none }
 }
 
 @media screen and (max-width: 436px) {
@@ -779,12 +757,12 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       border-bottom: 2px solid $alter-bg;
       padding-bottom: 5px;
     }
-    h2 { text-align: center }
+    .release-title { text-align: center }
   }
   #list {
     text-align: center;
-    .cover { float: none }
     .series {
+      .cover { float: none }
       &-info { left: 0 }
       &-chapter {
         justify-content: center;
@@ -809,28 +787,6 @@ i[data-pcount='100+'] { padding: 0 0.5em }
         &:not(:last-of-type) {
           border-bottom: 2px solid $alter-bg;
         }
-      }
-    }
-    &-title { padding-bottom: 3px !important }
-    &-info {
-      width: 100%;
-      max-width: unset;
-      padding: 0;
-      margin-top: 0.5em;
-    }
-    &-desc {
-      padding: 0;
-      margin: 0.5em 0;
-      p { display: inline-block }
-    }
-    &-aliases, &-authors, &-artists, &-categories {
-      max-width: unset;
-      overflow: unset;
-      white-space: normal;
-      span, div {
-        display: block;
-        padding: 0 1em;
-        hyphens: manual;
       }
     }
     .cover {
@@ -868,6 +824,28 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     }
     .bookmark-btn { margin: 0.2em 0 -0.2em 50% }
     div.alias, div.author, div.artist, div.category { text-indent: 0 }
+    &-title { padding-bottom: 3px !important }
+    &-info {
+      width: 100%;
+      max-width: unset;
+      padding: 0;
+      margin-top: 0.5em;
+    }
+    &-desc {
+      padding: 0;
+      margin: 0.5em 0;
+      p { display: inline-block }
+    }
+    &-aliases, &-authors, &-artists, &-categories {
+      max-width: unset;
+      overflow: unset;
+      white-space: normal;
+      span, div {
+        display: block;
+        padding: 0 1em;
+        hyphens: manual;
+      }
+    }
   }
   #search {
     label { display: block }
@@ -892,13 +870,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
   #user-profile section {
     display: block;
     text-align: center;
-    span:first-child { display: block }
-  }
-  #info {
-    text-align: center;
-    &-header { display: none !important }
-    section div { text-indent: 0 }
+    strong { display: block }
   }
   #links .link span { display: none }
 }
-

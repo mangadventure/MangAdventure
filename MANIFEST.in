@@ -3,4 +3,3 @@ include README.md
 include manage.py
 recursive-include static *
 recursive-include */templates *
-

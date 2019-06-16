@@ -11,7 +11,7 @@
   {% block title %}
     {% with title=flatpage.title|striptags %}
       <meta name="twitter:title" content="{{ title }} - {{ config.NAME }}">
-      <meta property="og:title" content="{{ title }}- {{ config.NAME }}">
+      <meta property="og:title" content="{{ title }} - {{ config.NAME }}">
       <meta name="title" content="{{ title }}">
       <title>{{ title }} &middot; {{ config.NAME }}</title>
     {% endwith %}
@@ -21,4 +21,3 @@
       <article id="info" class="flatpage">{{ flatpage.content }}</article>
   {% endblock %}
 {% endcache %}
-

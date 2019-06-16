@@ -1,30 +1,24 @@
-from django.contrib.redirects.models import Redirect
+from os.path import join
+from shutil import move
+from time import mktime
+
+from django.db import models
+from django.shortcuts import reverse
 from django.utils.functional import cached_property
 from django.utils.http import http_date
 from django.utils.text import slugify
-from django.shortcuts import reverse
-from django.db import models
-from time import mktime
-from MangAdventure.models import (
-    Alias, AliasKeyField, AliasField
-)
-from MangAdventure.utils import (
-    validators, storage,
-    uploaders, images
-)
+
 from groups.models import Group
-from os.path import join
-from shutil import move
+from MangAdventure.models import Alias, AliasField, AliasKeyField
+from MangAdventure.utils import images, storage, uploaders, validators
 
 
 def _move(old, new):
     try:
         move(old.get_directory, new.get_directory)
     except OSError as e:
-        if e.errno == 2:
-            pass
-        else:
-            raise
+        if e.errno == 2: pass
+        else: raise e
 
 
 def _alias_help(name, identifier='name'):
@@ -241,4 +235,3 @@ __all__ = [
     'Author', 'AuthorAlias', 'Artist', 'ArtistAlias',
     'Series', 'SeriesAlias', 'Chapter', 'Page', 'Category'
 ]
-

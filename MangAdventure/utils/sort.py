@@ -1,3 +1,5 @@
+# Source: https://blog.codinghorror.com/sorting-for-humans-natural-sort-order/
+
 from re import split
 
 
@@ -11,6 +13,3 @@ def natural_sort(l): return sorted(l, key=alnum_key)
 
 
 __all__ = ['alnum_key', 'natural_sort']
-
-# Source: https://blog.codinghorror.com/sorting-for-humans-natural-sort-order/
-

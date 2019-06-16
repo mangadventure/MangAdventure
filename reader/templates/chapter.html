@@ -60,7 +60,7 @@
           <i class="mi mi-down"></i>
           Chapters
         </span>
-        <a href="#" title="{{ curr_chapter.title }}">
+        <a href="#" title="{{ curr_chapter.title }}" class="faux-link">
           <i class="mi mi-down"></i>
           {% with vol=curr_chapter.volume num=curr_chapter.number %}
             <span {% if curr_chapter.final %}class="end"{% endif %}>
@@ -68,9 +68,9 @@
             </span>
           {% endwith %}
         </a>
-        <ul class="main-bg">
+        <ul class="dropdown-list main-bg">
           {% for chapter in all_chapters %}
-            <li class="chapter-details"
+            <li class="dropdown-element chapter-details"
               {% if chapter == curr_chapter %}
                 data-current="true"
               {% endif %}>
@@ -86,16 +86,15 @@
       </div>
       <div class="dropdown page-list main-bg" aria-haspopup="true">
         <span class="dropdown-title alter-fg">
-          Pages
-          <i class="mi mi-down"></i>
+          Pages <i class="mi mi-down"></i>
         </span>
-        <a href="#">
+        <a href="#" class="faux-link">
           Page {{ curr_page.number|stringformat:'02d' }}
           <i class="mi mi-down"></i>
         </a>
-        <ul class="main-bg">
+        <ul class="dropdown-list main-bg">
           {% for page in all_pages %}
-            <li class="page-details"
+            <li class="dropdown-element page-details"
               {% if page.number == curr_page.number %}
                 data-current="true"
               {% endif %}>
@@ -138,18 +137,20 @@
     <section id="controls" class="no-display">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
         <div id="controls-top">
-          <a href="{{ all_pages.first.get_absolute_url }}" title="First page">
+          <a href="{{ all_pages.first.get_absolute_url }}"
+             title="First page" class="control">
             <i class="mi mi-rewind"></i>
           </a>
           {% if prev == 0 %}
             {% if prev_chapter %}
-              <a href="{{ prev_chapter.get_absolute_url }}" title="Previous chapter">
+              <a href="{{ prev_chapter.get_absolute_url }}"
+                 title="Previous chapter" class="control">
             {% else %}
               <a href="{{ curr_chapter.series.get_absolute_url }}"
-                 title="No previous chapters">
+                 title="No previous chapters" class="control">
             {% endif %}
           {% else %}
-            <a href="../{{ prev }}/" title="Previous page">
+            <a href="../{{ prev }}/" title="Previous page" class="control">
           {% endif %}
             <i class="mi mi-left"></i>
           </a>
@@ -162,17 +163,18 @@
             {% if next > max %}
               {% if next_chapter %}
                 <a href="{{ next_chapter.get_absolute_url }}"
-                   title="Next chapter">
+                   title="Next chapter" class="control">
               {% else %}
                 <a href="{{ curr_chapter.series.get_absolute_url }}"
-                   title="No more chapters">
+                   title="No more chapters" class="control">
               {% endif %}
             {% else %}
-              <a href="../{{ next }}/" title="Next page">
+              <a href="../{{ next }}/" title="Next page" class="control">
             {% endif %}
               <i class="mi mi-right"></i>
             </a>
-            <a href="{{ all_pages.last.get_absolute_url }}" title="Last page">
+            <a href="{{ all_pages.last.get_absolute_url }}"
+               title="Last page" class="control">
               <i class="mi mi-forward"></i>
             </a>
           {% endwith %}
@@ -186,4 +188,3 @@
     {% endfor %}
   </div>
 {% endblock %}
-

@@ -20,4 +20,3 @@ Series
    :maxdepth: 2
 
    chapter
-

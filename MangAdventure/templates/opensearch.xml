@@ -14,4 +14,3 @@
       <moz:UpdateUrl>{{ self }}</moz:UpdateUrl>
   </OpenSearchDescription>
 {% endcache %}
-

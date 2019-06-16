@@ -90,4 +90,3 @@ Each object contains the following:
    :start-after: indented
 
 .. include:: ../includes/status.rst
-

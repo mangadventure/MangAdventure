@@ -76,4 +76,3 @@ The response body is a JSON object which contains the following:
   - The requested group doesn't exist.
 * `400 Bad Request <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400>`_
   - The id parameter was invalid.
-

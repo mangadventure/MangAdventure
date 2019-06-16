@@ -9,4 +9,3 @@ urlpatterns = [
     url(r'^$', invalid_endpoint, name='root'),
     url(r'^v1/', include('api.v1.urls')),
 ]
-

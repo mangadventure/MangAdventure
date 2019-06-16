@@ -1,14 +1,17 @@
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.cache import cache_control
-from django.contrib.messages import error, info as message
+from django.contrib.messages import error, info
 from django.db import IntegrityError
-from django.shortcuts import render
 from django.http import Http404, HttpResponse
+from django.shortcuts import render
+from django.views.decorators.cache import cache_control
+
 from allauth.account.models import EmailAddress
 from allauth.account.views import LogoutView
+
 from reader.models import Chapter
-from .models import UserProfile, Bookmark
+
 from .forms import UserProfileForm
+from .models import Bookmark, UserProfile
 
 
 @login_required
@@ -38,7 +41,7 @@ def edit_user(request):
                 EmailAddress.objects.add_email(
                     request, request.user, email, confirm=True
                 )
-                message(request, 'Please confirm your new e-mail address.')
+                info(request, 'Please confirm your new e-mail address.')
         else:
             error(request, 'Error: please check the fields and try again.')
     else:
@@ -78,4 +81,3 @@ def bookmarks(request):
         return render(request, 'bookmarks.html', {
             'releases': chapters
         })
-

@@ -10,4 +10,3 @@ Authors
    :maxdepth: 2
 
    single
-

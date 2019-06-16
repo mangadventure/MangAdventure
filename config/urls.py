@@ -1,9 +1,9 @@
 from django.contrib.flatpages.views import flatpage
 
 try:
-    from django.urls import include, re_path as url
+    from django.urls import re_path as url
 except ImportError:
-    from django.conf.urls import include, url
+    from django.conf.urls import url
 
 try:
     from csp.decorators import csp_update
@@ -18,4 +18,3 @@ urlpatterns = [
     url(r'^info/$', info_page, {'url': '/info/'}, name='info'),
     url(r'^privacy/$', info_page, {'url': '/privacy/'}, name='privacy'),
 ]
-

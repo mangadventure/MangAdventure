@@ -18,4 +18,3 @@ about: Do you have a question regarding this project?
 * Python version:
 * Web server and version:
 * Browser type and version:
-

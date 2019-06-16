@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Role, Group, Member
+
+from .models import Group, Member, Role
 
 
 class MemberRoleInline(admin.StackedInline):
@@ -17,4 +18,3 @@ class GroupAdmin(admin.ModelAdmin):
 
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Member, MemberAdmin)
-

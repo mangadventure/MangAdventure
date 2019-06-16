@@ -65,4 +65,3 @@ The response body is an array of JSON objects. Each object contains the followin
    * **date** (*string*) - The date the chapter was uploaded.
 
 .. include:: includes/status.rst
-

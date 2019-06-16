@@ -1,5 +1,6 @@
 from allauth.urls import urlpatterns as allauth_urls
-from .views import profile, edit_user, PostOnlyLogoutView, bookmarks
+
+from .views import PostOnlyLogoutView, bookmarks, edit_user, profile
 
 try:
     from django.urls import re_path as url
@@ -12,4 +13,3 @@ urlpatterns = [
     url(r'^logout/$', PostOnlyLogoutView.as_view(), name='account_logout'),
     url(r'^bookmarks/$', bookmarks, name='user_bookmarks')
 ] + allauth_urls
-

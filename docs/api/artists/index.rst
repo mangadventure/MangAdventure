@@ -10,4 +10,3 @@ Artists
    :maxdepth: 2
 
    single
-

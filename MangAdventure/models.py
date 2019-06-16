@@ -1,4 +1,5 @@
 from django.db import models
+
 from .utils import validators
 
 
@@ -63,4 +64,3 @@ __all__ = [
     'TwitterField', 'DiscordNameField', 'DiscordURLField',
     'RedditField', 'AliasField', 'AliasKeyField', 'Alias'
 ]
-

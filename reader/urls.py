@@ -17,4 +17,3 @@ urlpatterns = [
     url(r'%s$' % _chapter, views.chapter_redirect, name='chapter'),
     url(r'%s$' % _page, views.chapter_page, name='page'),
 ]
-

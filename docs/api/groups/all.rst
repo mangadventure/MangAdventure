@@ -69,4 +69,3 @@ Each object contains the following:
 .. include:: ../includes/group.rst
 
 .. include:: ../includes/status.rst
-

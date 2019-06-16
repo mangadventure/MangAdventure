@@ -1,9 +1,11 @@
-from django.core.management import BaseCommand
-from django.core.files import File
-from xml.etree import cElementTree as et
 from os.path import abspath, join
-from reader.models import Series, Chapter, Page
+from xml.etree import cElementTree as et
+
+from django.core.files import File
+from django.core.management import BaseCommand
+
 from groups.models import Group
+from reader.models import Chapter, Page, Series
 
 
 def _get_element(tables, name):
@@ -124,4 +126,3 @@ class Command(BaseCommand):
                 page.image.save(fname, File(f), save=False)
             all_pages.append(page)
         Page.objects.bulk_create(all_pages)
-

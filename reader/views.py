@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect
 from django.http import Http404
+from django.shortcuts import redirect, render
+
 from next_prev import next_in_order, prev_in_order
+
 from .models import Chapter, Series
 
 
@@ -62,4 +64,3 @@ def chapter_page(request, slug, vol, num, page):
 
 def chapter_redirect(request, slug, vol, num):
     return redirect('reader:page', slug, vol, num, 1, permanent=True)
-

@@ -10,7 +10,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='chapter',
             name='number',
-            field=models.FloatField(default=0, help_text='The number of the chapter.'),
+            field=models.FloatField(
+                default=0, help_text='The number of the chapter.'
+            ),
         ),
     ]
-

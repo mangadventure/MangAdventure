@@ -32,7 +32,7 @@
       <input class="button" type="submit" value="Register">
     </form>
     <section id="oauth">
-      <div>Or, sign up with:</div>
+      <div id="oauth-or">Or, sign up with:</div>
       {% get_providers as socialaccount_providers %}
       {% for provider in socialaccount_providers|available %}
         <a title="{{ provider.name }}" class="provider main-fg"
@@ -44,4 +44,3 @@
     </section>
   </article>
 {% endblock %}
-

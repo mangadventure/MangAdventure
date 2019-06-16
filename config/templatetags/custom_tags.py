@@ -1,6 +1,7 @@
+from os.path import basename, splitext
+
 from django.template.defaultfilters import register, slice_filter
 from django.utils.six import moves
-from os.path import splitext, basename
 
 join = moves.urllib.parse.urljoin
 urlopen = moves.urllib.request.urlopen
@@ -51,4 +52,3 @@ def get_type(link):
             '.tiff': 'image/tiff',
             '.webp': 'image/webp'
         }.get(splitext(link.lower())[-1], 'image/jpeg')
-

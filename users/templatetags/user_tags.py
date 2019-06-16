@@ -1,4 +1,5 @@
 from django.template.defaultfilters import register
+
 from allauth.socialaccount.models import SocialApp
 
 
@@ -8,4 +9,3 @@ def available(providers):
     objects = SocialApp.objects \
         .filter(provider__in=ids).values_list('provider', flat=True)
     return list(filter(lambda p: p.id in objects, providers))
-

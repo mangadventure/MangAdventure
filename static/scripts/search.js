@@ -1,15 +1,14 @@
 /* global Tablesort */
 
-(function() {
+(function(form) {
   function getSearchParam(param) {
     var tmp = [];
     var items = location.search.substr(1).split('&');
     for(var i = 0, l = items.length; i < l; ++i) {
       tmp = items[i].split('=');
-      if(tmp[0] === param)
-        return decodeURIComponent(tmp[1]);
+      if(tmp[0] === param) return decodeURIComponent(tmp[1]);
     }
-    return ''
+    return '';
   }
 
   function appendInfo(row, cln, title, text) {
@@ -99,7 +98,6 @@
     form.categories.value = values.join(',');
   });
 
-  var form = document.getElementById('search-form');
   form.addEventListener('submit', function(evt) {
     evt.preventDefault();
     evt.stopPropagation();
@@ -114,5 +112,4 @@
       elem[j].removeAttribute('disabled');
     }
   });
-})();
-
+})(document.getElementById('search-form'));

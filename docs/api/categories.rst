@@ -51,4 +51,3 @@ The response body is an array of JSON objects. Each object contains the followin
 * **description** (*string*) - The description of the category.
 
 .. include:: includes/status.rst
-

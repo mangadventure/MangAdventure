@@ -15,4 +15,3 @@
   The key of each volume is its number.
   The value is an object containing the volume's chapters.
   Each chapter's key is its number and its value contains the following:
-

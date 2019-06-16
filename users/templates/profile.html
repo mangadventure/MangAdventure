@@ -32,25 +32,25 @@
           {% with user=profile.user %}
             {% if user == request.user %}
               <div>
-                <span>E-mail:</span>
+                <strong>E-mail:</strong>
                 <span>{{ user.email }}</span>
               </div>
             {% endif %}
             {% if user.username %}
               <div>
-                <span>Username:</span>
+                <strong>Username:</strong>
                 <span>{{ user.username }}</span>
               </div>
             {% endif %}
             {% if user.first_name %}
               <div>
-                <span>First name:</span>
+                <strong>First name:</strong>
                 <span>{{ user.first_name }}</span>
               </div>
             {% endif %}
             {% if user.last_name %}
               <div>
-                <span>Last name:</span>
+                <strong>Last name:</strong>
                 <span>{{ last_name }}</span>
               </div>
             {% endif %}
@@ -59,11 +59,10 @@
       </section>
       {% if profile.bio %}
         <section id="user-bio">
-          <span>About:</span>
+          <strong>About:</strong>
           <div>{{ profile.bio }}</div>
         </section>
       {% endif %}
     </article>
   {% endcache %}
 {% endblock %}
-

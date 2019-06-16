@@ -1,12 +1,13 @@
-from django.shortcuts import reverse
 from django.db import models
+from django.shortcuts import reverse
+
+from MangAdventure.models import (
+    DiscordNameField, DiscordURLField, RedditField, TwitterField
+)
+from MangAdventure.utils.images import thumbnail
 from MangAdventure.utils.storage import OverwriteStorage
 from MangAdventure.utils.uploaders import group_logo_uploader
 from MangAdventure.utils.validators import FileSizeValidator
-from MangAdventure.utils.images import thumbnail
-from MangAdventure.models import (
-    TwitterField, DiscordURLField, DiscordNameField, RedditField
-)
 
 
 class Group(models.Model):
@@ -98,4 +99,3 @@ class Role(models.Model):
 
 
 __all__ = ['Group', 'Member', 'Role']
-

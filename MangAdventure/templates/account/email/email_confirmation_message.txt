@@ -10,4 +10,3 @@ Please click the following link to confirm your e-mail:
 {{ activate_url }}
 {% endwith %}
 {% endautoescape %}
-

@@ -1,9 +1,9 @@
-from django.contrib.messages import get_messages, add_message
+from django.contrib import admin, redirects, sites
 from django.contrib.flatpages.admin import FlatPageAdmin
-from django.contrib.flatpages.models import FlatPage
 from django.contrib.flatpages.forms import FlatpageForm
-from django.contrib import admin, sites, redirects
+from django.contrib.flatpages.models import FlatPage
 from django.forms import ModelForm
+
 from constance.admin import Config, ConstanceAdmin
 from tinymce.widgets import TinyMCE
 
@@ -101,4 +101,3 @@ admin.site.register(Site, SiteAdmin)
 admin.site.register(Redirect, RedirectAdmin)
 admin.site.register(InfoPage, InfoPageAdmin)
 admin.site.register([Settings], ConstanceAdmin)
-

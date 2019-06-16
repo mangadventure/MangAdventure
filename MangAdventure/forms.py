@@ -1,11 +1,14 @@
-from django.core.exceptions import ValidationError
-from django.utils.six import reraise
-from django.forms import ImageField, CharField, URLField, widgets
-from MangAdventure.utils import validators
-from xml.etree import cElementTree as et
-from sys import exc_info
 from io import BytesIO
+from sys import exc_info
+from xml.etree import cElementTree as et
+
+from django.core.exceptions import ValidationError
+from django.forms import CharField, ImageField, URLField, widgets
+from django.utils.six import reraise
+
 from PIL import Image
+
+from MangAdventure.utils import validators
 
 
 # Source: https://gist.github.com/ambivalentno/9bc42b9a417677d96a21
@@ -98,4 +101,3 @@ class DiscordURLField(URLField):
 
 
 __all__ = ['SVGImageField', 'TwitterField', 'DiscordURLField', 'ColorField']
-

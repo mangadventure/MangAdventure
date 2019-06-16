@@ -7,4 +7,3 @@ class ReaderConfig(AppConfig):
     def ready(self):
         __import__('reader.receivers')
         super(ReaderConfig, self).ready()
-

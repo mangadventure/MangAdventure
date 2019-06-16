@@ -1,11 +1,14 @@
-from django.views.decorators.cache import cache_control
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.conf import settings
+from django.views.decorators.cache import cache_control
+
 from constance import config
-from reader.models import Category, Chapter
+
 from api.response import JsonError
-from .utils.search import query, parse
+from reader.models import Category, Chapter
+
+from .utils.search import parse, query
 
 
 def _error_context(msg, status=500):
@@ -102,4 +105,3 @@ def handler503(request, exception=None, template_name='error.html'):
         ' Please try again later.', 503
     )
     return render(request, template_name, context, status=503)
-

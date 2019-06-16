@@ -1,9 +1,11 @@
-from django.forms import ModelForm, CheckboxSelectMultiple
 from django.contrib import admin
+from django.forms import CheckboxSelectMultiple, ModelForm
+
 from constance import config
+
 from .models import (
-    Series, SeriesAlias, Author, AuthorAlias,
-    Artist, ArtistAlias, Chapter, Category
+    Artist, ArtistAlias, Author, AuthorAlias,
+    Category, Chapter, Series, SeriesAlias
 )
 
 admin.site.site_header = config.NAME + ' Administration'
@@ -59,4 +61,3 @@ admin.site.register(Series, SeriesAdmin)
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Category, CategoryAdmin)
-

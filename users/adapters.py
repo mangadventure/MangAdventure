@@ -13,4 +13,3 @@ class AccountAdapter(DefaultAccountAdapter):
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
     def get_connect_redirect_url(self, request, social_account):
         return request.POST.get('next', '/user')
-

@@ -8,3 +8,4 @@ static/django_tinymce/* linguist-vendored
 
 static/COMPILED/* linguist-generated
 
+.env.example linguist-detectable=false linguist-language=Shell

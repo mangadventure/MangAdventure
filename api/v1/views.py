@@ -1,11 +1,12 @@
-from django.views.decorators.http import last_modified
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from api.response import require_methods_api, JsonResponse, JsonError
-from reader.models import Chapter, Series, Author, Artist, Category
-from MangAdventure.utils.search import get_response
+from django.views.decorators.http import last_modified
+
+from api.response import JsonError, JsonResponse, require_methods_api
 from groups.models import Group, Member
+from MangAdventure.utils.search import get_response
+from reader.models import Artist, Author, Category, Chapter, Series
 
 
 def _chapter_response(request, _chapter):
@@ -302,4 +303,3 @@ def categories(request):
 @require_methods_api()
 def invalid_endpoint(request):
     return JsonError('Invalid API endpoint', 501)
-

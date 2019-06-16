@@ -79,4 +79,3 @@ Browsers
 
 .. |iOS| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/46.0.0/safari-ios/safari-ios_32x32.png
    :alt: iOS Safari
-

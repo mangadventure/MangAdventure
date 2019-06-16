@@ -1,5 +1,6 @@
-from django.shortcuts import render
 from django.http import Http404
+from django.shortcuts import render
+
 from .models import Group, Member
 
 
@@ -27,4 +28,3 @@ def group(request, g_id=0):
     return render(request, 'group.html', {
         'group': _group, 'members': members.order_by('name')
     })
-

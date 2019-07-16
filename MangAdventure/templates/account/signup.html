@@ -6,6 +6,9 @@
   <meta name="og:title" content="Sign up - {{ config.NAME }}">
   <title>Sign up &middot; {{ config.NAME }}</title>
 {% endblock %}
+{% block robots %}
+  <meta name="robots" content="noindex">
+{% endblock %}
 {% block content %}
   <h1 class="text-shadow alter-bg">Sign up</h1>
   <article class="user-action" id="sign-up">

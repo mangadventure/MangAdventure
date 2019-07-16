@@ -6,6 +6,9 @@
   <meta name="og:title" content="Activation Pending - {{ config.NAME }}">
   <title>Activation Pending &middot; {{ config.NAME }}</title>
 {% endblock %}
+{% block robots %}
+  <meta name="robots" content="noindex">
+{% endblock %}
 {% block content %}
   <h1 class="text-shadow alter-bg">Activation Pending</h1>
   <article class="user-action" id="activation-sent">

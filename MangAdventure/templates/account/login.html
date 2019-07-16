@@ -11,6 +11,9 @@
   <meta name="og:title" content="Login - {{ config.NAME }}">
   <title>Login &middot; {{ config.NAME }}</title>
 {% endblock %}
+{% block robots %}
+  <meta name="robots" content="noindex">
+{% endblock %}
 {% block content %}
   <h1 class="text-shadow alter-bg">Sign in</h1>
   <article class="user-action" id="sign-in">

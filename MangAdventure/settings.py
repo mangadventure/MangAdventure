@@ -11,7 +11,7 @@ from .bad_bots import BOTS
 BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 
 # Load environment variables from .env file.
-env = Env('.env')
+env = Env(path.join(BASE_DIR, '.env'))
 
 ###############
 #    Basic    #
@@ -140,13 +140,11 @@ LOGGING = {  # TODO: better logging
     },
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {pathname}'
-                      ' {funcName}:{lineno} {message}',
-            'style': '{',
+            'format': '%(levelname)s %(asctime)s %(pathname)s'
+                      ' %(funcName)s:%(lineno)s %(message)s',
         },
         'simple': {
-            'format': '{asctime} {module} {funcName} {message}',
-            'style': '{'
+            'format': '%(asctime)s %(module)s %(funcName)s %(message)s',
         },
     },
     'handlers': {

@@ -8,6 +8,7 @@ from constance import config
 from api.response import JsonError
 from reader.models import Category, Chapter
 
+from .bad_bots import BOTS
 from .utils.search import parse, query
 
 
@@ -58,9 +59,12 @@ def contribute(request):
     return render(request, 'contribute.json', {}, 'application/json')
 
 
-@cache_control(public=True, max_age=31536000)
+@cache_control(public=True, max_age=2628000)
 def robots(request):
-    return HttpResponse('User-agent: *\nDisallow:', 'text/plain')
+    _robots = 'User-agent: *\nDisallow:\n\n' + '\n'.join([
+        'User-agent: %s\nDisallow: /\n' % ua for ua in BOTS
+    ])
+    return HttpResponse(content=_robots, content_type='text/plain')
 
 
 def handler400(request, exception=None, template_name='error.html'):

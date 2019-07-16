@@ -1,5 +1,5 @@
+import re
 from os import mkdir, path
-from re import IGNORECASE, compile as regex
 from sys import argv
 
 from yaenv.core import Env
@@ -123,9 +123,9 @@ EMAIL_SUBJECT_PREFIX = '[%s] ' % env['SITE_DOMAIN']
 
 # URLs that should be ignored when reporting HTTP 404 errors.
 IGNORABLE_404_URLS = [
-    regex(r'^/favicon.ico'),
-    regex(r'^/robots.txt'),
-    regex(r'^/api'),
+    re.compile(r'^/favicon.ico'),
+    re.compile(r'^/robots.txt'),
+    re.compile(r'^/api'),
 ]
 
 LOGS_DIR = path.join(BASE_DIR, 'logs')
@@ -326,7 +326,8 @@ DEFAULT_FROM_EMAIL = env['EMAIL_ADDRESS']
 ##################
 
 # List of User-Agents that are not allowed to visit any page.
-DISALLOWED_USER_AGENTS = [regex(bot, IGNORECASE) for bot in BOTS]
+DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]
+DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
 
 # Use HttpOnly flag on the CSRF cookie.
 CSRF_COOKIE_HTTP_ONLY = True
@@ -541,4 +542,4 @@ if DEBUG:
     except ImportError:
         pass
 
-del BASE_DIR, BOTS, IGNORECASE, VERSION
+del BASE_DIR, BOTS, VERSION

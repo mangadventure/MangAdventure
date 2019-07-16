@@ -6,6 +6,9 @@
   <meta name="og:title" content="Inactive account - {{ config.NAME }}">
   <title>Inactive account &middot; {{ config.NAME }}</title>
 {% endblock %}
+{% block robots %}
+  <meta name="robots" content="noindex">
+{% endblock %}
 {% block content %}
   <h1 class="text-shadow alter-bg">Inactive account</h1>
   <article id="inactive-account">This account is inactive.</article>

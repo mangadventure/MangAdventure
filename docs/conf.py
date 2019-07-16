@@ -7,21 +7,26 @@ import django
 
 import sphinx_rtd_theme
 
-sys.path.insert(0, os.path.abspath('..'))
-docs = os.path.dirname(__file__)
+base_dir = os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__)
+))
+
+sys.path.insert(0, base_dir)
+
+# dummy .env file
+dotenv = os.path.join(base_dir, '.env')
+if not os.path.exists(dotenv):
+    with open(dotenv, 'w') as f:
+        f.writelines([
+            'DB_URL=sqlite://:memory:\n',
+            'EMAIL_URL=console:\n',
+            'EMAIL_ADDRESS=user@example.com\n',
+            'SITE_DOMAIN=example.com\n'
+        ])
 
 os.environ.setdefault(
     'DJANGO_SETTINGS_MODULE', 'MangAdventure.settings'
 )
-
-# dummy .env file
-with open(os.path.join(docs, '.env'), 'w') as env:
-    env.writelines([
-        'DB_URL=sqlite://:memory:\n',
-        'EMAIL_URL=console:\n',
-        'EMAIL_ADDRESS=""\n',
-        'SITE_DOMAIN=""\n'
-    ])
 
 django.setup()
 
@@ -100,4 +105,3 @@ texinfo_documents = [(
     master_doc, project, '%s Documentation' % project,
     author, project, MangAdventure.__doc__, 'Miscellaneous'
 )]
-

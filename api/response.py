@@ -1,8 +1,15 @@
 from functools import wraps
 
 from django.http import JsonResponse
-from django.utils.log import log_response
 from django.views.decorators.vary import vary_on_headers
+
+try:
+    from django.utils.log import log_response
+except ImportError:
+    from django.views.decorators.http import logger
+
+    def log_response(*args, **kwargs):
+        return logger.warning(*args, extra=kwargs)
 
 
 class JsonError(JsonResponse):
@@ -21,7 +28,7 @@ def require_methods_api(allowed_methods=('GET', 'HEAD')):
         @wraps(func)
         def inner(request, *args, **kwargs):
             if request.method not in allowed_methods:
-                response = JsonError('Method not allowed', 429)
+                response = JsonError('Method not allowed', 405)
                 response['Allow'] = ', '.join(allowed_methods)
                 log_response(
                     'Method Not Allowed (%s): %s',

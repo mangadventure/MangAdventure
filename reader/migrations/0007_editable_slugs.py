@@ -11,10 +11,6 @@ class Migration(migrations.Migration):
             ('reader', '0006_remove_chapter_url'),
         ]
         self.operations = [
-            migrations.AddField(
-                model_name='series', name='id',
-                field=models.IntegerField(default=0),
-            ),
             migrations.AlterField(
                 model_name='chapter', name='series',
                 field=models.CharField(max_length=250, blank=True)
@@ -27,6 +23,19 @@ class Migration(migrations.Migration):
             migrations.RemoveField(model_name='series', name='authors'),
             migrations.RemoveField(model_name='series', name='artists'),
             migrations.RemoveField(model_name='series', name='categories'),
+            migrations.AlterField(
+                model_name='series', name='slug',
+                field=models.SlugField(
+                    primary_key=False, blank=True,
+                    unique=True, verbose_name='Custom slug',
+                    help_text='The unique slug of the series.'
+                              ' Will be used in the URL.'
+                )
+            ),
+            migrations.AddField(
+                model_name='series', name='id',
+                field=models.AutoField(primary_key=True, serialize=False)
+            ),
             migrations.RunPython(self.populate_ids),
             migrations.AddField(
                 model_name='series', name='artists',
@@ -39,19 +48,6 @@ class Migration(migrations.Migration):
             migrations.AddField(
                 model_name='series', name='categories',
                 field=models.ManyToManyField(blank=True, to='reader.Category'),
-            ),
-            migrations.AlterField(
-                model_name='series', name='id',
-                field=models.AutoField(primary_key=True, serialize=False),
-            ),
-            migrations.AlterField(
-                model_name='series',
-                name='slug',
-                field=models.SlugField(
-                    blank=True, unique=True, verbose_name='Custom slug',
-                    help_text='The unique slug of the series.'
-                    ' Will be used in the URL.'
-                )
             ),
             migrations.RunPython(self.populate_m2m_fields),
             migrations.AlterField(
@@ -85,10 +81,7 @@ class Migration(migrations.Migration):
         series = apps.get_model('reader', 'Series')
         chapter = apps.get_model('reader', 'Chapter')
         alias = apps.get_model('reader', 'SeriesAlias')
-        pk = 1
         for s in series.objects.all():
-            s.id = pk
-            pk += 1
             s.save()
             for c in chapter.objects.filter(series=s.slug):
                 c.series = s.id

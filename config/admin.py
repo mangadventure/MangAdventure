@@ -5,30 +5,35 @@ from django.contrib.flatpages.models import FlatPage
 from django.forms import ModelForm
 
 from constance.admin import Config, ConstanceAdmin
-from tinymce.widgets import TinyMCE
+
+from MangAdventure.forms import TinyMCE
 
 
 class InfoPageForm(FlatpageForm):
+    def save(self, commit=True):
+        page = super(FlatpageForm, self).save(commit=False)
+        page.sites.add(sites.models.Site.objects.get_current())
+        if commit:
+            page.save()
+        return page
+
     class Meta:
         fields = '__all__'
         model = FlatPage
         widgets = {
-            'content': TinyMCE(mce_attrs={
-                'selector': '.django-tinymce',
-                'theme': 'modern',
-                'relative_urls': True,
-                'plugins': 'textcolor colorpicker lists advlist '
-                           'link charmap visualchars code table image',
-                'menubar': 'edit view format table',
-                'toolbar': ' | '.join([
+            'content': TinyMCE(attrs={
+                'mce_plugins': 'textcolor colorpicker lists advlist link'
+                               ' charmap visualchars code table image',
+                'mce_menubar': 'edit view format table',
+                'mce_toolbar': ' | '.join([
                     'undo redo', 'cut copy paste',
                     'formatselect forecolor backcolor',
                     'alignleft aligncenter alignright alignjustify',
                     'bold italic underline strikethrough',
                     'bullist numlist', 'link unlink', 'charmap image'
                 ]),
-                'valid_children': '+body[style]',
-                'extended_valid_elements': 'style[type]',
+                'mce_valid_children': '+body[style]',
+                'mce_extended_valid_elements': 'style[type]',
             })
         }
 
@@ -37,6 +42,9 @@ class InfoPageAdmin(FlatPageAdmin):
     change_list_template = 'admin/change_list.html'
     change_list_form = ModelForm
     form = InfoPageForm
+    fieldsets = [
+        (None, {'fields': ('url', 'title', 'content')})
+    ]
     list_filter = []
 
     def get_readonly_fields(self, request, obj=None):

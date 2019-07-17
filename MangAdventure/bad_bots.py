@@ -11,6 +11,7 @@ BOTS = [
     'ContactBot',
     'ContentSmartz',
     'DataCha0s',
+    'Dataprovider.com',
     'del.icio.us-thumbnails',
     'Demo Bot',
     'DigExt; DTS Agent',

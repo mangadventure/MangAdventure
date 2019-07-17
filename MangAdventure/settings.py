@@ -1,6 +1,5 @@
 import re
 from os import mkdir, path
-from sys import argv
 
 from yaenv.core import Env
 
@@ -60,10 +59,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.discord',
     'static_precompiler',
-    'tinymce',
+    'next_prev',
     'constance.backends.database',
     'config.apps.SiteConfig',
-    'next_prev',
     'config',
     'reader',
     'api',
@@ -368,7 +366,7 @@ else:
     CSP_CONNECT_SRC = ("'self'",)
 
     # Sets the script-src directive.
-    CSP_SCRIPT_SRC = ("'self'",)
+    CSP_SCRIPT_SRC = ("'self'", "https://cdn.tinymce.com")
 
     # Sets the style-src directive.
     CSP_STYLE_SRC = (
@@ -514,15 +512,6 @@ CONSTANCE_CONFIG_FIELDSETS = {
 # Use the database for storing configuration.
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
-
-#################
-#    TinyMCE    #
-#################
-
-# The URL to the TinyMCE JS file.
-TINYMCE_JS = 'https://cdnjs.cloudflare.com/ajax/' \
-             'libs/tinymce/4.9.3/tinymce.min.js'
-
 ###############
 #    Debug    #
 ###############
@@ -540,4 +529,4 @@ if DEBUG:
     except ImportError:
         pass
 
-del BASE_DIR, BOTS, VERSION
+del BOTS, LOGS_DIR, VERSION

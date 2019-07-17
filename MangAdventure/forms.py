@@ -1,9 +1,10 @@
 from io import BytesIO
+from json import dumps
 from sys import exc_info
 from xml.etree import cElementTree as et
 
 from django.core.exceptions import ValidationError
-from django.forms import CharField, ImageField, URLField, widgets
+from django.forms import CharField, ImageField, URLField, Widget, widgets
 from django.utils.six import reraise
 
 from PIL import Image
@@ -66,15 +67,16 @@ class SVGImageField(ImageField):
         """
         Check if provided file is svg
         """
-        f.seek(0)
-        tag = None
+        if hasattr(f, 'seek') and callable(f.seek):
+            f.seek(0)
+        else:
+            f = open(f, 'r')
         try:
-            for event, el in et.iterparse(f, ('start',)):
-                tag = el.tag
-                break
+            tag = '{http://www.w3.org/2000/svg}svg'
+            iter = et.iterparse(f, ('start',))
+            return next(iter)[1].tag == tag
         except et.ParseError:
-            pass
-        return tag == '{http://www.w3.org/2000/svg}svg'
+            return False
 
 
 class ColorField(CharField):
@@ -100,4 +102,36 @@ class DiscordURLField(URLField):
         super(DiscordURLField, self).__init__(**kwargs)
 
 
-__all__ = ['SVGImageField', 'TwitterField', 'DiscordURLField', 'ColorField']
+class TinyMCE(Widget):
+    template_name = 'django/forms/widgets/textarea.html'
+
+    def __init__(self, attrs=None):
+        attrs = attrs or {}
+        if 'class' in attrs:
+            attrs['class'] += ' tinymce'
+        else:
+            attrs['class'] = 'tinymce'
+        attrs.update({'cols': '75', 'rows': '15'})
+        mce_attrs = {
+            'selector': '.tinymce',
+            'theme': 'modern',
+            'relative_urls': True
+        }
+        for key in list(attrs):
+            if key.startswith('mce_'):
+                mce_attrs[key[4:]] = attrs.pop(key)
+        attrs['data-tinymce-config'] = dumps(mce_attrs)
+        super(TinyMCE, self).__init__(attrs)
+
+    class Media:
+        extend = False
+        js = (
+            'https://cdn.tinymce.com/4/tinymce.min.js',
+            'scripts/tinymce-init.js'
+        )
+
+
+__all__ = [
+    'SVGImageField', 'TwitterField',
+    'DiscordURLField', 'ColorField', 'TinyMCE',
+]

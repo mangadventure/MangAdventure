@@ -42,6 +42,8 @@ setup(
             'sphinx',
             'sphinx-rtd-theme',
         ],
+        'mysql': 'mysqlclient',
+        'pgsql': 'psycopg2',
         'csp': 'django-csp',
         'uwsgi': 'uwsgi',
         'gunicorn': 'gunicorn'

@@ -21,6 +21,10 @@ def thumbnail(obj, max_size=100):
     except OSError as e:
         if e.errno == 2: return obj
         else: raise e
+    # Don't do anything if it's already a thumbnail
+    if max_size in img.size:
+        img.close()
+        return obj
     # Convert grayscale images to RGB for better downsampling
     if img.mode in ('1', 'L', 'P'):
         img = img.convert('RGB')

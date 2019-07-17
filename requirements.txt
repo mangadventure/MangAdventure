@@ -3,6 +3,5 @@ django-allauth
 django-constance[database]
 django-next-prev
 django-static-precompiler[libsass]
-django-tinymce-lite
 Pillow
 yaenv

@@ -4,4 +4,4 @@ django-constance[database]
 django-next-prev
 django-static-precompiler[libsass]
 Pillow
-yaenv
+yaenv<1.0

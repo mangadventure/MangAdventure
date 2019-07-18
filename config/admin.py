@@ -4,9 +4,14 @@ from django.contrib.flatpages.forms import FlatpageForm
 from django.contrib.flatpages.models import FlatPage
 from django.forms import ModelForm
 
+from constance import config
 from constance.admin import Config, ConstanceAdmin
 
 from MangAdventure.forms import TinyMCE
+
+
+admin.site.site_header = config.NAME + ' Administration'
+admin.site.site_title = admin.site.site_header
 
 
 class InfoPageForm(FlatpageForm):

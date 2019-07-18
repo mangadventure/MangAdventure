@@ -131,11 +131,11 @@ class SeriesAlias(Alias):
 class Chapter(models.Model):
     _help = 'The %s of the chapter.'
     _vol_help = _help % 'volume' + ' Leave as 0 if the series has no volumes.'
-    _file_help = [
+    _file_help = (
         'Upload a zip or cbz file containing the chapter pages.',
         'Its size cannot exceed 50 MBs and it must not',
         'contain more than 1 subfolder.'
-    ]
+    )
     title = models.CharField(max_length=250, help_text=_help % 'title')
     number = models.FloatField(default=0, help_text=_help % 'number')
     volume = models.PositiveSmallIntegerField(default=0, help_text=_vol_help)

@@ -33,6 +33,12 @@ class Group(models.Model):
         help_text="Upload the group's logo. Its size must not exceed 2 MBs.",
     )
 
+    @property
+    def members(self):
+        return Member.objects.filter(id__in=models.Subquery(
+            Role.objects.filter(group_id=self.id).values('member')
+        ))
+
     def get_absolute_url(self):
         return reverse('groups:group', args=[self.id])
 
@@ -68,11 +74,17 @@ class Member(models.Model):
         blank=True, help_text=_help % 'Reddit username'
     )
 
+    @property
+    def groups(self):
+        return Group.objects.filter(id__in=models.Subquery(
+            Role.objects.filter(member_id=self.id).values('group')
+        ))
+
     def __str__(self): return self.name
 
 
 class Role(models.Model):
-    ROLES = [
+    ROLES = (
         ('LD', 'Leader'),
         ('TL', 'Translator'),
         ('PR', 'Proofreader'),
@@ -81,7 +93,7 @@ class Role(models.Model):
         ('TS', 'Typesetter'),
         ('RP', 'Raw Provider'),
         ('QC', 'Quality Checker')
-    ]
+    )
     member = models.ForeignKey(
         Member, on_delete=models.CASCADE, related_name='roles'
     )

@@ -6,6 +6,7 @@ from zipfile import ZipFile
 
 from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.utils.html import format_html
 
 from PIL import Image
 
@@ -43,6 +44,13 @@ def thumbnail(obj, max_size=100):
     )
 
 
+def img_tag(img, alt, height=None, width=None):
+    return format_html(
+        '<img src="{0}" alt="{3}" width="{1}" height="{2}">',
+        img.url, width or '', height or '', alt or ''
+    )
+
+
 def unzip(obj):
     counter = 0
     dir_path = path.join(
@@ -71,4 +79,4 @@ def unzip(obj):
     obj.file.delete(save=True)
 
 
-__all__ = ['thumbnail', 'unzip']
+__all__ = ['thumbnail', 'img_tag', 'unzip']

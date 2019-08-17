@@ -7,6 +7,7 @@
 }
 
 #chapter {
+  text-align: center;
   .chapter-page {
     display: block;
     width: auto;
@@ -35,7 +36,6 @@
     .dropdown-list {
       right: -1px;
       width: 125%;
-      text-align: center;
       border-top-right-radius: 0;
     }
   }
@@ -49,7 +49,6 @@
     }
     &-title { display: none }
   }
-  .curr-page { text-align: center }
 }
 
 #placeholder {
@@ -79,6 +78,15 @@
     display: inline-flex;
     @include justify-content(space-around);
   }
+}
+
+#comments {
+  text-align: center;
+  font-size: 1.1em;
+  padding: 0.2em 0.4em;
+  border: 1px solid $alter-bg;
+  border-radius: 5px;
+  text-decoration: none;
 }
 
 .curr-page input {

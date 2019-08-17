@@ -35,7 +35,7 @@ Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.5.2#egg=MangAdventure"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.5.3#egg=MangAdventure"
 
 MangAdventure also optionally provides `Content-Security-Policy <https://mdn.io/CSP>`_
 configuration via the `django-csp <https://github.com/mozilla/django-csp>`_ package.
@@ -58,6 +58,7 @@ This command will set up the database for your site.
 
 .. code-block:: shell
 
+   mangadventure makemigrations
    mangadventure migrate
 
 Create an administrator account
@@ -164,4 +165,5 @@ Finally, update the database:
 
 .. code-block:: shell
 
+   mangadventure makemigrations
    mangadventure migrate

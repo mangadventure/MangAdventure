@@ -14,7 +14,7 @@ _groups = '^groups'
 app_name = 'api:v1'
 
 urlpatterns = [
-    url(r'^$', views.invalid_endpoint, name='root'),
+    url('^$', views.invalid_endpoint, name='root'),
     url('^releases/?$', views.all_releases, name='releases'),
     url('^series/?$', views.all_series, name='all_series'),
     url('%s/?$' % _series, views.series, name='series'),

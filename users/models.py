@@ -15,6 +15,8 @@ class Bookmark(models.Model):
         unique_together = ('series', 'user')
 
 
+# TODO: add user preferences
+
 class UserProfile(models.Model):
     _validator = validators.FileSizeValidator(max_mb=2)
     user = models.OneToOneField(
@@ -29,7 +31,7 @@ class UserProfile(models.Model):
         upload_to=uploaders.avatar_uploader,
         help_text="The user's avatar image. Must be "
                   "up to %d MBs." % _validator.max_mb,
-        validators=[_validator], blank=True
+        validators=(_validator,), blank=True
     )
     bookmarks = models.ManyToManyField(
         Bookmark, related_name='profile', blank=True,
@@ -39,8 +41,6 @@ class UserProfile(models.Model):
 
     def __str__(self): return str(self.user)
 
-
-# TODO: add user preferences
 
 # Might be utilised for progress tracking in the future
 class Progress(models.Model):
@@ -58,4 +58,4 @@ class Progress(models.Model):
         super(Progress, self).save(kwargs)
 
 
-__all__ = ['UserProfile', 'Bookmark', 'Progress']
+__all__ = ['Bookmark', 'UserProfile']

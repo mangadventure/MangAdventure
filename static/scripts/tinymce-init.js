@@ -1,40 +1,30 @@
 /* global tinyMCE */
 
-(function() {
-  function initTinyMCE(el) {
+window.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.tinymce').forEach(function(el) {
     var mce_conf = JSON.parse(el.getAttribute('data-tinymce-config'));
-    var funcs = [
-      'color_picker_callback',
-      'file_browser_callback',
-      'file_picker_callback',
-      'images_dataimg_filter',
-      'images_upload_handler',
-      'paste_postprocess',
-      'paste_preprocess',
-      'setup',
-      'urlconverter_callback'
-    ];
-    funcs.forEach(function(fn) {
-      if(mce_conf[fn]) {
-        mce_conf[fn] = mce_conf[fn].includes('(') ?
-          eval(`(${mce_conf[fn]})`) : window[mce_conf[fn]];
-      }
-    });
-
-    if('elements' in mce_conf && mce_conf.mode == 'exact')
-      mce_conf.elements = el.id;
+    if('replace_icons' in mce_conf) {
+      var old_setup = mce_conf.setup;
+      mce_conf.setup = function(editor) {
+        if(typeof old_setup === 'function') old_setup(editor);
+        editor.on('init', function(evt) {
+          evt.target.editorContainer.querySelectorAll('i')
+            .forEach(function(ico) {
+              if(ico.className === 'mce-caret') {
+                ico.className = 'mi mi-down';
+              } else if(ico.className.endsWith('save')) {
+                ico.className = 'mi mi-send';
+                ico.nextElementSibling.innerHTML =
+                  mce_conf.submit_text || 'Send';
+              } else {
+                ico.className = ico.className
+                  .replace('mce-ico', 'mi')
+                  .replace(/mce-i-(\w+)/, 'mi-$1');
+              }
+            });
+        });
+      };
+    }
     if(!tinyMCE.editors[el.id]) tinyMCE.init(mce_conf);
-  }
-
-  window.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.tinymce').forEach(initTinyMCE);
-    document.body.addEventListener('click', function(evt) {
-      var row = evt.target.parentNode;
-      if(row && row.className.includes('add-row')) {
-        setTimeout(function() {
-          document.querySelectorAll('.tinymce').forEach(initTinyMCE);
-        }, 0);
-      }
-    }, true);
   });
-})();
+});

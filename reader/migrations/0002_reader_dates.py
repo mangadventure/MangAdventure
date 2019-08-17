@@ -68,10 +68,10 @@ class Migration(migrations.Migration):
                 blank=True, help_text='Upload a zip or cbz file containing'
                 ' the chapter pages. Its size cannot exceed 50 MBs and'
                 ' it must not contain more than 1 subfolder.',
-                upload_to='', validators=[
+                upload_to='', validators=(
                     validators.FileSizeValidator(max_mb=50),
                     validators.zipfile_validator
-                ]
+                )
             ),
         ),
         migrations.AlterField(

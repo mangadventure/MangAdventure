@@ -9,17 +9,17 @@ except ImportError:
     from django.conf.urls import include, url
 
 urlpatterns = [
-    url(r'^$', index, name='index'),
-    url(r'^', include('config.urls')),
-    url(r'^search/$', search, name='search'),
-    url(r'^admin-panel/', admin.site.urls),
-    url(r'^reader/', include('reader.urls')),
-    url(r'^api/', include('api.urls')),
-    url(r'^groups/', include('groups.urls')),
-    url(r'^user/', include('users.urls')),
-    url(r'^opensearch\.xml$', opensearch, name='opensearch'),
-    url(r'^contribute\.json$', contribute, name='contribute'),
-    url(r'^robots\.txt$', robots, name='robots')
+    url('^$', index, name='index'),
+    url('^', include('config.urls')),
+    url('^search/$', search, name='search'),
+    url('^admin-panel/', admin.site.urls),
+    url('^reader/', include('reader.urls')),
+    url('^api/', include('api.urls')),
+    url('^groups/', include('groups.urls')),
+    url('^user/', include('users.urls')),
+    url('^opensearch[.]xml$', opensearch, name='opensearch'),
+    url('^contribute[.]json$', contribute, name='contribute'),
+    url('^robots[.]txt$', robots, name='robots')
 ]
 
 if settings.DEBUG:
@@ -29,7 +29,7 @@ if settings.DEBUG:
     )
     try:
         from debug_toolbar import urls as debug_urls
-        urlpatterns.append(url(r'^__debug__/', include(debug_urls)))
+        urlpatterns.append(url('^__debug__/', include(debug_urls)))
     except ImportError:
         pass
 

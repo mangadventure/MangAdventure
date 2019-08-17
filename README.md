@@ -11,13 +11,15 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
 * [x] Includes JSON API.
 * [x] Works even without JavaScript.
 * [x] Supports searching for series.
-* [x] Supports users. <!--(comments & bookmarks too) soon-->
+* [x] Supports users. (comments & bookmarks too)
 * [x] Allows for migration from FoolSlide2.
 * [ ] More features coming soon...
 
 ## Documentation
 
-The documentation is available on [Read the Docs](https://mangadventure.rtfd.io).
+The documentation is available on [Read the Docs][rtfd].
+
+[rtfd]: https://mangadventure.rtfd.io
 
 ## Configuration
 
@@ -26,7 +28,17 @@ You can configure the site via the admin panel.
 To override the styling of the site, you can write some
 SCSS (or regular CSS) in the `static/extra/styles.scss` file.
 
+## Sites
+
+You can find a list of sites that use MangAdventure in the [wiki][wiki].
+
+If you use MangAdventure for your own site, please add it there.
+
+[wiki]: https://github.com/mangadventure/MangAdventure/wiki
+
 ## Development
+
+<!-- We'll write proper guidelines soon. -->
 
 To debug the app set the environment variable `MANGADV_DEBUG`
 to `true`. **Don't do this in production.**
@@ -39,7 +51,7 @@ You shouldn't use the development server during production.
 
 * Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
 * Search results are sorted using [tristen/tablesort](https://github.com/tristen/tablesort)
-* Info pages use the [TinyMCE editor](https://www.tiny.cloud/)
+* Info pages & comments use the [TinyMCE editor](https://www.tiny.cloud/)
 * Browser logos from [alrra/browser-logos](https://github.com/alrra/browser-logos)
 
 ## License

@@ -431,6 +431,24 @@ thead {
   &-bio div { text-indent: 1em }
 }
 
+#comments {
+  width: 100%;
+  &-links {
+    padding-top: 0.3em;
+    text-align: center;
+  }
+  &-form {
+    form {
+      margin: 0 auto;
+      max-width: 95%;
+      padding-bottom: 0.3em;
+    }
+    .tinymce, .button {
+      border: 1px solid $alter-fg;
+    }
+  }
+}
+
 #oauth {
   .provider {
     text-decoration: unset;
@@ -510,7 +528,7 @@ thead {
     border-bottom: none;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    &-list {
+    .dropdown-list {
       z-index: 10;
       display: block;
     }
@@ -599,6 +617,69 @@ thead {
   &-circle { color: lightslategray }
   &-ok-circle { color: limegreen }
   &-x-circle { color: tomato }
+}
+
+.mce {
+  &-container, &-container *,
+  &-widget, &-widget *, &-reset {
+    background-color: $main-bg !important;
+    color: $main-fg !important;
+    font-family: quote(#{$font-family}), 'Helvetica', 'Arial', sans-serif !important;
+    vertical-align: middle !important;
+  }
+  &-menu-item {
+    color: $main-fg !important;
+    @include touch() {
+      background-color: $alter-bg !important;
+    }
+  }
+  &-btn {
+    button { color: $main-fg !important }
+    &-group:not(:first-child) {
+      border-left: none !important;
+      border-radius: 0 !important;
+    }
+    @include touch() {
+      border-color: $alter-bg !important;
+    }
+  }
+  &-open {
+    @include touch() {
+      border-color: $alter-bg !important;
+    }
+  }
+  &-tooltip {
+    color: $main-fg !important;
+    background-color: transparent !important;
+    &-inner {
+      background-color: $alter-bg !important;
+      border-radius: 3px !important;
+    }
+    &-arrow { border-bottom-color: $alter-bg !important }
+  }
+  &-container .mi, &-widget .mi {
+    // stylelint-disable-next-line font-family-no-missing-generic-family-keyword
+    font-family: 'mangadventure' !important;
+    text-align: center !important;
+    color: $main-fg !important;
+    width: 1em !important;
+  }
+  &-container .mi-send, &-widget .mi-send {
+    margin: -0.1em 0.2em 0 0 !important;
+  }
+  &-branding a {
+    vertical-align: unset !important;
+    color: $alter-fg !important;
+    text-decoration: underline !important;
+  }
+  &-container {
+    border-radius: 3px !important;
+    border-color: $alter-fg !important;
+  }
+  &-menubtn button { color: $main-fg !important }
+  &-text { background-color: inherit !important }
+  &-label { text-shadow: unset !important }
+  &-path-item, &-divider { color: $main-fg !important }
 }
 
 .main-bg { background-color: $main-bg }

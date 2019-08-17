@@ -106,10 +106,10 @@ class Migration(migrations.Migration):
                     help_text='Upload a zip or cbz file containing '
                     'the chapter pages. Its size cannot exceed 50 MBs '
                     'and it must not contain more than 1 subfolder.',
-                    upload_to='', validators=[
+                    upload_to='', validators=(
                         validators.FileSizeValidator(max_mb=50),
                         validators.zipfile_validator
-                    ]
+                    )
                 )),
                 ('final', models.BooleanField(
                     default=False, help_text='Is this the final chapter?'
@@ -148,7 +148,7 @@ class Migration(migrations.Migration):
                     ' Its size must not exceed 2 MBs.',
                     storage=storage.OverwriteStorage(),
                     upload_to=uploaders.cover_uploader,
-                    validators=[validators.FileSizeValidator(max_mb=2)]
+                    validators=(validators.FileSizeValidator(max_mb=2),)
                 )),
                 ('slug', models.SlugField(
                     blank=True, help_text='A custom URL for the series.'

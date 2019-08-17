@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static humanize custom_tags %}
+{% load static humanize comments custom_tags %}
 {% block head_extras %}
   {% if request.user.is_authenticated %}
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -140,7 +140,7 @@
                 <span class="divider"
                       title="{{ chapter.uploaded|naturaltime }}">
                 </span>
-                 <span class="chapter-date"
+                <span class="chapter-date"
                       title="{{ chapter.uploaded|naturaltime }}">
                   {{ chapter.uploaded|naturaltime }}
                 </span>
@@ -149,6 +149,16 @@
           </div>
         {% endfor %}
       {% endwith %}
+    </div>
+    <div id="comments">
+      <section id="comments-list">
+        {% render_comment_list for series %}
+      </section>
+      <section id="comments-form">
+        {% with next=request.path %}
+          {% render_comment_form for series %}
+        {% endwith %}
+      </section>
     </div>
   </article>
 {% endblock %}

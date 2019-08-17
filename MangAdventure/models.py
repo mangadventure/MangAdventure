@@ -4,7 +4,7 @@ from .utils import validators
 
 
 class TwitterField(models.CharField):
-    default_validators = [validators.twitter_name_validator]
+    default_validators = (validators.twitter_name_validator,)
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 15
@@ -12,7 +12,7 @@ class TwitterField(models.CharField):
 
 
 class DiscordNameField(models.CharField):
-    default_validators = [validators.discord_name_validator]
+    default_validators = (validators.discord_name_validator,)
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 37
@@ -20,7 +20,7 @@ class DiscordNameField(models.CharField):
 
 
 class RedditField(models.CharField):
-    default_validators = [validators.reddit_name_validator]
+    default_validators = (validators.reddit_name_validator,)
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('max_length', 21)
@@ -28,7 +28,7 @@ class RedditField(models.CharField):
 
 
 class DiscordURLField(models.URLField):
-    default_validators = [validators.discord_server_validator]
+    default_validators = (validators.discord_server_validator,)
 
     def __init__(self, *args, **kwargs):
         super(DiscordURLField, self).__init__(*args, **kwargs)

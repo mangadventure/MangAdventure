@@ -8,6 +8,6 @@ except ImportError:
 app_name = 'groups'
 
 urlpatterns = [
-    url(r'^$', views.all_groups, name='all_groups'),
-    url(r'^(?P<g_id>[0-9]+)/$', views.group, name='group'),
+    url('^$', views.all_groups, name='all_groups'),
+    url('^(?P<g_id>[0-9]+)/$', views.group, name='group'),
 ]

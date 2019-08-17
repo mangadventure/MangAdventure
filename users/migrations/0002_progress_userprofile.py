@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                     " Must be up to 2 MBs.",
                     storage=utils.storage.OverwriteStorage(),
                     upload_to=utils.uploaders.avatar_uploader,
-                    validators=[utils.validators.FileSizeValidator(max_mb=2)]
+                    validators=(utils.validators.FileSizeValidator(max_mb=2),)
                 )),
                 ('bookmarks', models.ManyToManyField(
                     blank=True, help_text="The user's bookmarked series.",

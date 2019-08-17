@@ -1,0 +1,7 @@
+@import 'variables';
+
+.mce-content-body {
+  background-color: $main-bg;
+  color: $main-fg;
+  font-family: quote(#{$font-family}), 'Helvetica', 'Arial', sans-serif;
+}

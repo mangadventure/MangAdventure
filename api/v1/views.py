@@ -18,7 +18,7 @@ def _chapter_response(request, _chapter):
             '/reader', '%s%s' % (settings.MEDIA_URL, 'series')
         ),
         'pages_list': [p.get_file_name() for p in _chapter.pages.all()],
-        'date': _chapter.get_uploaded_date,
+        'date': _chapter.uploaded_date,
         'final': _chapter.final,
         'groups': []
     }
@@ -155,7 +155,7 @@ def all_releases(request):
                 'title': last_chapter.title,
                 'volume': last_chapter.volume,
                 'number': last_chapter.number,
-                'date': last_chapter.get_uploaded_date,
+                'date': last_chapter.uploaded_date,
             }
         except ObjectDoesNotExist:
             pass

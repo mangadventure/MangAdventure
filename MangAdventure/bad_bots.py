@@ -15,6 +15,7 @@ BOTS = [
     'del.icio.us-thumbnails',
     'Demo Bot',
     'DigExt; DTS Agent',
+    'DotBot',
     'Educate Search',
     'efp@gmx.net',
     'EmailCollector',

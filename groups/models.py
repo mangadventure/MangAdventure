@@ -29,7 +29,7 @@ class Group(models.Model):
     )
     logo = models.ImageField(
         blank=True, upload_to=group_logo_uploader,
-        storage=OverwriteStorage(), validators=[FileSizeValidator(max_mb=2)],
+        storage=OverwriteStorage(), validators=(FileSizeValidator(max_mb=2),),
         help_text="Upload the group's logo. Its size must not exceed 2 MBs.",
     )
 
@@ -40,7 +40,7 @@ class Group(models.Model):
         ))
 
     def get_absolute_url(self):
-        return reverse('groups:group', args=[self.id])
+        return reverse('groups:group', args=(self.id,))
 
     @property
     def _increment(self):

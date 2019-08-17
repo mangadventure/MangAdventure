@@ -7,7 +7,7 @@ from django.forms import ModelForm
 from constance import config
 from constance.admin import Config, ConstanceAdmin
 
-from MangAdventure.forms import TinyMCE
+from MangAdventure.widgets import TinyMCE
 
 
 admin.site.site_header = config.NAME + ' Administration'
@@ -35,7 +35,7 @@ class InfoPageForm(FlatpageForm):
                     'formatselect forecolor backcolor',
                     'alignleft aligncenter alignright alignjustify',
                     'bold italic underline strikethrough',
-                    'bullist numlist', 'link unlink', 'charmap image'
+                    'bullist numlist', 'link unlink image charmap'
                 ]),
                 'mce_valid_children': '+body[style]',
                 'mce_extended_valid_elements': 'style[type]',
@@ -47,9 +47,9 @@ class InfoPageAdmin(FlatPageAdmin):
     change_list_template = 'admin/change_list.html'
     change_list_form = ModelForm
     form = InfoPageForm
-    fieldsets = [
-        (None, {'fields': ('url', 'title', 'content')})
-    ]
+    fieldsets = (
+        (None, {'fields': ('url', 'title', 'content')}),
+    )
     list_filter = []
 
     def get_readonly_fields(self, request, obj=None):

@@ -3,6 +3,7 @@ from shutil import move
 from time import mktime
 
 from django.db import models
+from django.db.models.query import Q
 from django.shortcuts import reverse
 from django.utils.functional import cached_property
 from django.utils.http import http_date
@@ -82,7 +83,7 @@ class Series(models.Model):
         upload_to=uploaders.cover_uploader,
         help_text='Upload a cover image for the series. Its size '
                   'must not exceed %d MBs.' % _validator.max_mb,
-        validators=[_validator]
+        validators=(_validator,)
     )
     authors = models.ManyToManyField(Author, blank=True)
     artists = models.ManyToManyField(Artist, blank=True)
@@ -93,7 +94,7 @@ class Series(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def get_absolute_url(self):
-        return reverse('reader:series', args=[self.slug])
+        return reverse('reader:series', args=(self.slug,))
 
     def get_directory(self):
         return join('series', self.slug)
@@ -144,10 +145,10 @@ class Chapter(models.Model):
         help_text='The series this chapter belongs to.'
     )
     file = models.FileField(
-        help_text=' '.join(_file_help), validators=[
+        help_text=' '.join(_file_help), validators=(
             validators.FileSizeValidator(max_mb=50),
             validators.zipfile_validator
-        ], blank=True
+        ), blank=True
     )
     final = models.BooleanField(
         default=False, help_text='Is this the final chapter?'
@@ -173,17 +174,35 @@ class Chapter(models.Model):
         self.series.save()
 
     @cached_property
-    def get_uploaded_date(self):
+    def next(self):
+        q = Q(series_id=self.series_id) & (
+            Q(volume__gt=self.volume) |
+            Q(volume=self.volume, number__gt=self.number)
+        )
+        return self.__class__.objects.filter(q) \
+            .order_by('volume', 'number').first()
+
+    @cached_property
+    def prev(self):
+        q = Q(series_id=self.series_id) & (
+            Q(volume__lt=self.volume) |
+            Q(volume=self.volume, number__lt=self.number)
+        )
+        return self.__class__.objects.filter(q) \
+            .order_by('-volume', '-number').first()
+
+    @cached_property
+    def uploaded_date(self):
         return http_date(mktime(self.uploaded.timetuple()))
 
     @cached_property
-    def get_modified_date(self):
+    def modified_date(self):
         return http_date(mktime(self.modified.timetuple()))
 
     def get_absolute_url(self):
-        return reverse('reader:chapter', args=[
+        return reverse('reader:chapter', args=(
             self.series.slug, self.volume, '%g' % self.number
-        ])
+        ))
 
     def get_directory(self):
         return join(
@@ -194,12 +213,41 @@ class Chapter(models.Model):
         return '{0.series.title} - {0.volume}/' \
                '{0.number:g}: {0.title}'.format(self)
 
+    def __eq__(self, other):
+        if isinstance(other, tuple):
+            return (self.volume, self.number) == other
+        return super(Chapter, self).__eq__(other)
+
     def __gt__(self, other):
+        if isinstance(other, tuple):
+            if self.volume == other[0]:
+                return self.number > other[1]
+            return self.volume > other[1]
+
+        if not isinstance(other, self.__class__):
+            raise TypeError(
+                "'>' not supported between instances of '{}' and '{}'".format(
+                    self.__class__, other.__class__
+                )
+            )
+
         if self.volume == other.volume:
             return self.number > other.number
         return self.volume > other.volume
 
     def __lt__(self, other):
+        if isinstance(other, tuple):
+            if self.volume == other[0]:
+                return self.number < other[1]
+            return self.volume < other[1]
+
+        if not isinstance(other, self.__class__):
+            raise TypeError(
+                "'<' not supported between instances of '{}' and '{}'".format(
+                    self.__class__, other.__class__
+                )
+            )
+
         if self.volume == other.volume:
             return self.number < other.number
         return self.volume < other.volume
@@ -216,19 +264,50 @@ class Page(models.Model):
         return self.image.name.split('/')[-1]
 
     def get_absolute_url(self):
-        return reverse('reader:page', args=[
+        return reverse('reader:page', args=(
             self.chapter.series.slug, self.chapter.volume,
             '%g' % self.chapter.number, self.number
-        ])
+        ))
 
     def __str__(self):
         return '{0.series.title} - {0.volume}/{0.number} [{1}]'.format(
-            self.chapter, self.get_file_name
+            self.chapter, self.get_file_name()
         )
 
-    def __gt__(self, other): return self.number > other.number
+    def __eq__(self, other):
+        if isinstance(other, int):
+            return self.number == other
 
-    def __lt__(self, other): return self.number < other.number
+        if not isinstance(other, self.__class__):
+            return False
+
+        return self.chapter == other.chapter and self.number == other.number
+
+    def __gt__(self, other):
+        if isinstance(other, (float, int)):
+            return self.number > other
+
+        if not isinstance(other, self.__class__):
+            raise TypeError(
+                "'>' not supported between instances of '{}' and '{}'".format(
+                    self.__class__, other.__class__
+                )
+            )
+
+        return self.number > other.number
+
+    def __lt__(self, other):
+        if isinstance(other, (float, int)):
+            return self.number < other
+
+        if not isinstance(other, self.__class__):
+            raise TypeError(
+                "'<' not supported between instances of '{}' and '{}'".format(
+                    self.__class__, other.__class__
+                )
+            )
+
+        return self.number < other.number
 
 
 __all__ = [

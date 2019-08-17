@@ -1,10 +1,9 @@
 from io import BytesIO
-from json import dumps
 from sys import exc_info
 from xml.etree import cElementTree as et
 
 from django.core.exceptions import ValidationError
-from django.forms import CharField, ImageField, URLField, Widget, widgets
+from django.forms import CharField, ImageField, URLField, widgets
 from django.utils.six import reraise
 
 from PIL import Image
@@ -89,49 +88,20 @@ class ColorField(CharField):
 
 
 class TwitterField(CharField):
-    default_validators = [validators.twitter_name_validator]
+    default_validators = (validators.twitter_name_validator,)
 
     def __init__(self, *args, **kwargs):
         super(TwitterField, self).__init__(*args, **kwargs)
 
 
 class DiscordURLField(URLField):
-    default_validators = [validators.discord_server_validator]
+    default_validators = (validators.discord_server_validator,)
 
     def __init__(self, **kwargs):
         super(DiscordURLField, self).__init__(**kwargs)
 
 
-class TinyMCE(Widget):
-    template_name = 'django/forms/widgets/textarea.html'
-
-    def __init__(self, attrs=None):
-        attrs = attrs or {}
-        if 'class' in attrs:
-            attrs['class'] += ' tinymce'
-        else:
-            attrs['class'] = 'tinymce'
-        attrs.update({'cols': '75', 'rows': '15'})
-        mce_attrs = {
-            'selector': '.tinymce',
-            'theme': 'modern',
-            'relative_urls': True
-        }
-        for key in list(attrs):
-            if key.startswith('mce_'):
-                mce_attrs[key[4:]] = attrs.pop(key)
-        attrs['data-tinymce-config'] = dumps(mce_attrs)
-        super(TinyMCE, self).__init__(attrs)
-
-    class Media:
-        extend = False
-        js = (
-            'https://cdn.tinymce.com/4/tinymce.min.js',
-            'scripts/tinymce-init.js'
-        )
-
-
 __all__ = [
     'SVGImageField', 'TwitterField',
-    'DiscordURLField', 'ColorField', 'TinyMCE',
+    'DiscordURLField', 'ColorField'
 ]

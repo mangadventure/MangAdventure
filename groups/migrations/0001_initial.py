@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                     " Its size must not exceed 2 MBs.",
                     storage=storage.OverwriteStorage(),
                     upload_to=uploaders.group_logo_uploader,
-                    validators=[validators.FileSizeValidator(max_mb=2)]
+                    validators=(validators.FileSizeValidator(max_mb=2),)
                 )),
             ],
         ),
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                     serialize=False, verbose_name='ID'
                 )),
                 ('role', models.CharField(
-                    choices=[
+                    choices=(
                         ('LD', 'Leader'),
                         ('TL', 'Translator'),
                         ('PR', 'Proofreader'),
@@ -81,7 +81,7 @@ class Migration(migrations.Migration):
                         ('TS', 'Typesetter'),
                         ('RP', 'Raw Provider'),
                         ('QC', 'Quality Checker')
-                    ], max_length=2
+                    ), max_length=2
                 )),
                 ('group', models.ForeignKey(
                     on_delete=models.deletion.CASCADE,

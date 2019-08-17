@@ -15,6 +15,6 @@ except ImportError:
     info_page = flatpage
 
 urlpatterns = [
-    url(r'^info/$', info_page, {'url': '/info/'}, name='info'),
-    url(r'^privacy/$', info_page, {'url': '/privacy/'}, name='privacy'),
+    url('^info/$', info_page, {'url': '/info/'}, name='info'),
+    url('^privacy/$', info_page, {'url': '/privacy/'}, name='privacy'),
 ]

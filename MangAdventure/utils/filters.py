@@ -41,4 +41,4 @@ def boolean_filter(title, param, names):
 related_filter = partial(title_filter, klass=RelatedFieldListFilter)
 
 
-__all__ = ['title_filter', 'boolean_filter' 'related_filter']
+__all__ = ['title_filter', 'boolean_filter', 'related_filter']

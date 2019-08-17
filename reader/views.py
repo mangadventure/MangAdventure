@@ -1,9 +1,7 @@
 from django.http import Http404
 from django.shortcuts import redirect, render
 
-from next_prev import next_in_order, prev_in_order
-
-from .models import Chapter, Series
+from .models import Chapter, Series, Page
 
 
 def directory(request):
@@ -23,8 +21,10 @@ def series(request, slug):
             'error_message': 'Sorry. This series is not yet available.',
             'error_status': 403
         }, status=403)
-    marked = request.user.is_authenticated and \
+    marked = (
+        request.user.is_authenticated and
         request.user.bookmarks.filter(series=_series).exists()
+    )
     return render(request, 'series.html', {'series': _series, 'marked': marked})
 
 
@@ -35,32 +35,33 @@ def chapter_page(request, slug, vol, num, page):
         raise Http404
     if page == 0:
         raise Http404
-    chapters = {
-        'all': Chapter.objects.filter(series__slug=slug),
-        'curr': None,
-        'prev': None,
-        'next': None
-    }
+    chapters = Chapter.objects.filter(series__slug=slug)
     try:
-        chapters['curr'] = chapters['all'] \
-            .prefetch_related('pages').get(number=num, volume=vol)
-    except Chapter.DoesNotExist:
+        current = chapters.select_related('series') \
+            .prefetch_related('pages').get(volume=vol, number=num)
+        all_pages = current.pages.all()
+        curr_page = all_pages.get(number=page)
+    except (Chapter.DoesNotExist, Page.DoesNotExist):
         raise Http404
-    chapters['next'] = next_in_order(chapters['curr'], qs=chapters['all'])
-    chapters['prev'] = prev_in_order(chapters['curr'], qs=chapters['all'])
-    all_pages = chapters['curr'].pages.all()
-    if page > len(all_pages):
-        raise Http404
-
     return render(request, 'chapter.html', {
-        'all_chapters': chapters['all'].reverse(),
-        'curr_chapter': chapters['curr'],
-        'next_chapter': chapters['next'],
-        'prev_chapter': chapters['prev'],
+        'all_chapters': chapters.reverse(),
+        'curr_chapter': current,
+        'next_chapter': current.next,
+        'prev_chapter': current.prev,
         'all_pages': all_pages,
-        'curr_page': all_pages.get(number=page)
+        'curr_page': curr_page
     })
 
 
 def chapter_redirect(request, slug, vol, num):
     return redirect('reader:page', slug, vol, num, 1, permanent=True)
+
+
+def chapter_comments(request, slug, vol, num):
+    try:
+        chapter = Chapter.objects.get(
+            series__slug=slug, volume=int(vol), number=float(num)
+        )
+    except (ValueError, TypeError, Chapter.DoesNotExist):
+        raise Http404
+    return render(request, 'comments.html', {'chapter': chapter})

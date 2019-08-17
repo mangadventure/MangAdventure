@@ -80,14 +80,20 @@ class SeriesAdmin(admin.ModelAdmin):
 
 class AuthorAdmin(admin.ModelAdmin):
     inlines = (AuthorAliasInline,)
-    list_display = ('name',)
+    list_display = ('name', 'aliases')
     search_fields = ('name', 'aliases__alias')
+
+    def aliases(self, obj):
+        return ', '.join(obj.aliases.values_list('alias', flat=True))
 
 
 class ArtistAdmin(admin.ModelAdmin):
     inlines = (ArtistAliasInline,)
-    list_display = ('name',)
+    list_display = ('name', 'aliases')
     search_fields = ('name', 'aliases__alias')
+
+    def aliases(self, obj):
+        return ', '.join(obj.aliases.values_list('alias', flat=True))
 
 
 class CategoryAdmin(admin.ModelAdmin):

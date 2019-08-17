@@ -66,7 +66,7 @@ class UserProfileForm(forms.ModelForm):
     avatar = forms.ImageField(
         help_text='Max size: %d MBs' % _validator.max_mb +
                   ' | Optimal dimensions: 300x300',
-        widget=forms.FileInput, validators=[_validator],
+        widget=forms.FileInput, validators=(_validator,),
         label='Avatar', required=False
     )
 
@@ -74,12 +74,12 @@ class UserProfileForm(forms.ModelForm):
         super(UserProfileForm, self).__init__(*args)
         for key, value in iteritems(kwargs):
             self.fields[key].initial = value
-        self.user = User.objects.get(id=self['user_id'].value())
+        self.user = User.objects.get(id=self.fields['user_id'].value())
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
         users = User.objects.filter(username=username)
-        if users.exclude(id=self.user.id).count() > 0:
+        if users.exclude(id=self.user_id).count() > 0:
             raise forms.ValidationError('This username is already taken!')
         return username
 
@@ -113,11 +113,11 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = [
+        fields = (
             'email', 'new_password1', 'new_password2',
             'username', 'first_name', 'last_name',
             'bio', 'avatar', 'user_id', 'curr_password'
-        ]
+        )
 
 
 __all__ = ['UserProfileForm']

@@ -1,8 +1,21 @@
-#search-categories { display: none !important; }
-#placeholder { display: none !important; }
-#dropdowns, #controls { display: block !important; }
+#search-categories { display: none !important }
+#placeholder { display: none !important }
+#dropdowns, #controls { display: block !important }
+#comments form { text-align: center }
+#comments .tinymce {
+  background-color: inherit;
+  color: inherit;
+  width: 100%;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+#comments .button {
+  margin-top: 0.2em;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
 
 @media screen and (max-width: 690px) {
-  #search .s-hidden { display: inline !important; }
-  #result-table { border-right-style: solid; }
+  #search .s-hidden { display: inline !important }
+  #result-table { border-right-style: solid }
 }

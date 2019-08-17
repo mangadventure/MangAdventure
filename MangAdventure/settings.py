@@ -58,8 +58,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.twitter',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.discord',
+    'user_comments',
     'static_precompiler',
-    'next_prev',
     'constance.backends.database',
     'config.apps.SiteConfig',
     'config',
@@ -72,12 +72,14 @@ INSTALLED_APPS = [
 # A list of middleware to use.
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     'MangAdventure.middleware.PreloadMiddleware',
@@ -262,7 +264,7 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_ADAPTER = 'users.adapters.AccountAdapter'
 
 # A callable that returns the display name of the user.
-ACCOUNT_USER_DISPLAY = 'users.utils.user_display'
+ACCOUNT_USER_DISPLAY = 'users.get_user_display'
 
 # The user is required to hand over an e-mail address when signing up.
 ACCOUNT_EMAIL_REQUIRED = True
@@ -511,6 +513,22 @@ CONSTANCE_CONFIG_FIELDSETS = {
 
 # Use the database for storing configuration.
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+##################
+#    Comments    #
+##################
+
+# The app used for custom comments.
+COMMENTS_APP = 'users'
+
+# Removed comments won't be hidden.
+COMMENTS_HIDE_REMOVED = False
+
+# Allow HTML in comments.
+COMMENTS_ALLOW_HTML = True
+
+# Use TinyMCE widget in comments.
+COMMENTS_WIDGET = 'users.widgets.TinyMCEComment'
 
 ###############
 #    Debug    #

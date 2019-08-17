@@ -6,6 +6,6 @@ except ImportError:
     from django.conf.urls import include, url
 
 urlpatterns = [
-    url(r'^$', invalid_endpoint, name='root'),
-    url(r'^v1/', include('api.v1.urls')),
+    url('^$', invalid_endpoint, name='root'),
+    url('^v1/', include('api.v1.urls')),
 ]

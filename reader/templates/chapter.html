@@ -137,7 +137,7 @@
     <section id="controls" class="no-display">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
         <div id="controls-top">
-          <a href="{{ all_pages.first.get_absolute_url }}"
+          <a href="../{{ all_pages.first.number }}"
              title="First page" class="control">
             <i class="mi mi-rewind"></i>
           </a>
@@ -154,9 +154,9 @@
           {% endif %}
             <i class="mi mi-left"></i>
           </a>
-          {% with curr=curr_page.number|stringformat:'02d' max=all_pages|length %}
+          {% with curr=curr_page.number|stringformat:'02d' max=all_pages.count %}
             <span class="curr-page">
-              Page <input type="text" data-max="{{ curr_chapter.pages.count }}"
+              Page <input type="text" data-max="{{ max }}"
                           value="{{ curr }}" placeholder="{{ curr }}">
               /{{ max|stringformat:'02d' }}
             </span>
@@ -173,7 +173,7 @@
             {% endif %}
               <i class="mi mi-right"></i>
             </a>
-            <a href="{{ all_pages.last.get_absolute_url }}"
+            <a href="../{{ all_pages.last.number }}"
                title="Last page" class="control">
               <i class="mi mi-forward"></i>
             </a>
@@ -181,6 +181,9 @@
         </div>
       {% endwith %}
     </section>
+    <a href="../comments" id="comments" class="link">
+      <i class="mi mi-chat"></i>Comments
+    </a>
   </div>
   <div id="preload" class="no-display">
     {% for page in all_pages|preload_pages:curr_page.number %}

@@ -42,7 +42,7 @@
             <strong>Website:</strong>
             {% if group.website %}
               <a href="{{ group.website }}"
-                rel="noopener" target="_blank">
+                rel="noopener noreferrer" target="_blank">
                 {{ group.website }}
               </a>
             {% else %}
@@ -53,7 +53,7 @@
             <strong>Discord:</strong>
             {% if group.discord %}
               <a href="{{ group.discord }}"
-                 rel="noopener" target="_blank">
+                 rel="noopener noreferrer" target="_blank">
                 {{ group.discord }}
               </a>
             {% else %}
@@ -64,7 +64,7 @@
             <strong>Twitter:</strong>
             {% if group.twitter %}
               <a href="https://twitter.com/{{ group.twitter }}"
-                 rel="noopener" target="_blank">
+                 rel="noopener noreferrer" target="_blank">
                 @{{ group.twitter }}
               </a>
             {% else %}
@@ -75,7 +75,7 @@
             <strong>Reddit:</strong>
             {% if group.reddit %}
               <a href="https://reddit.com/r/{{ group.reddit }}"
-                 rel="noopener" target="_blank">
+                 rel="noopener noreferrer" target="_blank">
                 /r/{{ group.reddit }}
               </a>
             {% else %}
@@ -110,7 +110,7 @@
                 <strong>Twitter:</strong>
                 {% if member.twitter %}
                   <a href="https://twitter.com/{{ member.twitter }}"
-                     rel="noopener" target="_blank">
+                     rel="noopener noreferrer" target="_blank">
                     @{{ member.twitter }}
                   </a>
                 {% else %}
@@ -121,7 +121,7 @@
                 <strong>Reddit:</strong>
                 {% if member.reddit %}
                   <a href="https://reddit.com/{{ member.reddit }}"
-                     rel="noopener" target="_blank">
+                     rel="noopener noreferrer" target="_blank">
                     {{ member.reddit }}
                   </a>
                 {% else %}

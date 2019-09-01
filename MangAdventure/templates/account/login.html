@@ -20,7 +20,7 @@
     {% if request.user.is_authenticated %}
       <div>
         You are already logged in.
-        Click <a href="{% url 'account_logout' %}">here</a> to logout.
+        Click <a href="{% url 'account_logout' %}" rel="nofollow">here</a> to logout.
       </div>
     {% else %}
       {% for error in form.non_field_errors %}
@@ -59,18 +59,18 @@
         <input class="button" type="submit" value="Login">
       </form>
       <section id="forgot-password">
-        <a href="{% url 'account_reset_password' %}">Forgot your password?</a>
+        <a href="{% url 'account_reset_password' %}" rel="nofollow">Forgot your password?</a>
       </section>
       <section id="no-account">
         Don't have an account?
-        Click <a href="{{ signup_url }}">here</a> to sign up.
+        Click <a href="{{ signup_url }}" rel="nofollow">here</a> to sign up.
       </section>
       <section id="oauth">
         <div id="oauth-or">Or, sign in with:</div>
         {% get_providers as socialaccount_providers %}
         {% for provider in socialaccount_providers|available %}
           <a title="{{ provider.name }}" class="provider main-fg"
-             href="{% provider_login_url provider.id %}">
+             rel="noopener nofollow" href="{% provider_login_url provider.id %}">
             <i class="mi mi-{{ provider.id }}"></i>
             <span>{{ provider.name }}</span>
           </a>

@@ -59,7 +59,8 @@ class Category(models.Model):
         verbose_name_plural = 'categories'
 
     def save(self, *args, **kwargs):
-        self.id = self.name.lower()
+        if not self.id:
+            self.id = self.name.lower()
         super(Category, self).save(*args, **kwargs)
 
     def __str__(self): return self.name

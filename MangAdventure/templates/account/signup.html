@@ -39,7 +39,7 @@
       {% get_providers as socialaccount_providers %}
       {% for provider in socialaccount_providers|available %}
         <a title="{{ provider.name }}" class="provider main-fg"
-           href="{% provider_login_url provider.id %}">
+           rel="noopener nofollow" href="{% provider_login_url provider.id %}">
           <i class="mi mi-{{ provider.id }}"></i>
           <span>{{ provider.name }}</span>
         </a>

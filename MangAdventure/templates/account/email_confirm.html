@@ -29,7 +29,9 @@
       {% url 'account_email' as email_url %}
       <div>
         This e-mail confirmation link has expired or is invalid. Please
-        <a href="{{ email_url }}">issue a new e-mail confirmation request</a>.
+        <a href="{{ email_url }}" rel="nofollow">
+          issue a new e-mail confirmation request
+        </a>.
       </div>
     {% endif %}
   </article>

@@ -132,19 +132,19 @@
             </span>
             <ul class="dropdown-list">{% if request.user.is_authenticated %}
               <li class="dropdown-element">
-                <a href="{% url 'user_profile' %}">
+                <a href="{% url 'user_profile' %}" rel="nofollow">
                   <span>Profile</span>
                   <i class="mi mi-user" aria-hidden="true"></i>
                 </a>
               </li>
               <li class="dropdown-element">
-                <a href="{% url 'user_bookmarks' %}">
+                <a href="{% url 'user_bookmarks' %}" rel="nofollow">
                   <span>Bookmarks</span>
                   <i class="mi mi-bookmark" aria-hidden="true"></i>
                 </a>
               </li>
               <li class="dropdown-element">
-                <a href="{% url 'user_edit' %}">
+                <a href="{% url 'user_edit' %}" rel="nofollow">
                   <span>Settings</span>
                   <i class="mi mi-cog" aria-hidden="true"></i>
                 </a>
@@ -162,7 +162,7 @@
             {% else %}
               <li class="dropdown-element">
                 {% with next=request.path|urlencode %}
-                  <a href="{% url 'account_login' %}?next={{ next }}">
+                  <a href="{% url 'account_login' %}?next={{ next }}" rel="nofollow">
                     <span>Login</span>
                     <i class="mi mi-login" aria-hidden="true"></i>
                   </a>
@@ -195,12 +195,13 @@
           </a>
           {% if config.TWITTER %}
             <a href="https://twitter.com/{{ config.TWITTER }}"
-               class="link" title="Twitter">
+               class="link" rel="noopener noreferrer" title="Twitter">
               <i class="mi mi-twitter"></i><span>Twitter</span>
             </a>
           {% endif %}
           {% if config.DISCORD %}
-            <a href="{{ config.DISCORD }}" class="link" title="Discord">
+            <a href="{{ config.DISCORD }}" class="link"
+               rel="noopener noreferrer" title="Discord">
               <i class="mi mi-discord"></i><span>Discord</span>
             </a>
           {% endif %}

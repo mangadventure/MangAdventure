@@ -28,7 +28,7 @@ class PreloadMiddleware:
         for link in findall(pattern, content, MULTILINE):
             link_src = self._get_link_src(link)
             link_as = search(r'as="(.+?)"', link[0])
-            if not (link_src is None or link_as is None):
+            if link_src and link_as:
                 preload.append('<{}>; as={}; rel=preload'.format(
                     link_src.group(1), link_as.group(1)
                 ))

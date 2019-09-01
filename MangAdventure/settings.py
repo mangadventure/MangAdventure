@@ -1,7 +1,7 @@
 import re
 from os import mkdir, path
 
-from yaenv.core import Env
+from yaenv import Env
 
 from . import __version__ as VERSION
 from .bad_bots import BOTS
@@ -82,7 +82,6 @@ MIDDLEWARE = [
     'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
-    'MangAdventure.middleware.PreloadMiddleware',
 ]
 
 # A string representing the full Python import path to the root URLconf.
@@ -191,7 +190,7 @@ LOGGING = {  # TODO: better logging
 STATIC_URL = '/static/'
 
 # Absolute filesystem path to the directory that will hold static files.
-STATIC_ROOT = path.join(BASE_DIR, 'static/')
+STATIC_ROOT = path.join(BASE_DIR, 'static')
 
 # A list of static file finder backends.
 STATICFILES_FINDERS = [
@@ -214,7 +213,7 @@ STATIC_PRECOMPILER_COMPILERS = [
 MEDIA_URL = '/media/'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = path.join(BASE_DIR, 'media')
 
 ##############################
 #    Internationalization    #
@@ -332,6 +331,7 @@ CSRF_COOKIE_HTTP_ONLY = True
 
 if env.bool('HTTPS', True):
     env.ENV['wsgi.url_scheme'] = 'https'
+    MIDDLEWARE.append('MangAdventure.middleware.PreloadMiddleware')
 
     # HTTP header/value combination that signifies a request is secure.
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -383,9 +383,6 @@ else:
     # Sets the img-src directive.
     CSP_IMG_SRC = ("'self'",)
 
-    # Sets the object-src directive.
-    CSP_OBJECT_SRC = ("'self'",)
-
     # Sets the form-action directive.
     CSP_FORM_ACTION = ("'self'",)
 
@@ -397,6 +394,9 @@ else:
 
     # Sets the base-uri directive.
     CSP_BASE_URI = ("'none'",)
+
+    # Sets the report-uri directive.
+    CSP_REPORT_URI = env.list('CSP_REPORT_URI')
 
     # URLs beginning with any of these will not get the CSP headers.
     CSP_EXCLUDE_URL_PREFIXES = ('/api', '/admin-panel')

@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import error, info
 from django.db import IntegrityError
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import render
 from django.views.decorators.cache import cache_control
 
@@ -57,7 +57,7 @@ def edit_user(request):
 
 class PostOnlyLogoutView(LogoutView):
     def get(self, *args, **kwargs):
-        raise Http404
+        raise HttpResponseNotAllowed(['POST'])
 
 
 @login_required

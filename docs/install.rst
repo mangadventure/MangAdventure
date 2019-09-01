@@ -49,7 +49,7 @@ Configure the settings
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Before proceeding, there are some settings you will need to configure.
-To configure them, copy the ``.env.example`` file into ``.env`` and edit it.
+To configure them, copy the ``.env.example`` file to ``.env`` and edit it.
 
 Create the database
 ^^^^^^^^^^^^^^^^^^^

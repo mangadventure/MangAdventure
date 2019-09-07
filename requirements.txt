@@ -1,6 +1,5 @@
 django>=1.11
 django-allauth
-django-constance[database]
-django-static-precompiler[libsass]
 Pillow
+libsass
 yaenv<1.0

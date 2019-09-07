@@ -19,11 +19,6 @@
   }
   .chapter-list {
     float: left;
-    .dropdown-element {
-      display: inline-block;
-      max-width: 50vw;
-      @include truncate();
-    }
     .dropdown-list {
       left: -1px;
       min-width: 100%;
@@ -33,9 +28,12 @@
   }
   .page-list {
     float: right;
+    .dropdown-element {
+      padding: 0.1em 0;
+    }
     .dropdown-list {
       right: -1px;
-      width: 125%;
+      width: 115%;
       border-top-right-radius: 0;
     }
   }
@@ -43,6 +41,11 @@
     border: 1px solid $alter-bg;
     border-radius: 5px;
     display: inline-flex;
+    &-element {
+      display: block;
+      padding: 0.1em 0;
+      @include truncate();
+    }
     &-list {
       border: 1px solid $alter-bg;
       border-radius: 5px;

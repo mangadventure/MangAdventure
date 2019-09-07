@@ -20,7 +20,7 @@ env = Env(path.join(BASE_DIR, '.env'))
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [
     '127.0.0.1', '0.0.0.0', 'localhost', '[::1]',
     # From https://stackoverflow.com/questions/9626535/#36609868
-    env['SITE_DOMAIN'].split('//')[-1].split('/')[0].split('?')[0]
+    env['DOMAIN'].split('//')[-1].split('/')[0].split('?')[0]
 ])
 
 # A boolean that turns debug mode on/off.
@@ -59,9 +59,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.discord',
     'user_comments',
-    'static_precompiler',
-    'constance.backends.database',
-    'config.apps.SiteConfig',
     'config',
     'reader',
     'api',
@@ -91,7 +88,6 @@ ROOT_URLCONF = 'MangAdventure.urls'
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'OPTIONS': {'context_processors': [
-        'constance.context_processors.config',
         'django.template.context_processors.request',
         'django.contrib.auth.context_processors.auth',
         'django.template.context_processors.media',
@@ -118,7 +114,7 @@ DATABASES = {'default': env.db('DB_URL', 'sqlite:///db.sqlite3')}
 ##################################
 
 # Subject prefix for email messages sent to admins/managers.
-EMAIL_SUBJECT_PREFIX = '[%s] ' % env['SITE_DOMAIN']
+EMAIL_SUBJECT_PREFIX = '[%s] ' % env['DOMAIN']
 
 # URLs that should be ignored when reporting HTTP 404 errors.
 IGNORABLE_404_URLS = [
@@ -197,16 +193,6 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'static_precompiler.finders.StaticPrecompilerFinder',
-]
-
-# List of enabled compilers for django-static-precompiler.
-STATIC_PRECOMPILER_COMPILERS = [
-    ('static_precompiler.compilers.libsass.SCSS', {
-        'sourcemap_enabled': False,
-        'precision': 7,
-        'load_paths': [path.join(STATIC_ROOT, 'styles')],
-        'output_style': 'compressed',
-    }),
 ]
 
 # URL that handles the media served from MEDIA_ROOT.
@@ -372,12 +358,12 @@ else:
 
     # Sets the style-src directive.
     CSP_STYLE_SRC = (
-        "'self'", "https://fonts.googleapis.com", "https://cdn.staticaly.com",
+        "'self'", "https://fonts.googleapis.com", "https://cdn.staticaly.com"
     )
 
     # Sets the font-src directive.
     CSP_FONT_SRC = (
-        "'self'", "https://fonts.gstatic.com", "https://cdn.staticaly.com",
+        "'self'", "https://fonts.gstatic.com", "https://cdn.staticaly.com"
     )
 
     # Sets the img-src directive.
@@ -401,118 +387,31 @@ else:
     # URLs beginning with any of these will not get the CSP headers.
     CSP_EXCLUDE_URL_PREFIXES = ('/api', '/admin-panel')
 
-##########################
-#    django-constance    #
-##########################
+#######################
+#    Configuration    #
+#######################
 
-# Custom constance field types.
-CONSTANCE_ADDITIONAL_FIELDS = {
-    'char': ('django.forms.CharField', {}),
-    'url': ('django.forms.URLField', {}),
-    'color': ('MangAdventure.forms.ColorField', {}),
-    'number': ('django.forms.IntegerField', {
-        'min_value': 1,
-    }),
-    'discord': ('MangAdventure.forms.DiscordURLField', {
-        'required': False
-    }),
-    'twitter': ('MangAdventure.forms.TwitterField', {
-        'required': False
-    }),
-    'desc': ('django.forms.CharField', {
-        'max_length': 250, 'widget': 'django.forms.Textarea'
-    }),
-    'logo': ('MangAdventure.forms.SVGImageField', {}),
-    'favicon': ('django.forms.ImageField', {})
+# Configuration variables defined by the user.
+CONFIG = {
+    'NAME': env['NAME'],
+    'DOMAIN': env['DOMAIN'],
+    'DESCRIPTION': env['DESCRIPTION'],
+    'KEYWORDS': env['KEYWORDS'],
+    'DISCORD': env.get('DISCORD'),
+    'TWITTER': env.get('TWITTER'),
+    'FAVICON': env['FAVICON'],
+    'LOGO': env['LOGO'],
+    'MAIN_BG_COLOR': env['MAIN_BG_COLOR'],
+    'MAIN_TEXT_COLOR': env['MAIN_TEXT_COLOR'],
+    'ALTER_BG_COLOR': env['ALTER_BG_COLOR'],
+    'ALTER_TEXT_COLOR': env['ALTER_TEXT_COLOR'],
+    'SHADOW_COLOR': env['SHADOW_COLOR'],
+    'FONT_NAME': env['FONT_NAME'],
+    'FONT_URL': env['FONT_URL'],
+    'MAX_RELEASES': env.int('MAX_RELEASES', 10),
+    'MAX_CHAPTERS': env.int('MAX_CHAPTERS', 1),
+    'SHOW_CREDITS': env.bool('SHOW_CREDITS', True),
 }
-
-# Constance configuration variables.
-CONSTANCE_CONFIG = {
-    'NAME': (
-        'MangAdventure', 'The name of your website.', 'char'
-    ),
-    'DESCRIPTION': (
-        'MangAdventure is a simple manga hosting CMS written in Django',
-        'A description for your website.', 'desc'
-    ),
-    'KEYWORDS': (
-        'mangadventure,manga,scanlation,reader',
-        'A comma-separated list of keywords that describe your website', 'char'
-    ),
-    'DISCORD': (
-        '', 'The Discord server of your group.', 'discord'
-    ),
-    'TWITTER': (
-        '', 'The Twitter username of your group.', 'twitter'
-    ),
-    'FAVICON': (
-        '', 'The favicon of your website.', 'favicon'
-    ),
-    'MAIN_BACKGROUND': (
-        '#ffffff', 'The main background color of your website.', 'color'
-    ),
-    'ALTER_BACKGROUND': (
-        '#aaaaaa', 'The alternate background color of your website.', 'color'
-    ),
-    'MAIN_TEXT_COLOR': (
-        '#000000', 'The main text color of your website.', 'color'
-    ),
-    'ALTER_TEXT_COLOR': (
-        '#555555', 'The alternate text color of your website.', 'color'
-    ),
-    'SHADOW_COLOR': (
-        '#444444', 'The shadow color of your website.', 'color'
-    ),
-    'FONT_URL': (
-        'https://fonts.googleapis.com/css?family=Lato',
-        'The URL of the font to be used in your website.', 'url'
-    ),
-    'FONT_NAME': (
-        'Lato', 'The name of the font that '
-        'corresponds to the above URL.', 'char'
-    ),
-    'LOGO_LARGE': (
-        '', 'Upload a large-sized logo for your website.', 'logo'
-    ),
-    'LOGO_MEDIUM': (
-        '', 'Upload a medium-sized logo for your website.', 'logo'
-    ),
-    'LOGO_SMALL': (
-        '', 'Upload a small-sized logo for your website.', 'logo'
-    ),
-    'MAX_RELEASES': (
-        10, 'The maximum number of releases to '
-        'be shown in the main page', 'number'
-    ),
-    'MAX_CHAPTERS': (
-        1, 'The maximum number of chapters to be shown '
-        'for each series in the reader page.', 'number'
-    ),
-    'SHOW_CREDITS': (
-        True, "Credit MangAdventure in the site's footer.", bool
-    )
-}
-
-# Constance configuration groups.
-CONSTANCE_CONFIG_FIELDSETS = {
-    'Site Settings': (
-        'NAME', 'DESCRIPTION', 'KEYWORDS',
-        'FAVICON', 'TWITTER', 'DISCORD',
-    ),
-    'Theme Settings': (
-        'MAIN_BACKGROUND', 'ALTER_BACKGROUND', 'MAIN_TEXT_COLOR',
-        'ALTER_TEXT_COLOR', 'SHADOW_COLOR', 'FONT_URL', 'FONT_NAME',
-    ),
-    'Logo Settings': (
-        'LOGO_LARGE', 'LOGO_MEDIUM', 'LOGO_SMALL',
-    ),
-    'Other Settings': (
-        'MAX_RELEASES', 'MAX_CHAPTERS', 'SHOW_CREDITS',
-    )
-}
-
-# Use the database for storing configuration.
-CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
 ##################
 #    Comments    #

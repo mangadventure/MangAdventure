@@ -1,6 +1,18 @@
 Changelog
 ---------
 
+v0.5.3
+^^^^^^
+
+* Added ``nofollow`` to private links
+* Added ``noopener`` & ``noreferrer`` to external links
+* Added filters, ordering, search, date hierarchy to admin interface
+* Added images & more info to change lists in admin interface
+* Replaced large/medium/small logos with a single logo
+* Replaced ``django-tinymce`` with custom ``TinyMCE`` widget
+* Replaced ``django-constance`` with ``.env`` variables
+* Removed ``django-static-precompiler`` dependency
+
 v0.5.2
 ^^^^^^
 

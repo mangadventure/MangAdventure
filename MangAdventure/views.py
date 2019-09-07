@@ -3,8 +3,6 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.cache import cache_control
 
-from constance import config
-
 from api.response import JsonError
 from reader.models import Category, Chapter
 
@@ -18,7 +16,7 @@ def _error_context(msg, status=500):
 
 def index(request):
     latest = Chapter.objects.prefetch_related('groups', 'series') \
-        .order_by('-uploaded')[:config.MAX_RELEASES:1]
+        .order_by('-uploaded')[:settings.CONFIG['MAX_RELEASES']:1]
     return render(request, 'index.html', {'latest_releases': latest})
 
 

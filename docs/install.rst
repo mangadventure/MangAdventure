@@ -125,7 +125,7 @@ Set up the server
 | Also, create the ``media`` and ``log`` directories
    beforehand to avoid possible permission errors.
 | Lastly, don't forget to run ``uwsgi`` after setting up the server:
-| (For more details, check the uWSGI `docs <https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django>`_.)
+| (For more details, check the `uWSGI docs <https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django>`_.)
 
 .. code-block:: shell
 

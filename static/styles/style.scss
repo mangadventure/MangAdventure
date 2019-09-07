@@ -74,16 +74,18 @@ thead {
     color: $main-fg;
     &:hover, &:active { color: $alter-fg }
   }
-  .logo {
-    float: left;
-    position: relative;
-  }
 }
 
 #home {
   display: inline-block;
   position: relative;
   z-index: 1;
+}
+
+#logo {
+  float: left;
+  height: 44px;
+  position: relative;
 }
 
 #navig {
@@ -700,8 +702,6 @@ thead {
 
 .comma::after { content: quote(',') }
 
-.logo { &[height='27'], &[height='38'] { display: none } }
-
 #forgot-password { margin-bottom: 3px }
 
 #dropdowns { height: 30px }
@@ -766,13 +766,7 @@ thead {
 i[data-pcount='100+'] { padding: 0 0.5em }
 
 @media screen and (max-width: 1024px) {
-  #header {
-    height: 38px;
-    .logo {
-      &[height='45'] { display: none }
-      &[height='38'] { display: inline-block }
-    }
-  }
+  #header, #logo { height: 38px }
   #navig {
     top: -2px;
     right: 1px;
@@ -787,13 +781,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
 }
 
 @media screen and (max-width: 690px) {
-  #header {
-    height: 27px;
-    .logo {
-      &[height='38'] { display: none }
-      &[height='27'] { display: inline-block }
-    }
-  }
+  #header, #logo { height: 27px }
   #search .result-info {
     .mi { margin: 0 }
     .mi-people { margin-right: 0.3em }
@@ -843,7 +831,10 @@ i[data-pcount='100+'] { padding: 0 0.5em }
   #list {
     text-align: center;
     .series {
-      .cover { float: none }
+      .cover {
+        float: none;
+        &-container { margin: auto }
+      }
       &-info { left: 0 }
       &-chapter {
         justify-content: center;

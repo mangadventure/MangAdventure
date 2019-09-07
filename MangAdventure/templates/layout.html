@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load cache static compile_static custom_tags %}
+{% load cache static custom_tags %}
 <html lang="en-us">
   <head>
     {% cache 604800 meta MANGADV_VERSION %}
@@ -9,11 +9,11 @@
       <meta name="generator" content="MangAdventure v{{ MANGADV_VERSION }}">
     {% endcache %}
     {% block color %}
-      <meta name="theme-color" content="{{ config.ALTER_BACKGROUND }}">
+      <meta name="theme-color" content="{{ config.ALTER_BG_COLOR }}">
       <meta name="msapplication-navbutton-color"
-            content="{{ config.ALTER_BACKGROUND }}">
+            content="{{ config.ALTER_BG_COLOR }}">
       <meta name="apple-mobile-web-app-status-bar-style"
-            content="{{ config.ALTER_BACKGROUND }}">
+            content="{{ config.ALTER_BG_COLOR }}">
     {% endblock %}
     {% block keywords %}
       <meta name="keywords" content="{{ config.KEYWORDS }}">
@@ -33,13 +33,11 @@
       <meta name="description" content="{{ config.DESCRIPTION }}">
     {% endblock %}
     {% block image %}
-      {% with url=PAGE_URL|urljoin:MEDIA_URL %}
-        {% with logo=url|urljoin:config.LOGO_LARGE %}
-          <meta name="twitter:image" content="{{ logo }}">
-          <meta property="og:image" content="{{ logo }}">
-          <meta name="twitter:image:alt" content="Site logo">
-          <meta property="og:image:alt" content="Site logo">
-        {% endwith %}
+      {% with logo=PAGE_URL|urljoin:config.LOGO %}
+        <meta name="twitter:image" content="{{ logo }}">
+        <meta property="og:image" content="{{ logo }}">
+        <meta name="twitter:image:alt" content="Site logo">
+        <meta property="og:image:alt" content="Site logo">
       {% endwith %}
     {% endblock %}
     {% block url %}
@@ -52,7 +50,7 @@
       <meta property="og:determiner" content="">
       <meta property="og:type" content="website">
       <meta property="og:site_name" content="{{ config.NAME }}">
-      {% with favicon=MEDIA_URL|urljoin:config.FAVICON %}
+      {% with favicon=config.FAVICON %}
         <link href="{{ favicon }}" rel="shortcut icon" type="{{ favicon|get_type }}">
       {% endwith %}
       <link href="{% url 'opensearch' %}" rel="search" title="{{ config.NAME }}"
@@ -65,9 +63,9 @@
     <link href="{{ PAGE_URL }}" rel="canonical" type="text/html">
     {% block stylesheets %}
       {% cache 604800 styles %}
-        <link href="{% static 'styles/style.scss'|compile %}"
+        <link href="{% static 'COMPILED/styles/style.css' %}"
               rel="preload stylesheet" as="style" type="text/css">
-        <link href="{% static 'extra/style.scss'|compile %}"
+        <link href="{% static 'COMPILED/extra/style.css' %}"
               rel="stylesheet" type="text/css">
         <noscript>
           <link href="{% static 'styles/noscript.css' %}"
@@ -85,17 +83,9 @@
   </head>
   <body>
     <header id="header">
-      {% cache 604800 logo config.LOGO_LARGE config.LOGO_MEDIUM config.LOGO_SMALL %}
+      {% cache 604800 logo config.LOGO %}
         <a id="home" href="{% url 'index' %}">
-            {% with logo=MEDIA_URL|urljoin:config.LOGO_LARGE %}
-              <img class="logo" src="{{ logo }}" height="45"></img>
-            {% endwith %}
-            {% with logo=MEDIA_URL|urljoin:config.LOGO_MEDIUM %}
-              <img class="logo" src="{{ logo }}" height="38"></img>
-            {% endwith %}
-            {% with logo=MEDIA_URL|urljoin:config.LOGO_SMALL %}
-              <img class="logo" src="{{ logo }}" height="27"></img>
-            {% endwith %}
+          <img id="logo" src="{{ config.LOGO }}"></img>
         </a>
       {% endcache %}
       <nav id="navig">

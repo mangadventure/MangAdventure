@@ -57,5 +57,6 @@ user_settings.py
 config.ini
 media/
 static/extra/style.scss
+static/COMPILED/extra/style.css
 static/styles/_variables.scss
 static/debug_toolbar/

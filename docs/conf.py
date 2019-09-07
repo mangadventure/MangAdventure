@@ -1,38 +1,6 @@
-# -- Path setup --
-
-import os
-import sys
-
-import django
-
-import sphinx_rtd_theme
-
-base_dir = os.path.dirname(os.path.dirname(
-    os.path.abspath(__file__)
-))
-
-sys.path.insert(0, base_dir)
-
-# dummy .env file
-dotenv = os.path.join(base_dir, '.env')
-if not os.path.exists(dotenv):
-    with open(dotenv, 'w') as f:
-        f.writelines([
-            'DB_URL=sqlite://:memory:\n',
-            'EMAIL_URL=console:\n',
-            'EMAIL_ADDRESS=user@example.com\n',
-            'SITE_DOMAIN=example.com\n'
-        ])
-
-os.environ.setdefault(
-    'DJANGO_SETTINGS_MODULE', 'MangAdventure.settings'
-)
-
-django.setup()
-
 # -- Project information --
 
-import MangAdventure  # noqa: E402
+import MangAdventure
 
 project = MangAdventure.__name__
 author = MangAdventure.__author__
@@ -66,7 +34,7 @@ def setup(app):
 # -- Options for HTML output --
 
 html_theme = 'sphinx_rtd_theme'
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme_path = [__import__(html_theme).get_html_theme_path()]
 html_theme_options = {
     'logo_only': True,
     'display_version': False,

@@ -70,7 +70,7 @@
             {% endfor %}
           {% else %}
             <strong class="alter-fg">Author:</strong>
-            <span class="author">{{ authors.first|default:'N/A' }}</span>
+            <span class="author"> {{ authors.first|default:'N/A' }}</span>
           {% endif %}
         </div>
       {% endwith %}
@@ -82,8 +82,8 @@
               <div class="artist">{{ artist }}</div>
             {% endfor %}
           {% else %}
-            <strong class="alter-fg">Artist:</strong>
-            <span class="artist">{{ artists.first|default:'N/A' }}</span>
+            <strong class="alter-fg">Artist: </strong>
+            <span class="artist"> {{ artists.first|default:'N/A' }}</span>
           {% endif %}
         </div>
       {% endwith %}
@@ -97,7 +97,7 @@
               {% endfor %}
             {% else %}
               <strong class="alter-fg">Category:</strong>
-              <span class="category">{{ categories.first }}</span>
+              <span class="category"> {{ categories.first }}</span>
             {% endif %}
           </div>
         {% endif %}

@@ -1,27 +1,18 @@
+from django.conf import settings
 from django.contrib import admin, redirects, sites
 from django.contrib.flatpages.admin import FlatPageAdmin
 from django.contrib.flatpages.forms import FlatpageForm
 from django.contrib.flatpages.models import FlatPage
 from django.forms import ModelForm
 
-from constance import config
-from constance.admin import Config, ConstanceAdmin
-
 from MangAdventure.widgets import TinyMCE
 
 
-admin.site.site_header = config.NAME + ' Administration'
+admin.site.site_header = settings.CONFIG['NAME'] + ' Administration'
 admin.site.site_title = admin.site.site_header
 
 
 class InfoPageForm(FlatpageForm):
-    def save(self, commit=True):
-        page = super(FlatpageForm, self).save(commit=False)
-        page.sites.add(sites.models.Site.objects.get_current())
-        if commit:
-            page.save()
-        return page
-
     class Meta:
         fields = '__all__'
         model = FlatPage
@@ -66,7 +57,7 @@ class InfoPage(FlatPage):
     class Meta:
         proxy = True
         auto_created = True
-        app_label = 'constance'
+        app_label = 'config'
         verbose_name = 'info page'
 
 
@@ -74,7 +65,7 @@ class Site(sites.models.Site):
     class Meta:
         proxy = True
         auto_created = True
-        app_label = 'constance'
+        app_label = 'config'
 
 
 class SiteAdmin(sites.admin.SiteAdmin):
@@ -90,7 +81,7 @@ class Redirect(redirects.models.Redirect):
     class Meta:
         proxy = True
         auto_created = True
-        app_label = 'constance'
+        app_label = 'config'
 
 
 class RedirectAdmin(redirects.admin.RedirectAdmin):
@@ -98,19 +89,9 @@ class RedirectAdmin(redirects.admin.RedirectAdmin):
     change_list_form = ModelForm
 
 
-class Settings(Config):
-    class Meta(Config.Meta):
-        verbose_name = 'settings'
-        verbose_name_plural = 'settings'
-    _meta = Meta()
-
-
 admin.site.unregister([
-    FlatPage, Config,
-    sites.models.Site,
-    redirects.models.Redirect
+    FlatPage, sites.models.Site, redirects.models.Redirect
 ])
 admin.site.register(Site, SiteAdmin)
 admin.site.register(Redirect, RedirectAdmin)
 admin.site.register(InfoPage, InfoPageAdmin)
-admin.site.register([Settings], ConstanceAdmin)

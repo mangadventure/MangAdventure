@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static compile_static humanize custom_tags %}
+{% load static humanize custom_tags %}
 {% block head_extras %}
   <meta name="totalResults" content="{{ total }}">
   <script src="{% static 'vendor/tablesort.min.js' %}"

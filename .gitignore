@@ -53,10 +53,8 @@ _templates/
 *.br
 
 # MangAdventure stuff
-user_settings.py
-config.ini
 media/
-static/extra/style.scss
-static/COMPILED/extra/style.css
-static/styles/_variables.scss
+static/admin/
+static/extra/
 static/debug_toolbar/
+static/styles/_variables.scss

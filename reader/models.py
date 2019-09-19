@@ -3,6 +3,8 @@ from shutil import move
 from time import mktime
 
 from django.db import models
+from django.db.models import Value as V
+from django.db.models.functions import Concat as C
 from django.db.models.query import Q
 from django.shortcuts import reverse
 from django.utils.functional import cached_property
@@ -199,6 +201,15 @@ class Chapter(models.Model):
     @cached_property
     def modified_date(self):
         return http_date(mktime(self.modified.timetuple()))
+
+    @cached_property
+    def twitter_creators(self):
+        return ', '.join(
+            Group.objects.filter(releases__id=self.id)
+            .exclude(twitter='').only('twitter')
+            .annotate(creator=C(V('@'), 'twitter'))
+            .values_list('creator', flat=True)
+        )
 
     def get_absolute_url(self):
         return reverse('reader:chapter', args=(

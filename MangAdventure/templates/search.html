@@ -1,5 +1,6 @@
 {% extends 'layout.html' %}
 {% load static humanize custom_tags %}
+{% block canonical %}{% endblock %}
 {% block head_extras %}
   <meta name="totalResults" content="{{ total }}">
   <script src="{% static 'vendor/tablesort.min.js' %}"
@@ -17,28 +18,25 @@
   <h1 class="text-shadow alter-bg">Search</h1>
   <article id="search">
     <section id="search-options">
-      <form action="{% url 'search' %}" id="search-form"
-            method="GET" accept-charset="utf-8">
+      <form action="{% url 'search' %}" id="search-form" method="GET">
         <div id="search-title">
           <label for="query">Series Title:</label>
-          <input name="q" value="{{ query }}"
-                 id="query" type="text"/>
+          <input name="q" value="{{ query }}" id="query" type="text">
         </div>
         <div id="search-author">
           <label for="author">Author/Artist:</label>
-          <input name="author" value="{{ author }}"
-                 id="author" type="text"/>
+          <input name="author" value="{{ author }}" id="author" type="text">
         </div>
         <div id="search-status">
           <span>Series Status:</span>
           <input {% if status == 'any' %}checked="checked"{% endif %}
-            name="status" id="status-any" value="any" type="radio"/>
+                 name="status" id="status-any" value="any" type="radio">
           <label for="status-any">Any</label>
           <input {% if status == 'completed' %}checked="checked"{% endif %}
-            name="status" id="status-completed" value="completed" type="radio"/>
+                 name="status" id="status-completed" value="completed" type="radio">
           <label for="status-completed">Completed</label>
           <input {% if status == 'ongoing' %}checked="checked"{% endif %}
-            name="status" id="status-ongoing" value="ongoing" type="radio"/>
+                 name="status" id="status-ongoing" value="ongoing" type="radio">
           <label for="status-ongoing">Ongoing</label>
         </div>
         <div id="search-categories">
@@ -49,8 +47,7 @@
           </div>
           <div id="category-container">
             {% for category in all_categories %}
-              <span class="tooltip category"
-                    data-tooltip="{{ category.description }}">
+              <span class="tooltip category" data-tooltip="{{ category.description }}">
                 {% if category.id in in_categories %}
                   <i class="mi mi-ok-circle"></i> {{ category }}
                 {% elif category.id in ex_categories %}
@@ -61,8 +58,7 @@
               </span>
             {% endfor %}
           </div>
-          <input type="hidden" class="no-display"
-                 id="categories" name="categories">
+          <input type="hidden" class="no-display" id="categories" name="categories">
         </div>
         <button id="search-submit" type="submit">
           <i class="mi mi-send"></i> Submit Search
@@ -111,16 +107,12 @@
                   {{ series.categories.all|join:', '|default:'N/A' }}
                 </td>
                 {% with chapters=series.chapters.all %}
-                  <td class="result-chapters s-hidden"
-                      data-sort-method="number">
+                  <td class="result-chapters s-hidden" data-sort-method="number">
                     {{ chapters|length }}
                   </td>
                   <td class="result-date s-hidden" data-sort-method="date">
-                    {% if chapters %}
-                      {{ chapters.latest.uploaded|naturaltime }}
-                    {% else %}
-                      N/A
-                    {% endif %}
+                    {% if chapters %}{{ chapters.latest.uploaded|naturaltime }}
+                    {% else %}N/A{% endif %}
                   </td>
                 {% endwith %}
               </tr>

@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-{% load cache static custom_tags %}
-<html lang="en-us">
+<!DOCTYPE html>{% load cache static custom_tags %}
+<html lang="en-us">{% spaceless %}
   <head>
-    {% cache 604800 meta MANGADV_VERSION %}
+    {% cache 604800 meta %}
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
       <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +9,8 @@
     {% endcache %}
     {% block color %}
       <meta name="theme-color" content="{{ config.ALTER_BG_COLOR }}">
-      <meta name="msapplication-navbutton-color"
-            content="{{ config.ALTER_BG_COLOR }}">
-      <meta name="apple-mobile-web-app-status-bar-style"
-            content="{{ config.ALTER_BG_COLOR }}">
+      <meta name="msapplication-navbutton-color" content="{{ config.ALTER_BG_COLOR }}">
+      <meta name="apple-mobile-web-app-status-bar-style" content="{{ config.ALTER_BG_COLOR }}">
     {% endblock %}
     {% block keywords %}
       <meta name="keywords" content="{{ config.KEYWORDS }}">
@@ -21,18 +18,13 @@
     {% block robots %}
       <meta name="robots" content="index,follow">
     {% endblock %}
-    {% if config.DISCORD %}
-      <meta name="discord" content="{{ config.DISCORD }}">
-    {% endif %}
-    {% if config.TWITTER %}
-      <meta name="twitter:site" content="@{{ config.TWITTER }}">
-    {% endif %}
     {% block description %}
       <meta name="twitter:description" content="{{ config.DESCRIPTION }}">
       <meta property="og:description" content="{{ config.DESCRIPTION }}">
       <meta name="description" content="{{ config.DESCRIPTION }}">
     {% endblock %}
     {% block image %}
+      <meta name="twitter:card" content="summary_large_image">
       {% with logo=PAGE_URL|urljoin:config.LOGO %}
         <meta name="twitter:image" content="{{ logo }}">
         <meta property="og:image" content="{{ logo }}">
@@ -44,15 +36,18 @@
       <meta name="url" content="{{ PAGE_URL }}">
       <meta property="og:url" content="{{ PAGE_URL }}">
     {% endblock %}
-    {% cache 604800 links config.FONT_URL config.FAVICON config.NAME %}
-      <meta name="twitter:card" content="summary_large_image">
+    {% cache 604800 links %}
+      {% if config.DISCORD %}
+        <meta name="discord" content="{{ config.DISCORD }}">
+      {% endif %}
+      {% if config.TWITTER %}
+        <meta name="twitter:site" content="@{{ config.TWITTER }}">
+      {% endif %}
       <meta name="twitter:site_name" content="{{ config.NAME }}">
       <meta property="og:determiner" content="">
       <meta property="og:type" content="website">
       <meta property="og:site_name" content="{{ config.NAME }}">
-      {% with favicon=config.FAVICON %}
-        <link href="{{ favicon }}" rel="shortcut icon" type="{{ favicon|get_type }}">
-      {% endwith %}
+      <link href="{{ config.FAVICON }}" rel="shortcut icon" type="{{ config.FAVICON|get_type }}">
       <link href="{% url 'opensearch' %}" rel="search" title="{{ config.NAME }}"
             type="application/opensearchdescription+xml">
       <link href="https://cdn.staticaly.com/gh/mangadventure/font/6211328/dist/mangadventure.css"
@@ -60,16 +55,16 @@
             rel="stylesheet" type="text/css" crossorigin="anonymous">
       <link href="{{ config.FONT_URL }}" rel="stylesheet" type="text/css" crossorigin="anonymous">
     {% endcache %}
-    <link href="{{ PAGE_URL }}" rel="canonical" type="text/html">
+    {% block canonical %}
+      <link href="{{ CANON_URL }}" rel="canonical" type="text/html">
+    {% endblock %}
     {% block stylesheets %}
       {% cache 604800 styles %}
         <link href="{% static 'COMPILED/styles/style.css' %}"
               rel="preload stylesheet" as="style" type="text/css">
-        <link href="{% static 'COMPILED/extra/style.css' %}"
-              rel="stylesheet" type="text/css">
+        <link href="{% static 'COMPILED/extra/style.css' %}" rel="stylesheet" type="text/css">
         <noscript>
-          <link href="{% static 'styles/noscript.css' %}"
-                rel="stylesheet" type="text/css">
+          <link href="{% static 'styles/noscript.css' %}" rel="stylesheet" type="text/css">
         </noscript>
       {% endcache %}
     {% endblock %}
@@ -83,7 +78,7 @@
   </head>
   <body>
     <header id="header">
-      {% cache 604800 logo config.LOGO %}
+      {% cache 604800 logo %}
         <a id="home" href="{% url 'index' %}">
           <img id="logo" src="{{ config.LOGO }}"></img>
         </a>
@@ -93,26 +88,23 @@
           {% cache 604800 nav %}
             <li>
               <a class="navig-link" href="{% url 'index' %}">
-                <i class="mi mi-clock"></i>
-                <span class="ident">Latest</span>
+                <i class="mi mi-clock"></i><span class="ident">Latest</span>
               </a>
             </li>
             <li>
               <a class="navig-link" href="{% url 'reader:directory' %}">
-                <i class="mi mi-library"></i>
-                <span class="ident">Library</span>
+                <i class="mi mi-library"></i><span class="ident">Library</span>
               </a>
             </li>
             <li id="searchlink">
               <a class="navig-link" href="{% url 'search' %}">
-                <i class="mi mi-search"></i>
-                <span class="ident">Search</span>
+                <i class="mi mi-search"></i><span class="ident">Search</span>
               </a>
             </li>
             <li>
               <form action="{% url 'search' %}" method="GET">
                 <input placeholder="Type a series to search for"
-                       name="q" type="search" class="main-bg" id="searchbox"/>
+                       name="q" type="search" class="main-bg" id="searchbox">
               </form>
             </li>
           {% endcache %}
@@ -122,41 +114,34 @@
             </span>
             <ul class="dropdown-list">{% if request.user.is_authenticated %}
               <li class="dropdown-element">
-                <a href="{% url 'user_profile' %}" rel="nofollow">
-                  <span>Profile</span>
-                  <i class="mi mi-user" aria-hidden="true"></i>
+                <a href="{% url 'user_profile' %}?id={{ request.user.id }}" rel="nofollow">
+                  <span>Profile</span><i class="mi mi-user" aria-hidden="true"></i>
                 </a>
               </li>
               <li class="dropdown-element">
                 <a href="{% url 'user_bookmarks' %}" rel="nofollow">
-                  <span>Bookmarks</span>
-                  <i class="mi mi-bookmark" aria-hidden="true"></i>
+                  <span>Bookmarks</span><i class="mi mi-bookmark" aria-hidden="true"></i>
                 </a>
               </li>
               <li class="dropdown-element">
                 <a href="{% url 'user_edit' %}" rel="nofollow">
-                  <span>Settings</span>
-                  <i class="mi mi-cog" aria-hidden="true"></i>
+                  <span>Settings</span><i class="mi mi-cog" aria-hidden="true"></i>
                 </a>
               </li>
               <li class="dropdown-element">
                 <form action="{% url 'account_logout' %}" method="POST">
                   {% csrf_token %}
-                  <input type="hidden" name="next" value="{{ PAGE_URL }}">
+                  <input type="hidden" name="next" value="{{ request.path }}">
                   <button type="submit" class="logout-btn">
-                    <span>Logout</span>
-                    <i class="mi mi-logout" aria-hidden="true"></i>
+                    <span>Logout</span><i class="mi mi-logout" aria-hidden="true"></i>
                   </button>
                 </form>
               </li>
             {% else %}
               <li class="dropdown-element">
-                {% with next=request.path|urlencode %}
-                  <a href="{% url 'account_login' %}?next={{ next }}" rel="nofollow">
-                    <span>Login</span>
-                    <i class="mi mi-login" aria-hidden="true"></i>
-                  </a>
-                {% endwith %}
+                <a href="{% url 'account_login' %}?next={{ request.path }}" rel="nofollow">
+                  <span>Login</span><i class="mi mi-login" aria-hidden="true"></i>
+                </a>
               </li>
             {% endif %}</ul>
           </li>
@@ -174,7 +159,7 @@
       {% block content %}
       {% endblock %}
     </main>
-    {% cache 604800 footer config.DISCORD config.TWITTER config.SHOW_CREDITS %}
+    {% cache 604800 footer %}
       <footer id="footer">
         <div id="links">
           <a href="{% url 'info' %}" class="link" title="About us">
@@ -206,4 +191,4 @@
       </footer>
     {% endcache %}
   </body>
-</html>
+</html>{% endspaceless %}

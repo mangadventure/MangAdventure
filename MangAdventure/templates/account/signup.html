@@ -17,10 +17,9 @@
       {% for item in form %}
         <div class="field">
           <label for="{{ item.name }}">{{ item.label }}</label>
-          <input type="{{ item.field.widget.input_type }}" class="input"
-                 placeholder="{{ item.field.widget.attrs.placeholder }}"
-                 {% if 'password' in item.name %}autocomplete="off"{% endif %}
-                 name="{{ item.name }}" id="{{ item.name }}" required>
+          <input type="{{ item.field.widget.input_type }}" class="input" name="{{ item.name }}"
+                 id="{{ item.name }}" placeholder="{{ item.field.widget.attrs.placeholder }}"
+                 required{% if 'password' in item.name %} autocomplete="off"{% endif %}>
           {% if item.errors %}
             {% for error in item.errors %}
               <p class="error">{{ error|escape }}</p>
@@ -29,8 +28,7 @@
         </div>
       {% endfor %}
       {% if redirect_field_value %}
-        <input type="hidden" name="{{ redirect_field_name }}"
-               value="{{ redirect_field_value }}">
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
       {% endif %}
       <input class="button" type="submit" value="Register">
     </form>
@@ -40,8 +38,7 @@
       {% for provider in socialaccount_providers|available %}
         <a title="{{ provider.name }}" class="provider main-fg"
            rel="noopener nofollow" href="{% provider_login_url provider.id %}">
-          <i class="mi mi-{{ provider.id }}"></i>
-          <span>{{ provider.name }}</span>
+          <i class="mi mi-{{ provider.id }}"></i><span>{{ provider.name }}</span>
         </a>
       {% endfor %}
     </section>

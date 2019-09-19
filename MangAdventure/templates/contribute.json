@@ -14,13 +14,5 @@
     "list": "https://github.com/mangadventure/MangAdventure/issues",
     "report": "https://github.com/mangadventure/MangAdventure/issues/new/choose"
   },
-  "keywords": [
-    "python",
-    "django",
-    "scss",
-    "html5",
-    "vanillajs",
-    "manga",
-    "reader"
-  ]
+  "keywords": ["python", "django", "scss", "html5", "vanillajs", "manga", "reader"]
 }

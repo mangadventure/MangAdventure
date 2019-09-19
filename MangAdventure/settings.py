@@ -188,11 +188,17 @@ STATIC_URL = '/static/'
 # Absolute filesystem path to the directory that will hold static files.
 STATIC_ROOT = path.join(BASE_DIR, 'static')
 
+# A list of directories containing static files.
+STATICFILES_DIRS = [
+    ('styles', path.join(STATIC_ROOT, 'styles')),
+    ('scripts', path.join(STATIC_ROOT, 'scripts')),
+    ('COMPILED', path.join(STATIC_ROOT, 'COMPILED')),
+]
+
 # A list of static file finder backends.
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'static_precompiler.finders.StaticPrecompilerFinder',
 ]
 
 # URL that handles the media served from MEDIA_ROOT.
@@ -385,7 +391,10 @@ else:
     CSP_REPORT_URI = env.list('CSP_REPORT_URI')
 
     # URLs beginning with any of these will not get the CSP headers.
-    CSP_EXCLUDE_URL_PREFIXES = ('/api', '/admin-panel')
+    CSP_EXCLUDE_URL_PREFIXES = (
+        '/api', '/admin-panel', '/robots.txt',
+        '/opensearch.xml', '/contribute.json',
+    )
 
 #######################
 #    Configuration    #

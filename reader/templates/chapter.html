@@ -9,13 +9,13 @@
   {% endwith %}
 {% endblock %}
 {% block image %}
-  {% with url=PAGE_URL|urljoin:MEDIA_URL %}
-    {% with cover=curr_chapter.series.cover.name %}
-      <meta name="twitter:image" content="{{ url|add:cover }}">
-      <meta property="og:image" content="{{ url|add:cover }}">
-      <meta name="twitter:image:alt" content="Series Cover">
-      <meta property="og:image:alt" content="Series Cover">
-    {% endwith %}
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:creator" content="{{ chapter.twitter_creators }}">
+  {% with cover=PAGE_URL|urljoin:curr_chapter.series.cover.url %}
+    <meta name="twitter:image" content="{{ cover }}">
+    <meta property="og:image" content="{{ cover }}">
+    <meta name="twitter:image:alt" content="Series Cover">
+    <meta property="og:image:alt" content="Series Cover">
   {% endwith %}
 {% endblock %}
 {% block description %}
@@ -49,21 +49,19 @@
     <h1>
       <a href="{{ curr_chapter.series.get_absolute_url }}">
         {{ curr_chapter.series.title }}
-      </a>
-      <br>V{{ vol }} / C{{ num|floatformat }}
+      </a><br>V{{ vol }} / C{{ num|floatformat }}
     </h1>
   {% endwith %}
   <div id="chapter">
     <section id="dropdowns" class="no-display">
       <div class="dropdown chapter-list main-bg" aria-haspopup="true">
         <span class="dropdown-title alter-fg">
-          <i class="mi mi-down"></i>
-          Chapters
+          <i class="mi mi-down"></i>Chapters
         </span>
         <a href="#" title="{{ curr_chapter.title }}" class="faux-link">
           <i class="mi mi-down"></i>
           {% with vol=curr_chapter.volume num=curr_chapter.number %}
-            <span {% if curr_chapter.final %}class="end"{% endif %}>
+            <span{% if curr_chapter.final %} class="end"{% endif %}>
               V{{ vol }} / C{{ num|floatformat }}: {{ curr_chapter.title }}
             </span>
           {% endwith %}
@@ -71,11 +69,9 @@
         <ul class="dropdown-list main-bg">
           {% for chapter in all_chapters %}
             <li class="dropdown-element chapter-details"
-              {% if chapter == curr_chapter %}
-                data-current="true"
-              {% endif %}>
+              {% if chapter == curr_chapter %}data-current="true"{% endif %}>
               <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
-                       {% if chapter.final %}class="end"{% endif %}>
+                 {% if chapter.final %} class="end"{% endif %}>
                 {% with vol=chapter.volume num=chapter.number %}
                   V{{ vol }} / C{{ num|floatformat }}: {{ chapter.title }}
                 {% endwith %}
@@ -89,15 +85,12 @@
           Pages <i class="mi mi-down"></i>
         </span>
         <a href="#" rel="nofollow" class="faux-link">
-          Page {{ curr_page.number|stringformat:'02d' }}
-          <i class="mi mi-down"></i>
+          Page {{ curr_page.number|stringformat:'02d' }}<i class="mi mi-down"></i>
         </a>
         <ul class="dropdown-list main-bg">
           {% for page in all_pages %}
             <li class="dropdown-element page-details"
-              {% if page.number == curr_page.number %}
-                data-current="true"
-              {% endif %}>
+              {% if page.number == curr_page.number %} data-current="true"{% endif %}>
               {% with num=page.number|stringformat:'02d' %}
                 <a href="{{ page.get_absolute_url }}">Page {{ num }}</a>
               {% endwith %}
@@ -107,22 +100,14 @@
       </div>
     </section>
     {% with series_url=chapter.series.get_absolute_url %}
-      <section id="placeholder" class="main-bg"
-               data-num="{{ curr_page.number }}"
-               data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
+      <section id="placeholder" class="main-bg" data-num="{{ curr_page.number }}"
                {% if curr_page.number == all_pages.count %}
-                 {% if next_chapter %}
-                   data-next="{{ next_chapter.get_absolute_url }}"
-                 {% else %}
-                   data-next="{{ series_url }}"
-                 {% endif %}
+                 {% if next_chapter %} data-next="{{ next_chapter.get_absolute_url }}"
+                 {% else %} data-next="{{ series_url }}"{% endif %}
               {% elif curr_page.number == 1 %}
-                 {% if prev_chapter %}
-                   data-prev="{{ prev_chapter.get_absolute_url }}"
-                 {% else %}
-                   data-prev="{{ series_url }}"
-                 {% endif %}
-              {% endif %}>
+                 {% if prev_chapter %} data-prev="{{ prev_chapter.get_absolute_url }}"
+                 {% else %} data-prev="{{ series_url }}"{% endif %}
+              {% endif %} data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}">
         <i class="mi mi-spin"></i>
       </section>
     {% endwith %}
@@ -130,24 +115,20 @@
             rel="preload" as="script" type="application/javascript">
     </script>
     <noscript>
-      <img src="{{ MEDIA_URL|urljoin:curr_page.image.url }}"
-           rel="preload" as="image" class="chapter-page"
-           alt="Page {{ curr_page.number }}">
+      <img src="{{ MEDIA_URL|urljoin:curr_page.image.url }}" rel="preload" as="image"
+           class="chapter-page" alt="Page {{ curr_page.number }}">
     </noscript>
     <section id="controls" class="no-display">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
         <div id="controls-top">
-          <a href="../{{ all_pages.first.number }}"
-             title="First page" class="control">
+          <a href="../{{ all_pages.first.number }}" title="First page" class="control">
             <i class="mi mi-rewind"></i>
           </a>
           {% if prev == 0 %}
             {% if prev_chapter %}
-              <a href="{{ prev_chapter.get_absolute_url }}"
-                 title="Previous chapter" class="control">
+              <a href="{{ prev_chapter.get_absolute_url }}" title="Previous chapter" class="control">
             {% else %}
-              <a href="{{ curr_chapter.series.get_absolute_url }}"
-                 title="No previous chapters" class="control">
+              <a href="{{ curr_chapter.series.get_absolute_url }}" title="No previous chapters" class="control">
             {% endif %}
           {% else %}
             <a href="../{{ prev }}/" title="Previous page" class="control">
@@ -156,25 +137,21 @@
           </a>
           {% with curr=curr_page.number|stringformat:'02d' max=all_pages.count %}
             <span class="curr-page">
-              Page <input type="text" data-max="{{ max }}"
-                          value="{{ curr }}" placeholder="{{ curr }}">
-              /{{ max|stringformat:'02d' }}
+              Page <input type="text" data-max="{{ max }}" value="{{ curr }}"
+                          placeholder="{{ curr }}">/{{ max|stringformat:'02d' }}
             </span>
             {% if next > max %}
               {% if next_chapter %}
-                <a href="{{ next_chapter.get_absolute_url }}"
-                   title="Next chapter" class="control">
+                <a href="{{ next_chapter.get_absolute_url }}" title="Next chapter" class="control">
               {% else %}
-                <a href="{{ curr_chapter.series.get_absolute_url }}"
-                   title="No more chapters" class="control">
+                <a href="{{ curr_chapter.series.get_absolute_url }}" title="No more chapters" class="control">
               {% endif %}
             {% else %}
               <a href="../{{ next }}/" title="Next page" class="control">
             {% endif %}
               <i class="mi mi-right"></i>
             </a>
-            <a href="../{{ all_pages.last.number }}"
-               title="Last page" class="control">
+            <a href="../{{ all_pages.last.number }}" title="Last page" class="control">
               <i class="mi mi-forward"></i>
             </a>
           {% endwith %}
@@ -187,7 +164,7 @@
   </div>
   <div id="preload" class="no-display">
     {% for page in all_pages|preload_pages:curr_page.number %}
-      <img alt='preload' src="{{ page.image.url }}">
+      <img alt="preload" src="{{ page.image.url }}">
     {% endfor %}
   </div>
 {% endblock %}

@@ -17,7 +17,7 @@ from .models import Bookmark, UserProfile
 @login_required
 @cache_control(private=True, max_age=3600)
 def profile(request):
-    uid = request.GET.get('id', request.user.id)
+    uid = int(request.GET.get('id', request.user.id))
     try:
         prof = UserProfile.objects.get_or_create(user_id=uid)[0]
         if uid != request.user.id and prof.user.is_superuser:

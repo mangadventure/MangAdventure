@@ -1,11 +1,15 @@
 {% extends 'layout.html' %}
 {% load cache static custom_tags %}
 {% block description %}
+  {% if group.twitter %}
+    <meta name="twitter:creator" content="@{{ group.twitter }}">
+  {% endif %}
   <meta name="twitter:description" content="{{ group.description }}">
   <meta property="og:description" content="{{ group.description }}">
   <meta name="description" content="{{ group.description }}">
 {% endblock %}
 {% block image %}
+  <meta name="twitter:card" content="summary">
   {% if group.logo %}
     {% with logo=PAGE_URL|urljoin:group.logo.url %}
       <meta name="twitter:image" content="{{ logo }}">
@@ -39,10 +43,9 @@
         {% endif %}
         <div class="group-links">
           <div class="group-site">
-            <strong>Website:</strong>
+            <strong>Website: </strong>
             {% if group.website %}
-              <a href="{{ group.website }}"
-                rel="noopener noreferrer" target="_blank">
+              <a href="{{ group.website }}" rel="noopener noreferrer" target="_blank">
                 {{ group.website }}
               </a>
             {% else %}
@@ -50,10 +53,9 @@
             {% endif %}
           </div>
           <div class="group-discord">
-            <strong>Discord:</strong>
+            <strong>Discord: </strong>
             {% if group.discord %}
-              <a href="{{ group.discord }}"
-                 rel="noopener noreferrer" target="_blank">
+              <a href="{{ group.discord }}" rel="noopener noreferrer" target="_blank">
                 {{ group.discord }}
               </a>
             {% else %}
@@ -61,10 +63,9 @@
             {% endif %}
           </div>
           <div class="group-twitter">
-            <strong>Twitter:</strong>
+            <strong>Twitter: </strong>
             {% if group.twitter %}
-              <a href="https://twitter.com/{{ group.twitter }}"
-                 rel="noopener noreferrer" target="_blank">
+              <a href="https://twitter.com/{{ group.twitter }}" rel="noopener noreferrer" target="_blank">
                 @{{ group.twitter }}
               </a>
             {% else %}
@@ -72,18 +73,17 @@
             {% endif %}
           </div>
           <div class="group-reddit">
-            <strong>Reddit:</strong>
+            <strong>Reddit: </strong>
             {% if group.reddit %}
-              <a href="https://reddit.com/r/{{ group.reddit }}"
-                 rel="noopener noreferrer" target="_blank">
-                /r/{{ group.reddit }}
+              <a href="https://reddit.com/{{ group.reddit }}" rel="noopener noreferrer" target="_blank">
+                {{ group.reddit }}
               </a>
             {% else %}
               <span>N/A</span>
             {% endif %}
           </div>
           <div class="group-irc">
-            <strong>IRC:</strong>
+            <strong>IRC: </strong>
             <span>{{ group.irc|default:'N/A' }}</span>
           </div>
         </div>
@@ -101,16 +101,13 @@
             <div class="member">
               <h2 class="member-name">{{ member.name }}</h2>
               <div class="member-discord">
-                <strong>Discord:</strong>
-                <span class="member-discord">
-                  {{ member.discord|default:'N/A' }}
-                </span>
+                <strong>Discord: </strong>
+                <span class="member-discord">{{ member.discord|default:'N/A' }}</span>
               </div>
               <div class="member-twitter">
-                <strong>Twitter:</strong>
+                <strong>Twitter: </strong>
                 {% if member.twitter %}
-                  <a href="https://twitter.com/{{ member.twitter }}"
-                     rel="noopener noreferrer" target="_blank">
+                  <a href="https://twitter.com/{{ member.twitter }}" rel="noopener noreferrer" target="_blank">
                     @{{ member.twitter }}
                   </a>
                 {% else %}
@@ -118,18 +115,17 @@
                 {% endif %}
               </div>
               <div class="member-reddit">
-                <strong>Reddit:</strong>
+                <strong>Reddit: </strong>
                 {% if member.reddit %}
-                  <a href="https://reddit.com/{{ member.reddit }}"
-                     rel="noopener noreferrer" target="_blank">
-                    {{ member.reddit }}
+                  <a href="https://reddit.com/u/{{ member.reddit }}" rel="noopener noreferrer" target="_blank">
+                    /u/{{ member.reddit }}
                   </a>
                 {% else %}
                   <span>N/A</span>
                 {% endif %}
               </div>
               <div class="member-irc">
-                <strong>IRC:</strong>
+                <strong>IRC: </strong>
                 <span>{{ member.irc|default:'N/A' }}</span>
               </div>
               <div class="member-roles">

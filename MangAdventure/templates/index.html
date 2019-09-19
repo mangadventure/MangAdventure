@@ -13,8 +13,7 @@
       {% for release in latest_releases %}
         <section class="release">
           <h2 class="release-title">
-            <a href="{{ release.series.get_absolute_url }}"
-               title="{{ release.series }}">
+            <a href="{{ release.series.get_absolute_url }}" title="{{ release.series }}">
               {{ release.series }}
             </a>
           </h2>
@@ -27,22 +26,18 @@
             {% endwith %}
             <div class="chapter-metadata">
               {% with groups=release.groups.all  %}
-                <span class="divider" title="{{ groups|join:', ' }}">
-                </span>
+                <span class="divider" title="{{ groups|join:', ' }}"></span>
                 <span class="chapter-groups" title="{{ groups|join:', ' }}">
                   {% for group in groups %}
-                    <a href="{{ group.get_absolute_url }}"
-                       title="{{ group.name }}"
-                      {% if not forloop.last %}class="comma"{% endif %}>
-                      {{ group.name }}</a>
+                    <a href="{{ group.get_absolute_url }}" title="{{ group.name }}"
+                       {% if not forloop.last %}class="comma"{% endif %}>
+                      {{ group.name }}
+                    </a>
                   {% endfor %}
               {% endwith %}
               </span>
-              <span class="divider"
-                    title="{{ release.uploaded|naturaltime }}">
-              </span>
-              <span class="chapter-date"
-                    title="{{ release.uploaded|naturaltime }}">
+              <span class="divider" title="{{ release.uploaded|naturaltime }}"></span>
+              <span class="chapter-date" title="{{ release.uploaded|naturaltime }}">
                 {{ release.uploaded|naturaltime }}
               </span>
             </div>

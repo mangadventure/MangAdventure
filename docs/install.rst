@@ -61,6 +61,16 @@ This command will set up the database for your site.
    mangadventure makemigrations
    mangadventure migrate
 
+Collect the static files
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+This command will collect the static files into ``static/``.
+
+
+.. code-block:: shell
+
+   mangadventure collectstatic
+
 Create an administrator account
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

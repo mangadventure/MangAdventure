@@ -41,12 +41,13 @@ def search(request):
 @cache_control(public=True, max_age=2628000)
 def opensearch(request):
     _icon = request.build_absolute_uri(
-        settings.MEDIA_URL + config.FAVICON
+        settings.CONFIG['FAVICON']
     )
     _search = request.build_absolute_uri('/search/')
     _self = request.build_absolute_uri('/opensearch.xml')
     return render(
         request, 'opensearch.xml', {
+            'name': settings.CONFIG['NAME'],
             'search': _search, 'self': _self, 'icon': _icon,
         }, 'application/opesearchdescription+xml'
     )
@@ -59,10 +60,11 @@ def contribute(request):
 
 @cache_control(public=True, max_age=2628000)
 def robots(request):
+    ctype = 'text/plain; charset=us-ascii'
     _robots = 'User-agent: *\nDisallow:\n\n' + '\n'.join([
         'User-agent: %s\nDisallow: /\n' % ua for ua in BOTS
     ])
-    return HttpResponse(content=_robots, content_type='text/plain')
+    return HttpResponse(content=_robots, content_type=ctype)
 
 
 def handler400(request, exception=None, template_name='error.html'):

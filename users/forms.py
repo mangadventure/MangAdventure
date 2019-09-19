@@ -74,7 +74,7 @@ class UserProfileForm(forms.ModelForm):
         super(UserProfileForm, self).__init__(*args)
         for key, value in iteritems(kwargs):
             self.fields[key].initial = value
-        self.user = User.objects.get(id=self.fields['user_id'].value())
+        self.user = User.objects.get(id=self.fields['user_id'].initial)
 
     def clean_username(self):
         username = self.cleaned_data.get('username')

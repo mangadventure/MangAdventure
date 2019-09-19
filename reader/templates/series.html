@@ -13,9 +13,10 @@
   {% endwith %}
 {% endblock %}
 {% block image %}
-  {% with url=PAGE_URL|urljoin:MEDIA_URL %}
-    <meta name="twitter:image" content="{{ url|add:series.cover.name }}">
-    <meta property="og:image" content="{{ url|add:series.cover.name }}">
+  <meta name="twitter:card" content="summary">
+  {% with cover=PAGE_URL|urljoin:series.cover.url %}
+    <meta name="twitter:image" content="{{ cover }}">
+    <meta property="og:image" content="{{ cover }}">
     <meta name="twitter:image:alt" content="Series Cover">
     <meta property="og:image:alt" content="Series Cover">
   {% endwith %}
@@ -34,71 +35,41 @@
 {% block content %}
   <h1 id="series-title" class="text-shadow alter-bg">{{ series.title }}</h1>
   <article id="series">
-    <img src="{{ MEDIA_URL|urljoin:series.cover.name }}"
-         alt="{{ series }} Cover" class="cover">
+    <img src="{{ MEDIA_URL|urljoin:series.cover.name }}" alt="{{ series }} Cover" class="cover">
     {% if user.is_authenticated %}
-      {% if marked %}
-        <i class="mi mi-bookmark bookmark-btn"
-           title="Unbookmark" data-series="{{ series.id }}"></i>
-      {% else %}
-        <i class="mi mi-bookmark-o bookmark-btn"
-           title="Bookmark" data-series="{{ series.id }}"></i>
-      {% endif %}
+      <i class="bookmark-btn mi mi-bookmark{{ marked|yesno:',-o' }}"
+         title="{{ marked|yesno:'Unb,B' }}ookmark" data-series="{{ series.id }}"></i>
     {% endif %}
     <div id="series-info">
       {% with aliases=series.aliases.all %}
         {% if aliases %}
           <div id="series-aliases">
-            {% if aliases|length > 1 %}
-              <strong class="alter-fg">Alt. titles:</strong>
-              {% for alias in aliases %}
-                <div class="alias">{{ alias }}</div>
-              {% endfor %}
-            {% else %}
-              <strong class="alter-fg">Alt. title:</strong>
-              <span class="alias">{{ aliases.first }}</span>
-            {% endif %}
+            <strong class="alter-fg">Alt. title{{ aliases|pluralize }}:</strong>
+            {% for alias in aliases %}<div class="alias">{{ alias }}</div>{% endfor %}
           </div>
         {% endif %}
       {% endwith %}
       {% with authors=series.authors.all %}
-        <div id="series-authors">
-          {% if authors|length > 1 %}
-            <strong class="alter-fg">Authors:</strong>
-            {% for author in authors %}
-              <div class="author">{{ author }}</div>
-            {% endfor %}
-          {% else %}
-            <strong class="alter-fg">Author:</strong>
-            <span class="author"> {{ authors.first|default:'N/A' }}</span>
-          {% endif %}
-        </div>
+        {% if authors %}
+          <div id="series-authors">
+            <strong class="alter-fg">Author{{ authors|pluralize }}:</strong>
+            {% for author in authors %}<div class="author">{{ author }}</div>{% endfor %}
+          </div>
+        {% endif %}
       {% endwith %}
       {% with artists=series.artists.all %}
-        <div id="series-artists">
-          {% if artists|length > 1 %}
-            <strong class="alter-fg">Artists:</strong>
-            {% for artist in artists %}
-              <div class="artist">{{ artist }}</div>
-            {% endfor %}
-          {% else %}
-            <strong class="alter-fg">Artist: </strong>
-            <span class="artist"> {{ artists.first|default:'N/A' }}</span>
-          {% endif %}
-        </div>
+        {% if artists %}
+          <div id="series-artists">
+            <strong class="alter-fg">Artist{{ artists|pluralize }}:</strong>
+            {% for artist in artists %}<div class="artist">{{ artist }}</div>{% endfor %}
+          </div>
+        {% endif %}
       {% endwith %}
       {% with categories=series.categories.all %}
         {% if categories %}
           <div id="series-categories">
-            {% if categories|length > 1 %}
-              <strong class="alter-fg">Categories:</strong>
-              {% for category in categories %}
-                <div class="category">{{ category }}</div>
-              {% endfor %}
-            {% else %}
-              <strong class="alter-fg">Category:</strong>
-              <span class="category"> {{ categories.first }}</span>
-            {% endif %}
+            <strong class="alter-fg">Categor{{ categories|pluralize:'y,ies' }}:</strong>
+            {% for category in categories %}<div class="category">{{ category }}</div>{% endfor %}
           </div>
         {% endif %}
       {% endwith %}
@@ -119,29 +90,24 @@
         {% for chapter in chapters %}
           <div class="chapter">
             {% with vol=chapter.volume num=chapter.number %}
-              <a href="{{ chapter.get_absolute_url }}"
-                 {% if chapter.final %}class="end"{% endif %}
-                 title="{{ chapter.title }}">
+              <a {% if chapter.final %}class="end"{% endif %}
+                 href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}">
                 Vol. {{ vol }}, Ch. {{ num|floatformat }}: {{ chapter.title }}
               </a>
               <div class="chapter-metadata">
                 {% with groups=chapter.groups.all %}
-                  <span class="divider" title="{{ groups|join:', ' }}">
-                  </span>
+                  <span class="divider" title="{{ groups|join:', ' }}"></span>
                   <span class="chapter-groups" title="{{ groups|join:', ' }}">
                     {% for group in groups %}
-                      <a href="{{ group.get_absolute_url }}"
-                         title="{{ group.name }}"
-                         {% if not forloop.last %}class="comma"{% endif %}>
+                      <a {% if not forloop.last %}class="comma"{% endif %}
+                         href="{{ group.get_absolute_url }}" title="{{ group.name }}">
                         {{ group.name }}</a>
                     {% endfor %}
                   </span>
                 {% endwith %}
-                <span class="divider"
-                      title="{{ chapter.uploaded|naturaltime }}">
+                <span class="divider" title="{{ chapter.uploaded|naturaltime }}">
                 </span>
-                <span class="chapter-date"
-                      title="{{ chapter.uploaded|naturaltime }}">
+                <span class="chapter-date" title="{{ chapter.uploaded|naturaltime }}">
                   {{ chapter.uploaded|naturaltime }}
                 </span>
               </div>

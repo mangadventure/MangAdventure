@@ -2,7 +2,7 @@
 {% load account socialaccount user_tags %}
 {% block head_extras %}
   {% if request.user.is_authenticated %}
-    <meta http-equiv="Refresh" content="1; url={% url 'user_profile' %}">
+    <meta http-equiv="Refresh" content="1; url={% url 'user_profile' %}?id={{{ requst.user.id }}}">
   {% endif %}
 {% endblock %}
 {% block title %}
@@ -19,8 +19,8 @@
   <article class="user-action" id="sign-in">
     {% if request.user.is_authenticated %}
       <div>
-        You are already logged in.
-        Click <a href="{% url 'account_logout' %}" rel="nofollow">here</a> to logout.
+        You are already logged in. Click
+        <a href="{% url 'account_logout' %}" rel="nofollow">here</a> to logout.
       </div>
     {% else %}
       {% for error in form.non_field_errors %}
@@ -38,23 +38,18 @@
         </div>
         <div class="field">
           <label for="password">{{ form.password.label }}:</label>
-          <input placeholder="{{ form.password.field.widget.attrs.placeholder }}"
-                 type="password" name="password" id="password"
-                 class="input" autocomplete="off" required>
+          <input class="input" placeholder="{{ form.password.field.widget.attrs.placeholder }}"
+                 type="password" name="password" id="password" autocomplete="off" required>
           {% for error in form.password.errors %}
             <div class="error">{{ error|escape }}</div>
           {% endfor %}
         </div>
         <span class="field">
           <input type="checkbox" class="input" name="remember" id="remember">
-          <label for="remember">
-            <i class="mi"></i>
-            {{ form.remember.label }}
-          </label>
+          <label for="remember"><i class="mi"></i> {{ form.remember.label }}</label>
         </span>
         {% if redirect_field_value %}
-          <input type="hidden" name="{{ redirect_field_name }}"
-                 value="{{ redirect_field_value }}">
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
         {% endif %}
         <input class="button" type="submit" value="Login">
       </form>
@@ -62,8 +57,7 @@
         <a href="{% url 'account_reset_password' %}" rel="nofollow">Forgot your password?</a>
       </section>
       <section id="no-account">
-        Don't have an account?
-        Click <a href="{{ signup_url }}" rel="nofollow">here</a> to sign up.
+        Don't have an account? Click <a href="{{ signup_url }}" rel="nofollow">here</a> to sign up.
       </section>
       <section id="oauth">
         <div id="oauth-or">Or, sign in with:</div>
@@ -71,8 +65,7 @@
         {% for provider in socialaccount_providers|available %}
           <a title="{{ provider.name }}" class="provider main-fg"
              rel="noopener nofollow" href="{% provider_login_url provider.id %}">
-            <i class="mi mi-{{ provider.id }}"></i>
-            <span>{{ provider.name }}</span>
+            <i class="mi mi-{{ provider.id }}"></i><span>{{ provider.name }}</span>
           </a>
         {% endfor %}
       </section>

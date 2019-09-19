@@ -4,6 +4,23 @@
 {% block robots %}
   <meta name="robots" content="noindex">
 {% endblock %}
+{% block image %}
+  <meta name="twitter:card" content="summary">
+  {% if profile.avatar %}
+    {% with avatar=profile.avatar.url %}
+      <meta name="twitter:image" content="{{ avatar }}">
+      <meta property="og:image" content="{{ avatar }}">
+      <meta name="twitter:image:alt" content="Avatar">
+      <meta property="og:image:alt" content="Avatar">
+    {% endwith %}
+  {% else %}
+    <meta name="twitter:image" content="">
+    <meta property="og:image" content="">
+  {% endif %}
+{% endblock %}
+{% block canonical %}
+  <link href="{{ CANON_URL }}?id={{ request.GET.id|default:request.user.id }}" rel="canonical" type="text/html">
+{% endblock %}
 {% with user=user_display %}
   {% block title %}
     <meta name="title" content="User profile">
@@ -19,8 +36,7 @@
       <section id="user-info">
         <div id="user-avatar">
           {% if profile.avatar %}
-            <img src="{{ MEDIA_URL|urljoin:profile.avatar.url }}"
-                 alt="{{ user_display }}">
+            <img src="{{ MEDIA_URL|urljoin:profile.avatar.url }}" alt="{{ user_display }}">
           {% else %}
             <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"  version="1.2" viewBox="0 0 24 24">
               <metadata>Source: https://github.com/stephenhutchings/typicons.font, License: CC-BY-SA</metadata>
@@ -31,37 +47,22 @@
         <div id="user-details">
           {% with user=profile.user %}
             {% if user == request.user %}
-              <div>
-                <strong>E-mail:</strong>
-                <span>{{ user.email }}</span>
-              </div>
+              <div><strong>E-mail: </strong><span>{{ user.email }}</span></div>
             {% endif %}
             {% if user.username %}
-              <div>
-                <strong>Username:</strong>
-                <span>{{ user.username }}</span>
-              </div>
+              <div><strong>Username: </strong><span>{{ user.username }}</span></div>
             {% endif %}
             {% if user.first_name %}
-              <div>
-                <strong>First name:</strong>
-                <span>{{ user.first_name }}</span>
-              </div>
+              <div><strong>First name: </strong><span>{{ user.first_name }}</span></div>
             {% endif %}
             {% if user.last_name %}
-              <div>
-                <strong>Last name:</strong>
-                <span>{{ last_name }}</span>
-              </div>
+              <div><strong>Last name: </strong><span>{{ user.last_name }}</span></div>
             {% endif %}
           </div>
         {% endwith %}
       </section>
       {% if profile.bio %}
-        <section id="user-bio">
-          <strong>About:</strong>
-          <div>{{ profile.bio }}</div>
-        </section>
+        <section id="user-bio"><strong>About:</strong><div>{{ profile.bio }}</div></section>
       {% endif %}
     </article>
   {% endcache %}

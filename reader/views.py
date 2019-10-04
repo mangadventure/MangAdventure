@@ -34,7 +34,8 @@ def chapter_page(request, slug, vol, num, page):
     except (ValueError, TypeError):
         raise Http404
     if page == 0:
-        raise Http404
+        return render(request, 'series.html', {'series': _series, 'marked': marked})
+
     chapters = {
         'all': Chapter.objects.filter(series__slug=slug),
         'curr': None,
@@ -50,7 +51,8 @@ def chapter_page(request, slug, vol, num, page):
     chapters['prev'] = prev_in_order(chapters['curr'], qs=chapters['all'])
     all_pages = chapters['curr'].pages.all()
     if page > len(all_pages):
-        raise Http404
+        return render(request, 'series.html', {'series': _series, 'marked': marked})
+
 
     return render(request, 'chapter.html', {
         'all_chapters': chapters['all'].reverse(),

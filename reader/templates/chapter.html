@@ -114,13 +114,13 @@
                  {% if next_chapter %}
                    data-next="{{ next_chapter.get_absolute_url }}"
                  {% else %}
-                   data-next="{{ series_url }}"
+                   data-next="{{ curr_chapter.series.get_absolute_url }}"
                  {% endif %}
               {% elif curr_page.number == 1 %}
                  {% if prev_chapter %}
                    data-prev="{{ prev_chapter.get_absolute_url }}"
                  {% else %}
-                   data-prev="{{ series_url }}"
+                   data-prev="{{ curr_chapter.series.get_absolute_url }}"
                  {% endif %}
               {% endif %}>
         <i class="mi mi-spin"></i>

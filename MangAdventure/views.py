@@ -61,9 +61,9 @@ def contribute(request):
 @cache_control(public=True, max_age=2628000)
 def robots(request):
     ctype = 'text/plain; charset=us-ascii'
-    _robots = 'User-agent: *\nDisallow:\n\n' + '\n'.join([
+    _robots = 'User-agent: *\nDisallow:\n\n' + '\n'.join(
         'User-agent: %s\nDisallow: /\n' % ua for ua in BOTS
-    ])
+    )
     return HttpResponse(content=_robots, content_type=ctype)
 
 

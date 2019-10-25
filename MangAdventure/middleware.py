@@ -1,5 +1,14 @@
 from re import MULTILINE, findall, search
 
+from django.middleware.common import CommonMiddleware
+
+
+class BaseMiddleware(CommonMiddleware):
+    def __call__(self, request):
+        if request.path == '/robots.txt':
+            return self.get_response(request)
+        return super(BaseMiddleware, self).__call__(request)
+
 
 class XPBMiddleware:
     def __init__(self, get_response):
@@ -44,4 +53,4 @@ class PreloadMiddleware:
         )
 
 
-__all__ = ['XPBMiddleware', 'PreloadMiddleware']
+__all__ = ['BaseMiddleware', 'XPBMiddleware', 'PreloadMiddleware']

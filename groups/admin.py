@@ -34,8 +34,6 @@ class GroupAdmin(admin.ModelAdmin):
         return (Lower('name'),)
 
     def logo_image(self, obj):
-        if not obj.logo:
-            return ''
         return img_tag(obj.logo, 'logo', height=25)
 
     logo_image.short_description = 'logo'

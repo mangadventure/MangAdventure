@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.db import connection
 
 SCSS_VARS = """\
 $main-bg: %(MAIN_BG_COLOR)s;
@@ -17,7 +18,9 @@ class SiteConfig(AppConfig):
 
     def ready(self):
         super(SiteConfig, self).ready()
-        self._configure()
+
+        if 'django_site' in connection.introspection.table_names():
+            self._configure()
 
     def _configure(self):
         from django.conf import settings

@@ -51,7 +51,10 @@ class ChapterAdmin(admin.ModelAdmin):
     empty_value_display = 'N/A'
 
     def preview(self, obj):
-        return img_tag(obj.pages.first().image, 'preview', height=50)
+        page = obj.pages.first()
+        if page is None:
+            return ''
+        return img_tag(page.image, 'preview', height=50)
 
 
 class SeriesAdmin(admin.ModelAdmin):

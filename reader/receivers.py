@@ -23,7 +23,10 @@ def _move(old_dir, new_dir):
 @receiver(pre_save, sender=Series)
 def redirect_series(sender, instance, **kwargs):
     if instance.id:
-        current = Series.objects.get(id=instance.id)
+        try:
+            current = Series.objects.get(id=instance.id)
+        except Series.DoesNotExist:
+            return
         if current.slug != instance.slug:
             old_path = current.get_absolute_url()
             new_path = instance.get_absolute_url()
@@ -53,7 +56,10 @@ def redirect_series(sender, instance, **kwargs):
 @receiver(pre_save, sender=Chapter)
 def redirect_chapter(sender, instance, **kwargs):
     if instance.id:
-        current = Chapter.objects.get(id=instance.id)
+        try:
+            current = Chapter.objects.get(id=instance.id)
+        except Chapter.DoesNotExist:
+            return
         if current.get_directory() != instance.get_directory():
             if current.volume != instance.volume:
                 _move(

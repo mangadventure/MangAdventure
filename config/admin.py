@@ -13,6 +13,9 @@ admin.site.site_title = admin.site.site_header
 
 
 class InfoPageForm(FlatpageForm):
+    def __init__(self, *args, **kwargs):
+        super(ModelForm, self).__init__(*args, **kwargs)
+
     class Meta:
         fields = '__all__'
         model = FlatPage

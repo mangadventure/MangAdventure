@@ -30,7 +30,7 @@ setup(
     download_url='https://github.com/mangadventure/MangAdventure',
     keywords=['manga', 'scanlation', 'reader'],
     packages=find_packages(),
-    python_requires='>=2.7',
+    python_requires='>=3.6',
     install_requires=read('requirements.txt').splitlines(),
     extras_require={
         'dev': [
@@ -52,20 +52,18 @@ setup(
         'console_scripts': ['mangadventure = manage:main']
     },
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
-        'Framework :: Django :: 1.11',
-        'Framework :: Django :: 2.1',
         'Framework :: Django :: 2.2',
         'Intended Audience :: Other Audience',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3 :: Only',
         'Topic :: Internet :: WWW/HTTP :: '
         'Dynamic Content :: Content Management System',
     ]

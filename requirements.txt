@@ -1,5 +1,5 @@
-django>=1.11,<3.0
+django>=2.2,<3.0
 django-allauth
 Pillow
 libsass
-yaenv<1.0
+yaenv>=1.2

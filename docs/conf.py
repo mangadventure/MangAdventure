@@ -1,11 +1,11 @@
 # -- Project information --
 
-import MangAdventure
+import MangAdventure as MA
 
-project = MangAdventure.__name__
-author = MangAdventure.__author__
-release = MangAdventure.__version__
-copyright = MangAdventure.__copyright__
+project = 'MangAdventure'
+author = MA.__author__
+release = MA.__version__
+copyright = f'2018-2020, {project}, {MA.__license__} license'
 
 
 # -- General configuration --
@@ -44,15 +44,15 @@ html_logo = '_static/logo.png'
 
 # -- Options for HTMLHelp output --
 
-htmlhelp_basename = '%sDoc' % project
+htmlhelp_basename = f'{project}Doc'
 
 
 # -- Options for LaTeX output --
 
 latex_elements = {}
 latex_documents = [(
-    master_doc, '%s.tex' % project,
-    '%s Documentation' % project, author, 'manual'
+    master_doc, f'{project}.tex',
+    f'{project} Documentation', author, 'manual'
 )]
 
 
@@ -60,13 +60,13 @@ latex_documents = [(
 
 man_pages = [(
     master_doc, project.lower(),
-    '%s Documentation' % project, [author], 7
+    f'{project} Documentation', author.split(', '), 7
 )]
 
 
 # -- Options for Texinfo output --
 
 texinfo_documents = [(
-    master_doc, project, '%s Documentation' % project,
-    author, project, MangAdventure.__doc__, 'Miscellaneous'
+    master_doc, project, f'{project} Documentation',
+    author, project, MA.__doc__, 'Miscellaneous'
 )]

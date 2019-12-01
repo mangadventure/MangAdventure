@@ -57,7 +57,8 @@ class Alias(models.Model):
         verbose_name = 'alias'
         verbose_name_plural = verbose_name + 'es'
 
-    def __str__(self): return self.alias
+    def __str__(self):
+        return self.alias
 
 
 __all__ = [

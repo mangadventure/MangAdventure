@@ -11,7 +11,10 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
 * [x] Includes JSON API.
 * [x] Works even without JavaScript.
 * [x] Supports searching for series.
-* [x] Supports users. (comments & bookmarks too)
+* [x] Supports users.
+  * [x] OAuth.
+  * [x] Bookmarks.
+  * [ ] Comments.
 * [x] Allows for migration from FoolSlide2.
 * [ ] More features coming soon...
 

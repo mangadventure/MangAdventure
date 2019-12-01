@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.twitter',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.discord',
-    'user_comments',
+    # 'commentary',
     'config',
     'reader',
     'api',
@@ -124,7 +124,8 @@ IGNORABLE_404_URLS = [
 ]
 
 LOGS_DIR = path.join(BASE_DIR, 'logs')
-if not path.exists(LOGS_DIR): mkdir(LOGS_DIR)
+if not path.exists(LOGS_DIR):
+    mkdir(LOGS_DIR)
 
 # Logging configuration dictionary.
 LOGGING = {  # TODO: better logging
@@ -348,8 +349,8 @@ if env.bool('HTTPS', True):
 
 # Optional django-csp module
 try:
-    __import__('csp.middleware')
-    MIDDLEWARE.append('csp.middleware.CSPMiddleware')
+    __import__('csp')
+    MIDDLEWARE.append('csp.contrib.rate_limiting.RateLimitedCSPMiddleware')
 except ImportError:
     pass
 else:
@@ -364,12 +365,12 @@ else:
 
     # Sets the style-src directive.
     CSP_STYLE_SRC = (
-        "'self'", "https://fonts.googleapis.com", "https://cdn.staticaly.com"
+        "'self'", "https://fonts.googleapis.com", "https://cdn.statically.io"
     )
 
     # Sets the font-src directive.
     CSP_FONT_SRC = (
-        "'self'", "https://fonts.gstatic.com", "https://cdn.staticaly.com"
+        "'self'", "https://fonts.gstatic.com", "https://cdn.statically.io"
     )
 
     # Sets the img-src directive.
@@ -389,6 +390,9 @@ else:
 
     # Sets the report-uri directive.
     CSP_REPORT_URI = env.list('CSP_REPORT_URI')
+
+    # Percentage of requests that should see the report-uri directive.
+    CSP_REPORT_PERCENTAGE = env.float('CSP_REPORT_PERCENTAGE', 1.0) / 100
 
     # URLs beginning with any of these will not get the CSP headers.
     CSP_EXCLUDE_URL_PREFIXES = (

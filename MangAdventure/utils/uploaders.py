@@ -1,7 +1,8 @@
 from os.path import join, splitext
 
 
-def _rename_file(old, new): return new + splitext(old)[-1]
+def _rename_file(old, new):
+    return new + splitext(old)[-1]
 
 
 def _uploader(filename, newname, subdirs):

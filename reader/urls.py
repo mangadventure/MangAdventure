@@ -16,5 +16,5 @@ urlpatterns = [
     url('%s/$' % _slug, views.series, name='series'),
     url('%s/$' % _chapter, views.chapter_redirect, name='chapter'),
     url('%s/$' % _page, views.chapter_page, name='page'),
-    url('%s/comments/$' % _chapter, views.chapter_comments, name='comments'),
+    # url('%s/comments/$' % _chapter, views.chapter_comments, name='comments'),
 ]

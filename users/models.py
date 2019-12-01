@@ -39,7 +39,8 @@ class UserProfile(models.Model):
     )
     # TODO: add links and let users choose whether to display their e-mail
 
-    def __str__(self): return str(self.user)
+    def __str__(self):
+        return str(self.user)
 
 
 # Might be utilised for progress tracking in the future

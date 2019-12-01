@@ -16,8 +16,8 @@ def _move(old_dir, new_dir):
             join(settings.MEDIA_ROOT, new_dir)
         )
     except OSError as e:
-        if e.errno == 2: pass
-        else: raise e
+        if e.errno != 2:
+            raise e
 
 
 @receiver(pre_save, sender=Series)

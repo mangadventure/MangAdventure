@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static humanize comments custom_tags %}
+{% load static humanize custom_tags %}
 {% block head_extras %}
   {% if request.user.is_authenticated %}
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -116,15 +116,17 @@
         {% endfor %}
       {% endwith %}
     </div>
-    <div id="comments">
-      <section id="comments-list">
-        {% render_comment_list for series %}
-      </section>
-      <section id="comments-form">
-        {% with next=request.path %}
-          {% render_comment_form for series %}
-        {% endwith %}
-      </section>
-    </div>
+    {% comment %}
+      <div id="comments">
+        <section id="comments-list">
+          {% render_comment_list for series %}
+        </section>
+        <section id="comments-form">
+          {% with next=request.path %}
+            {% render_comment_form for series %}
+          {% endwith %}
+        </section>
+      </div>
+    {% endcomment %}
   </article>
 {% endblock %}

@@ -37,8 +37,7 @@ v0.5.x
 |    |c| Allow Google/Twitter/Reddit sign-in.
 |    |c| Allow users to bookmark series.
 |    |c| Password reset form.
-| |u| Comments (custom/Disqus/Commento).
-| |u| Privacy page & cookie consent.
+| |c| Privacy page.
 | |c| Migration from FoolSlide2.
 
 v0.6.x

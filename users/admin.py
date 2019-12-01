@@ -6,8 +6,8 @@ from MangAdventure.utils.filters import boolean_filter
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.admin import SocialAppAdmin
 from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
-from user_comments.admin import CommentsAdmin
-from user_comments.models import Comment
+# from commentary.admin import CommentsAdmin
+# from commentary.models import Comment
 
 
 class UserTypeFilter(admin.SimpleListFilter):
@@ -69,16 +69,16 @@ class OAuthAppAdmin(SocialAppAdmin):
     list_display = ('name', 'provider', 'client_id')
 
 
-class UserComment(Comment):
-    class Meta:
-        proxy = True
-        auto_created = True
-        app_label = 'users'
+# class UserComment(Comment):
+#     class Meta:
+#         proxy = True
+#         auto_created = True
+#         app_label = 'users'
 
 
-class UserCommentAdmin(CommentsAdmin):
-    def has_add_permission(self, request):
-        return False
+# class UserCommentAdmin(CommentsAdmin):
+#     def has_add_permission(self, request):
+#         return False
 
 
 admin.site.unregister([
@@ -87,4 +87,4 @@ admin.site.unregister([
 ])
 admin.site.register(User, UserAdmin)
 admin.site.register(OAuthApp, OAuthAppAdmin)
-admin.site.register(UserComment, UserCommentAdmin)
+# admin.site.register(UserComment, UserCommentAdmin)

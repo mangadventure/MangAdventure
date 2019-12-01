@@ -57,11 +57,11 @@ def chapter_redirect(request, slug, vol, num):
     return redirect('reader:page', slug, vol, num, 1, permanent=True)
 
 
-def chapter_comments(request, slug, vol, num):
-    try:
-        chapter = Chapter.objects.get(
-            series__slug=slug, volume=int(vol), number=float(num)
-        )
-    except (ValueError, TypeError, Chapter.DoesNotExist):
-        raise Http404
-    return render(request, 'comments.html', {'chapter': chapter})
+# def chapter_comments(request, slug, vol, num):
+#     try:
+#         chapter = Chapter.objects.get(
+#             series__slug=slug, volume=int(vol), number=float(num)
+#         )
+#     except (ValueError, TypeError, Chapter.DoesNotExist):
+#         raise Http404
+#     return render(request, 'comments.html', {'chapter': chapter})

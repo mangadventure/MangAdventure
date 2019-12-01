@@ -57,7 +57,8 @@ class Group(models.Model):
             self.logo = thumbnail(self.logo, 150)
         super(Group, self).save(*args, **kwargs)
 
-    def __str__(self): return self.name
+    def __str__(self):
+        return self.name
 
 
 class Member(models.Model):
@@ -80,7 +81,8 @@ class Member(models.Model):
             Role.objects.filter(member_id=self.id).values('group')
         ))
 
-    def __str__(self): return self.name
+    def __str__(self):
+        return self.name
 
 
 class Role(models.Model):

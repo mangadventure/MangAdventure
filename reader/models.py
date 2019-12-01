@@ -20,8 +20,8 @@ def _move(old, new):
     try:
         move(old.get_directory, new.get_directory)
     except OSError as e:
-        if e.errno == 2: pass
-        else: raise e
+        if e.errno != 2:
+            raise e
 
 
 def _alias_help(name, identifier='name'):
@@ -33,7 +33,8 @@ class Author(models.Model):
         max_length=100, help_text="The author's full name."
     )
 
-    def __str__(self): return self.name
+    def __str__(self):
+        return self.name
 
 
 class Artist(models.Model):
@@ -41,7 +42,8 @@ class Artist(models.Model):
         max_length=100, help_text="The artist's full name."
     )
 
-    def __str__(self): return self.name
+    def __str__(self):
+        return self.name
 
 
 class Category(models.Model):
@@ -65,7 +67,8 @@ class Category(models.Model):
             self.id = self.name.lower()
         super(Category, self).save(*args, **kwargs)
 
-    def __str__(self): return self.name
+    def __str__(self):
+        return self.name
 
 
 class Series(models.Model):
@@ -112,7 +115,8 @@ class Series(models.Model):
             self.cover = images.thumbnail(self.cover, 300)
         super(Series, self).save(*args, **kwargs)
 
-    def __str__(self): return self.title
+    def __str__(self):
+        return self.title
 
 
 class AuthorAlias(Alias):

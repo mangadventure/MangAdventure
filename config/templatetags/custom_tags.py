@@ -8,23 +8,28 @@ urlopen = moves.urllib.request.urlopen
 
 
 @register.filter
-def urljoin(origin, pathname): return join(origin, pathname)
+def urljoin(origin, pathname):
+    return join(origin, pathname)
 
 
 @register.filter
-def vslice(value, var): return slice_filter(value, ':%d' % var)
+def vslice(value, var):
+    return slice_filter(value, f':{var:d}')
 
 
 @register.filter
-def order_by(qs, order): return qs.order_by(order)
+def order_by(qs, order):
+    return qs.order_by(order)
 
 
 @register.filter
-def get_name(value): return basename(value)
+def get_name(value):
+    return basename(value)
 
 
 @register.filter
-def get_ext(value): return splitext(value)[-1]
+def get_ext(value):
+    return splitext(value)[-1]
 
 
 @register.filter

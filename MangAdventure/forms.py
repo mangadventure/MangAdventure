@@ -1,10 +1,8 @@
 from io import BytesIO
-from sys import exc_info
 from xml.etree import cElementTree as et
 
 from django.core.exceptions import ValidationError
-from django.forms import CharField, ImageField, URLField, widgets
-from django.utils.six import reraise
+from django.forms import CharField, ImageField, URLField
 
 from PIL import Image
 
@@ -13,7 +11,6 @@ from MangAdventure.utils import validators
 
 # Source: https://gist.github.com/ambivalentno/9bc42b9a417677d96a21
 class SVGImageField(ImageField):
-
     def to_python(self, data):
         """
         Checks that the file-upload field data contains a
@@ -29,11 +26,10 @@ class SVGImageField(ImageField):
         # have to read the data into memory.
         if hasattr(data, 'temporary_file_path'):
             ifile = data.temporary_file_path()
+        elif hasattr(data, 'read'):
+            ifile = BytesIO(data.read())
         else:
-            if hasattr(data, 'read'):
-                ifile = BytesIO(data.read())
-            else:
-                ifile = BytesIO(data['content'])
+            ifile = BytesIO(data['content'])
 
         try:
             # load() could spot a truncated JPEG, but it loads the entire
@@ -45,21 +41,20 @@ class SVGImageField(ImageField):
             # Annotating so subclasses can reuse it for their own validation
             test_file.image = image
             test_file.content_type = Image.MIME[image.format]
-        except OSError:
+        except OSError as err:
             # add a workaround to handle svg images
             if not self.is_svg(ifile):
-                reraise(ValidationError, ValidationError(
+                raise ValidationError(
                     self.error_messages['invalid_image'],
                     code='invalid_image',
-                ), exc_info()[2])
+                ) from err
         if hasattr(test_file, 'seek') and callable(test_file.seek):
             test_file.seek(0)
         return test_file
 
     def run_validators(self, value):
-        if self.is_svg(value):
-            return
-        super(ImageField, self).run_validators(value)
+        if not self.is_svg(value):
+            super(ImageField, self).run_validators(value)
 
     @staticmethod
     def is_svg(f):
@@ -78,30 +73,12 @@ class SVGImageField(ImageField):
             return False
 
 
-class ColorField(CharField):
-    def __init__(self, *args, **kwargs):
-        self.min_length = 7
-        self.max_length = 20
-        self.strip = True
-        super(CharField, self).__init__(*args, **kwargs)
-        self.widget = widgets.TextInput({'type': 'color'})
-
-
 class TwitterField(CharField):
     default_validators = (validators.twitter_name_validator,)
-
-    def __init__(self, *args, **kwargs):
-        super(TwitterField, self).__init__(*args, **kwargs)
 
 
 class DiscordURLField(URLField):
     default_validators = (validators.discord_server_validator,)
 
-    def __init__(self, **kwargs):
-        super(DiscordURLField, self).__init__(**kwargs)
 
-
-__all__ = [
-    'SVGImageField', 'TwitterField',
-    'DiscordURLField', 'ColorField'
-]
+__all__ = ['SVGImageField', 'TwitterField', 'DiscordURLField']

@@ -1,7 +1,7 @@
 from django.http import Http404
 from django.shortcuts import redirect, render
 
-from .models import Chapter, Series, Page
+from .models import Chapter, Page, Series
 
 
 def directory(request):

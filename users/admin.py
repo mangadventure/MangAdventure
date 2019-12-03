@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth import models
 
-from MangAdventure.utils.filters import boolean_filter
-
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.admin import SocialAppAdmin
 from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
+
+from MangAdventure.utils.filters import boolean_filter
+
 # from commentary.admin import CommentsAdmin
 # from commentary.models import Comment
 

@@ -1,16 +1,16 @@
 import re
-from os import mkdir, path
+from pathlib import Path
 
 from yaenv import Env
 
 from . import __version__ as VERSION
 from .bad_bots import BOTS
 
-# Build paths inside the project like this: path.join(BASE_DIR, ...)
-BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
+# Build paths inside the project like this: BASE_DIR / ...
+BASE_DIR = Path(__file__).resolve().parents[1]
 
 # Load environment variables from .env file.
-env = Env(path.join(BASE_DIR, '.env'))
+env = Env(BASE_DIR / '.env')
 
 ###############
 #    Basic    #
@@ -94,7 +94,7 @@ TEMPLATES = [{
         'django.contrib.messages.context_processors.messages',
         'config.context_processors.extra_settings',
     ]},
-    'DIRS': [path.join(BASE_DIR, 'MangAdventure', 'templates')],
+    'DIRS': [BASE_DIR / 'MangAdventure' / 'templates'],
     'APP_DIRS': True,
 }]
 
@@ -123,9 +123,8 @@ IGNORABLE_404_URLS = [
     re.compile(r'^/api'),
 ]
 
-LOGS_DIR = path.join(BASE_DIR, 'logs')
-if not path.exists(LOGS_DIR):
-    mkdir(LOGS_DIR)
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
 
 # Logging configuration dictionary.
 LOGGING = {  # TODO: better logging
@@ -148,20 +147,20 @@ LOGGING = {  # TODO: better logging
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filters': ['require_debug_true'],
-            'filename': path.join(LOGS_DIR, 'debug.log'),
+            'filename': LOGS_DIR / 'debug.log',
             'formatter': 'verbose',
         },
         'error': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': path.join(LOGS_DIR, 'errors.log'),
+            'filename': LOGS_DIR / 'errors.log',
             'formatter': 'simple',
         },
         'query': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filters': ['require_debug_true'],
-            'filename': path.join(LOGS_DIR, 'queries.log'),
+            'filename': LOGS_DIR / 'queries.log',
             'formatter': 'simple'
         }
     },
@@ -187,13 +186,13 @@ LOGGING = {  # TODO: better logging
 STATIC_URL = '/static/'
 
 # Absolute filesystem path to the directory that will hold static files.
-STATIC_ROOT = path.join(BASE_DIR, 'static')
+STATIC_ROOT = BASE_DIR / 'static'
 
 # A list of directories containing static files.
 STATICFILES_DIRS = [
-    ('styles', path.join(STATIC_ROOT, 'styles')),
-    ('scripts', path.join(STATIC_ROOT, 'scripts')),
-    ('COMPILED', path.join(STATIC_ROOT, 'COMPILED')),
+    ('styles', STATIC_ROOT / 'styles'),
+    ('scripts', STATIC_ROOT / 'scripts'),
+    ('COMPILED', STATIC_ROOT / 'COMPILED'),
 ]
 
 # A list of static file finder backends.
@@ -206,7 +205,7 @@ STATICFILES_FINDERS = [
 MEDIA_URL = '/media/'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
 ##############################
 #    Internationalization    #

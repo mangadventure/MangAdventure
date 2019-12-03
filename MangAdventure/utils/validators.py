@@ -1,24 +1,17 @@
 from io import BytesIO
 from os import remove
-from zipfile import ZipFile, error as BadZipfile
+from zipfile import BadZipfile, ZipFile
 
 from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator, RegexValidator
 
 from PIL import Image
 
-
-def _is_dir(f):
-    return f.filename[-1] == '/'
-
-
-def _remove_file(_file):
+def _remove_file(file):
     try:
-        remove(_file.path)
-    except OSError as err:
-        # Ignore FileNotFoundError
-        if err.errno != 2:
-            raise err
+        remove(file.path)
+    except FileNotFoundError:
+        pass
 
 
 class FileSizeValidator(BaseValidator):
@@ -52,7 +45,7 @@ def zipfile_validator(_file):
         raise ValidationError(message=messages[2], code=codes[2])
     first_folder = True
     for f in zip_file.namelist():
-        if _is_dir(zip_file.getinfo(f)):
+        if zip_file.getinfo(f).is_dir():
             if first_folder:
                 first_folder = False
                 continue

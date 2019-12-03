@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from os.path import dirname, join
+from pathlib import PurePath
 
 from setuptools import find_packages, setup
 
@@ -14,7 +14,7 @@ except ImportError:
 
 
 def read(fname):
-    with open(join(dirname(__file__), fname)) as f:
+    with open(PurePath(__file__).parent / fname) as f:
         return f.read()
 
 
@@ -49,7 +49,9 @@ setup(
         'gunicorn': 'gunicorn'
     },
     entry_points={
-        'console_scripts': ['mangadventure = manage:main']
+        'console_scripts': [
+            'mangadventure = MangAdventure.__main__:main'
+        ]
     },
     classifiers=[
         'Development Status :: 4 - Beta',

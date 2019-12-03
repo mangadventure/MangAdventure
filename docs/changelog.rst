@@ -6,6 +6,7 @@ v0.6.0
 
 * Dropped support for Python <3.6
 * Dropped support for non-ES6 browsers
+* Removed ``ColorField``
 
 v0.5.3
 ^^^^^^

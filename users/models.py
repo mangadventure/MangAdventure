@@ -27,11 +27,12 @@ class UserProfile(models.Model):
         help_text="The user's biography."
     )
     avatar = models.ImageField(
+        help_text=(
+            "The user's avatar image. Must be"
+            f" up to {_validator.max_mb} MBs."
+        ), validators=(_validator,), blank=True,
         storage=storage.OverwriteStorage(),
-        upload_to=uploaders.avatar_uploader,
-        help_text="The user's avatar image. Must be "
-                  "up to %d MBs." % _validator.max_mb,
-        validators=(_validator,), blank=True
+        upload_to=uploaders.avatar_uploader
     )
     bookmarks = models.ManyToManyField(
         Bookmark, related_name='profile', blank=True,

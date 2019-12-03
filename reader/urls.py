@@ -1,20 +1,17 @@
 from . import views
 
-try:
-    from django.urls import re_path as url
-except ImportError:
-    from django.conf.urls import url
+from django.urls import path as url
 
 app_name = 'reader'
 
-_slug = '^(?P<slug>[A-Za-z0-9_-]+)'
-_chapter = '%s/(?P<vol>[0-9]+)/(?P<num>[0-9]+([.][0-9]+|))' % _slug
-_page = '%s/(?P<page>[0-9]+)' % _chapter
+_slug = '<slug:slug>/'
+_chapter = f'{_slug}<int:vol>/<float:num>/'
+_page = f'{_chapter}<int:page>/'
 
 urlpatterns = [
-    url('^$', views.directory, name='directory'),
-    url('%s/$' % _slug, views.series, name='series'),
-    url('%s/$' % _chapter, views.chapter_redirect, name='chapter'),
-    url('%s/$' % _page, views.chapter_page, name='page'),
-    # url('%s/comments/$' % _chapter, views.chapter_comments, name='comments'),
+    url('', views.directory, name='directory'),
+    url(_slug, views.series, name='series'),
+    url(_chapter, views.chapter_redirect, name='chapter'),
+    url(_page, views.chapter_page, name='page'),
+    # url(f'{_chapter}comments/', views.chapter_comments, name='comments'),
 ]

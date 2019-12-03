@@ -32,6 +32,7 @@ class SiteConfig(AppConfig):
         site.save()
 
         self._compile_scss(settings)
+        self._register_converters()
 
     def _compile_scss(self, settings):
         from sass import compile as sassc
@@ -48,3 +49,9 @@ class SiteConfig(AppConfig):
         dst = settings.STATIC_ROOT / 'COMPILED' / 'extra'
 
         sassc(dirname=(src, dst), output_style='compressed')
+
+    def _register_converters(self):
+        from django.urls import register_converter
+        from MangAdventure.utils.converters import FloatConverter
+
+        register_converter(FloatConverter, 'float')

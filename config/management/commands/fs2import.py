@@ -15,7 +15,7 @@ def _get_element(tables, name):
 
 
 def _get_column(table, name):
-    text = table.find('column[@name="%s"]' % name).text
+    text = table.find(f'column[@name="{name}"]').text
     return text if text is not None else ''
 
 
@@ -70,8 +70,8 @@ class Command(BaseCommand):
                 description=_get_column(s, 'description'),
             )
             thumb = _get_column(s, 'thumbnail')
-            series_dir = join(content, '%s_%s' % (
-                slug, _get_column(s, 'uniqid')
+            series_dir = join(content, '{slug}_{uniqid}'.format(
+                slug=slug, uniqid=_get_column(s, 'uniqid')
             ))
             cover = join(series_dir, 'thumb_%s' % thumb)
             with open(cover, 'rb') as f:
@@ -88,9 +88,9 @@ class Command(BaseCommand):
         for c in elements['chapters']:
             cid = _get_column(c, 'id')
             sid = _get_column(c, 'comic_id')
-            number = float('%s.%s' % (
-                _get_column(c, 'chapter') or '0',
-                _get_column(c, 'subchapter') or '0'
+            number = float('{chapter}.{subchapter}'.format(
+                chapter=_get_column(c, 'chapter') or '0',
+                subchapter=_get_column(c, 'subchapter') or '0'
             ))
             volume = int(_get_column(c, 'volume') or '0')
             chapter = Chapter(
@@ -105,8 +105,9 @@ class Command(BaseCommand):
                 )
             _dir = next(d[1] for d in directories['series'] if d[0] == sid)
             directories['chapters'].append((
-                cid, join(_dir, '%s_%s' % (
-                    _get_column(c, 'stub'), _get_column(c, 'uniqid')
+                cid, join(_dir, '{stub}_{uniqid}'.format(
+                    stub=_get_column(c, 'stub'),
+                    uniqid=_get_column(c, 'uniqid')
                 ))
             ))
             all_chapters.append(chapter)

@@ -49,7 +49,7 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ('username',)
 
     def full_name(self, obj):
-        return '{} {}'.format(obj.first_name, obj.last_name)
+        return f'{obj.first_name} {obj.last_name}'
 
     def has_add_permission(self, request):
         return False
@@ -63,7 +63,7 @@ class OAuthApp(SocialApp):
         verbose_name = 'OAuth app'
 
     def __str__(self):
-        return '%s (%s)' % (self.name, self.provider)
+        return f'{self.name} ({self.provider})'
 
 
 class OAuthAppAdmin(SocialAppAdmin):

@@ -25,8 +25,6 @@ def search(request):
     params = parse(request)
     if any(p in ('q', 'author', 'status') for p in request.GET):
         results = query(params)
-        if len(results) == 1 and not results.first().chapters.count():
-            results = None
     return render(request, 'search.html', {
         'query': params['query'],
         'author': params['author'],
@@ -62,7 +60,7 @@ def contribute(request):
 def robots(request):
     ctype = 'text/plain; charset=us-ascii'
     _robots = 'User-agent: *\nDisallow:\n\n' + '\n'.join(
-        'User-agent: %s\nDisallow: /\n' % ua for ua in BOTS
+        f'User-agent: {ua}\nDisallow: /\n' for ua in BOTS
     )
     return HttpResponse(content=_robots, content_type=ctype)
 

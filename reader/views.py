@@ -29,10 +29,6 @@ def series(request, slug):
 
 
 def chapter_page(request, slug, vol, num, page):
-    try:
-        vol, num, page = int(vol), float(num), int(page)
-    except (ValueError, TypeError):
-        raise Http404
     if page == 0:
         raise Http404
     chapters = Chapter.objects.filter(series__slug=slug)

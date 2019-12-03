@@ -16,7 +16,7 @@ from MangAdventure.utils import images, storage, uploaders, validators
 
 
 def _alias_help(name, identifier='name'):
-    return 'Another %s for the %s.' % (identifier, name)
+    return f'Another {identifier} for the {name}.'
 
 
 class Author(models.Model):
@@ -76,11 +76,12 @@ class Series(models.Model):
         blank=True, help_text='The description of the series.'
     )
     cover = models.ImageField(
+        help_text=(
+            'Upload a cover image for the series. Its size'
+            f' must not exceed {_validator.max_mb} MBs.'
+        ), validators=(_validator,),
         storage=storage.OverwriteStorage(),
-        upload_to=uploaders.cover_uploader,
-        help_text='Upload a cover image for the series. Its size '
-                  'must not exceed %d MBs.' % _validator.max_mb,
-        validators=(_validator,)
+        upload_to=uploaders.cover_uploader
     )
     authors = models.ManyToManyField(Author, blank=True)
     artists = models.ManyToManyField(Artist, blank=True)
@@ -130,11 +131,6 @@ class SeriesAlias(Alias):
 class Chapter(models.Model):
     _help = 'The %s of the chapter.'
     _vol_help = _help % 'volume' + ' Leave as 0 if the series has no volumes.'
-    _file_help = (
-        'Upload a zip or cbz file containing the chapter pages.',
-        'Its size cannot exceed 50 MBs and it must not',
-        'contain more than 1 subfolder.'
-    )
     title = models.CharField(max_length=250, help_text=_help % 'title')
     number = models.FloatField(default=0, help_text=_help % 'number')
     volume = models.PositiveSmallIntegerField(default=0, help_text=_vol_help)
@@ -143,7 +139,11 @@ class Chapter(models.Model):
         help_text='The series this chapter belongs to.'
     )
     file = models.FileField(
-        help_text=' '.join(_file_help), validators=(
+        help_text=(
+            'Upload a zip or cbz file containing the chapter pages.'
+            ' Its size cannot exceed 50 MBs and it'
+            ' must not contain more than 1 subfolder.'
+        ), validators=(
             validators.FileSizeValidator(max_mb=50),
             validators.zipfile_validator
         ), blank=True

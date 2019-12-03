@@ -10,11 +10,7 @@ def all_groups(request):
     })
 
 
-def group(request, g_id=0):
-    try:
-        g_id = int(g_id)
-    except (ValueError, TypeError):
-        raise Http404
+def group(request, g_id):
     if g_id == 0:
         raise Http404
     try:

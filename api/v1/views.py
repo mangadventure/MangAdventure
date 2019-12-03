@@ -9,24 +9,36 @@ from MangAdventure.utils.search import get_response
 from reader.models import Artist, Author, Category, Chapter, Series
 
 
+def _latest(request, slug=None, vol=None, num=None):
+    try:
+        if slug is None:
+            return Series.objects.only('modified').latest().modified
+        if vol is None:
+            return Series.objects.only('modified').get(slug=slug).modified
+        if num is None:
+            return Chapter.objects.only('modified').filter(
+                series__slug=slug, volume=vol
+            ).latest().modified
+        return Chapter.objects.only('modified').filter(
+            series__slug=slug, volume=vol, number=num
+        ).latest().modified
+    except ObjectDoesNotExist:
+        return None
+
+
 def _chapter_response(request, _chapter):
     url = request.build_absolute_uri(_chapter.get_absolute_url())
     response = {
         'title': _chapter.title,
         'url': url,
-        'pages_root': url.replace(
-            '/reader', '%s%s' % (settings.MEDIA_URL, 'series')
-        ),
+        'pages_root': url.replace('/reader', f'{settings.MEDIA_URL}series'),
         'pages_list': [p.get_file_name() for p in _chapter.pages.all()],
         'date': _chapter.uploaded_date,
         'final': _chapter.final,
         'groups': []
     }
     for _group in _chapter.groups.all():
-        response['groups'].append({
-            'id': _group.id,
-            'name': _group.name,
-        })
+        response['groups'].append({'id': _group.id, 'name': _group.name})
     return response
 
 
@@ -36,7 +48,7 @@ def _volume_response(request, _series, vol):
     if chapters.count() == 0:
         return JsonError('Not found', 404)
     for _chapter in chapters:
-        response['%g' % _chapter.number] = \
+        response[f'{_chapter.number:g}'] = \
             _chapter_response(request, _chapter)
     return response
 
@@ -137,7 +149,7 @@ def _group_response(request, _group):
 
 @csrf_exempt
 @require_methods_api()
-@last_modified(lambda request: Series.objects.latest().modified)
+@last_modified(_latest)
 def all_releases(request):
     _series = Series.objects.prefetch_related('chapters').all()
     response = []
@@ -161,23 +173,6 @@ def all_releases(request):
             pass
         response.append(series_res)
     return JsonResponse(response, safe=False)
-
-
-def _latest(request, slug=None, vol=None, num=None):
-    try:
-        if slug is None:
-            return Series.objects.only('modified').latest().modified
-        if vol is None:
-            return Series.objects.only('modified').get(slug=slug).modified
-        if num is None:
-            return Chapter.objects.only('modified').filter(
-                series__slug=slug, volume=vol
-            ).latest().modified
-        return Chapter.objects.only('modified').filter(
-            series__slug=slug, volume=vol, number=num
-        ).latest().modified
-    except ObjectDoesNotExist:
-        return None
 
 
 @csrf_exempt
@@ -207,13 +202,8 @@ def series(request, slug):
 @last_modified(_latest)
 def volume(request, slug, vol):
     try:
-        vol = int(vol)
-        if vol < 0:
-            raise ValueError
         _series = Series.objects \
             .prefetch_related('chapters__pages').get(slug=slug)
-    except (ValueError, TypeError):
-        return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_volume_response(request, _series, vol))
@@ -224,13 +214,8 @@ def volume(request, slug, vol):
 @last_modified(_latest)
 def chapter(request, slug, vol, num):
     try:
-        vol, num = int(vol), float(num)
-        if vol < 0 or num < 0:
-            raise ValueError
         _chapter = Chapter.objects.prefetch_related('pages') \
             .get(series__slug=slug, volume=vol, number=num)
-    except (ValueError, TypeError):
-        return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_chapter_response(request, _chapter))
@@ -255,13 +240,8 @@ def all_people(request):
 def person(request, p_id):
     prefetch = ('aliases', 'series_set__aliases')
     try:
-        p_id = int(p_id)
-        if p_id < 1:
-            raise ValueError
         _type = Author if _is_author(request) else Artist
         _person = _type.objects.prefetch_related(*prefetch).get(id=p_id)
-    except (ValueError, TypeError):
-        return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_person_response(request, _person))
@@ -281,12 +261,7 @@ def all_groups(request):
 def group(request, g_id):
     prefetch = ('releases__series', 'roles__member')
     try:
-        g_id = int(g_id)
-        if g_id < 1:
-            raise ValueError
         _group = Group.objects.prefetch_related(*prefetch).get(id=g_id)
-    except (ValueError, TypeError):
-        return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_group_response(request, _group))

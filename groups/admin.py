@@ -3,6 +3,7 @@ from django.db.models.functions import Lower
 
 from MangAdventure.utils import filters
 from MangAdventure.utils.images import img_tag
+
 from .models import Group, Member, Role
 
 

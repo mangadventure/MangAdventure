@@ -34,18 +34,17 @@ class SiteConfig(AppConfig):
         self._compile_scss(settings)
 
     def _compile_scss(self, settings):
-        from os import path
         from sass import compile as sassc
 
-        src = path.join(settings.STATIC_ROOT, 'styles')
-        dst = path.join(settings.STATIC_ROOT, 'COMPILED', 'styles')
+        src = settings.STATIC_ROOT / 'styles'
+        dst = settings.STATIC_ROOT / 'COMPILED' / 'styles'
 
-        with open(path.join(src, '_variables.scss'), 'w') as f:
+        with open(src / '_variables.scss', 'w') as f:
             f.write(SCSS_VARS % settings.CONFIG)
 
         sassc(dirname=(src, dst), output_style='compressed')
 
-        src = path.join(settings.STATIC_ROOT, 'extra')
-        dst = path.join(settings.STATIC_ROOT, 'COMPILED', 'extra')
+        src = settings.STATIC_ROOT / 'extra'
+        dst = settings.STATIC_ROOT / 'COMPILED' / 'extra'
 
         sassc(dirname=(src, dst), output_style='compressed')

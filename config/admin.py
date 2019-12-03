@@ -7,7 +7,6 @@ from django.forms import ModelForm
 
 from MangAdventure.widgets import TinyMCE
 
-
 admin.site.site_header = settings.CONFIG['NAME'] + ' Administration'
 admin.site.site_title = admin.site.site_header
 

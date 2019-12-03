@@ -1,5 +1,3 @@
-from os import path, remove
-
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
@@ -7,8 +5,9 @@ from django.core.files.storage import FileSystemStorage
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, **kwargs):
         # If the file already exists, remove it
-        if self.exists(name):
-            remove(path.join(settings.MEDIA_ROOT, name))
+        old_file = settings.MEDIA_ROOT / name
+        if old_file.exists():
+            old_file.unlink()
         return name
 
 

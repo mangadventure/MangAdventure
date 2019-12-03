@@ -1,5 +1,4 @@
-from os.path import join
-from shutil import move
+from pathlib import PurePath
 from time import mktime
 
 from django.db import models
@@ -14,14 +13,6 @@ from django.utils.text import slugify
 from groups.models import Group
 from MangAdventure.models import Alias, AliasField, AliasKeyField
 from MangAdventure.utils import images, storage, uploaders, validators
-
-
-def _move(old, new):
-    try:
-        move(old.get_directory, new.get_directory)
-    except OSError as e:
-        if e.errno != 2:
-            raise e
 
 
 def _alias_help(name, identifier='name'):
@@ -103,7 +94,7 @@ class Series(models.Model):
         return reverse('reader:series', args=(self.slug,))
 
     def get_directory(self):
-        return join('series', self.slug)
+        return PurePath('series', self.slug)
 
     class Meta:
         verbose_name_plural = 'series'
@@ -217,13 +208,12 @@ class Chapter(models.Model):
 
     def get_absolute_url(self):
         return reverse('reader:chapter', args=(
-            self.series.slug, self.volume, '%g' % self.number
+            self.series.slug, self.volume, f'{self.number:g}'
         ))
 
     def get_directory(self):
-        return join(
-            self.series.get_directory(), str(self.volume), '%g' % self.number
-        )
+        return self.series.get_directory() / \
+            str(self.volume) / f'{self.number:g}'
 
     def __str__(self):
         return '{0.series.title} - {0.volume}/' \
@@ -282,7 +272,7 @@ class Page(models.Model):
     def get_absolute_url(self):
         return reverse('reader:page', args=(
             self.chapter.series.slug, self.chapter.volume,
-            '%g' % self.chapter.number, self.number
+            f'{self.chapter.number:g}', self.number
         ))
 
     def __str__(self):

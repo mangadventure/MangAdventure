@@ -1,5 +1,5 @@
 from io import BytesIO
-from os import makedirs, path, remove
+from os import path, remove
 from shutil import rmtree
 from sys import getsizeof
 from zipfile import ZipFile
@@ -15,18 +15,10 @@ from . import sort
 Image.MIME.setdefault('ICO', 'image/x-icon')
 
 
-def _is_dir(f):
-    return f.filename[-1] == '/'
-
-
 def thumbnail(obj, max_size=100):
-    try:
-        img = Image.open(obj)
-    except OSError as e:
-        if e.errno == 2:
-            return obj
-        else:
-            raise e
+    if not path.exists(obj.path):
+        return obj
+    img = Image.open(obj.path)
     # Don't do anything if it's already a thumbnail
     if max_size in img.size:
         img.close()
@@ -58,23 +50,24 @@ def img_tag(img, alt, height=None, width=None):
 def unzip(obj):
     counter = 0
     dir_path = path.join(
-        'series', obj.series.slug, str(obj.volume), '%g' % obj.number
+        'series', obj.series.slug,
+        str(obj.volume), f'{obj.number:g}'
     )
-    full_path = path.join(settings.MEDIA_ROOT, dir_path)
+    full_path = settings.MEDIA_ROOT / dir_path
     if path.exists(full_path):
         rmtree(full_path)
-    makedirs(full_path)
+    full_path.mkdir(parents=True)
     zip_file = ZipFile(obj.file)
     name_list = zip_file.namelist()
     for name in sort.natural_sort(name_list):
-        if _is_dir(zip_file.getinfo(name)):
+        if zip_file.getinfo(name).is_dir():
             continue
         counter += 1
         data = zip_file.read(name)
-        filename = '%03d%s' % (counter, path.splitext(name)[-1])
+        filename = f'{counter:03d}{path.splitext(name)[-1]}'
         file_path = path.join(dir_path, filename)
         image = Image.open(BytesIO(data))
-        image.save(path.join(full_path, filename), quality=100)
+        image.save(full_path / filename, quality=100)
         obj.pages.create(number=counter, image=file_path)
     zip_file.close()
     obj.file.close()

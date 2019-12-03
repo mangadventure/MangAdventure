@@ -64,10 +64,11 @@ class UserProfileForm(forms.ModelForm):
 
     _validator = FileSizeValidator(max_mb=2)
     avatar = forms.ImageField(
-        help_text='Max size: %d MBs' % _validator.max_mb +
-                  ' | Optimal dimensions: 300x300',
+        help_text=(
+            f'Max size: {_validator.max_mb} MBs'
+            ' | Optimal dimensions: 300x300'
+        ), label='Avatar', required=False,
         widget=forms.FileInput, validators=(_validator,),
-        label='Avatar', required=False
     )
 
     def __init__(self, *args, **kwargs):

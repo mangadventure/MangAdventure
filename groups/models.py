@@ -109,7 +109,7 @@ class Role(models.Model):
         unique_together = ('member', 'role', 'group')
 
     def __str__(self):
-        return '%s (%s)' % (self.get_role_display(), self.group)
+        return f'{self.get_role_display()} {(self.group)}'
 
 
 __all__ = ['Group', 'Member', 'Role']

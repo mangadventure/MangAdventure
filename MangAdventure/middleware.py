@@ -9,6 +9,11 @@ class BaseMiddleware(CommonMiddleware):
             return self.get_response(request)
         return super(BaseMiddleware, self).__call__(request)
 
+    def should_redirect_with_slash(self, request):
+        if request.path.startswith('/api'):
+            return False
+        return super(BaseMiddleware, self).should_redirect_with_slash(request)
+
 
 class XPBMiddleware:
     def __init__(self, get_response):
@@ -35,12 +40,12 @@ class PreloadMiddleware:
         content = str(response.content)
 
         for link in findall(pattern, content, MULTILINE):
-            link_src = self._get_link_src(link)
-            link_as = search(r'as="(.+?)"', link[0])
-            if link_src and link_as:
-                preload.append('<{}>; as={}; rel=preload'.format(
-                    link_src.group(1), link_as.group(1)
-                ))
+            src = self._get_link_src(link)
+            as_ = search(r'as="(.+?)"', link[0])
+            if src and as_:
+                preload.append(
+                    f'<{src.group(1)}>; as={as_.group(1)}; rel=preload'
+                )
 
         if preload:
             response['Link'] = ', '.join(preload)

@@ -1,13 +1,10 @@
 from . import views
 
-try:
-    from django.urls import re_path as url
-except ImportError:
-    from django.conf.urls import url
+from django.urls import path as url
 
 app_name = 'groups'
 
 urlpatterns = [
-    url('^$', views.all_groups, name='all_groups'),
-    url('^(?P<g_id>[0-9]+)/$', views.group, name='group'),
+    url('', views.all_groups, name='all_groups'),
+    url('<int:g_id>/', views.group, name='group'),
 ]

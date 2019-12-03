@@ -114,7 +114,7 @@ DATABASES = {'default': env.db('DB_URL', 'sqlite:///db.sqlite3')}
 ##################################
 
 # Subject prefix for email messages sent to admins/managers.
-EMAIL_SUBJECT_PREFIX = '[%s] ' % env['DOMAIN']
+EMAIL_SUBJECT_PREFIX = f'[{env["DOMAIN"]}] '
 
 # URLs that should be ignored when reporting HTTP 404 errors.
 IGNORABLE_404_URLS = [
@@ -131,15 +131,19 @@ LOGGING = {  # TODO: better logging
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
-        'require_debug_true': {'()': 'django.utils.log.RequireDebugTrue'}
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue'
+        }
     },
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(pathname)s'
-                      ' %(funcName)s:%(lineno)s %(message)s',
+            'format': '{levelname} {asctime} {pathname}'
+                      ' {funcName}:{lineno} {message}',
+            'style': '{',
         },
         'simple': {
-            'format': '%(asctime)s %(module)s %(funcName)s %(message)s',
+            'format': '{asctime} {module} {funcName} {message}',
+            'style': '{',
         },
     },
     'handlers': {
@@ -240,7 +244,7 @@ TIME_ZONE = env.get('TIME_ZONE', 'UTC')
 
 # A list of validators that are used to check the strength of users' passwords.
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.%sValidator' % n}
+    {'NAME': f'django.contrib.auth.password_validation.{n}Validator'}
     for n in ('UserAttributeSimilarity', 'MinimumLength',
               'CommonPassword', 'NumericPassword')
 ]
@@ -283,9 +287,10 @@ SOCIALACCOUNT_PROVIDERS = {
     },
     'reddit': {
         'AUTH_PARAMS': {'duration': 'permanent'},
-        'USER_AGENT': 'Django:MangAdventure:{} (by {})'.format(
-            VERSION, 'https://github.com/mangadventure'
-        ),
+        'USER_AGENT': (
+            f'Django:MangAdventure:{VERSION} '
+            '(by https://github.com/mangadventure)'
+        )
     },
     'discord': {
         'SCOPE': ['identify', 'email'],
@@ -447,7 +452,7 @@ COMMENTS_WIDGET = 'users.widgets.TinyMCEComment'
 
 if DEBUG:
     INTERNAL_IPS = env.list('INTERNAL_IPS', ['127.0.0.1'])
-    ALLOWED_HOSTS += ['192.168.1.%s' % i for i in range(2, 256)]
+    ALLOWED_HOSTS += [f'192.168.1.{i}' for i in range(2, 256)]
     try:
         __import__('debug_toolbar')
         INSTALLED_APPS.append('debug_toolbar')

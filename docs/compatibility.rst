@@ -40,13 +40,13 @@ Browsers
      - |X|
    * - | |Edge|
        | Edge
-     - 13+
+     - 15+
    * - | |Safari|
        | Safari
      - 11+
    * - | |Opera|
        | Opera
-     - 36+
+     - 37+
    * - | |iOS|
        | iOS Safari
      - 11+

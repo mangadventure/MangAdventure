@@ -26,7 +26,7 @@ setup(
     maintainer=MangAdventure.__author__,
     description=MangAdventure.__doc__,
     long_description=read('README.md'),
-    url='https://mangadventure.rtfd.io',
+    url='https://mangadventure.readthedocs.io',
     download_url='https://github.com/mangadventure/MangAdventure',
     keywords=['manga', 'scanlation', 'reader'],
     packages=find_packages(),

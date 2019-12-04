@@ -1,5 +1,4 @@
 from pathlib import PurePath
-from time import mktime
 
 from django.db import models
 from django.db.models import Value as V
@@ -21,7 +20,8 @@ def _alias_help(name, identifier='name'):
 
 class Author(models.Model):
     name = models.CharField(
-        max_length=100, help_text="The author's full name."
+        max_length=100, db_index=True,
+        help_text="The author's full name."
     )
 
     def __str__(self):
@@ -30,7 +30,8 @@ class Author(models.Model):
 
 class Artist(models.Model):
     name = models.CharField(
-        max_length=100, help_text="The artist's full name."
+        max_length=100, db_index=True,
+        help_text="The artist's full name."
     )
 
     def __str__(self):
@@ -66,7 +67,7 @@ class Series(models.Model):
     _validator = validators.FileSizeValidator(max_mb=2)
     id = models.AutoField(primary_key=True)
     title = models.CharField(
-        max_length=250, help_text='The title of the series.'
+        max_length=250, db_index=True, help_text='The title of the series.'
     )
     slug = models.SlugField(
         blank=True, unique=True, verbose_name='Custom slug',
@@ -113,18 +114,19 @@ class Series(models.Model):
 
 class AuthorAlias(Alias):
     author = AliasKeyField(Author)
-    alias = AliasField(help_text=_alias_help('author'))
+    alias = AliasField(db_index=True, help_text=_alias_help('author'))
 
 
 class ArtistAlias(Alias):
     artist = AliasKeyField(Artist)
-    alias = AliasField(help_text=_alias_help('artist'))
+    alias = AliasField(db_index=True, help_text=_alias_help('artist'))
 
 
 class SeriesAlias(Alias):
     series = AliasKeyField(Series)
     alias = AliasField(
-        max_length=250, help_text=_alias_help('series', 'title')
+        max_length=250, db_index=True,
+        help_text=_alias_help('series', 'title')
     )
 
 
@@ -151,7 +153,7 @@ class Chapter(models.Model):
     final = models.BooleanField(
         default=False, help_text='Is this the final chapter?'
     )
-    uploaded = models.DateTimeField(auto_now_add=True)
+    uploaded = models.DateTimeField(auto_now_add=True, db_index=True)
     modified = models.DateTimeField(auto_now=True)
     groups = models.ManyToManyField(
         Group, blank=True, related_name='releases'
@@ -191,11 +193,11 @@ class Chapter(models.Model):
 
     @cached_property
     def uploaded_date(self):
-        return http_date(mktime(self.uploaded.timetuple()))
+        return http_date(self.uploaded.timestamp())
 
     @cached_property
     def modified_date(self):
-        return http_date(mktime(self.modified.timetuple()))
+        return http_date(self.modified.timestamp())
 
     @cached_property
     def twitter_creators(self):
@@ -265,6 +267,9 @@ class Page(models.Model):
     )
     image = models.ImageField()
     number = models.PositiveSmallIntegerField()
+
+    class Meta:
+        ordering = ('chapter', 'number')
 
     def get_file_name(self):
         return self.image.name.split('/')[-1]

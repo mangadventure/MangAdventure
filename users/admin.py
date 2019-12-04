@@ -82,10 +82,10 @@ class OAuthAppAdmin(SocialAppAdmin):
 #         return False
 
 
-admin.site.unregister([
+admin.site.unregister((
     EmailAddress, SocialAccount, SocialToken,
     SocialApp, models.User, models.Group
-])
+))
 admin.site.register(User, UserAdmin)
 admin.site.register(OAuthApp, OAuthAppAdmin)
 # admin.site.register(UserComment, UserCommentAdmin)

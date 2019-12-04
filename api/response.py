@@ -2,14 +2,7 @@ from functools import wraps
 
 from django.http import JsonResponse
 from django.views.decorators.vary import vary_on_headers
-
-try:
-    from django.utils.log import log_response
-except ImportError:
-    from django.views.decorators.http import logger
-
-    def log_response(*args, **kwargs):
-        return logger.warning(*args, extra=kwargs)
+from django.utils.log import log_response
 
 
 class JsonError(JsonResponse):

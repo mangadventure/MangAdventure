@@ -43,10 +43,8 @@ class InfoPageAdmin(FlatPageAdmin):
     fieldsets = (
         (None, {'fields': ('url', 'title', 'content')}),
     )
-    list_filter = []
-
-    def get_readonly_fields(self, request, obj=None):
-        return ['url']
+    readonly_fields = ('url',)
+    list_filter = ()
 
     def has_add_permission(self, request):
         return False
@@ -91,9 +89,9 @@ class RedirectAdmin(redirects.admin.RedirectAdmin):
     change_list_form = ModelForm
 
 
-admin.site.unregister([
+admin.site.unregister((
     FlatPage, sites.models.Site, redirects.models.Redirect
-])
+))
 admin.site.register(Site, SiteAdmin)
 admin.site.register(Redirect, RedirectAdmin)
 admin.site.register(InfoPage, InfoPageAdmin)

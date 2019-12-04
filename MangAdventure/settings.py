@@ -326,6 +326,12 @@ DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
 # Use HttpOnly flag on the CSRF cookie.
 CSRF_COOKIE_HTTP_ONLY = True
 
+# Prevent the CSRF cookie from being sent in cross-site requests.
+CSRF_COOKIE_SAMESITE = 'Strict'
+
+# Prevent the session cookie from being sent in cross-site requests.
+SESSION_COOKIE_SAMESITE = 'Strict'
+
 if env.bool('HTTPS', True):
     env.ENV['wsgi.url_scheme'] = 'https'
     MIDDLEWARE.append('MangAdventure.middleware.PreloadMiddleware')
@@ -336,10 +342,10 @@ if env.bool('HTTPS', True):
     # Redirect all non-HTTPS requests to HTTPS.
     SECURE_SSL_REDIRECT = True
 
-    # Sets the "X-XSS-Protection: 1; mode=block" header.
+    # Set the "X-XSS-Protection: 1; mode=block" header.
     SECURE_BROWSER_XSS_FILTER = True
 
-    # Sets the "X-Content-Type-Options: nosniff" header.
+    # Set the "X-Content-Type-Options: nosniff" header.
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
     # Use a secure cookie for the session cookie.

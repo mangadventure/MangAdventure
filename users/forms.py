@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.utils.six import iteritems
 
 from MangAdventure.utils.validators import FileSizeValidator
 
@@ -73,7 +72,7 @@ class UserProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args)
-        for key, value in iteritems(kwargs):
+        for key, value in kwargs.items():
             self.fields[key].initial = value
         self.user = User.objects.get(id=self.fields['user_id'].initial)
 

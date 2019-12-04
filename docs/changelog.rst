@@ -4,6 +4,7 @@ Changelog
 v0.5.3
 ^^^^^^
 
+* Fixed page-click navigation
 * Added support for CSP report URI
 * Added ``nofollow`` to private links
 * Added ``noopener`` & ``noreferrer`` to external links

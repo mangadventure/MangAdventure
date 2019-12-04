@@ -197,6 +197,8 @@ STATICFILES_DIRS = [
     ('styles', STATIC_ROOT / 'styles'),
     ('scripts', STATIC_ROOT / 'scripts'),
     ('COMPILED', STATIC_ROOT / 'COMPILED'),
+    ('extra', STATIC_ROOT / 'extra'),
+    ('vendor', STATIC_ROOT / 'vendor'),
 ]
 
 # A list of static file finder backends.

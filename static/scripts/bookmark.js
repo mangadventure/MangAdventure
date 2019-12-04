@@ -1,7 +1,7 @@
 (function(buttons) {
-  buttons.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var xhr = new XMLHttpRequest();
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const xhr = new XMLHttpRequest();
       xhr.open('POST', '/user/bookmarks/', true);
       xhr.setRequestHeader('Content-Type',
         'application/x-www-form-urlencoded; charset=UTF-8');
@@ -14,7 +14,7 @@
           default: console.error(xhr.statusText);
         }
       };
-      xhr.send('series=' + btn.getAttribute('data-series'));
+      xhr.send(`series=${btn.getAttribute('data-series')}`);
     });
   });
 })(document.querySelectorAll('.bookmark-btn'));

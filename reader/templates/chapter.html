@@ -99,15 +99,15 @@
         </ul>
       </div>
     </section>
-    {% with series_url=chapter.series.get_absolute_url %}
+    {% with series_url=curr_chapter.series.get_absolute_url %}
       <section id="placeholder" class="main-bg" data-num="{{ curr_page.number }}"
                {% if curr_page.number == all_pages.count %}
                  {% if next_chapter %} data-next="{{ next_chapter.get_absolute_url }}"
                  {% else %} data-next="{{ series_url }}"{% endif %}
-              {% elif curr_page.number == 1 %}
+               {% endif %}{% if curr_page.number == 1 %}
                  {% if prev_chapter %} data-prev="{{ prev_chapter.get_absolute_url }}"
                  {% else %} data-prev="{{ series_url }}"{% endif %}
-              {% endif %} data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}">
+               {% endif %} data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}">
         <i class="mi mi-spin"></i>
       </section>
     {% endwith %}

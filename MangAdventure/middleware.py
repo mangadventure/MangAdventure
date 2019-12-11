@@ -1,46 +1,73 @@
+"""Custom middleware."""
+
 from re import MULTILINE, findall, search
+from typing import TYPE_CHECKING
 
 from django.middleware.common import CommonMiddleware
 
+if TYPE_CHECKING:
+    from typing import Callable
+    from django.http import HttpRequest, HttpResponse
+
 
 class BaseMiddleware(CommonMiddleware):
-    def __call__(self, request):
+    """``CommonMiddleware`` with custom patches."""
+    def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
+        """
+        Patched to allow :const:`blocked user agents
+        <MangAdventure.settings.DISALLOWED_USER_AGENTS>`
+        to view ``/robots.txt``.
+
+        :param request: The original request.
+
+        :return: The response to the request.
+        """
         if request.path == '/robots.txt':
             return self.get_response(request)
         return super(BaseMiddleware, self).__call__(request)
 
-    def should_redirect_with_slash(self, request):
+    def should_redirect_with_slash(self, request: 'HttpRequest') -> bool:
+        """
+        Patched to disable redirects under ``/api``.
+
+        :param request: The original request.
+
+        :return: ``True`` if the response should be a redirect.
+        """
         if request.path.startswith('/api'):
             return False
         return super(BaseMiddleware, self).should_redirect_with_slash(request)
 
 
-class XPBMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        response = self.get_response(request)
-        response.setdefault('X-Powered-By', 'MangAdventure')
-        return response
-
-
 class PreloadMiddleware:
-    def __init__(self, get_response):
+    """Middleware that allows for preloading resources."""
+    def __init__(self, get_response: 'Callable[[HttpRequest], HttpResponse]'):
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
+        """
+        Add a ``Link`` header with preloadable resources to the response.
+
+        :param request: The original request.
+
+        :return: The response to the request.
+        """
         response = self.get_response(request)
         if 'text/html' not in response['Content-Type']:
             return response
 
         preload = []
-        pattern = r'(<(link|script|img)[^>]+?' + \
-            r'rel="[^>]*?preload[^>]*?"[^>]*?/?>)'
+        pattern = (
+            r'(<(link|script|img)[^>]+?rel='
+            r'"[^>]*?preload[^>]*?"[^>]*?/?>)'
+        )
         content = str(response.content)
 
         for link in findall(pattern, content, MULTILINE):
-            src = self._get_link_src(link)
+            src = search(
+                r'href="(.+?)"' if link[1] == 'link'
+                else r'src="(.+?)"', link[0]
+            )
             as_ = search(r'as="(.+?)"', link[0])
             if src and as_:
                 preload.append(
@@ -51,11 +78,5 @@ class PreloadMiddleware:
             response['Link'] = ', '.join(preload)
         return response
 
-    def _get_link_src(self, link):
-        return search(
-            r'href="(.+?)"' if link[1] == 'link'
-            else r'src="(.+?)"', link[0]
-        )
 
-
-__all__ = ['BaseMiddleware', 'XPBMiddleware', 'PreloadMiddleware']
+__all__ = ['BaseMiddleware', 'PreloadMiddleware']

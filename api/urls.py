@@ -1,8 +1,13 @@
+"""The main URLconf of the api app."""
+
+from django.urls import include, path
+
 from .v1.views import invalid_endpoint
 
-from django.urls import include, path as url
-
+#: The main URL patterns of the API app.
 urlpatterns = [
-    url('', invalid_endpoint, name='root'),
-    url('v1/', include('api.v1.urls')),
+    path('', invalid_endpoint, name='root'),
+    path('v1/', include('api.v1.urls')),
 ]
+
+__all__ = ['urlpatterns']

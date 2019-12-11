@@ -9,6 +9,7 @@ import MangAdventure
 try:
     from isort.settings import default
     default['known_django'] = 'django'
+    default['mangadv'] = 'MangAdventure'
 except ImportError:
     pass
 
@@ -37,10 +38,12 @@ setup(
             'django-debug-toolbar',
             'flake8',
             'isort',
+            'mypy',
         ],
         'docs': [
-            'sphinx',
+            'sphinx>=2.2',
             'sphinx-rtd-theme',
+            'sphinx-autodoc-typehints',
         ],
         'mysql': 'mysqlclient',
         'pgsql': 'psycopg2',

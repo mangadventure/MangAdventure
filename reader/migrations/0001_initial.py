@@ -3,7 +3,9 @@ from datetime import date
 from django.db import migrations, models
 
 from MangAdventure.models import AliasField, AliasKeyField
-from MangAdventure.utils import storage, uploaders, validators
+from MangAdventure.utils import storage, validators
+
+from .models import _cover_uploader
 
 
 class Migration(migrations.Migration):
@@ -147,7 +149,7 @@ class Migration(migrations.Migration):
                     help_text='Upload a cover image for the series.'
                     ' Its size must not exceed 2 MBs.',
                     storage=storage.OverwriteStorage(),
-                    upload_to=uploaders.cover_uploader,
+                    upload_to=_cover_uploader,
                     validators=(validators.FileSizeValidator(max_mb=2),)
                 )),
                 ('slug', models.SlugField(

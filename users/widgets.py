@@ -1,7 +1,10 @@
+"""Form widgets for the users app."""
+
 from django.conf import settings
 
 from MangAdventure.widgets import TinyMCE
 
+#: A :class:`~MangAdventure.widgets.TinyMCE` widget used in comments.
 TinyMCEComment = TinyMCE(attrs={
     'mce_theme': 'modern',
     'mce_resize': False,

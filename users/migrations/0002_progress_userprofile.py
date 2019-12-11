@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.db import migrations, models
 
-from MangAdventure import utils
+from MangAdventure.utils import storage, validators
+
+from users.models import _avatar_uploader
 
 
 class Migration(migrations.Migration):
@@ -45,9 +47,9 @@ class Migration(migrations.Migration):
                 ('avatar', models.ImageField(
                     blank=True, help_text="The user's avatar image."
                     " Must be up to 2 MBs.",
-                    storage=utils.storage.OverwriteStorage(),
-                    upload_to=utils.uploaders.avatar_uploader,
-                    validators=(utils.validators.FileSizeValidator(max_mb=2),)
+                    storage=storage.OverwriteStorage(),
+                    upload_to=_avatar_uploader,
+                    validators=(validators.FileSizeValidator(max_mb=2),)
                 )),
                 ('bookmarks', models.ManyToManyField(
                     blank=True, help_text="The user's bookmarked series.",

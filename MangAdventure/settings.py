@@ -1,12 +1,14 @@
+"""The project's settings."""
+
 import re
 from pathlib import Path
 
 from yaenv import Env
 
-from . import __version__ as VERSION
-from .bad_bots import BOTS
+from MangAdventure import __version__ as VERSION
+from MangAdventure.bad_bots import BOTS
 
-# Build paths inside the project like this: BASE_DIR / ...
+#: Build paths inside the project like this: ``BASE_DIR / ...``.
 BASE_DIR = Path(__file__).resolve().parents[1]
 
 # Load environment variables from .env file.
@@ -16,30 +18,33 @@ env = Env(BASE_DIR / '.env')
 #    Basic    #
 ###############
 
-# A list of host/domain names that this site can serve.
+#: A list of host/domain names that this site can serve.
+#: See :setting:`ALLOWED_HOSTS`.
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [
     '127.0.0.1', '0.0.0.0', 'localhost', '[::1]',
     # From https://stackoverflow.com/questions/9626535/#36609868
     env['DOMAIN'].split('//')[-1].split('/')[0].split('?')[0]
 ])
 
-# A boolean that turns debug mode on/off.
-# SECURITY WARNING: never turn this on in production!
+#: | A boolean that turns debug mode on/off. See :setting:`DEBUG`.
+#: | **SECURITY WARNING: never turn this on in production!**
 DEBUG = env.bool('MANGADV_DEBUG', False)
 
-# A secret key used to provide cryptographic signing.
-# SECURITY WARNING: this must be kept secret!
+#: | A secret key used to provide cryptographic signing.
+#:   See :setting:`SECRET_KEY`.
+#: | **SECURITY WARNING: this must be kept secret!**
 SECRET_KEY = env.secret('SECRET_KEY')
 
-# The ID of the current site.
+#: The ID of the current site. See :setting:`SITE_ID`.
 SITE_ID = 1
 
 #####################
 #    Application    #
 #####################
 
-# A list of strings designating all applications
-# that are enabled in this Django installation.
+#: A list of strings designating all applications
+#: that are enabled in this Django installation.
+#: See :setting:`INSTALLED_APPS`.
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -66,7 +71,7 @@ INSTALLED_APPS = [
     'users',
 ]
 
-# A list of middleware to use.
+#: A list of middleware to use. See :setting:`MIDDLEWARE`.
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
@@ -81,10 +86,12 @@ MIDDLEWARE = [
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
 ]
 
-# A string representing the full Python import path to the root URLconf.
+#: A string representing the full Python import path to the root URLconf.
+#: See :setting:`ROOT_URLCONF`
 ROOT_URLCONF = 'MangAdventure.urls'
 
-# A list containing the settings for all template engines to be used.
+#: A list containing the settings for all template engines to be used.
+#: See :setting:`TEMPLATES`.
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'OPTIONS': {'context_processors': [
@@ -98,25 +105,28 @@ TEMPLATES = [{
     'APP_DIRS': True,
 }]
 
-# The full Python path of the WSGI application
-# object that Django's built-in servers will use.
+#: The full Python path of the WSGI application
+#: object that Django's built-in servers will use.
+#: See :setting:`WSGI_APPLICATION`.
 WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 
 ##################
 #    Database    #
 ##################
 
-# Database settings dictionary.
+#: Database settings dictionary. See :setting:`DATABASES`.
 DATABASES = {'default': env.db('DB_URL', 'sqlite:///db.sqlite3')}
 
 ##################################
 #    Logging & Error Handling    #
 ##################################
 
-# Subject prefix for email messages sent to admins/managers.
+#: Subject prefix for email messages sent to admins/managers.
+#: See :setting:`EMAIL_SUBJECT_PREFIX`.
 EMAIL_SUBJECT_PREFIX = f'[{env["DOMAIN"]}] '
 
-# URLs that should be ignored when reporting HTTP 404 errors.
+#: URLs that should be ignored when reporting HTTP 404 errors.
+#: See :setting:`IGNORABLE_404_URLS`.
 IGNORABLE_404_URLS = [
     re.compile(r'^/favicon.ico'),
     re.compile(r'^/robots.txt'),
@@ -126,8 +136,13 @@ IGNORABLE_404_URLS = [
 LOGS_DIR = BASE_DIR / 'logs'
 LOGS_DIR.mkdir(exist_ok=True)
 
-# Logging configuration dictionary.
-LOGGING = {  # TODO: better logging
+#: Logging configuration dictionary. See :setting:`LOGGING`.
+#:
+#: .. admonition:: TODO
+#:    :class: warning
+#:
+#:    Logging should be improved.
+LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
@@ -186,13 +201,16 @@ LOGGING = {  # TODO: better logging
 #    Static & Media Files    #
 ##############################
 
-# URL that handles the files served from STATIC_ROOT.
+#: URL that handles the files served from :const:`STATIC_ROOT`.
+#: See :setting:`STATIC_URL`.
 STATIC_URL = '/static/'
 
-# Absolute filesystem path to the directory that will hold static files.
+#: Absolute filesystem path to the directory that will hold static files.
+#: See :setting:`STATIC_ROOT`.
 STATIC_ROOT = BASE_DIR / 'static'
 
-# A list of directories containing static files.
+#: A list of directories containing static files.
+#: See :setting:`STATICFILES_DIRS`.
 STATICFILES_DIRS = [
     ('styles', STATIC_ROOT / 'styles'),
     ('scripts', STATIC_ROOT / 'scripts'),
@@ -201,87 +219,111 @@ STATICFILES_DIRS = [
     ('vendor', STATIC_ROOT / 'vendor'),
 ]
 
-# A list of static file finder backends.
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
-
-# URL that handles the media served from MEDIA_ROOT.
+#: URL that handles the media served from :const:`MEDIA_ROOT`.
+#: See :setting:`MEDIA_URL`.
 MEDIA_URL = '/media/'
 
-# Absolute filesystem path to the directory that will hold user-uploaded files.
+#: Absolute filesystem path to the directory that will hold user-uploaded files.
+#: See :setting:`MEDIA_ROOT`.
 MEDIA_ROOT = BASE_DIR / 'media'
 
 ##############################
 #    Internationalization    #
 ##############################
 
-# Enable Django's translation system.
-USE_I18N = False  # TODO: enable this
+#: Enable Django's translation system. See :setting:`USE_I18N`.
+#:
+#: .. admonition:: TODO
+#:    :class: warning
+#:
+#:    This is not enabled yet.
+USE_I18N = False
 
-# Enable localized formatting of data.
+#: Enable localized formatting of data. See :setting:`USE_L10N`.
 USE_L10N = True
 
-# Enable timezone-aware datetimes.
+#: Enable timezone-aware datetimes. See :setting:`USE_TZ`.
 USE_TZ = True
 
-# A string representing the language code for this installation.
+#: A string representing the language code for this installation.
+#: See :setting:`LANGUAGE_CODE`.
 LANGUAGE_CODE = env.get('LANG_CODE', 'en-us')
 
-# The name of the cookie to use for the language cookie.
+#: The name of the cookie to use for the language cookie.
+#: See :setting:`LANGUAGE_COOKIE_NAME`.
 LANGUAGE_COOKIE_NAME = 'mangadv_lang'
 
-# A list of all available languages.
+#: Set the ``HttpOnly`` flag on the language cookie.
+#: See :setting:`LANGUAGE_COOKIE_HTTPONLY`.
+LANGUAGE_COOKIE_HTTPONLY = True
+
+#: Prevent the language cookie from being sent in cross-site requests.
+#: See :setting:`LANGUAGE_COOKIE_SAMESITE`.
+LANGUAGE_COOKIE_SAMESITE = 'Strict'
+
+#: A list of all available languages. See :setting:`LANGUAGES`.
 LANGUAGES = [
     ('en', 'English'),
 ]
 
-# The time zone for this installation.
+#: The time zone of this installation. See :setting:`TIME_ZONE`.
 TIME_ZONE = env.get('TIME_ZONE', 'UTC')
 
 #########################
 #    Users & E-mails    #
 #########################
 
-# A list of validators that are used to check the strength of users' passwords.
+#: A list of validators that are used to check the strength of
+#: users' passwords. See :setting:`AUTH_PASSWORD_VALIDATORS`.
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': f'django.contrib.auth.password_validation.{n}Validator'}
     for n in ('UserAttributeSimilarity', 'MinimumLength',
               'CommonPassword', 'NumericPassword')
 ]
 
-# A list of authentication backends to use when authenticating a user.
+#: A list of authentication backends to use when authenticating a user.
+#: See :setting:`AUTHENTICATION_BACKENDS`.
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend'
 ]
 
-# The account adapter class to use.
+#: The account adapter class to use.
+#: See :auth:`ACCOUNT_ADAPTER <configuration.html>`.
 ACCOUNT_ADAPTER = 'users.adapters.AccountAdapter'
 
-# A callable that returns the display name of the user.
+#: A callable that returns the display name of the user.
+#: See :auth:`ACCOUNT_USER_DISPLAY <configuration.html>`.
 ACCOUNT_USER_DISPLAY = 'users.get_user_display'
 
-# The user is required to hand over an e-mail address when signing up.
+#: The user is required to hand over an e-mail address when signing up.
+#: See :auth:`ACCOUNT_EMAIL_REQUIRED <configuration.html>`.
 ACCOUNT_EMAIL_REQUIRED = True
 
-# Use either the username or the email to login.
+#: Use either the username or the email to login.
+#: See :auth:`ACCOUNT_AUTHENTICATION_METHOD <configuration.html>`.
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 
-# The user is blocked from logging in until the email address is verified.
+#: The user is blocked from logging in until the email address is verified.
+#: See :auth:`ACCOUNT_EMAIL_VERIFICATION <configuration.html>`.
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
-# The social account adapter class to use.
+#: The social account adapter class to use.
+#: See :auth:`SOCIALACCOUNT_ADAPTER <configuration.html>`.
 SOCIALACCOUNT_ADAPTER = 'users.adapters.SocialAccountAdapter'
 
-# An email address is not required for social accounts.
+#: An email address is not required for social accounts.
+#: See :auth:`SOCIALACCOUNT_EMAIL_REQUIRED <configuration.html>`.
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 
-# Verifying the email address is not required for social accounts.
+#: Verifying the email address is not required for social accounts.
+#: See :auth:`SOCIALACCOUNT_EMAIL_VERIFICATION <configuration.html>`.
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
 
-# Social account provider customization.
+#: Social account provider customization. See
+#: :auth:`Google <providers.html#google>`,
+#: :auth:`Reddit <providers.html#reddit>`,
+#: :auth:`Discord <providers.html#discord>`.
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['profile', 'email'],
@@ -299,64 +341,89 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# The URL where requests are redirected for login.
+#: The URL where requests are redirected for login.
+#: See :setting:`LOGIN_URL`.
 LOGIN_URL = '/user/login'
 
-# The age of session cookies (1 month).
+#: The age of session cookies (1 month).
+#: See :setting:`SESSION_COOKIE_AGE`.
 SESSION_COOKIE_AGE = 2592000
 
-# Use HttpOnly flag on the session cookie.
+#: Set the ``HttpOnly`` flag on the session cookie.
+#: See :setting:`SESSION_COOKIE_HTTPONLY`.
 SESSION_COOKIE_HTTPONLY = True
 
-# Don't expire the session when the user closes their browser.
+#: Don't expire the session when the user closes their browser.
+#: See :setting:`SESSION_EXPIRE_AT_BROWSER_CLOSE`.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-# Sets up the e-mail server URL.
+# Set up the e-mail server URL.
 vars().update(env.email('EMAIL_URL'))
 
-# The default e-mail address of the site.
+#: The default e-mail address of the site.
+#: See :setting:`DEFAULT_FROM_EMAIL`.
 DEFAULT_FROM_EMAIL = env['EMAIL_ADDRESS']
 
 ##################
 #    Security    #
 ##################
 
-# List of User-Agents that are not allowed to visit any page.
+#: List of User-Agents that are not allowed to visit any page.
+#: See :setting:`DISALLOWED_USER_AGENTS`.
 DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]
 DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
 
-# Use HttpOnly flag on the CSRF cookie.
+#: Set the ``HttpOnly`` flag on the CSRF cookie.
+#: See :setting:`CSRF_COOKIE_HTTP_ONLY`.
 CSRF_COOKIE_HTTP_ONLY = True
 
-# Prevent the CSRF cookie from being sent in cross-site requests.
+#: Prevent the CSRF cookie from being sent in cross-site requests.
+#: See :setting:`CSRF_COOKIE_SAMESITE`.
 CSRF_COOKIE_SAMESITE = 'Strict'
 
-# Prevent the session cookie from being sent in cross-site requests.
+#: Prevent the session cookie from being sent in cross-site requests.
+#: See :setting:`SESSION_COOKIE_SAMESITE`.
 SESSION_COOKIE_SAMESITE = 'Strict'
 
 if env.bool('HTTPS', True):
     env.ENV['wsgi.url_scheme'] = 'https'
     MIDDLEWARE.append('MangAdventure.middleware.PreloadMiddleware')
 
-    # HTTP header/value combination that signifies a request is secure.
+    #: HTTP header/value combination that signifies a secure request.
+    #: See :setting:`SECURE_PROXY_SSL_HEADER`.
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-    # Redirect all non-HTTPS requests to HTTPS.
+    #: Redirect all non-HTTPS requests to HTTPS.
+    #: See :setting:`SECURE_SSL_REDIRECT`.
     SECURE_SSL_REDIRECT = True
 
-    # Set the "X-XSS-Protection: 1; mode=block" header.
+    #: Set the ``X-XSS-Protection: 1; mode=block`` header.
+    #: See :setting:`SECURE_BROWSER_XSS_FILTER`.
     SECURE_BROWSER_XSS_FILTER = True
 
-    # Set the "X-Content-Type-Options: nosniff" header.
+    #: Set the ``X-Content-Type-Options: nosniff`` header.
+    #: See :setting:`SECURE_CONTENT_TYPE_NOSNIFF`.
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
-    # Use a secure cookie for the session cookie.
+    #: Instructs the browser to send only the origin, not the full URL,
+    #: and to send no referrer when a protocol downgrade occurs.
+    #: See :setting:`SECURE_REFERRER_POLICY`.
+    SECURE_REFERRER_POLICY = 'strict-origin'
+
+    #: Use a secure cookie for the language cookie.
+    #: See :setting:`LANGUAGE_COOKIE_SECURE`.
+    LANGUAGE_COOKIE_SECURE = True
+
+    #: Use a secure cookie for the session cookie.
+    #: See :setting:`SESSION_COOKIE_SECURE`.
     SESSION_COOKIE_SECURE = True
 
-    # Use a secure cookie for the CSRF cookie.
+    #: Use a secure cookie for the CSRF cookie.
+    #: See :setting:`CSRF_COOKIE_SECURE`.
     CSRF_COOKIE_SECURE = True
 
-    # The default protocol used when generating account URLs.
+    #: The default protocol used when generating account URLs.
+    #: See :auth:`ACCOUNT_DEFAULT_HTTP_PROTOCOL <configuration.html>`.
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 # Optional django-csp module
@@ -366,47 +433,47 @@ try:
 except ImportError:
     pass
 else:
-    # Sets the default-src directive.
+    #: Set the :csp:`default-src` CSP directive.
     CSP_DEFAULT_SRC = ("'none'",)
 
-    # Sets the connect-src directive.
+    #: Set the :csp:`connect-src` CSP directive.
     CSP_CONNECT_SRC = ("'self'",)
 
-    # Sets the script-src directive.
+    #: Set the :csp:`script-src` CSP directive.
     CSP_SCRIPT_SRC = ("'self'", "https://cdn.tinymce.com")
 
-    # Sets the style-src directive.
+    #: Set the :csp:`style-src` CSP directive.
     CSP_STYLE_SRC = (
         "'self'", "https://fonts.googleapis.com", "https://cdn.statically.io"
     )
 
-    # Sets the font-src directive.
+    #: Set the :csp:`font-src` directive.
     CSP_FONT_SRC = (
         "'self'", "https://fonts.gstatic.com", "https://cdn.statically.io"
     )
 
-    # Sets the img-src directive.
+    #: Set the :csp:`img-src` CSP directive.
     CSP_IMG_SRC = ("'self'",)
 
-    # Sets the form-action directive.
+    #: Set the :csp:`form-action` CSP directive.
     CSP_FORM_ACTION = ("'self'",)
 
-    # Sets the frame-src directive.
+    #: Set the :csp:`frame-src` CSP directive.
     CSP_FRAME_SRC = ("'self'",)
 
-    # Sets the frame-ancestors directive.
+    #: Set the :csp:`frame-ancestors` CSP directive.
     CSP_FRAME_ANCESTORS = ("'self'",)
 
-    # Sets the base-uri directive.
+    #: Set the :csp:`base-uri` CSP directive.
     CSP_BASE_URI = ("'none'",)
 
-    # Sets the report-uri directive.
+    #: Set the :csp:`report-uri` CSP directive.
     CSP_REPORT_URI = env.list('CSP_REPORT_URI')
 
-    # Percentage of requests that should see the report-uri directive.
+    #: Percentage of requests that should see the ``report-uri`` directive.
     CSP_REPORT_PERCENTAGE = env.float('CSP_REPORT_PERCENTAGE', 1.0) / 100
 
-    # URLs beginning with any of these will not get the CSP headers.
+    #: URLs beginning with any of these will not get the CSP headers.
     CSP_EXCLUDE_URL_PREFIXES = (
         '/api', '/admin-panel', '/robots.txt',
         '/opensearch.xml', '/contribute.json',
@@ -416,7 +483,7 @@ else:
 #    Configuration    #
 #######################
 
-# Configuration variables defined by the user.
+#: Configuration variables defined by the user in the ``.env`` file.
 CONFIG = {
     'NAME': env['NAME'],
     'DOMAIN': env['DOMAIN'],

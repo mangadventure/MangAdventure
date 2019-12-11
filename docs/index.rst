@@ -9,6 +9,7 @@ MangAdventure
 
    install
    api/index
+   modules/index
    compatibility
    changelog
    roadmap

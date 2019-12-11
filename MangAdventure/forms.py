@@ -2,7 +2,7 @@
 
 from django.forms import CharField, URLField
 
-from MangAdventure.utils import validators
+from MangAdventure import validators
 
 
 class TwitterField(CharField):

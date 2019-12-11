@@ -2,7 +2,7 @@
 
 from django.urls import path, register_converter
 
-from MangAdventure.utils.converters import FloatConverter
+from MangAdventure.converters import FloatConverter
 
 from . import views
 

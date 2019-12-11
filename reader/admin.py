@@ -7,8 +7,7 @@ from django.forms import CheckboxSelectMultiple, ModelForm
 # XXX: Forward reference warning when under TYPE_CHECKING
 from django.http import HttpRequest
 
-from MangAdventure.utils import filters
-from MangAdventure.utils.images import img_tag
+from MangAdventure import filters, utils
 
 from .models import (
     Artist, ArtistAlias, Author, AuthorAlias,
@@ -72,7 +71,7 @@ class ChapterAdmin(admin.ModelAdmin):
         page = obj.pages.only('image').first()
         if page is None:
             return ''
-        return img_tag(page.image, 'preview', height=50)
+        return utils.img_tag(page.image, 'preview', height=50)
 
 
 class SeriesAdmin(admin.ModelAdmin):
@@ -102,7 +101,7 @@ class SeriesAdmin(admin.ModelAdmin):
 
         :return: An ``<img>`` tag with the series cover.
         """
-        return img_tag(obj.cover, 'cover', height=75)
+        return utils.img_tag(obj.cover, 'cover', height=75)
 
     cover_image.short_description = 'cover'
 

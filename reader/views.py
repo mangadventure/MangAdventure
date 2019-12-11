@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING
 
-from django.http import Http404
+from django.http import Http404, FileResponse
 from django.shortcuts import redirect, render
 
 from .models import Chapter, Page, Series
@@ -108,6 +108,37 @@ def chapter_redirect(request: 'HttpRequest', slug: str, vol: int,
     return redirect('reader:page', slug, vol, num, 1, permanent=True)
 
 
+def chapter_download(request: 'HttpRequest', slug: str,
+                     vol: int, num: float) -> FileResponse:
+    """
+    View that generates a ``.cbz`` file from a chapter.
+
+    .. admonition:: TODO
+       :class: warning
+
+       Add a download link on the series page.
+
+    :param request: The original request.
+    :param slug: The slug of the chapter's series.
+    :param vol: The volume of the chapter.
+    :param num: The number of the chapter.
+
+    :return: A response with the ``.cbz`` file.
+    """
+    try:
+        _chapter = Chapter.objects.get(
+            series__slug=slug, volume=vol, number=num
+        )
+    except Chapter.DoesNotExist:
+        raise Http404
+    mime = 'application/vnd.comicbook+zip'
+    name = '{0.series} - v{0.volume} c{0.number:g}.cbz'.format(_chapter)
+    return FileResponse(
+        _chapter.zip(), as_attachment=True,
+        filename=name, content_type=mime
+    )
+
+
 # def chapter_comments(request, slug, vol, num):
 #     try:
 #         chapter = Chapter.objects.get(
@@ -118,4 +149,7 @@ def chapter_redirect(request: 'HttpRequest', slug: str, vol: int,
 #     return render(request, 'comments.html', {'chapter': chapter})
 
 
-__all__ = ['directory', 'series', 'chapter_page', 'chapter_redirect']
+__all__ = [
+    'directory', 'series', 'chapter_page',
+    'chapter_redirect', 'chapter_download'
+]

@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from .utils import validators
+from . import validators
 
 
 class TwitterField(models.CharField):

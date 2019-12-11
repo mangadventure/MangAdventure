@@ -17,8 +17,8 @@ from django.utils.text import slugify
 
 from PIL import Image
 
+from MangAdventure import storage, validators, utils
 from MangAdventure.models import Alias, AliasField, AliasKeyField
-from MangAdventure.utils import images, sort, storage, validators
 
 from groups.models import Group
 
@@ -160,7 +160,7 @@ class Series(models.Model):
         """Save the current instance."""
         self.slug = slugify(self.slug or self.title)
         if self.cover:
-            self.cover = images.thumbnail(self.cover, 300)
+            self.cover = utils.thumbnail(self.cover, 300)
         super(Series, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -332,7 +332,7 @@ class Chapter(models.Model):
         full_path.mkdir(parents=True)
         zip_file = ZipFile(self.file)
         name_list = zip_file.namelist()
-        for name in sort.natural_sort(name_list):
+        for name in utils.natsort(name_list):
             if zip_file.getinfo(name).is_dir():
                 continue
             counter += 1
@@ -347,6 +347,20 @@ class Chapter(models.Model):
         # TODO: option to keep zip file
         remove(self.file.path)
         self.file.delete(save=True)
+
+    def zip(self) -> BytesIO:
+        """
+        Generate a zip file containing the pages of this chapter.
+
+        :return: The file-like object of the generated file.
+        """
+        buf = BytesIO()
+        with ZipFile(buf, 'a', compression=8) as zf:
+            for page in self.pages.all():
+                path = page.image.path
+                zf.write(path, path.split('/')[-1])
+        buf.seek(0)
+        return buf
 
     @cached_property
     def _tuple(self) -> Tuple[int, int]:

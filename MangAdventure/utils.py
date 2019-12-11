@@ -1,18 +1,18 @@
-"""Functions used to manipulate image files."""
+"""Various utility functions."""
 
 from io import BytesIO
 from os import path
+from re import split
 from sys import getsizeof
-from typing import Union
+from typing import TYPE_CHECKING, List, Union
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
-# XXX: Forward reference warning when under TYPE_CHECKING
-from django.db.models.fields.files import FieldFile
 from django.utils.html import format_html
 
 from PIL import Image
 
-Image.MIME.setdefault('ICO', 'image/x-icon')
+if TYPE_CHECKING:
+    from django.db.models.fields.files import FieldFile
 
 
 def thumbnail(obj: 'FieldFile', max_size: int = 100
@@ -39,6 +39,7 @@ def thumbnail(obj: 'FieldFile', max_size: int = 100
         img = img.convert('P', dither=Image.NONE, palette=Image.ADAPTIVE)
     else:
         img.thumbnail((max_size, max_size), Image.ANTIALIAS)
+    Image.MIME.setdefault('ICO', 'image/x-icon')
     mime = Image.MIME.get(img.format)
     buff = BytesIO()
     img.save(buff, format=img.format, quality=100)
@@ -67,4 +68,36 @@ def img_tag(obj: 'FieldFile', alt: str,
     ) if hasattr(obj, 'url') else ''
 
 
-__all__ = ['thumbnail', 'img_tag']
+def atoi(s: str) -> Union[int, str]:
+    """Convert a :class:`str` to an :class:`int` if possible."""
+    return int(s) if s.isdigit() else s.lower()
+
+
+def alnum_key(k: str) -> List[str]:
+    """Generate an alphanumeric key for sorting."""
+    return list(map(atoi, split('([0-9]+)', k)))
+
+
+def natsort(original: List[str]) -> List[str]:
+    """
+    Sort a list in natural order.
+
+    .. code-block:: python
+
+       >>> sorted(map(str, range(12)))
+       ['0', '1', '10', '11', '2', '3', '4', '5', '6', '7', '8', '9']
+       >>> natsort(map(str, range(12)))
+       ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']
+
+    :param original: The original list.
+
+    :return: The sorted list.
+
+    .. seealso::
+
+        https://blog.codinghorror.com/sorting-for-humans-natural-sort-order/
+    """
+    return sorted(original, key=alnum_key)
+
+
+__all__ = ['thumbnail', 'img_tag', 'natsort']

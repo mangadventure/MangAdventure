@@ -3,8 +3,7 @@
 from django.contrib import admin
 from django.db.models.functions import Lower
 
-from MangAdventure.utils import filters
-from MangAdventure.utils.images import img_tag
+from MangAdventure import filters, utils
 
 from .models import Group, Member, Role
 
@@ -43,7 +42,7 @@ class GroupAdmin(admin.ModelAdmin):
 
         :return: An ``<img>`` tag with the group's logo.
         """
-        return img_tag(obj.logo, 'logo', height=25)
+        return utils.img_tag(obj.logo, 'logo', height=25)
 
     logo_image.short_description = 'logo'
 

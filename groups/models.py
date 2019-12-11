@@ -9,9 +9,9 @@ from django.utils.functional import cached_property
 from MangAdventure.models import (
     DiscordNameField, DiscordURLField, RedditField, TwitterField
 )
-from MangAdventure.utils.images import thumbnail
-from MangAdventure.utils.storage import OverwriteStorage
-from MangAdventure.utils.validators import FileSizeValidator
+from MangAdventure.storage import OverwriteStorage
+from MangAdventure.utils import thumbnail
+from MangAdventure.validators import FileSizeValidator
 
 
 def _logo_uploader(obj: 'Group', name: str) -> str:

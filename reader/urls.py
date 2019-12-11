@@ -2,7 +2,7 @@
 
 from django.urls import path, register_converter
 
-from MangAdventure.utils.converters import FloatConverter
+from MangAdventure.converters import FloatConverter
 
 from . import views
 
@@ -14,6 +14,7 @@ app_name = 'reader'
 _slug = '<slug:slug>/'
 _chapter = f'{_slug}<int:vol>/<float:num>/'
 _page = f'{_chapter}<int:page>/'
+_cbz = f'{_chapter[:-1]}.cbz'
 
 #: The URL namespace of the reader app.
 urlpatterns = [
@@ -21,6 +22,7 @@ urlpatterns = [
     path(_slug, views.series, name='series'),
     path(_chapter, views.chapter_redirect, name='chapter'),
     path(_page, views.chapter_page, name='page'),
+    path(_cbz, views.chapter_download, name='cbz')
     # path(f'{_chapter}comments/', views.chapter_comments, name='comments'),
 ]
 

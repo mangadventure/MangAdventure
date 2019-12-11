@@ -11,7 +11,7 @@ from api.response import JsonError
 from reader.models import Category, Chapter
 
 from .bad_bots import BOTS
-from .utils.search import parse, query
+from .search import parse, query
 
 if TYPE_CHECKING:
     from django.http import HttpRequest

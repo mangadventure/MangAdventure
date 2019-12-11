@@ -6,15 +6,24 @@ MangAdventure package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-
-   MangAdventure.utils
-
 Submodules
 ----------
+
+MangAdventure.converters module
+-------------------------------
+
+.. automodule:: MangAdventure.converters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+MangAdventure.filters module
+----------------------------
+
+.. automodule:: MangAdventure.filters
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 MangAdventure.forms module
 --------------------------
@@ -40,6 +49,14 @@ MangAdventure.models module
    :undoc-members:
    :show-inheritance:
 
+MangAdventure.search module
+---------------------------
+
+.. automodule:: MangAdventure.search
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 MangAdventure.settings module
 -----------------------------
 
@@ -48,10 +65,34 @@ MangAdventure.settings module
    :undoc-members:
    :show-inheritance:
 
+MangAdventure.storage module
+----------------------------
+
+.. automodule:: MangAdventure.storage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 MangAdventure.urls module
 -------------------------
 
 .. automodule:: MangAdventure.urls
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+MangAdventure.utils module
+--------------------------
+
+.. automodule:: MangAdventure.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+MangAdventure.validators module
+-------------------------------
+
+.. automodule:: MangAdventure.validators
    :members:
    :undoc-members:
    :show-inheritance:

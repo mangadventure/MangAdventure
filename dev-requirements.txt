@@ -1,0 +1,4 @@
+django-debug-toolbar
+flake8
+isort
+mypy

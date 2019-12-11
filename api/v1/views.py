@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import last_modified
 
-from MangAdventure.utils.search import get_response
+from MangAdventure.search import get_response
 
 from groups.models import Group, Member
 from reader.models import Artist, Author, Category, Chapter, Series

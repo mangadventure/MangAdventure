@@ -3,7 +3,7 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from MangAdventure.utils.validators import FileSizeValidator
+from MangAdventure.validators import FileSizeValidator
 
 from .models import UserProfile
 

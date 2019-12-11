@@ -2,10 +2,10 @@ from datetime import date
 
 from django.db import migrations, models
 
+from MangAdventure import storage, validators
 from MangAdventure.models import AliasField, AliasKeyField
-from MangAdventure.utils import storage, validators
 
-from .models import _cover_uploader
+from reader.models import _cover_uploader
 
 
 class Migration(migrations.Migration):

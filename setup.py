@@ -34,17 +34,8 @@ setup(
     python_requires='>=3.6',
     install_requires=read('requirements.txt').splitlines(),
     extras_require={
-        'dev': [
-            'django-debug-toolbar',
-            'flake8',
-            'isort',
-            'mypy',
-        ],
-        'docs': [
-            'sphinx>=2.2',
-            'sphinx-rtd-theme',
-            'sphinx-autodoc-typehints',
-        ],
+        'dev': read('dev-requirements.txt').splitlines(),
+        'docs': read('docs/requirements.txt').splitlines(),
         'mysql': 'mysqlclient',
         'pgsql': 'psycopg2',
         'csp': 'django-csp',

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import migrations, models
 
-from MangAdventure.utils import storage, validators
+from MangAdventure import storage, validators
 
 from users.models import _avatar_uploader
 

@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import migrations, models
 from django.utils import timezone
 
-from MangAdventure.utils import validators
+from MangAdventure import validators
 
 
 class Migration(migrations.Migration):

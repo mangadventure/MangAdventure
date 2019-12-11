@@ -2,14 +2,16 @@
 
 from io import BytesIO
 from os import remove
+from typing import TYPE_CHECKING
 from zipfile import BadZipfile, ZipFile
 
 from django.core.exceptions import ValidationError
-# XXX: Forward reference warning when under TYPE_CHECKING
-from django.core.files import File
 from django.core.validators import BaseValidator, RegexValidator
 
 from PIL import Image
+
+if TYPE_CHECKING:
+    from django.core.files import File
 
 
 def _remove_file(file: 'File'):

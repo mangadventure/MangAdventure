@@ -1,7 +1,7 @@
 from django.db import migrations, models
 
 from MangAdventure.models import DiscordNameField, DiscordURLField, TwitterField
-from MangAdventure.utils import storage, validators
+from MangAdventure import storage, validators
 
 from groups.models import _logo_uploader
 

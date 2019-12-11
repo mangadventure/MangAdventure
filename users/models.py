@@ -5,7 +5,7 @@ from pathlib import PurePath
 from django.contrib.auth.models import User
 from django.db import models
 
-from MangAdventure.utils import storage, validators
+from MangAdventure import storage, validators
 
 from reader.models import Series
 

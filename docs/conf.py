@@ -1,3 +1,23 @@
+# -- Create .env file if missing --
+
+from pathlib import Path
+
+env = Path(__file__).parent.with_name('.env')
+if not env.exists():
+    example = env.with_suffix('.example')
+    env.write_bytes(example.read_bytes())
+
+
+# -- Setup Django --
+
+from sys import path
+from os import environ
+
+path.insert(0, str(env.parent))
+environ['DJANGO_SETTINGS_MODULE'] = 'MangAdventure.settings'
+__import__('django').setup()
+
+
 # -- Project information --
 
 import MangAdventure as MA
@@ -8,12 +28,100 @@ release = MA.__version__
 copyright = f'2018-2020, {project}, {MA.__license__} license'
 
 
+# -- Add setup function & patch documenters --
+
+from typing import get_type_hints, Any, List, Optional, Type, Tuple
+
+from django.db.models.fields.related_descriptors import (
+    ReverseManyToOneDescriptor, ReverseOneToOneDescriptor,
+)
+from django.db.models.query_utils import DeferredAttribute
+
+from sphinx.application import Sphinx
+from sphinx.ext.autodoc import DataDocumenter, Options, PropertyDocumenter
+
+
+def skip_django_junk(app: Sphinx, what: str, name: str,
+                     obj: Any, skip: bool, options: Options) -> bool:
+    junk = (
+        DeferredAttribute,
+        ReverseManyToOneDescriptor,
+        ReverseOneToOneDescriptor,
+    )
+    if isinstance(obj, junk):
+        return True
+    if isinstance(obj, property) and name == 'media':
+        return True
+    return skip
+
+def annotate_attributes(app: Sphinx, what: str, name: str,
+                        obj: Any, options: Options, lines: List[str]):
+
+    if obj is None:
+        return
+    cls = None
+    if what == 'attribute':
+        if hasattr(obj, 'field'):
+            cls = obj.field.__class__
+        else:
+            cls = obj.__class__
+    if what == 'property':
+        if hasattr(obj, 'func'):
+            cls = get_type_hints(obj.func)['return']
+        else:
+            cls = get_type_hints(obj.fget)['return']
+    if not cls:
+        return
+    mod = cls.__module__
+    if mod == 'builtins':
+        qname = cls.__name__
+    elif mod.startswith('django.db.models'):
+        qname = f'django.db.models.{cls.__name__}'
+    else:
+        qname = f'{mod}.{cls.__name__}'
+    if qname in ('dict', 'list', 'tuple'):
+        qname = f'typing.{qname.capitalize()}'
+    if lines:
+        lines[0] = f':class:`~{qname}` – {lines[0]}'
+
+def setup(app: Sphinx):
+    app.connect('autodoc-skip-member', skip_django_junk)
+    app.connect('autodoc-process-docstring', annotate_attributes)
+    app.add_stylesheet('css/style.css')
+
+PropertyDocumenter._original_can_document_member = \
+    PropertyDocumenter.can_document_member
+
+def _patched_can_document_member(cls: Type[PropertyDocumenter],
+                                 member: Any, membername: str,
+                                 isattr: bool, parent: Any) -> bool:
+    return member.__class__.__name__ == 'cached_property' or \
+        cls._original_can_document_member(member, membername, isattr, parent)
+
+PropertyDocumenter.can_document_member = \
+    classmethod(_patched_can_document_member)
+
+DataDocumenter._original_add_directive_header = \
+    DataDocumenter.add_directive_header
+
+def _patched_add_directive_header(self: DataDocumenter, sig: str):
+    # Don't document values of settings
+    if self.modname == 'MangAdventure.settings':
+        DataDocumenter.__base__.add_directive_header(self, sig)
+    else:
+        self._original_add_directive_header(sig)
+
+DataDocumenter.add_directive_header = _patched_add_directive_header
+
+
 # -- General configuration --
 
 extensions = [
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
+    'sphinx_autodoc_typehints',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.viewcode',
 ]
 templates_path = ['_templates']
 source_suffix = '.rst'
@@ -22,10 +130,46 @@ language = 'en'
 pygments_style = 'manni'
 
 
-# -- Custom CSS --
+# -- InterSphinx & extlinks configuration --
 
-def setup(app):
-    app.add_stylesheet('css/style.css')
+_django = 'https://docs.djangoproject.com/en/3.0/'
+_mdn = 'https://developer.mozilla.org/en-US/docs/Web/'
+
+intersphinx_mapping = {
+    'django': (_django, f'{_django}_objects/'),
+    'python': ('https://docs.python.org/3.6/', None),
+}
+
+extlinks = {
+    'setting': (f'{_django}ref/settings/#std:setting-%s', ''),
+    'tag': (f'{_django}ref/templates/builtins/#%s', ''),
+    'auth': ('https://django-allauth.rtfd.io/en/latest/%s', ''),
+    'csp': (f'{_mdn}HTTP/Headers/Content-Security-Policy/%s', ''),
+    'status': (f'{_mdn}HTTP/Status/%s', ''),
+}
+
+
+# -- Autodoc configuration --
+
+autodoc_default_options = {
+    'member-order': 'bysource',
+    'special-members': True,
+    'undoc-members': True,
+    'exclude-members': ','.join((
+        '__dict__',
+        '__init__',
+        '__slots__',
+        '__module__',
+        '__weakref__',
+        '__slotnames__',
+        '__annotations__',
+    ))
+}
+autodoc_inherit_docstrings = True
+always_document_param_types = True
+set_type_checking_flag = True
+typehints_fully_qualified = False
+typehints_document_rtype = True
 
 
 # -- Options for HTML output --

@@ -1,22 +1,24 @@
+"""The root URLconf."""
+
 from django.conf import settings
 from django.contrib import admin
+from django.urls import include, path
 
 from .views import contribute, index, opensearch, robots, search
 
-from django.urls import include, path as url
-
+#: The main URL patterns.
 urlpatterns = [
-    url('', index, name='index'),
-    url('', include('config.urls')),
-    url('search/', search, name='search'),
-    url('admin-panel/', admin.site.urls),
-    url('reader/', include('reader.urls')),
-    url('api/', include('api.urls')),
-    url('groups/', include('groups.urls')),
-    url('user/', include('users.urls')),
-    url('opensearch.xml', opensearch, name='opensearch'),
-    url('contribute.json', contribute, name='contribute'),
-    url('robots.txt', robots, name='robots')
+    path('', index, name='index'),
+    path('', include('config.urls')),
+    path('search/', search, name='search'),
+    path('admin-panel/', admin.site.urls),
+    path('reader/', include('reader.urls')),
+    path('api/', include('api.urls')),
+    path('groups/', include('groups.urls')),
+    path('user/', include('users.urls')),
+    path('opensearch.xml', opensearch, name='opensearch'),
+    path('contribute.json', contribute, name='contribute'),
+    path('robots.txt', robots, name='robots')
 ]
 
 if settings.DEBUG:
@@ -26,10 +28,26 @@ if settings.DEBUG:
     )
     try:
         from debug_toolbar import urls as debug_urls
-        urlpatterns.append(url('__debug__/', include(debug_urls)))
+        urlpatterns.append(path('__debug__/', include(debug_urls)))
     except ImportError:
         pass
 
+#: See :func:`MangAdventure.views.handler400`.
+handler400 = 'MangAdventure.views.handler400'
+
+#: See :func:`MangAdventure.views.handler403`.
+handler403 = 'MangAdventure.views.handler403'
+
+#: See :func:`MangAdventure.views.handler404`.
 handler404 = 'MangAdventure.views.handler404'
+
+#: See :func:`MangAdventure.views.handler500`.
 handler500 = 'MangAdventure.views.handler500'
+
+#: See :func:`MangAdventure.views.handler503`.
 handler503 = 'MangAdventure.views.handler503'
+
+__all__ = [
+    'urlpatterns', 'handler400', 'handler403',
+    'handler404', 'handler500', 'handler503'
+]

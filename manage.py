@@ -1,0 +1,1 @@
+MangAdventure/__main__.py

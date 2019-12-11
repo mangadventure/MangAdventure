@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static custom_tags reader_tags %}
+{% load static custom_tags %}
 {% block robots %}
   <meta name="robots" content="nosnippet">
 {% endblock %}
@@ -10,7 +10,8 @@
 {% endblock %}
 {% block image %}
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:creator" content="{{ chapter.twitter_creators }}">
+  {# TODO: is it possible to show multiple creators? #}
+  <meta name="twitter:creator" content="{{ chapter.twitter_creator }}">
   {% with cover=PAGE_URL|urljoin:curr_chapter.series.cover.url %}
     <meta name="twitter:image" content="{{ cover }}">
     <meta property="og:image" content="{{ cover }}">
@@ -161,7 +162,7 @@
     {# <a href="../comments" id="comments" class="link"><i class="mi mi-chat"></i>Comments</a> #}
   </div>
   <div id="preload" class="no-display">
-    {% for page in all_pages|preload_pages:curr_page.number %}
+    {% for page in curr_page.preload %}
       <img alt="preload" src="{{ page.image.url }}">
     {% endfor %}
   </div>

@@ -1,12 +1,25 @@
+"""Database models for the users app."""
+
+from pathlib import PurePath
+
 from django.contrib.auth.models import User
 from django.db import models
 
-from MangAdventure.utils import storage, uploaders, validators
-from reader.models import Chapter, Series
+from MangAdventure.utils import storage, validators
+
+from reader.models import Series
+
+
+def _avatar_uploader(obj: 'UserProfile', name: str) -> str:
+    name = f'avatar.{name.split(".")[-1]}'
+    return str(obj.get_directory() / name)
 
 
 class Bookmark(models.Model):
+    """A model representing a bookmark."""
+    #: The series this bookmark belongs to.
     series = models.ForeignKey(Series, on_delete=models.CASCADE)
+    #: The user this bookmark belongs to.
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='bookmarks'
     )
@@ -15,49 +28,52 @@ class Bookmark(models.Model):
         unique_together = ('series', 'user')
 
 
-# TODO: add user preferences
-
 class UserProfile(models.Model):
-    _validator = validators.FileSizeValidator(max_mb=2)
+    """
+    A model representing a user's profile.
+
+    .. admonition:: TODO
+       :class: warning
+
+       Add links and let users hide their e-mail.
+    """
+    #: The user this profile belongs to.
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='profile'
     )
+    #: The bio of the user.
     bio = models.TextField(
         blank=True, verbose_name='biography',
         help_text="The user's biography."
     )
+    #: The avatar of the user.
     avatar = models.ImageField(
-        help_text=(
-            "The user's avatar image. Must be"
-            f" up to {_validator.max_mb} MBs."
-        ), validators=(_validator,), blank=True,
-        storage=storage.OverwriteStorage(),
-        upload_to=uploaders.avatar_uploader
+        help_text="The user's avatar image. Must be up to 2 MBs.",
+        validators=(validators.FileSizeValidator(2),), blank=True,
+        storage=storage.OverwriteStorage(), upload_to=_avatar_uploader
     )
+    #: The user's bookmarks.
     bookmarks = models.ManyToManyField(
         Bookmark, related_name='profile', blank=True,
         help_text="The user's bookmarked series."
     )
-    # TODO: add links and let users choose whether to display their e-mail
 
-    def __str__(self):
+    def get_directory(self) -> PurePath:
+        """
+        Get the storage directory of the object.
+
+        :return: A path relative to
+                 :const:`~MangAdventure.settings.MEDIA_ROOT`.
+        """
+        return PurePath('users', str(self.id))
+
+    def __str__(self) -> str:
+        """
+        Return a string representing the object.
+
+        :return: The user as a string.
+        """
         return str(self.user)
-
-
-# Might be utilised for progress tracking in the future
-class Progress(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='progress'
-    )
-    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
-    last_update = models.DateTimeField(auto_now=True)
-
-    def save(self, **kwargs):
-        # Delete old progress before saving
-        Progress.objects.filter(
-            user_id=self.user.id, chapter__series_id=self.chapter.series.id
-        ).delete()
-        super(Progress, self).save(kwargs)
 
 
 __all__ = ['Bookmark', 'UserProfile']

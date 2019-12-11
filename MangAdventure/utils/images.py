@@ -1,21 +1,30 @@
-from io import BytesIO
-from os import path, remove
-from shutil import rmtree
-from sys import getsizeof
-from zipfile import ZipFile
+"""Functions used to manipulate image files."""
 
-from django.conf import settings
+from io import BytesIO
+from os import path
+from sys import getsizeof
+from typing import Union
+
 from django.core.files.uploadedfile import InMemoryUploadedFile
+# XXX: Forward reference warning when under TYPE_CHECKING
+from django.db.models.fields.files import FieldFile
 from django.utils.html import format_html
 
 from PIL import Image
 
-from . import sort
-
 Image.MIME.setdefault('ICO', 'image/x-icon')
 
 
-def thumbnail(obj, max_size=100):
+def thumbnail(obj: 'FieldFile', max_size: int = 100
+              ) -> Union[InMemoryUploadedFile, 'FieldFile']:
+    """
+    Generate the thumbnail of an :class:`~django.db.models.ImageField`.
+
+    :param obj: An ``ImageFieldFile`` instance.
+    :param max_size: The width/height of the thumbnail.
+
+    :return: The thumbnail, or the original if small enough.
+    """
     if not path.exists(obj.path):
         return obj
     img = Image.open(obj.path)
@@ -40,40 +49,22 @@ def thumbnail(obj, max_size=100):
     )
 
 
-def img_tag(img, alt, height=None, width=None):
+def img_tag(obj: 'FieldFile', alt: str,
+            height: int = 0, width: int = 0) -> str:
+    """
+    Create an HTML ``<img>`` from an :class:`~django.db.models.ImageField`.
+
+    :param img: An ``ImageFieldFile`` instance.
+    :param alt: The alternate text of the tag.
+    :param height: The height of the ``<img>``. Unset if ``0``.
+    :param width: The width of the ``<img>``. Unset if ``0``.
+
+    :return: An ``<img>`` tag with the given image.
+    """
     return format_html(
         '<img src="{0}" alt="{3}" width="{1}" height="{2}">',
-        img.url, width or '', height or '', alt or ''
-    ) if hasattr(img, 'url') else ''
+        obj.url, width or '', height or '', alt or ''
+    ) if hasattr(obj, 'url') else ''
 
 
-def unzip(obj):
-    counter = 0
-    dir_path = path.join(
-        'series', obj.series.slug,
-        str(obj.volume), f'{obj.number:g}'
-    )
-    full_path = settings.MEDIA_ROOT / dir_path
-    if path.exists(full_path):
-        rmtree(full_path)
-    full_path.mkdir(parents=True)
-    zip_file = ZipFile(obj.file)
-    name_list = zip_file.namelist()
-    for name in sort.natural_sort(name_list):
-        if zip_file.getinfo(name).is_dir():
-            continue
-        counter += 1
-        data = zip_file.read(name)
-        filename = f'{counter:03d}{path.splitext(name)[-1]}'
-        file_path = path.join(dir_path, filename)
-        image = Image.open(BytesIO(data))
-        image.save(full_path / filename, quality=100)
-        obj.pages.create(number=counter, image=file_path)
-    zip_file.close()
-    obj.file.close()
-    # TODO: option to keep zip file
-    remove(obj.file.path)
-    obj.file.delete(save=True)
-
-
-__all__ = ['thumbnail', 'img_tag', 'unzip']
+__all__ = ['thumbnail', 'img_tag']

@@ -1,11 +1,28 @@
-from functools import partial
+"""
+A collection of filters used in the admin interface.
 
-from django.contrib.admin import (
+.. seealso:: :attr:`django.contrib.admin.ModelAdmin.list_filter`
+"""
+
+from functools import partial
+from typing import Tuple, Type
+
+from django.contrib.admin.filters import (
     FieldListFilter, RelatedFieldListFilter, SimpleListFilter
 )
 
 
-def title_filter(title, klass=FieldListFilter):
+def title_filter(title: str, klass: Type[FieldListFilter] =
+                 FieldListFilter) -> Type[FieldListFilter]:
+    """
+    A :class:`FieldListFilter` with a custom title.
+
+    :param title: The title of the filter.
+    :param klass: The parent class of the filter.
+                  Must be a subclass of :class:`FieldListFilter`.
+
+    :return: A class that inherits from ``klass``.
+    """
     class Wrapper(klass):
         def __new__(cls, *args, **kwargs):
             instance = super(Wrapper, cls).create(*args, **kwargs)
@@ -15,7 +32,17 @@ def title_filter(title, klass=FieldListFilter):
     return Wrapper
 
 
-def boolean_filter(title, param, names):
+def boolean_filter(title: str, param: str, names:
+                   Tuple[str, str]) -> Type[SimpleListFilter]:
+    """
+    A boolean :class:`SimpleListFilter`.
+
+    :param title: The title of the filter.
+    :param param: The name of the parameter to filter.
+    :param names: The names for ``True`` and ``False`` respectively.
+
+    :return: A class that inherits from :class:`SimpleListFilter`.
+    """
     class Wrapper(SimpleListFilter):
         def __init__(self, *args, **kwargs):
             self.names = names
@@ -39,6 +66,10 @@ def boolean_filter(title, param, names):
 
 
 related_filter = partial(title_filter, klass=RelatedFieldListFilter)
+related_filter.__doc__ = """
+A :func:`title_filter` for related fields.
 
+:return: A class that inherits from :class:`RelatedFieldListFilter`.
+"""
 
 __all__ = ['title_filter', 'boolean_filter', 'related_filter']

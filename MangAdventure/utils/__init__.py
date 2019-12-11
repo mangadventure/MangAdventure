@@ -1,1 +1,3 @@
-__all__ = ['storage', 'sort', 'images', 'validators', 'uploaders']
+"""Various utility functions."""
+
+__all__ = ['storage', 'sort', 'images', 'validators']

@@ -4,10 +4,17 @@ Changelog
 v0.6.0
 ^^^^^^
 
-* Dropped support for Python <3.6
+* Dropped support for Python<3.6
+* Dropped support for Django<3.0
 * Dropped support for non-ES6 browsers
-* Added table indexes
-* Removed ``ColorField``
+* Added table indexes for searching
+* Added type hints and docstrings
+* Added auto-generated modules documentation
+* Added ``modules`` Makefile directive
+* Removed ``uploaders``
+* Removed ``XPBMiddleware``
+* Removed ``ColorField`` & ``SVGImageField``
+* Removed ``get_name`` & ``get_ext``
 
 v0.5.3
 ^^^^^^

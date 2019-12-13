@@ -161,6 +161,11 @@ def handler404(request: 'HttpRequest', exception: Optional[Exception] = None,
     """
     if request.path.startswith('/api'):
         return JsonError('Invalid API endpoint', 501)
+    try:
+        from sentry_sdk import capture_exception
+        capture_exception(exception)
+    except ImportError:
+        pass
     context = _error_context("Sorry. This page doesn't exist.", 404)
     return render(request, template_name, context, status=404)
 

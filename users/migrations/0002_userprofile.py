@@ -11,28 +11,12 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('users', '0001_initial'),
-        ('reader', '0006_remove_chapter_url'),
         ('socialaccount', '0003_extra_data_default_dict'),
     ]
 
+    replaces = [('users', '0002_progress_userprofile')]
+
     operations = [
-        migrations.CreateModel(
-            name='Progress',
-            fields=[
-                ('id', models.AutoField(
-                    auto_created=True, primary_key=True,
-                    serialize=False, verbose_name='ID'
-                )),
-                ('chapter', models.ForeignKey(
-                    on_delete=models.deletion.CASCADE, to='reader.Chapter'
-                )),
-                ('user', models.ForeignKey(
-                    on_delete=models.deletion.CASCADE,
-                    related_name='progress', to=settings.AUTH_USER_MODEL
-                )),
-                ('last_update', models.DateTimeField(auto_now=True))
-            ],
-        ),
         migrations.CreateModel(
             name='UserProfile',
             fields=[

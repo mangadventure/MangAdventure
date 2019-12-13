@@ -35,15 +35,36 @@ Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.5.3#egg=MangAdventure"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.0#egg=mangadventure"
 
-MangAdventure also optionally provides `Content-Security-Policy <https://mdn.io/CSP>`_
-configuration via the `django-csp <https://github.com/mozilla/django-csp>`_ package.
-You can install it if you'd like some extra security:
+MangAdventure also provides the following extras:
+
+* ``mysql``: `MySQL database support`_
+* ``pgsql``: `PostgreSQL database support`_
+* ``csp``: `Content-Security-Policy headers`_
+* ``sentry``: `Sentry error reporting`_
+* ``uwsgi``: `uWSGI application server`_
+
+For example, you can install ``csp`` & ``uwsgi`` like so:
 
 .. code-block:: shell
 
-   pip install django-csp
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.0#egg=mangadventure[csp,uwsgi]"
+
+.. _MySQL database support:
+   https://mysql.com/
+
+.. _PostgreSQL database support:
+   https://www.postgresql.org
+
+.. _Content-Security-Policy headers:
+   https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+
+.. _Sentry error reporting:
+   https://sentry.io/for/django/
+
+.. _uWSGI application server:
+   https://uwsgi-docs.readthedocs.io/en/latest/index.html
 
 Configure the settings
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -82,6 +103,16 @@ You can create multiple administrator accounts.
 
    mangadventure createsuperuser
 
+Load Categories
+^^^^^^^^^^^^^^^
+
+If you want to load an initial set of manga categories imported from
+`MangaUpdates <https://www.mangaupdates.com/genres.html>`_, run this command:
+
+.. code-block:: shell
+
+   mangadventure loaddata categories
+
 Migrate from FoolSlide2
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -115,16 +146,6 @@ Next, import the data into MangAdventure:
 
    mangadventure fs2import "{root}" "{data}"
 
-Load Categories
-^^^^^^^^^^^^^^^
-
-If you want to load an initial set of manga categories imported from
-`MangaUpdates <https://www.mangaupdates.com/genres.html>`_, run this command:
-
-.. code-block:: shell
-
-   mangadventure loaddata categories
-
 Set up the server
 ^^^^^^^^^^^^^^^^^
 
@@ -135,35 +156,44 @@ Set up the server
 | Also, create the ``media`` and ``log`` directories
    beforehand to avoid possible permission errors.
 | Lastly, don't forget to run ``uwsgi`` after setting up the server:
-| (For more details, check the `uWSGI docs <https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django>`_.)
+| (For more details, check the `uWSGI docs`_.)
 
 .. code-block:: shell
 
-   uwsgi --socket "127.0.0.1:25432" --chdir "/var/www/my-site.com/" --module "MangAdventure.wsgi"
+   uwsgi --socket "127.0.0.1:25432" --chdir "/var/www/my-site.com" --module "MangAdventure.wsgi"
+
+.. _uWSGI docs:
+   https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django
 
 Apache example
 ~~~~~~~~~~~~~~
 
-Apache requires `mod_wsgi <https://modwsgi.rtfd.io/en/latest/>`_.
+Apache requires `mod_uwsgi`_.
 
 .. literalinclude:: examples/apache.conf
    :language: apache
    :end-before: # vim
 
+.. _mod_uwsgi:
+   https://uwsgi-docs.readthedocs.io/en/latest/Apache.html
+
 Nginx example
 ~~~~~~~~~~~~~
 
-Nginx requires `uwsgi <https://uwsgi-docs.rtfd.io/en/latest/>`_.
+Nginx requires `uwsgi`_.
 
 .. literalinclude:: examples/nginx.conf
    :language: nginx
    :end-before: # vim
 
+.. _uwsgi:
+   https://uwsgi-docs.readthedocs.io/en/latest/Nginx.html
+
 Updating
 --------
 
 | First, install the latest release from GitHub:
-| (Replace ``{tag}`` with the latest `release tag <https://github.com/mangadventure/MangAdventure/releases/latest>`_.)
+| (Replace ``{tag}`` with the latest `release tag`_.)
 
 .. code-block:: shell
 
@@ -177,3 +207,6 @@ Finally, update the database:
 
    mangadventure makemigrations
    mangadventure migrate
+
+.. _release tag:
+   https://github.com/mangadventure/MangAdventure/releases/latest

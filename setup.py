@@ -8,10 +8,11 @@ import MangAdventure
 
 try:
     from isort.settings import default
-    default['known_django'] = 'django'
-    default['mangadv'] = 'MangAdventure'
 except ImportError:
     pass
+else:
+    default['known_django'] = 'django'
+    default['mangadv'] = 'MangAdventure'
 
 
 def read(fname):
@@ -40,7 +41,7 @@ setup(
         'pgsql': 'psycopg2',
         'csp': 'django-csp',
         'uwsgi': 'uwsgi',
-        'gunicorn': 'gunicorn'
+        'sentry': 'sentry-sdk',
     },
     entry_points={
         'console_scripts': [

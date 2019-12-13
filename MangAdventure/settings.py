@@ -538,4 +538,21 @@ if DEBUG:
     except ImportError:
         pass
 
+################
+#    Sentry    #
+################
+
+try:
+    from sentry_sdk.hub import init as sentry_init
+    from sentry_sdk.integrations.django import DjangoIntegration
+except ImportError:
+    pass
+else:
+    sentry_init(
+        dsn=env['SENTRY_DSN'],
+        send_default_pii=True,
+        release=f'mangadventure@{VERSION}',
+        integrations=[DjangoIntegration()]
+    )
+
 del BOTS, LOGS_DIR, VERSION

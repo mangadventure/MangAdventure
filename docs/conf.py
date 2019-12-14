@@ -146,6 +146,7 @@ extlinks = {
     'auth': ('https://django-allauth.rtfd.io/en/latest/%s', ''),
     'csp': (f'{_mdn}HTTP/Headers/Content-Security-Policy/%s', ''),
     'status': (f'{_mdn}HTTP/Status/%s', ''),
+    'schema': ('https://schema.org/%s', ''),
 }
 
 

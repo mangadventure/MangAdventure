@@ -1,7 +1,7 @@
 /* global Tablesort */
 
 (function(form, url) {
-  const getSearchParam = param => url.searchParams.get(param);
+  const getSearchParam = param => url.searchParams.get(param) || '';
 
   const regFilter = (arr, reg) => arr.filter(e => !reg.test(e));
 

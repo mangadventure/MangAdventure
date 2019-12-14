@@ -68,7 +68,7 @@ def qsfilter(params: _SearchParams) -> Tuple[Q, List[str]]:
         )
         if len(aliases):
             filters |= Q(aliases__in=aliases)
-    if params['author']:
+    if params.author:
         q = Q(authors__name__icontains=params.author) | \
             Q(artists__name__icontains=params.author)
         authors = AuthorAlias.objects.filter(
@@ -85,7 +85,7 @@ def qsfilter(params: _SearchParams) -> Tuple[Q, List[str]]:
     if params.status != 'any':
         filters &= Q(completed=(params.status == 'completed'))
     categories = params.categories
-    if categories[0]:
+    if params.categories[0]:
         filters &= Q(categories__in=categories[0])
     return filters, categories[1]
 

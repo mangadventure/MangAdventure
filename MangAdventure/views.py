@@ -11,6 +11,7 @@ from api.response import JsonError
 from reader.models import Category, Chapter
 
 from .bad_bots import BOTS
+from .jsonld import breadcrumbs
 from .search import parse, query
 
 if TYPE_CHECKING:
@@ -31,7 +32,11 @@ def index(request: 'HttpRequest') -> HttpResponse:
     """
     latest = Chapter.objects.prefetch_related('groups', 'series') \
         .order_by('-uploaded')[:settings.CONFIG['MAX_RELEASES']:1]
-    return render(request, 'index.html', {'latest_releases': latest})
+    uri = request.build_absolute_uri('/')
+    crumbs = breadcrumbs([('Home', uri)])
+    return render(request, 'index.html', {
+        'latest_releases': latest, 'breadcrumbs': crumbs
+    })
 
 
 def search(request: 'HttpRequest') -> HttpResponse:
@@ -46,14 +51,17 @@ def search(request: 'HttpRequest') -> HttpResponse:
     params = parse(request)
     if any(p in ('q', 'author', 'status') for p in request.GET):
         results = query(params)
+    uri = request.build_absolute_uri(request.path)
+    crumbs = breadcrumbs([('Search', uri)])
     return render(request, 'search.html', {
-        'query': params['query'],
-        'author': params['author'],
-        'status': params['status'],
-        'in_categories': params['categories']['include'],
-        'ex_categories': params['categories']['exclude'],
+        'query': params.query,
+        'author': params.author,
+        'status': params.status,
+        'in_categories': params.categories[0],
+        'ex_categories': params.categories[1],
         'all_categories': Category.objects.all(),
-        'results': results, 'total': len(results or '')
+        'results': results, 'total': len(results or ''),
+        'breadcrumbs': crumbs
     })
 
 

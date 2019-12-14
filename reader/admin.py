@@ -78,7 +78,7 @@ class SeriesAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Series`."""
     inlines = (SeriesAliasInline,)
     form = SeriesAdminForm
-    list_display = ('cover', 'title', 'modified', 'completed')
+    list_display = ('cover_image', 'title', 'modified', 'completed')
     list_display_links = ('title',)
     date_hierarchy = 'modified'
     ordering = ('-modified',)

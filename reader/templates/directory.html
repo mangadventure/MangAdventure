@@ -1,5 +1,8 @@
 {% extends 'layout.html' %}
 {% load cache custom_tags humanize %}
+{% block head_extras %}
+  {{ library|jsonld:'library' }}
+{% endblock %}
 {% block title %}
   <meta name="title" content="Series List">
   <meta name="twitter:title" content="Series List - {{ config.NAME }}">
@@ -30,7 +33,7 @@
                       <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
                          {% if chapter.final %}class="end"{% endif %}>
                         {% if vol > 0 %} Vol. {{ vol }},{% endif %}
-                        Ch. {{ num|floatformat }}: {{ chapter.title }}
+                        Ch. {{ num|stringformat:'g' }}: {{ chapter.title }}
                       </a>
                       <div class="chapter-metadata">
                         {% with groups=chapter.groups.all %}

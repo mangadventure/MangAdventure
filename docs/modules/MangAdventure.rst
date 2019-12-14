@@ -33,6 +33,14 @@ MangAdventure.forms module
    :undoc-members:
    :show-inheritance:
 
+MangAdventure.jsonld module
+---------------------------
+
+.. automodule:: MangAdventure.jsonld
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 MangAdventure.middleware module
 -------------------------------
 

@@ -1,11 +1,14 @@
 """Template tags of the config app."""
 
+from json import dumps
 from os.path import splitext
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Dict, List
 from urllib.parse import urljoin as join
 from urllib.request import urlopen
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.template.defaultfilters import register, slice_filter
+from django.utils.html import format_html, mark_safe
 
 if TYPE_CHECKING:
     from django.db.models.query import QuerySet
@@ -22,6 +25,26 @@ def urljoin(origin: str, pathname: str) -> str:
     :return: The URL joined via :func:`~urllib.parse.urljoin`.
     """
     return join(origin, pathname)
+
+
+@register.filter(is_safe=True)
+def jsonld(value: Dict, element_id: str) -> str:
+    """
+    Generate a JSON-LD script tag.
+
+    :param value: A JSON-LD dictionary.
+    :param element_id: The id of the element.
+
+    :return: An HTML ``<script>`` element.
+
+    .. seealso:: :tag:`json_script template tag <json-script>`
+    """
+    escapes = {ord('>'): '\\u003E', ord('<'): '\\u003C', ord('&'): '\\u0026'}
+    jstr = dumps(value, cls=DjangoJSONEncoder, indent=None, separators=',:')
+    return format_html(
+        '<script id="{}" type="application/ld+json">{}</script>',
+        element_id, mark_safe(jstr.translate(escapes))
+    )
 
 
 @register.filter
@@ -84,4 +107,4 @@ def get_type(link: str) -> str:
         }.get(splitext(link.lower())[-1], 'image/jpeg')
 
 
-__all__ = ['urljoin', 'vslice', 'order_by', 'get_type']
+__all__ = ['urljoin', 'vslice', 'jsonld', 'order_by', 'get_type']

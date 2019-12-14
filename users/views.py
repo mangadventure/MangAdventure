@@ -14,6 +14,8 @@ from django.views.decorators.cache import cache_control
 from allauth.account.models import EmailAddress
 from allauth.account.views import LogoutView
 
+from MangAdventure.jsonld import breadcrumbs
+
 from reader.models import Chapter
 
 from .forms import UserProfileForm
@@ -46,7 +48,11 @@ def profile(request: 'HttpRequest') -> HttpResponse:
             raise Http404  # hide superuser profile from other users
     except IntegrityError:
         raise Http404
-    return render(request, 'profile.html', {'profile': prof})
+    uri = request.build_absolute_uri(request.path)
+    crumbs = breadcrumbs([('User', uri)])
+    return render(request, 'profile.html', {
+        'profile': prof, 'breadcrumbs': crumbs
+    })
 
 
 @login_required
@@ -87,7 +93,15 @@ def edit_user(request: 'HttpRequest') -> HttpResponse:
             last_name=prof.user.last_name,
             bio=prof.bio, avatar=prof.avatar
         )
-    return render(request, 'edit_user.html', {'form': form})
+    url = request.path
+    p_url = url.rsplit('/', 2)[0] + '/'
+    crumbs = breadcrumbs([
+        ('User', request.build_absolute_uri(p_url)),
+        ('Edit', request.build_absolute_uri(url))
+    ])
+    return render(request, 'edit_user.html', {
+        'form': form, 'breadcrumbs': crumbs
+    })
 
 
 @method_decorator(login_required, name='dispatch')
@@ -131,7 +145,15 @@ def bookmarks(request: 'HttpRequest') -> HttpResponse:
         chapters = Chapter.objects.filter(series_id__in=Subquery(
             Bookmark.objects.filter(user_id=uid).values('series')
         )).order_by('-uploaded')
-        return render(request, 'bookmarks.html', {'releases': chapters})
+        url = request.path
+        p_url = url.rsplit('/', 2)[0] + '/'
+        crumbs = breadcrumbs([
+            ('User', request.build_absolute_uri(p_url)),
+            ('Bookmarks', request.build_absolute_uri(url))
+        ])
+        return render(request, 'bookmarks.html', {
+            'releases': chapters, 'breadcrumbs': crumbs
+        })
 
 
 __all__ = ['profile', 'edit_user', 'bookmarks', 'PostOnlyLogoutView']

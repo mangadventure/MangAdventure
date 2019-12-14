@@ -50,7 +50,7 @@
     <h1>
       <a href="{{ curr_chapter.series.get_absolute_url }}">
         {{ curr_chapter.series.title }}
-      </a><br>V{{ vol }} / C{{ num|floatformat }}
+      </a><br>V{{ vol }} / C{{ num|stringformat:'g' }}
     </h1>
   {% endwith %}
   <div id="chapter">
@@ -63,7 +63,7 @@
           <i class="mi mi-down"></i>
           {% with vol=curr_chapter.volume num=curr_chapter.number %}
             <span{% if curr_chapter.final %} class="end"{% endif %}>
-              V{{ vol }} / C{{ num|floatformat }}: {{ curr_chapter.title }}
+              V{{ vol }} / C{{ num|stringformat:'g' }}: {{ curr_chapter.title }}
             </span>
           {% endwith %}
         </a>
@@ -74,7 +74,7 @@
               <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
                  {% if chapter.final %} class="end"{% endif %}>
                 {% with vol=chapter.volume num=chapter.number %}
-                  V{{ vol }} / C{{ num|floatformat }}: {{ chapter.title }}
+                  V{{ vol }} / C{{ num|stringformat:'g' }}: {{ chapter.title }}
                 {% endwith %}
               </a>
             </li>

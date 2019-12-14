@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 from django.http import Http404, FileResponse
 from django.shortcuts import redirect, render
 
+from MangAdventure import jsonld
+
 from .models import Chapter, Page, Series
 
 if TYPE_CHECKING:
@@ -23,7 +25,14 @@ def directory(request: 'HttpRequest') -> 'HttpResponse':
     :return: A response with the rendered ``all_series.html`` template.
     """
     _series = Series.objects.prefetch_related('chapters').order_by('title')
-    return render(request, 'directory.html', {'all_series': _series})
+    uri = request.build_absolute_uri(request.path)
+    crumbs = jsonld.breadcrumbs([('Reader', uri)])
+    library = jsonld.carousel([s.get_absolute_url() for s in _series])
+    return render(request, 'directory.html', {
+        'all_series': _series,
+        'library': library,
+        'breadcrumbs': crumbs
+    })
 
 
 def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
@@ -55,7 +64,47 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
         request.user.is_authenticated and
         request.user.bookmarks.filter(series=_series).exists()
     )
-    return render(request, 'series.html', {'series': _series, 'marked': marked})
+    url = request.path
+    p_url = url.rsplit('/', 2)[0] + '/'
+    uri = request.build_absolute_uri(url)
+    crumbs = jsonld.breadcrumbs([
+        ('Reader', request.build_absolute_uri(p_url)),
+        (_series.title, uri)
+    ])
+    book = jsonld.schema('Book', {
+        'url': uri,
+        'name': _series.title,
+        'abstract': _series.description,
+        'author': [{
+            '@type': 'Person',
+            'name': au.name,
+            'alternateName': [
+                al.alias for al in au.aliases.all()
+            ]
+        } for au in _series.authors.all()],
+        'illustrator': [{
+            '@type': 'Person',
+            'name': ar.name,
+            'alternateName': ar.aliases.all()
+        } for ar in _series.artists.all()],
+        'alternateName': [
+            al.alias for al in _series.aliases.all()
+        ],
+        'genre': [
+            c.name for c in _series.categories.all()
+        ],
+        'creativeWorkStatus': (
+            'Published' if _series.completed else 'Incomplete'
+        ),
+        'dateModified': _series.modified,
+        'bookFormat': 'GraphicNovel',
+    })
+    return render(request, 'series.html', {
+        'series': _series,
+        'marked': marked,
+        'breadcrumbs': crumbs,
+        'book_ld': book
+    })
 
 
 def chapter_page(request: 'HttpRequest', slug: str, vol: int,
@@ -83,13 +132,22 @@ def chapter_page(request: 'HttpRequest', slug: str, vol: int,
         curr_page = all_pages.get(number=page)
     except (Chapter.DoesNotExist, Page.DoesNotExist):
         raise Http404
+    url = request.path
+    p_url = url.rsplit('/', 4)[0] + '/'
+    p2_url = url.rsplit('/', 5)[0] + '/'
+    crumbs = jsonld.breadcrumbs([
+        ('Reader', request.build_absolute_uri(p2_url)),
+        (current.series.title, request.build_absolute_uri(p_url)),
+        (current.title, request.build_absolute_uri(url))
+    ])
     return render(request, 'chapter.html', {
         'all_chapters': chapters.reverse(),
         'curr_chapter': current,
         'next_chapter': current.next,
         'prev_chapter': current.prev,
         'all_pages': all_pages,
-        'curr_page': curr_page
+        'curr_page': curr_page,
+        'breadcrumbs': crumbs
     })
 
 

@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 from django.http import Http404
 from django.shortcuts import render
 
+from MangAdventure.jsonld import breadcrumbs
+
 from .models import Group, Member
 
 if TYPE_CHECKING:
@@ -19,8 +21,11 @@ def all_groups(request: 'HttpRequest') -> 'HttpResponse':
 
     :return: A response with the rendered ``all_groups.html`` template.
     """
+    uri = request.build_absolute_uri(request.path)
+    crumbs = breadcrumbs([('Groups', uri)])
     return render(request, 'all_groups.html', {
-        'groups': Group.objects.all()
+        'groups': Group.objects.all(),
+        'breadcrumbs': crumbs
     })
 
 
@@ -45,8 +50,16 @@ def group(request: 'HttpRequest', g_id: int) -> 'HttpResponse':
     for role in _group.roles.values('member_id').distinct():
         member_ids.append(role['member_id'])
     members = Member.objects.filter(id__in=member_ids)
+    url = request.path
+    p_url = url.rsplit('/', 2)[0] + '/'
+    crumbs = breadcrumbs([
+        ('Groups', request.build_absolute_uri(p_url)),
+        (_group.name, request.build_absolute_uri(url))
+    ])
     return render(request, 'group.html', {
-        'group': _group, 'members': members.order_by('name')
+        'group': _group,
+        'members': members.order_by('name'),
+        'breadcrumbs': crumbs
     })
 
 

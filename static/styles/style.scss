@@ -433,7 +433,7 @@ thead {
   &-bio div { text-indent: 1em }
 }
 
-#comments {
+/* #comments {
   width: 100%;
   &-links {
     padding-top: 0.3em;
@@ -449,7 +449,7 @@ thead {
       border: 1px solid $alter-fg;
     }
   }
-}
+} */
 
 #oauth {
   .provider {
@@ -704,7 +704,7 @@ thead {
 
 #forgot-password { margin-bottom: 3px }
 
-#dropdowns { height: 30px }
+#dropdowns { height: 1.75em }
 
 #search {
   &-options {

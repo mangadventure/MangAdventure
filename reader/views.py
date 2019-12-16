@@ -171,11 +171,6 @@ def chapter_download(request: 'HttpRequest', slug: str,
     """
     View that generates a ``.cbz`` file from a chapter.
 
-    .. admonition:: TODO
-       :class: warning
-
-       Add a download link on the series page.
-
     :param request: The original request.
     :param slug: The slug of the chapter's series.
     :param vol: The volume of the chapter.

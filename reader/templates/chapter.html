@@ -81,6 +81,10 @@
           {% endfor %}
         </ul>
       </div>
+      <a id="download" title="Download chapter"
+        {% with slug=curr_chapter.series.slug vol=curr_chapter.volume num=curr_chapter.number %}
+          href="{% url 'reader:cbz' slug vol num %}"><i class="mi mi-download"></i></a>
+        {% endwith %}
       <div class="dropdown page-list main-bg" aria-haspopup="true">
         <span class="dropdown-title alter-fg">
           Pages <i class="mi mi-down"></i>

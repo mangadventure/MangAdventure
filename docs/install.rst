@@ -15,18 +15,18 @@ Installation
 Install the project
 ^^^^^^^^^^^^^^^^^^^
 
-First, install the following prerequisites:
+First, you will need Python_ (3.6+) and pip_.
 
-* `Python <https://www.python.org/downloads/>`_
-* `pip <https://pip.pypa.io/en/stable/installing/>`_
-* `virtualenv <https://virtualenv.pypa.io/en/latest/installation/>`_
+.. _Python: https://www.python.org/downloads/
 
-Afterwards, set up a virtualenv for MangAdventure with the following commands:
+.. _pip: https://pip.pypa.io/en/stable/installing/
+
+Then, set up a virtualenv for MangAdventure with the following commands:
 
 .. code-block:: shell
 
    # This will install a virtualenv under /var/www/my-site.com/
-   python -m virtualenv /var/www/my-site.com/
+   python3 -m venv /var/www/my-site.com/
 
    # This will activate the virtualenv
    source /var/www/my-site.com/bin/activate
@@ -79,7 +79,6 @@ This command will set up the database for your site.
 
 .. code-block:: shell
 
-   mangadventure makemigrations
    mangadventure migrate
 
 Collect the static files
@@ -197,6 +196,9 @@ Updating
 
 .. code-block:: shell
 
+   # Don't forget to activate the virtualenv
+   source /var/www/my-site.com/bin/activate
+
    pip install -U "git+https://github.com/mangadventure/MangAdventure@{tag}#egg=MangAdventure"
 
 Then, check ``.env.example`` for new variables. If there are any, set them in ``.env``.
@@ -205,7 +207,6 @@ Finally, update the database:
 
 .. code-block:: shell
 
-   mangadventure makemigrations
    mangadventure migrate
 
 .. _release tag:

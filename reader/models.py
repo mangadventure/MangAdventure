@@ -344,7 +344,6 @@ class Chapter(models.Model):
             self.pages.create(number=counter, image=file_path)
         zip_file.close()
         self.file.close()
-        # TODO: option to keep zip file
         remove(self.file.path)
         self.file.delete(save=True)
 

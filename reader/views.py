@@ -4,18 +4,47 @@ from typing import TYPE_CHECKING
 
 from django.http import Http404, FileResponse
 from django.shortcuts import redirect, render
+from django.views.decorators.cache import cache_control
+from django.views.decorators.http import condition
 
 from MangAdventure import jsonld
 
 from .models import Chapter, Page, Series
 
 if TYPE_CHECKING:
+    from typing import Optional
+    from django.db.models import DateTimeField
     from django.http import (
         HttpRequest, HttpResponse,
         HttpResponsePermanentRedirect
     )
 
 
+def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
+            vol: 'Optional[int]' = None, num: 'Optional[float]' = None,
+            page: 'Optional[int]' = None) -> 'Optional[DateTimeField]':
+    try:
+        if slug is None:
+            return Series.objects.only('modified').latest().modified
+        if vol is None:
+            return Series.objects.only('modified').get(slug=slug).modified
+        if num is None:
+            return Chapter.objects.only('modified').filter(
+                series__slug=slug, volume=vol
+            ).latest().modified
+        return Chapter.objects.only('modified').filter(
+            series__slug=slug, volume=vol, number=num
+        ).latest().modified
+    except (Series.DoesNotExist, Chapter.DoesNotExist):
+        return None
+
+
+def _cbz_etag(slug: str, vol: int, num: float) -> str:
+    return '\\W"%x"' % (hash(f'{slug}-{vol}-{num}.cbz') & (1 << 64) - 1)
+
+
+@condition(last_modified_func=_latest)
+@cache_control(max_age=600, must_revalidate=True)
 def directory(request: 'HttpRequest') -> 'HttpResponse':
     """
     View that serves a page which lists all the series.
@@ -35,6 +64,8 @@ def directory(request: 'HttpRequest') -> 'HttpResponse':
     })
 
 
+@condition(last_modified_func=_latest)
+@cache_control(max_age=3600, must_revalidate=True)
 def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
     """
     View that serves the page of a single series.
@@ -107,6 +138,8 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
     })
 
 
+@condition(last_modified_func=_latest)
+@cache_control(max_age=3600, must_revalidate=True)
 def chapter_page(request: 'HttpRequest', slug: str, vol: int,
                  num: float, page: int) -> 'HttpResponse':
     """
@@ -166,6 +199,8 @@ def chapter_redirect(request: 'HttpRequest', slug: str, vol: int,
     return redirect('reader:page', slug, vol, num, 1, permanent=True)
 
 
+@condition(etag_func=_cbz_etag, last_modified_func=_latest)
+@cache_control(public=True, max_age=3600)
 def chapter_download(request: 'HttpRequest', slug: str,
                      vol: int, num: float) -> FileResponse:
     """

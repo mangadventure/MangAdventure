@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from django.http import Http404
 from django.shortcuts import render
+from django.views.decorators.cache import cache_control
 
 from MangAdventure.jsonld import breadcrumbs
 
@@ -13,6 +14,7 @@ if TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
 
+@cache_control(max_age=7200)
 def all_groups(request: 'HttpRequest') -> 'HttpResponse':
     """
      View that serves a page with all the groups.
@@ -29,6 +31,7 @@ def all_groups(request: 'HttpRequest') -> 'HttpResponse':
     })
 
 
+@cache_control(max_age=86400)
 def group(request: 'HttpRequest', g_id: int) -> 'HttpResponse':
     """
      View that serves a single group's page.

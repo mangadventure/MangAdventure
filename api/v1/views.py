@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Subquery
 from django.http import JsonResponse
+from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import last_modified
 
@@ -165,6 +166,7 @@ def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
 @csrf_exempt
 @require_methods_api()
 @last_modified(_latest)
+@cache_control(public=True, max_age=600, must_revalidate=True)
 def all_releases(request: 'HttpRequest') -> JsonResponse:
     """
      View that serves all the releases in a JSON array.
@@ -200,6 +202,7 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
 @csrf_exempt
 @require_methods_api()
 @last_modified(_latest)
+@cache_control(public=True, max_age=600, must_revalidate=True)
 def all_series(request: 'HttpRequest') -> JsonResponse:
     """
      View that serves all the series in a JSON array.
@@ -218,6 +221,7 @@ def all_series(request: 'HttpRequest') -> JsonResponse:
 @csrf_exempt
 @require_methods_api()
 @last_modified(_latest)
+@cache_control(public=True, max_age=600, must_revalidate=True)
 def series(request: 'HttpRequest', slug: str) -> JsonResponse:
     """
      View that serves a single series as a JSON object.
@@ -237,6 +241,7 @@ def series(request: 'HttpRequest', slug: str) -> JsonResponse:
 @csrf_exempt
 @require_methods_api()
 @last_modified(_latest)
+@cache_control(public=True, max_age=600, must_revalidate=True)
 def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
     """
      View that serves a single volume as a JSON object.
@@ -258,6 +263,7 @@ def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
 @csrf_exempt
 @require_methods_api()
 @last_modified(_latest)
+@cache_control(public=True, max_age=600, must_revalidate=True)
 def chapter(request: 'HttpRequest', slug: str,
             vol: int, num: float) -> JsonResponse:
     """
@@ -284,6 +290,7 @@ def _is_author(request: 'HttpRequest') -> bool:
 
 @csrf_exempt
 @require_methods_api()
+@cache_control(public=True, max_age=1800, must_revalidate=True)
 def all_people(request: 'HttpRequest') -> JsonResponse:
     """
      View that serves all the authors/artists in a JSON array.
@@ -301,6 +308,7 @@ def all_people(request: 'HttpRequest') -> JsonResponse:
 
 @csrf_exempt
 @require_methods_api()
+@cache_control(public=True, max_age=1800, must_revalidate=True)
 def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
     """
      View that serves a single author/artist as a JSON object.
@@ -321,6 +329,7 @@ def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
 
 @csrf_exempt
 @require_methods_api()
+@cache_control(public=True, max_age=1800, must_revalidate=True)
 def all_groups(request: 'HttpRequest') -> JsonResponse:
     """
      View that serves all the groups in a JSON array.
@@ -337,6 +346,7 @@ def all_groups(request: 'HttpRequest') -> JsonResponse:
 
 @csrf_exempt
 @require_methods_api()
+@cache_control(public=True, max_age=1800, must_revalidate=True)
 def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
     """
      View that serves a single group as a JSON object.
@@ -356,6 +366,7 @@ def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
 
 @csrf_exempt
 @require_methods_api()
+@cache_control(public=True, max_age=1800, must_revalidate=True)
 def categories(request: 'HttpRequest') -> JsonResponse:
     """
      View that serves all the categories in a JSON array.

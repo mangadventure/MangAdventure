@@ -10,6 +10,7 @@ v0.6.0
 * Added Sentry integration
 * Added chapter download
 * Added table indexes for searching
+* Added ``Cache-Control`` headers
 * Added type hints and docstrings
 * Added auto-generated modules documentation
 * Added ``modules`` Makefile directive

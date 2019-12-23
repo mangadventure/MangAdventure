@@ -56,7 +56,7 @@ def profile(request: 'HttpRequest') -> HttpResponse:
 
 
 @login_required
-@cache_control(private=True, max_age=0)
+@cache_control(no_store=True)
 def edit_user(request: 'HttpRequest') -> HttpResponse:
     """
     View that serves the edit form for a user's profile.
@@ -105,7 +105,7 @@ def edit_user(request: 'HttpRequest') -> HttpResponse:
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(cache_control(private=True, max_age=0), name='dispatch')
+@method_decorator(cache_control(no_store=True), name='dispatch')
 class PostOnlyLogoutView(LogoutView):
     """A :class:`LogoutView` that disallows ``GET`` requests."""
     def get(self, *args, **kwargs) -> HttpResponseNotAllowed:

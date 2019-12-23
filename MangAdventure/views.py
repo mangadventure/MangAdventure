@@ -22,6 +22,7 @@ def _error_context(msg: str, status: int = 500) -> Dict[str, Any]:
     return {'error_message': msg, 'error_status': status}
 
 
+@cache_control(max_age=600, must_revalidate=True)
 def index(request: 'HttpRequest') -> HttpResponse:
     """
     View that serves the index page which shows the latest releases.
@@ -39,6 +40,7 @@ def index(request: 'HttpRequest') -> HttpResponse:
     })
 
 
+@cache_control(max_age=600, must_revalidate=True)
 def search(request: 'HttpRequest') -> HttpResponse:
     """
     View that serves a page used for searching for series.
@@ -65,7 +67,7 @@ def search(request: 'HttpRequest') -> HttpResponse:
     })
 
 
-@cache_control(public=True, max_age=2628000)
+@cache_control(public=True, max_age=2628000, immutable=True)
 def opensearch(request: 'HttpRequest') -> HttpResponse:
     """
     View that serves the ``opensearch.xml`` file.
@@ -87,7 +89,7 @@ def opensearch(request: 'HttpRequest') -> HttpResponse:
     )
 
 
-@cache_control(public=True, max_age=31536000)
+@cache_control(public=True, max_age=31536000, immutable=True)
 def contribute(request: 'HttpRequest') -> HttpResponse:
     """
     View that serves the ``contribute.json`` file.
@@ -99,7 +101,7 @@ def contribute(request: 'HttpRequest') -> HttpResponse:
     return render(request, 'contribute.json', {}, 'application/json')
 
 
-@cache_control(public=True, max_age=2628000)
+@cache_control(public=True, max_age=2628000, immutable=True)
 def robots(request: 'HttpRequest') -> HttpResponse:
     """
     View that serves the ``robots.txt`` file.

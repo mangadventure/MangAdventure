@@ -2,7 +2,7 @@
 <html lang="en-us">{% spaceless %}
   <head>
     {% cache 604800 meta %}
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
       <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="generator" content="MangAdventure v{{ MANGADV_VERSION }}">
@@ -47,6 +47,7 @@
       <meta property="og:determiner" content="">
       <meta property="og:type" content="website">
       <meta property="og:site_name" content="{{ config.NAME }}">
+      <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
       <link href="{{ config.FAVICON }}" rel="shortcut icon" type="{{ config.FAVICON|get_type }}">
       <link href="{% url 'opensearch' %}" rel="search" title="{{ config.NAME }}"
             type="application/opensearchdescription+xml">

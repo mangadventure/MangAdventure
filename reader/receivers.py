@@ -1,4 +1,4 @@
-"""Signal receivers for the users app."""
+"""Signal receivers for the reader app."""
 
 from typing import Type
 

@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING
 
-from django.http import Http404, FileResponse
+from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import condition
@@ -39,8 +39,8 @@ def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
         return None
 
 
-def _cbz_etag(slug: str, vol: int, num: float) -> str:
-    return '\\W"%x"' % (hash(f'{slug}-{vol}-{num}.cbz') & (1 << 64) - 1)
+def _cbz_etag(request: 'HttpRequest', slug: str, vol: int, num: float) -> str:
+    return 'W/"%x"' % (hash(f'{slug}-{vol}-{num}.cbz') & (1 << 64) - 1)
 
 
 @condition(last_modified_func=_latest)

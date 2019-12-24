@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('avatar', models.ImageField(
                     blank=True, help_text="The user's avatar image."
                     " Must be up to 2 MBs.",
-                    storage=storage.OverwriteStorage(),
+                    storage=storage.CDNStorage(),
                     upload_to=_avatar_uploader,
                     validators=(validators.FileSizeValidator(max_mb=2),)
                 )),

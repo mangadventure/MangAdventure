@@ -8,6 +8,7 @@ v0.6.0
 * Dropped support for Django<3.0
 * Dropped support for non-ES6 browsers
 * Added Sentry integration
+* Added Statically image CDN
 * Added chapter download
 * Added table indexes for searching
 * Added ``Cache-Control`` headers

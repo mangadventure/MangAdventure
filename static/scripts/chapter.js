@@ -8,7 +8,6 @@
     );
   }
 
-
   img.src = ph.getAttribute('data-img');
   img.alt = `Page ${ph.getAttribute('data-num')}`;
   img.className = 'chapter-page';
@@ -33,7 +32,7 @@
       location.pathname = location.pathname.replace(/\d+\/$/, `${n}/`);
     });
   });
-  document.body.addEventListener('keyup', (evt) => {
+  document.body.addEventListener('keyup', evt => {
     switch(evt.keyCode) {
       case 37: location.pathname = changePage('prev'); break;
       case 39: location.pathname = changePage('next'); break;

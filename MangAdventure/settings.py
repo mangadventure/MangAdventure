@@ -97,7 +97,6 @@ TEMPLATES = [{
     'OPTIONS': {'context_processors': [
         'django.template.context_processors.request',
         'django.contrib.auth.context_processors.auth',
-        'django.template.context_processors.media',
         'django.contrib.messages.context_processors.messages',
         'config.context_processors.extra_settings',
     ]},
@@ -440,7 +439,7 @@ else:
     CSP_CONNECT_SRC = ("'self'",)
 
     #: Set the :csp:`script-src` CSP directive.
-    CSP_SCRIPT_SRC = ("'self'", "https://cdn.tinymce.com")
+    CSP_SCRIPT_SRC = ("'self'",)
 
     #: Set the :csp:`style-src` CSP directive.
     CSP_STYLE_SRC = (
@@ -453,7 +452,7 @@ else:
     )
 
     #: Set the :csp:`img-src` CSP directive.
-    CSP_IMG_SRC = ("'self'",)
+    CSP_IMG_SRC = ("'self'", "https://cdn.statically.io")
 
     #: Set the :csp:`form-action` CSP directive.
     CSP_FORM_ACTION = ("'self'",)

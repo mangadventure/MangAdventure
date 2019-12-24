@@ -5,7 +5,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const mce_conf = JSON.parse(el.getAttribute('data-tinymce-config'));
     if('replace_icons' in mce_conf) {
       const old_setup = mce_conf.setup;
-      mce_conf.setup = function(editor) {
+      mce_conf.setup = editor => {
         if(typeof old_setup === 'function') old_setup(editor);
         editor.on('init', evt => {
           evt.target.editorContainer.querySelectorAll('i')

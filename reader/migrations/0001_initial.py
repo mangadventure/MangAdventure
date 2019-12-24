@@ -148,7 +148,7 @@ class Migration(migrations.Migration):
                 ('cover', models.ImageField(
                     help_text='Upload a cover image for the series.'
                     ' Its size must not exceed 2 MBs.',
-                    storage=storage.OverwriteStorage(),
+                    storage=storage.CDNStorage(),
                     upload_to=_cover_uploader,
                     validators=(validators.FileSizeValidator(max_mb=2),)
                 )),

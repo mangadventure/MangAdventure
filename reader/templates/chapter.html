@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static custom_tags %}
+{% load static %}
 {% block robots %}
   <meta name="robots" content="nosnippet">
 {% endblock %}
@@ -12,7 +12,7 @@
   <meta name="twitter:card" content="summary">
   {# TODO: is it possible to show multiple creators? #}
   <meta name="twitter:creator" content="{{ chapter.twitter_creator }}">
-  {% with cover=PAGE_URL|urljoin:curr_chapter.series.cover.url %}
+  {% with cover=curr_chapter.series.cover.url %}
     <meta name="twitter:image" content="{{ cover }}">
     <meta property="og:image" content="{{ cover }}">
     <meta name="twitter:image:alt" content="Series Cover">
@@ -112,7 +112,7 @@
                {% endif %}{% if curr_page.number == 1 %}
                  {% if prev_chapter %} data-prev="{{ prev_chapter.get_absolute_url }}"
                  {% else %} data-prev="{{ series_url }}"{% endif %}
-               {% endif %} data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}">
+               {% endif %} data-img="{{ curr_page.image.url }}">
         <i class="mi mi-spin"></i>
       </section>
     {% endwith %}
@@ -120,7 +120,7 @@
             rel="preload" as="script" type="application/javascript">
     </script>
     <noscript>
-      <img src="{{ MEDIA_URL|urljoin:curr_page.image.url }}" rel="preload" as="image"
+      <img src="{{ curr_page.image.url }}" rel="preload" as="image"
            class="chapter-page" alt="Page {{ curr_page.number }}">
     </noscript>
     <section id="controls" class="no-display">

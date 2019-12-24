@@ -80,11 +80,3 @@ users.views module
    :undoc-members:
    :show-inheritance:
 
-users.widgets module
---------------------
-
-.. automodule:: users.widgets
-   :members:
-   :undoc-members:
-   :show-inheritance:
-

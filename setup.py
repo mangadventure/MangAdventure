@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from pathlib import PurePath
 
@@ -12,7 +12,7 @@ except ImportError:
     pass
 else:
     default['known_django'] = 'django'
-    default['mangadv'] = 'MangAdventure'
+    default['known_mangadv'] = 'MangAdventure'
 
 
 def read(fname):

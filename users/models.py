@@ -49,8 +49,9 @@ class UserProfile(models.Model):
     #: The avatar of the user.
     avatar = models.ImageField(
         help_text="The user's avatar image. Must be up to 2 MBs.",
-        validators=(validators.FileSizeValidator(2),), blank=True,
-        storage=storage.OverwriteStorage(), upload_to=_avatar_uploader
+        validators=(validators.FileSizeValidator(2),),
+        storage=storage.CDNStorage((150, 150)),
+        upload_to=_avatar_uploader, blank=True
     )
     #: The user's bookmarks.
     bookmarks = models.ManyToManyField(

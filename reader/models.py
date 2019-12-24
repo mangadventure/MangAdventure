@@ -1,7 +1,8 @@
 """Database models for the reader app."""
 
+from hashlib import shake_128
 from io import BytesIO
-from os import path, remove
+from os import path
 from pathlib import PurePath
 from shutil import rmtree
 from typing import Any, Tuple
@@ -15,9 +16,7 @@ from django.utils.functional import cached_property
 from django.utils.http import http_date
 from django.utils.text import slugify
 
-from PIL import Image
-
-from MangAdventure import storage, validators, utils
+from MangAdventure import storage, utils, validators
 from MangAdventure.models import Alias, AliasField, AliasKeyField
 
 from groups.models import Group
@@ -118,9 +117,9 @@ class Series(models.Model):
         help_text=(
             'Upload a cover image for the series.'
             ' Its size must not exceed 2 MBs.'
-        ), validators=(validators.FileSizeValidator(2),),
-        storage=storage.OverwriteStorage(),
-        upload_to=_cover_uploader
+        ), upload_to=_cover_uploader,
+        validators=(validators.FileSizeValidator(2),),
+        storage=storage.CDNStorage((300, 300))
     )
     #: The authors of the series.
     authors = models.ManyToManyField(Author, blank=True)
@@ -159,8 +158,6 @@ class Series(models.Model):
     def save(self, *args, **kwargs):
         """Save the current instance."""
         self.slug = slugify(self.slug or self.title)
-        if self.cover:
-            self.cover = utils.thumbnail(self.cover, 300)
         super(Series, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -252,7 +249,7 @@ class Chapter(models.Model):
         super(Chapter, self).save(*args, **kwargs)
         if self.file:
             validators.zipfile_validator(self.file)
-            Page.objects.filter(chapter=self).delete()
+            Page.objects.filter(chapter_id=self.id).delete()
             self.unzip()
         self.series.completed = self.final
         self.series.save()
@@ -322,6 +319,7 @@ class Chapter(models.Model):
     def unzip(self):
         """Unzip the chapter and save its images."""
         counter = 0
+        pages = []
         dir_path = path.join(
             'series', self.series.slug,
             str(self.volume), f'{self.number:g}'
@@ -330,21 +328,21 @@ class Chapter(models.Model):
         if path.exists(full_path):
             rmtree(full_path)
         full_path.mkdir(parents=True)
-        zip_file = ZipFile(self.file)
-        name_list = zip_file.namelist()
-        for name in utils.natsort(name_list):
-            if zip_file.getinfo(name).is_dir():
-                continue
-            counter += 1
-            data = zip_file.read(name)
-            filename = f'{counter:03d}{path.splitext(name)[-1]}'
-            file_path = path.join(dir_path, filename)
-            image = Image.open(BytesIO(data))
-            image.save(full_path / filename, quality=100)
-            self.pages.create(number=counter, image=file_path)
-        zip_file.close()
-        self.file.close()
-        remove(self.file.path)
+        with ZipFile(self.file) as zf:
+            for name in utils.natsort(zf.namelist()):
+                if zf.getinfo(name).is_dir():
+                    continue
+                counter += 1
+                data = zf.read(name)
+                sha = shake_128(data).hexdigest(16)
+                filename = sha + path.splitext(name)[-1]
+                file_path = path.join(dir_path, filename)
+                with open(full_path / filename, 'wb') as img:
+                    img.write(data)
+                pages.append(Page(
+                    chapter_id=self.id, number=counter, image=file_path
+                ))
+        self.pages.bulk_create(pages)
         self.file.delete(save=True)
 
     def zip(self) -> BytesIO:
@@ -356,8 +354,10 @@ class Chapter(models.Model):
         buf = BytesIO()
         with ZipFile(buf, 'a', compression=8) as zf:
             for page in self.pages.all():
-                path = page.image.path
-                zf.write(path, path.split('/')[-1])
+                img = page.image.path
+                name = f'{page.number:03d}'
+                ext = path.splitext(img)[-1]
+                zf.write(img, name + ext)
         buf.seek(0)
         return buf
 
@@ -449,6 +449,14 @@ class Chapter(models.Model):
             .format(self.__class__, other.__class__)
         )
 
+    def __hash__(self) -> int:
+        """
+        Return the hash of the object.
+
+        :return: An integer hash value.
+        """
+        return abs(hash(str(self)))
+
 
 class Page(models.Model):
     """A model representing a page."""
@@ -457,7 +465,7 @@ class Page(models.Model):
         Chapter, related_name='pages', on_delete=models.CASCADE
     )
     #: The image of the page.
-    image = models.ImageField()
+    image = models.ImageField(storage=storage.CDNStorage())
     #: The number of the page.
     number = models.PositiveSmallIntegerField()
 
@@ -466,7 +474,7 @@ class Page(models.Model):
 
     @cached_property
     def _file_name(self) -> str:
-        return self.image.name.split('/')[-1]
+        return self.image.name.rsplit('/')[-1]
 
     def get_absolute_url(self) -> str:
         """
@@ -584,6 +592,17 @@ class Page(models.Model):
             "'<' not supported between instances of '{}' and '{}'"
             .format(self.__class__, other.__class__)
         )
+
+    def __hash__(self) -> int:
+        """
+        Return the hash of the object.
+
+        :return: An integer hash value.
+        """
+        name = path.splitext(self._file_name)[0]
+        if len(name) == 32:
+            return int(name, 16)
+        return abs(hash(str(self)))
 
 
 __all__ = [

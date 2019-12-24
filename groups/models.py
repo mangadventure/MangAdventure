@@ -9,8 +9,7 @@ from django.utils.functional import cached_property
 from MangAdventure.models import (
     DiscordNameField, DiscordURLField, RedditField, TwitterField
 )
-from MangAdventure.storage import OverwriteStorage
-from MangAdventure.utils import thumbnail
+from MangAdventure.storage import CDNStorage
 from MangAdventure.validators import FileSizeValidator
 
 
@@ -53,8 +52,8 @@ class Group(models.Model):
     )
     #: The group's logo.
     logo = models.ImageField(
-        blank=True, upload_to=_logo_uploader,
-        storage=OverwriteStorage(), validators=(FileSizeValidator(2),),
+        blank=True, storage=CDNStorage((150, 150)),
+        upload_to=_logo_uploader, validators=(FileSizeValidator(2),),
         help_text="Upload the group's logo. Its size must not exceed 2 MBs.",
     )
 
@@ -94,8 +93,6 @@ class Group(models.Model):
         """Save the current instance."""
         if not self.id:
             self.id = self._increment
-        if self.logo:
-            self.logo = thumbnail(self.logo, 150)
         super(Group, self).save(*args, **kwargs)
 
     def __str__(self) -> str:

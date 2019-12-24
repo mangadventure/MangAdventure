@@ -45,7 +45,7 @@ class FileSizeValidator(BaseValidator):
         if file.size >= self.max_mb << 20:
             _remove_file(file)
             raise ValidationError(
-                message=self.message, code=self.code,
+                self.message, code=self.code,
                 params={'max': self.max_mb}
             )
 
@@ -69,25 +69,27 @@ def zipfile_validator(file: 'File'):
     )
     codes = ('no_multiple_subfolders', 'only_images', 'invalid_format')
     try:
-        zip_file = ZipFile(file)
-    except BadZipfile:
+        zf = ZipFile(file)
+    except BadZipfile as err:
         _remove_file(file)
-        raise ValidationError(message=messages[2], code=codes[2])
-    first_folder = True
-    for f in zip_file.namelist():
-        if zip_file.getinfo(f).is_dir():
-            if first_folder:
-                first_folder = False
-                continue
-            _remove_file(file)
-            raise ValidationError(message=messages[0], code=codes[0])
-        try:
-            data = zip_file.read(f)
-            img = Image.open(BytesIO(data))
-            img.verify()
-        except OSError:
-            _remove_file(file)
-            raise ValidationError(message=messages[1], code=codes[1])
+        raise ValidationError(messages[2], code=codes[2]) from err
+    else:
+        first_folder = True
+        for f in zf.namelist():
+            if zf.getinfo(f).is_dir():
+                if first_folder:
+                    first_folder = False
+                    continue
+                _remove_file(file)
+                raise ValidationError(messages[0], code=codes[0])
+            try:
+                data = BytesIO(zf.read(f))
+                Image.open(data).verify()
+            except Exception as exc:
+                _remove_file(file)
+                raise ValidationError(messages[1], code=codes[1]) from exc
+    finally:
+        zf.close()
 
 
 def discord_server_validator(url: str):

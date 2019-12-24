@@ -75,7 +75,14 @@ class ChapterAdmin(admin.ModelAdmin):
 
 
 class SeriesAdmin(admin.ModelAdmin):
-    """Admin model for :class:`~reader.models.Series`."""
+    """
+    Admin model for :class:`~reader.models.Series`.
+
+    .. admonition:: TODO
+       :class: warning
+
+       Add ability to order by volume & number.
+    """
     inlines = (SeriesAliasInline,)
     form = SeriesAdminForm
     list_display = ('cover_image', 'title', 'modified', 'completed')

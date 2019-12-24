@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static humanize custom_tags %}
+{% load static humanize %}
 {% block head_extras %}
   {% if request.user.is_authenticated %}
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -15,7 +15,7 @@
 {% endblock %}
 {% block image %}
   <meta name="twitter:card" content="summary">
-  {% with cover=PAGE_URL|urljoin:series.cover.url %}
+  {% with cover=series.cover.url %}
     <meta name="twitter:image" content="{{ cover }}">
     <meta property="og:image" content="{{ cover }}">
     <meta name="twitter:image:alt" content="Series Cover">
@@ -36,7 +36,7 @@
 {% block content %}
   <h1 id="series-title" class="text-shadow alter-bg">{{ series.title }}</h1>
   <article id="series">
-    <img src="{{ MEDIA_URL|urljoin:series.cover.name }}" alt="{{ series }} Cover" class="cover">
+    <img src="{{ series.cover.url }}" alt="{{ series }} Cover" class="cover">
     {% if user.is_authenticated %}
       <i class="bookmark-btn mi mi-bookmark{{ marked|yesno:',-o' }}"
          title="{{ marked|yesno:'Unb,B' }}ookmark" data-series="{{ series.id }}"></i>

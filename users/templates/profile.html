@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load cache account custom_tags %}
+{% load cache account %}
 {% user_display request.user as user_display %}
 {% block robots %}
   <meta name="robots" content="noindex">
@@ -36,7 +36,7 @@
       <section id="user-info">
         <div id="user-avatar">
           {% if profile.avatar %}
-            <img src="{{ MEDIA_URL|urljoin:profile.avatar.url }}" alt="{{ user_display }}">
+            <img src="{{ profile.avatar.url }}" alt="{{ user_display }}">
           {% else %}
             <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"  version="1.2" viewBox="0 0 24 24">
               <metadata>Source: https://github.com/stephenhutchings/typicons.font, License: CC-BY-SA</metadata>

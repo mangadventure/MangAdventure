@@ -4,9 +4,13 @@ from typing import Dict, List, Tuple
 
 from django.contrib import admin
 from django.contrib.auth import models
+from django.db.models.functions import Concat as C
+from django.db.models.query import QuerySet, Value as V
+from django.forms.models import ModelForm
+from django.forms.widgets import CheckboxSelectMultiple
 # XXX: Forward reference warning when under TYPE_CHECKING
-from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils.html import format_html
 
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.admin import SocialAppAdmin
@@ -84,7 +88,7 @@ class User(models.User):
 class UserAdmin(admin.ModelAdmin):
     """Admin model for :class:`User`."""
     exclude = ('password', 'groups')
-    list_display = ('username', 'email', 'full_name', 'date_joined')
+    list_display = ('username', '_email', 'full_name', 'date_joined')
     search_fields = ('username', 'email', 'first_name', 'last_name')
     list_filter = (
         boolean_filter('status', 'is_active', ('Active', 'Inactive')),
@@ -92,20 +96,28 @@ class UserAdmin(admin.ModelAdmin):
     )
     ordering = ('username',)
 
-    def full_name(self, obj: models.User) -> str:
+    def _email(self, obj: User) -> str:
+        if not obj.email:
+            return ''
+        return format_html(
+            '<a href="mailto:{0}" rel="noopener noreferrer"'
+            ' target="_blank">{0}</a>', obj.email
+        )
+
+    _email.short_description = 'e-mail address'
+    _email.admin_order_field = 'email'
+
+    def full_name(self, obj: User) -> str:
         """
         Get the full name of the user.
-
-        .. admonition:: TODO
-           :class: warning
-
-           Support last-first name order.
 
         :param obj: A ``User`` model instance.
 
         :return: The user's full name.
         """
-        return f'{obj.first_name} {obj.last_name}'
+        return obj.get_full_name()
+
+    full_name.admin_order_field = C('first_name', V(' '), 'last_name')
 
     def has_add_permission(self, request: 'HttpRequest') -> bool:
         """
@@ -135,9 +147,34 @@ class OAuthApp(SocialApp):
         return f'{self.name} ({self.provider})'
 
 
+class OAuthAppForm(ModelForm):
+    """Admin form for :class:`OAuthApp`."""
+    def __init__(self, *args, **kwargs):
+        super(OAuthAppForm, self).__init__(*args, **kwargs)
+        self.fields['sites'].widget.widget = CheckboxSelectMultiple()
+
+    class Meta:
+        model = OAuthApp
+        fields = '__all__'
+
+
 class OAuthAppAdmin(SocialAppAdmin):
     """Admin model for :class:`OAuthApp`."""
-    list_display = ('name', 'provider', 'client_id')
+    form = OAuthAppForm
+    list_display = ('name', '_provider', 'client_id')
+    radio_fields = {'provider': admin.HORIZONTAL}
+
+    def _provider(self, obj: OAuthApp) -> str:
+        if not obj.provider:
+            return ''
+        return format_html(
+            '<a href="{}{}" rel="noopener noreferrer" target="_blank">{}</a>',
+            'https://django-allauth.readthedocs.io/en/stable/providers.html#',
+            obj.provider, obj.provider.capitalize()
+        )
+
+    _provider.short_description = 'provider'
+    _provider.admin_order_field = 'provider'
 
 
 # class UserComment(Comment):
@@ -162,5 +199,5 @@ admin.site.register(OAuthApp, OAuthAppAdmin)
 
 __all__ = [
     'UserTypeFilter', 'User', 'UserAdmin',
-    'OAuthApp', 'OAuthAppAdmin'
+    'OAuthApp', 'OAuthAppForm', 'OAuthAppAdmin'
 ]

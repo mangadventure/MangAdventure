@@ -3,7 +3,7 @@
 from typing import Optional, Tuple
 
 from django.contrib import admin
-from django.forms import CheckboxSelectMultiple, ModelForm
+from django.db.models.query import Q, QuerySet
 # XXX: Forward reference warning when under TYPE_CHECKING
 from django.http import HttpRequest
 
@@ -13,17 +13,6 @@ from .models import (
     Artist, ArtistAlias, Author, AuthorAlias,
     Category, Chapter, Series, SeriesAlias
 )
-
-
-class SeriesAdminForm(ModelForm):
-    """Admin form for :class:`~reader.models.Series`."""
-    def __init__(self, *args, **kwargs):
-        super(SeriesAdminForm, self).__init__(*args, **kwargs)
-        self.fields['categories'].widget.widget = CheckboxSelectMultiple()
-
-    class Meta:
-        model = Series
-        fields = '__all__'
 
 
 class SeriesAliasInline(admin.StackedInline):
@@ -47,7 +36,10 @@ class ArtistAliasInline(admin.StackedInline):
 class ChapterAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Chapter`."""
     date_hierarchy = 'uploaded'
-    list_display = ('preview', 'title', 'uploaded', 'modified', 'final')
+    list_display = (
+        'preview', 'title', 'volume', '_number',
+        'uploaded', 'modified', 'final'
+    )
     list_display_links = ('title',)
     ordering = ('-modified',)
     search_fields = ('title', 'series__title')
@@ -58,7 +50,14 @@ class ChapterAdmin(admin.ModelAdmin):
             'status', 'final', ('Final', 'Not final')
         )
     )
+    actions = ('toggle_final',)
     empty_value_display = 'N/A'
+
+    def _number(self, obj: Chapter) -> str:
+        return f'{obj.number:g}'
+
+    _number.short_description = 'number'
+    _number.admin_order_field = 'number'
 
     def preview(self, obj: Chapter) -> str:
         """
@@ -73,23 +72,27 @@ class ChapterAdmin(admin.ModelAdmin):
             return ''
         return utils.img_tag(page.image, 'preview', height=50)
 
+    def toggle_final(self, request: 'HttpRequest', queryset: 'QuerySet'):
+        """
+        Toggle the status of the selected chapters.
+
+        :param request: The original request.
+        :param queryset: The original queryset.
+        """
+        queryset.update(final=Q(final=False))
+
+    toggle_final.short_description = 'Toggle status of selected chapters'
+
 
 class SeriesAdmin(admin.ModelAdmin):
-    """
-    Admin model for :class:`~reader.models.Series`.
-
-    .. admonition:: TODO
-       :class: warning
-
-       Add ability to order by volume & number.
-    """
+    """Admin model for :class:`~reader.models.Series`."""
     inlines = (SeriesAliasInline,)
-    form = SeriesAdminForm
     list_display = ('cover_image', 'title', 'modified', 'completed')
     list_display_links = ('title',)
     date_hierarchy = 'modified'
     ordering = ('-modified',)
     search_fields = ('title',)
+    autocomplete_fields = ('categories',)
     list_filter = (
         ('authors', filters.related_filter('author')),
         ('artists', filters.related_filter('artist')),
@@ -98,6 +101,7 @@ class SeriesAdmin(admin.ModelAdmin):
             'status', 'completed', ('Completed', 'Ongoing')
         )
     )
+    actions = ('toggle_completed',)
     empty_value_display = 'N/A'
 
     def cover_image(self, obj: Series) -> str:
@@ -111,6 +115,17 @@ class SeriesAdmin(admin.ModelAdmin):
         return utils.img_tag(obj.cover, 'cover', height=75)
 
     cover_image.short_description = 'cover'
+
+    def toggle_completed(self, request: 'HttpRequest', queryset: 'QuerySet'):
+        """
+        Toggle the status of the selected series.
+
+        :param request: The original request.
+        :param queryset: The original queryset.
+        """
+        queryset.update(completed=Q(completed=False))
+
+    toggle_completed.short_description = 'Toggle status of selected series'
 
 
 class AuthorAdmin(admin.ModelAdmin):
@@ -176,8 +191,7 @@ admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Category, CategoryAdmin)
 
 __all__ = [
-    'SeriesAdminForm', 'SeriesAliasInline',
-    'AuthorAliasInline', 'ArtistAliasInline',
-    'ChapterAdmin', 'SeriesAdmin', 'AuthorAdmin',
-    'ArtistAdmin', 'CategoryAdmin'
+    'SeriesAliasInline', 'AuthorAliasInline',
+    'ArtistAliasInline', 'ChapterAdmin', 'SeriesAdmin',
+    'AuthorAdmin', 'ArtistAdmin', 'CategoryAdmin'
 ]

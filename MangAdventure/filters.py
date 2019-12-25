@@ -23,13 +23,13 @@ def title_filter(title: str, klass: Type[FieldListFilter] =
 
     :return: A class that inherits from ``klass``.
     """
-    class Wrapper(klass):
+    class _GenericFilter(klass):
         def __new__(cls, *args, **kwargs):
-            instance = super(Wrapper, cls).create(*args, **kwargs)
+            instance = super(_GenericFilter, cls).create(*args, **kwargs)
             instance.title = title
             return instance
 
-    return Wrapper
+    return _GenericFilter
 
 
 def boolean_filter(title: str, param: str, names:
@@ -43,12 +43,12 @@ def boolean_filter(title: str, param: str, names:
 
     :return: A class that inherits from :class:`SimpleListFilter`.
     """
-    class Wrapper(SimpleListFilter):
+    class _BooleanFilter(SimpleListFilter):
         def __init__(self, *args, **kwargs):
             self.names = names
             self.title = title
             self.parameter_name = param
-            super(Wrapper, self).__init__(*args, **kwargs)
+            super(_BooleanFilter, self).__init__(*args, **kwargs)
 
         def lookups(self, request, model_admin):
             return (
@@ -62,7 +62,7 @@ def boolean_filter(title: str, param: str, names:
                 'False': queryset.filter(**{self.parameter_name: False})
             }.get(self.value(), queryset)
 
-    return Wrapper
+    return _BooleanFilter
 
 
 related_filter = partial(title_filter, klass=RelatedFieldListFilter)

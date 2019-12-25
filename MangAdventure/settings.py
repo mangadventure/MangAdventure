@@ -206,11 +206,11 @@ STATIC_ROOT = BASE_DIR / 'static'
 #: A list of directories containing static files.
 #: See :setting:`STATICFILES_DIRS`.
 STATICFILES_DIRS = [
-    ('styles', STATIC_ROOT / 'styles'),
-    ('scripts', STATIC_ROOT / 'scripts'),
-    ('COMPILED', STATIC_ROOT / 'COMPILED'),
-    ('extra', STATIC_ROOT / 'extra'),
-    ('vendor', STATIC_ROOT / 'vendor'),
+    ('styles', str(STATIC_ROOT / 'styles')),
+    ('scripts', str(STATIC_ROOT / 'scripts')),
+    ('COMPILED', str(STATIC_ROOT / 'COMPILED')),
+    ('extra', str(STATIC_ROOT / 'extra')),
+    ('vendor', str(STATIC_ROOT / 'vendor')),
 ]
 
 #: URL that handles the media served from :const:`MEDIA_ROOT`.

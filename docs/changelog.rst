@@ -11,6 +11,7 @@ v0.6.0
 * Added Statically image CDN
 * Added chapter download
 * Added table indexes for searching
+* Added links & actions to admin interface
 * Added ``Cache-Control`` headers
 * Added type hints and docstrings
 * Added auto-generated modules documentation

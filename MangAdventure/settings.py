@@ -136,11 +136,6 @@ LOGS_DIR = BASE_DIR / 'logs'
 LOGS_DIR.mkdir(exist_ok=True)
 
 #: Logging configuration dictionary. See :setting:`LOGGING`.
-#:
-#: .. admonition:: TODO
-#:    :class: warning
-#:
-#:    Logging should be improved.
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

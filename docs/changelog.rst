@@ -15,6 +15,7 @@ v0.6.0
 * Added type hints and docstrings
 * Added auto-generated modules documentation
 * Added ``modules`` Makefile directive
+* Converted multi-method views to class-based
 * Restructured ``utils``
 * Removed unused stuff
 

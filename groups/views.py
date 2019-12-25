@@ -44,11 +44,11 @@ def group(request: 'HttpRequest', g_id: int) -> 'HttpResponse':
     :raises Http404: If the group does not exist.
     """
     if g_id == 0:
-        raise Http404
+        raise Http404('Group ID cannot be 0')
     try:
         _group = Group.objects.get(id=g_id)
-    except Group.DoesNotExist:
-        raise Http404
+    except Group.DoesNotExist as e:
+        raise Http404 from e
     member_ids = []
     for role in _group.roles.values('member_id').distinct():
         member_ids.append(role['member_id'])

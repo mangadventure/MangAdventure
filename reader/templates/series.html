@@ -39,7 +39,8 @@
     <img src="{{ series.cover.url }}" alt="{{ series }} Cover" class="cover">
     {% if user.is_authenticated %}
       <i class="bookmark-btn mi mi-bookmark{{ marked|yesno:',-o' }}"
-         title="{{ marked|yesno:'Unb,B' }}ookmark" data-series="{{ series.id }}"></i>
+         title="{{ marked|yesno:'Unb,B' }}ookmark" data-series="{{ series.id }}"
+         data-target="{% url 'user_bookmarks' %}"></i>
     {% endif %}
     <div id="series-info">
       {% with aliases=series.aliases.all %}

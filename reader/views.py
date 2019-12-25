@@ -84,8 +84,8 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
         _series = Series.objects.prefetch_related(
             'chapters__groups', 'artists', 'categories', 'authors', 'aliases'
         ).get(slug=slug)
-    except Series.DoesNotExist:
-        raise Http404
+    except Series.DoesNotExist as e:
+        raise Http404 from e
     if not (request.user.is_staff or _series.chapters.count()):
         return render(request, 'error.html', {
             'error_message': 'Sorry. This series is not yet available.',
@@ -156,15 +156,15 @@ def chapter_page(request: 'HttpRequest', slug: str, vol: int,
     :raises Http404: If there is no matching chapter or page.
     """
     if page == 0:
-        raise Http404
+        raise Http404('Page cannot be 0')
     chapters = Chapter.objects.filter(series__slug=slug)
     try:
         current = chapters.select_related('series') \
             .prefetch_related('pages').get(volume=vol, number=num)
         all_pages = current.pages.all()
         curr_page = all_pages.get(number=page)
-    except (Chapter.DoesNotExist, Page.DoesNotExist):
-        raise Http404
+    except (Chapter.DoesNotExist, Page.DoesNotExist) as e:
+        raise Http404 from e
     url = request.path
     p_url = url.rsplit('/', 4)[0] + '/'
     p2_url = url.rsplit('/', 5)[0] + '/'
@@ -217,8 +217,8 @@ def chapter_download(request: 'HttpRequest', slug: str,
         _chapter = Chapter.objects.get(
             series__slug=slug, volume=vol, number=num
         )
-    except Chapter.DoesNotExist:
-        raise Http404
+    except Chapter.DoesNotExist as e:
+        raise Http404 from e
     mime = 'application/vnd.comicbook+zip'
     name = '{0.series} - v{0.volume} c{0.number:g}.cbz'.format(_chapter)
     return FileResponse(
@@ -230,10 +230,10 @@ def chapter_download(request: 'HttpRequest', slug: str,
 # def chapter_comments(request, slug, vol, num):
 #     try:
 #         chapter = Chapter.objects.get(
-#             series__slug=slug, volume=int(vol), number=float(num)
+#             series__slug=slug, volume=vol, number=num
 #         )
-#     except (ValueError, TypeError, Chapter.DoesNotExist):
-#         raise Http404
+#     except Chapter.DoesNotExist as e:
+#         raise Http404 from e
 #     return render(request, 'comments.html', {'chapter': chapter})
 
 

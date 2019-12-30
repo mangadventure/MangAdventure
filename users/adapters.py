@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
     from allauth.socialaccount.models import SocialAccount
 

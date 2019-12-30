@@ -22,5 +22,6 @@ class Migration(migrations.Migration):
                 ), storage=CDNStorage((150, 150)),
                 upload_to=users.models._avatar_uploader,
                 validators=[FileSizeValidator(2)])
-        )
+        ),
+        migrations.RemoveField(model_name='userprofile', name='bookmarks')
     ]

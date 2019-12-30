@@ -31,6 +31,9 @@ PKG-INFO
 _build/
 _templates/
 
+# Coverage stuff
+htmlcov/
+
 # Editor stuff
 .idea/
 .settings/

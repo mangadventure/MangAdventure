@@ -53,11 +53,6 @@ class UserProfile(models.Model):
         storage=storage.CDNStorage((150, 150)),
         upload_to=_avatar_uploader, blank=True
     )
-    #: The user's bookmarks.
-    bookmarks = models.ManyToManyField(
-        Bookmark, related_name='profile', blank=True,
-        help_text="The user's bookmarked series."
-    )
 
     def get_directory(self) -> PurePath:
         """

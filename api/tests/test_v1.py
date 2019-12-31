@@ -7,7 +7,6 @@ from django.urls import reverse
 from pytest import mark
 
 from api.response import JsonError
-from api.v1 import apps
 from groups.models import Group, Member, Role
 
 from . import APITestBase
@@ -241,7 +240,3 @@ class TestInvalid(APIViewTestBase):
         url = reverse('api:v1:all_series')
         r = self.client.post(url)
         assert r.status_code == 405
-
-
-def test_api_config():
-    assert apps.ApiV1Config.name == "api.v1"

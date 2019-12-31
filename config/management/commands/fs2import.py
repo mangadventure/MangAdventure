@@ -10,7 +10,7 @@ from django.core.management import BaseCommand
 from groups.models import Group
 from reader.models import Chapter, Page, Series
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from argparse import ArgumentParser
     from typing import List
     Elem = et.Element

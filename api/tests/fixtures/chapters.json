@@ -1,0 +1,1 @@
+[{"model": "reader.chapter", "pk": 1, "fields": {"title": "my chapter", "number": 0.0, "volume": 1, "series": 1, "file": "", "final": false, "uploaded": "2019-12-31T13:36:20.264Z", "modified": "2019-12-31T13:36:20.264Z", "groups": [1]}}]

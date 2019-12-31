@@ -1,6 +1,6 @@
 """The views of the api.v1 app."""
 
-from typing import TYPE_CHECKING, Dict, Optional, Iterable
+from typing import TYPE_CHECKING, Dict, Iterable, Optional
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist

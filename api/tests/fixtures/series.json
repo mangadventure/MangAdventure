@@ -1,0 +1,38 @@
+[
+  {
+    "model": "reader.series",
+    "pk": 1,
+    "fields": {
+      "title": "Test Series",
+      "slug": "test-series",
+      "description": "",
+      "cover": "series/test-series/cover.png",
+      "completed": false,
+      "modified": "2019-12-30T13:58:18.645Z",
+      "authors": [
+        1
+      ],
+      "artists": [
+        1
+      ],
+      "categories": [
+        "adventure"
+      ]
+    }
+  },
+  {
+    "model": "reader.series",
+    "pk": 2,
+    "fields": {
+      "title": "Test Series 2",
+      "slug": "test-series-2",
+      "description": "",
+      "cover": "series/test-series/cover.png",
+      "completed": false,
+      "modified": "2019-12-30T13:58:18.645Z",
+      "authors": [],
+      "artists": [],
+      "categories": []
+    }
+  }
+]

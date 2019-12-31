@@ -1,21 +1,23 @@
 """FoolSlide2 importer."""
 
+from io import StringIO
 from os.path import abspath, join
 from typing import TYPE_CHECKING
-from xml.etree import cElementTree as et
+from xml.etree import cElementTree as eT
 
 from django.core.files import File
-from django.core.management import BaseCommand
+from django.core.management import BaseCommand, CommandError, call_command
+from django.db.utils import IntegrityError
 
 from groups.models import Group
 from reader.models import Chapter, Page, Series
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from argparse import ArgumentParser
     from typing import List
-    Elem = et.Element
-    Tree = et.ElementTree
-    Trees = List[et.ElementTree]
+    Elem = eT.Element
+    Tree = eT.ElementTree
+    Trees = List[eT.ElementTree]
 
 
 class Command(BaseCommand):
@@ -36,6 +38,10 @@ class Command(BaseCommand):
             'data', type=str,
             help="The path to FS2's exported data (in XML format)."
         )
+        parser.add_argument(
+            '-y', '--yes', action='store_true',
+            help="Flag to disable the database wipe prompt."
+        )
 
     def handle(self, *args: str, **options: str):
         """
@@ -44,9 +50,10 @@ class Command(BaseCommand):
         :param args: The arguments of the command.
         :param options: The options of the command.
         """
+        call_command('migrate', stdout=StringIO())  # Set up database
         root = abspath(options['root'])
         data = abspath(options['data'])
-        tables = et.parse(data).findall('database/table')
+        tables = eT.parse(data).findall('database/table')
         content = join(root, 'content', 'comics')
         directories = {'series': [], 'chapters': []}
         elements = {
@@ -56,6 +63,21 @@ class Command(BaseCommand):
             'groups': self._get_element(tables, 'teams')
         }
 
+        if not options['yes']:  # pragma: no cover
+            self._print_warning('Importing FoolSlide2 data requires an empty '
+                                'database. ')
+            self._print_warning('This calls for an IRREVERSIBLE destruction of '
+                                'all data currently in the database,\n'
+                                'and return each table to an empty state.')
+            self._print_warning('Are you sure you want to do this?\n')
+            prompt = "    Type 'yes' to continue, or 'no' to cancel: "
+            answer = input(prompt)
+            if answer != 'yes':
+                self._print('Import cancelled.')
+                return
+        call_command('flush', '--no-input')
+
+        self._print(f'Importing {self._sql_name("Groups")}...')
         all_groups = []
         for g in elements['groups']:
             group = Group(
@@ -65,9 +87,15 @@ class Command(BaseCommand):
                 twitter=self._get_column(g, 'twitter'),
                 irc=self._get_column(g, 'irc')
             )
+            self._print(f'- Found {self._sql_name("Group")}: {group}')
             all_groups.append(group)
-        Group.objects.bulk_create(all_groups)
+        try:
+            Group.objects.bulk_create(all_groups)
+            self._print_success('Groups successfully imported.')
+        except IntegrityError as e:  # pragma: no cover
+            raise CommandError(f'Failed to insert Groups: {e}')
 
+        self._print(f'Importing {self._sql_name("Series")}...')
         all_series = []
         for s in elements['series']:
             slug = self._get_column(s, 'stub')
@@ -76,19 +104,24 @@ class Command(BaseCommand):
                 title=self._get_column(s, 'name'),
                 description=self._get_column(s, 'description'),
             )
+            self._print(f'- Found {self._sql_name("Series")}: {series}')
             thumb = self._get_column(s, 'thumbnail')
-            series_dir = join(content, '{slug}_{uniqid}'.format(
-                slug=slug, uniqid=self._get_column(s, 'uniqid')
-            ))
-            cover = join(series_dir, f'thumb_{thumb}')
+            series_dir = join(content,
+                              f'{slug}_{self._get_column(s, "uniqid")}')
+            cover = join(series_dir, thumb)
             with open(cover, 'rb') as f:
                 series.cover.save(thumb, File(f), save=False)
             all_series.append(series)
             directories['series'].append(
                 (self._get_column(s, 'id'), series_dir)
             )
-        Series.objects.bulk_create(all_series)
+        try:
+            Series.objects.bulk_create(all_series)
+            self._print_success('Series successfully imported.')
+        except IntegrityError as e:  # pragma: no cover
+            raise CommandError(f'Failed to insert Series: {e}')
 
+        self._print(f'Importing {self._sql_name("Chapters")}...')
         all_chapters = []
         chapter_groups = []
         groups_through = Chapter.groups.through
@@ -105,6 +138,7 @@ class Command(BaseCommand):
                 title=self._get_column(c, 'name'),
                 volume=volume, number=number
             )
+            print(f'- Found {self._sql_name("Chapter")}: {chapter}')
             gid = self._get_column(c, 'team_id')
             if gid:
                 chapter_groups.append(
@@ -118,9 +152,14 @@ class Command(BaseCommand):
                 ))
             ))
             all_chapters.append(chapter)
-        Chapter.objects.bulk_create(all_chapters)
-        groups_through.objects.bulk_create(chapter_groups)
+        try:
+            Chapter.objects.bulk_create(all_chapters)
+            groups_through.objects.bulk_create(chapter_groups)
+            self._print_success('Chapters successfully imported.')
+        except IntegrityError as e:  # pragma: no cover
+            raise CommandError(f'Failed to insert Chapters: {e}')
 
+        self._print(f'Importing {self._sql_name("Pages")}...')
         all_pages = []
         page_numbers = {}
         for p in self._sort_children(elements['pages'], 'filename'):
@@ -128,27 +167,45 @@ class Command(BaseCommand):
             cid = self._get_column(p, 'chapter_id')
             page_numbers[cid] = page_numbers.get(cid, 0) + 1
             page = Page(id=pid, chapter_id=cid, number=page_numbers[cid])
+            self._print(f'- Found {self._sql_name("Page")}: {page}')
             _dir = next(d[1] for d in directories['chapters'] if d[0] == cid)
             fname = self._get_column(p, 'filename')
             with open(join(_dir, fname), 'rb') as f:
                 page.image.save(fname, File(f), save=False)
             all_pages.append(page)
-        Page.objects.bulk_create(all_pages)
+        try:
+            Page.objects.bulk_create(all_pages)
+            self._print_success('Chapter pages successfully imported.')
+        except IntegrityError as e:  # pragma: no cover
+            raise CommandError(f'Failed to insert Pages: {e}')
+        self._print_success('Successfully imported FoolSlide2 data.')
 
-        @staticmethod
-        def _get_element(tables: 'Tree', name: str) -> 'Trees':
-            return list(filter(
-                lambda t: t.attrib['name'].endswith(name), tables
-            ))
+    @staticmethod
+    def _get_element(tables: 'Trees', name: str) -> 'Trees':
+        return list(filter(
+            lambda t: t.attrib['name'].endswith(name), tables
+        ))
 
-        @staticmethod
-        def _get_column(table: 'Elem', name: str) -> str:
-            text = table.find(f'column[@name="{name}"]').text
-            return text if text is not None else ''
+    @staticmethod
+    def _get_column(table: 'Tree', name: str) -> str:
+        text = table.find(f'column[@name="{name}"]').text
+        return text if text is not None else ''
 
-        @staticmethod
-        def _sort_children(tables: 'Tree', name: str) -> 'Trees':
-            return sorted(tables, key=lambda p: _get_column(p, name))
+    @staticmethod
+    def _sort_children(tables: 'Trees', name: str) -> 'Trees':
+        return sorted(tables, key=lambda p: Command._get_column(p, name))
+
+    def _print(self, text: str, **kwargs):
+        self.stdout.write(text, **kwargs)
+
+    def _print_success(self, text: str, **kwargs):
+        self._print(self.style.SUCCESS(text), **kwargs)
+
+    def _print_warning(self, text: str, **kwargs):  # pragma: no cover
+        self._print(self.style.WARNING(text), **kwargs)
+
+    def _sql_name(self, name: str) -> str:
+        return self.style.SQL_TABLE(name)
 
 
 __all__ = ['Command']

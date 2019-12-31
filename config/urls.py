@@ -3,7 +3,7 @@
 from django.contrib.flatpages.views import flatpage
 from django.urls import path
 
-try:
+try:  # pragma: no cover
     from csp.decorators import csp_update
     info_page = csp_update(
         style_src="'unsafe-inline'", img_src="https:"

@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pma_xml_export version="1.0" xmlns:pma="http://www.phpmyadmin.net/some_doc_url/">
+  <pma:structure_schemas>
+    <pma:database name="DjuupcfBPK" collation="latin1_swedish_ci" charset="latin1">
+      <pma:table name="fs_chapters">
+        CREATE TABLE `fs_chapters` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `comic_id` int(11) NOT NULL,
+        `team_id` int(11) NOT NULL,
+        `joint_id` int(11) NOT NULL,
+        `chapter` int(11) NOT NULL,
+        `subchapter` int(11) NOT NULL,
+        `volume` int(11) NOT NULL,
+        `language` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
+        `name` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `stub` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `uniqid` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+        `hidden` int(11) NOT NULL,
+        `description` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
+        `thumbnail` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
+        `created` datetime NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `lastseen` timestamp NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `updated` datetime NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `creator` int(11) NOT NULL,
+        `editor` int(11) NOT NULL,
+        PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+      </pma:table>
+      <pma:table name="fs_comics">
+        CREATE TABLE `fs_comics` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `name` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `stub` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `uniqid` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `hidden` int(11) NOT NULL,
+        `description` text COLLATE utf8_unicode_ci NOT NULL,
+        `thumbnail` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
+        `created` datetime NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `lastseen` timestamp NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `updated` datetime NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `creator` int(11) NOT NULL,
+        `editor` int(11) NOT NULL,
+        PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+      </pma:table>
+      <pma:table name="fs_memberships">
+        CREATE TABLE `fs_memberships` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `team_id` int(11) NOT NULL,
+        `user_id` int(11) NOT NULL,
+        `is_leader` int(11) NOT NULL,
+        `accepted` int(11) NOT NULL,
+        `requested` int(11) NOT NULL,
+        `applied` int(11) NOT NULL,
+        `created` datetime NOT NULL,
+        `updated` datetime NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `team_id` (`team_id`),
+        KEY `user_id` (`user_id`),
+        KEY `is_leader` (`is_leader`),
+        KEY `accepted` (`accepted`),
+        KEY `requested` (`requested`),
+        KEY `applied` (`applied`),
+        KEY `created` (`created`),
+        KEY `updated` (`updated`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+      </pma:table>
+      <pma:table name="fs_pages">
+        CREATE TABLE `fs_pages` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `chapter_id` int(11) NOT NULL,
+        `filename` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `hidden` int(11) NOT NULL,
+        `description` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
+        `thumbnail` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
+        `created` datetime NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `lastseen` timestamp NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `updated` datetime NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `creator` int(11) NOT NULL,
+        `editor` int(11) NOT NULL,
+        `height` int(11) NOT NULL,
+        `width` int(11) NOT NULL,
+        `mime` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+        `grayscale` int(11) NOT NULL,
+        `thumbheight` int(11) NOT NULL,
+        `thumbwidth` int(11) NOT NULL,
+        `size` int(11) NOT NULL,
+        `thumbsize` int(11) NOT NULL,
+        PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+      </pma:table>
+      <pma:table name="fs_preferences">
+        CREATE TABLE `fs_preferences` (
+        `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+        `value` varchar(2048) COLLATE utf8_unicode_ci NOT NULL,
+        `group` int(11) NOT NULL,
+        PRIMARY KEY (`name`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+      </pma:table>
+      <pma:table name="fs_teams">
+        CREATE TABLE `fs_teams` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `name` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `stub` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `url` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
+        `forum` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
+        `irc` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `twitter` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+        `facebook` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
+        `facebookid` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
+        `created` datetime NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `lastseen` timestamp NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `updated` datetime NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `creator` int(11) NOT NULL,
+        `editor` int(11) NOT NULL,
+        PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+      </pma:table>
+    </pma:database>
+  </pma:structure_schemas>
+  <database name="DjuupcfBPK">
+    <table name="fs_chapters">
+      <column name="id">1</column>
+      <column name="comic_id">1</column>
+      <column name="team_id">1</column>
+      <column name="joint_id">0</column>
+      <column name="chapter">1</column>
+      <column name="subchapter">0</column>
+      <column name="volume">1</column>
+      <column name="language">en</column>
+      <column name="name">Test</column>
+      <column name="stub">1-0-test</column>
+      <column name="uniqid">5c757cceb87cc</column>
+      <column name="hidden">0</column>
+      <column name="description"></column>
+      <column name="thumbnail"></column>
+      <column name="created">2019-02-26 17:52:20</column>
+      <column name="lastseen">1970-01-01 00:00:00</column>
+      <column name="updated">2019-02-26 18:14:40</column>
+      <column name="creator">1</column>
+      <column name="editor">1</column>
+    </table>
+    <table name="fs_comics">
+      <column name="id">1</column>
+      <column name="name">Test</column>
+      <column name="stub">testo</column>
+      <column name="uniqid">5c757683a638f</column>
+      <column name="hidden">0</column>
+      <column name="description">AAAAAAAAAAAAAAA</column>
+      <column name="thumbnail">cover.jpg</column>
+      <column name="created">2019-02-26 17:25:28</column>
+      <column name="lastseen">1970-01-01 00:00:00</column>
+      <column name="updated">2019-02-26 18:10:40</column>
+      <column name="creator">1</column>
+      <column name="editor">1</column>
+    </table>
+    <table name="fs_memberships">
+      <column name="id">1</column>
+      <column name="team_id">1</column>
+      <column name="user_id">1</column>
+      <column name="is_leader">1</column>
+      <column name="accepted">1</column>
+      <column name="requested">1</column>
+      <column name="applied">1</column>
+      <column name="created">2019-02-26 18:37:30</column>
+      <column name="updated">2019-02-26 18:37:30</column>
+    </table>
+    <table name="fs_pages">
+      <column name="id">1</column>
+      <column name="chapter_id">1</column>
+      <column name="filename">test-1.jpg</column>
+      <column name="hidden">0</column>
+      <column name="description">test-1.jpg</column>
+      <column name="thumbnail">test-1.jpg</column>
+      <column name="created">1970-01-01 00:00:00</column>
+      <column name="lastseen">1970-01-01 00:00:00</column>
+      <column name="updated">1970-01-01 00:00:00</column>
+      <column name="creator">1</column>
+      <column name="editor">1</column>
+      <column name="height">1304</column>
+      <column name="width">900</column>
+      <column name="mime">image/jpeg</column>
+      <column name="grayscale">1</column>
+      <column name="thumbheight">1304</column>
+      <column name="thumbwidth">900</column>
+      <column name="size">381172</column>
+      <column name="thumbsize">381172</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_ads_bottom_banner</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_ads_bottom_banner_active</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_ads_bottom_banner_reload</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_ads_left_banner</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_ads_left_banner_active</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_ads_left_banner_reload</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_ads_top_banner</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_ads_top_banner_active</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_ads_top_banner_reload</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_cron_autoupgrade</column>
+      <column name="value">1551204891</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_cron_autoupgrade_version</column>
+      <column name="value">0</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_dl_archive_max</column>
+      <column name="value">350</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_dl_enabled</column>
+      <column name="value">0</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_gen_anon_team_show</column>
+      <column name="value">1</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_gen_back_url</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_gen_default_lang</column>
+      <column name="value">en</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_gen_default_team</column>
+      <column name="value">Anonymous</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_gen_footer_text</column>
+      <column name="value">If you liked any of the manga you obtained here, consider buying the original versions, or the local translation, where available. Thanks for your support.</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_gen_site_title</column>
+      <column name="value">A fresh FoOlSlide</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_geo_blocked</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_priv_maintenance</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_priv_version</column>
+      <column name="value">2.3.3</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_reg_disabled</column>
+      <column name="value">0</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_reg_email_disabled</column>
+      <column name="value">0</column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_reg_recaptcha_public</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_reg_recaptcha_secret</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_preferences">
+      <column name="name">fs_srv_servers</column>
+      <column name="value"></column>
+      <column name="group">0</column>
+    </table>
+    <table name="fs_teams">
+      <column name="id">1</column>
+      <column name="name">Anonymous</column>
+      <column name="stub">anonymous</column>
+      <column name="url"></column>
+      <column name="forum"></column>
+      <column name="irc"></column>
+      <column name="twitter"></column>
+      <column name="facebook"></column>
+      <column name="facebookid"></column>
+      <column name="created">1970-01-01 00:00:00</column>
+      <column name="lastseen">1970-01-01 00:00:00</column>
+      <column name="updated">1970-01-01 00:00:00</column>
+      <column name="creator">1</column>
+      <column name="editor">1</column>
+    </table>
+    <table name="fs_teams">
+      <column name="id">2</column>
+      <column name="name">Idk</column>
+      <column name="stub">idk</column>
+      <column name="url">https://example.com</column>
+      <column name="forum"></column>
+      <column name="irc"></column>
+      <column name="twitter">Idk</column>
+      <column name="facebook"></column>
+      <column name="facebookid"></column>
+      <column name="created">2019-02-26 17:36:39</column>
+      <column name="lastseen">1970-01-01 00:00:00</column>
+      <column name="updated">1970-01-01 00:00:00</column>
+      <column name="creator">1</column>
+      <column name="editor">1</column>
+    </table>
+  </database>
+</pma_xml_export>

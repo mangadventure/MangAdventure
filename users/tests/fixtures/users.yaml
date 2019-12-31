@@ -17,3 +17,11 @@
     username: obs
     is_active: true
     groups: []
+- model: auth.user
+  pk: 3
+  fields:
+    password: pbkdf2_sha256$180000$dXmCnzea8rAY$VjWHkSdYjpwELyhSislsXw+Ka6U8dT8HfBcC6kY/ISw= # test2
+    is_superuser: true
+    username: admin
+    is_active: true
+    groups: []

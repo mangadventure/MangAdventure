@@ -1,7 +1,7 @@
 from pytest import mark
 
-from users.models import UserProfile
 from users.forms import UserProfileForm
+from users.models import UserProfile
 
 from . import UsersTestBase, get_test_image
 

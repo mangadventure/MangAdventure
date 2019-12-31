@@ -24,19 +24,19 @@ class UserAdapterTestBase(UsersTestBase):
 class TestAccountAdapter(UserAdapterTestBase):
     def test_get_login_redirect_url(self):
         assert AccountAdapter()\
-                   .get_login_redirect_url(self.request) == self.next_url
+            .get_login_redirect_url(self.request) == self.next_url
 
     def test_get_login_redirect_url_no_next(self):
         assert AccountAdapter()\
-                   .get_login_redirect_url(self.empty_request) == "/user"
+            .get_login_redirect_url(self.empty_request) == "/user"
 
     def test_get_logout_redirect_url(self):
         assert AccountAdapter()\
-                   .get_logout_redirect_url(self.request) == self.next_url
+            .get_logout_redirect_url(self.request) == self.next_url
 
     def test_get_logout_redirect_url_no_next(self):
         assert AccountAdapter()\
-                   .get_logout_redirect_url(self.empty_request) == "/"
+            .get_logout_redirect_url(self.empty_request) == "/"
 
 
 class TestSocialAccountAdapter(UserAdapterTestBase):
@@ -47,11 +47,11 @@ class TestSocialAccountAdapter(UserAdapterTestBase):
                                                            uid="whatever")
 
     def test_get_connect_redirect_url(self):
-        assert SocialAccountAdapter()\
-            .get_connect_redirect_url(self.request, self.social_account) \
-               == self.next_url
+        redirect_url = SocialAccountAdapter()\
+            .get_connect_redirect_url(self.request, self.social_account)
+        assert redirect_url == self.next_url
 
     def test_get_connect_redirect_url_no_next(self):
-        assert SocialAccountAdapter() \
-            .get_connect_redirect_url(self.empty_request, self.social_account) \
-               == "/user"
+        redirect_url = SocialAccountAdapter() \
+            .get_connect_redirect_url(self.empty_request, self.social_account)
+        assert redirect_url == "/user"

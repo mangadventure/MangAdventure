@@ -1,6 +1,6 @@
 """Admin models for the users app."""
 
-from typing import Dict, List, Tuple, Type
+from typing import List, Tuple, Type
 
 from django.contrib import admin
 from django.contrib.auth import models

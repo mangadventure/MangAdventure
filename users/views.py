@@ -3,6 +3,7 @@
 from typing import TYPE_CHECKING
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.messages import error, info
 from django.db import IntegrityError
 from django.db.models import Subquery
@@ -22,7 +23,7 @@ from reader.models import Chapter
 from .forms import UserProfileForm
 from .models import Bookmark, UserProfile
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
 
 
@@ -44,8 +45,9 @@ def profile(request: 'HttpRequest') -> HttpResponse:
     """
     try:
         uid = int(request.GET.get('id', request.user.id))
-        prof = UserProfile.objects.get_or_create(user_id=uid)[0]
-    except (ValueError, IntegrityError) as e:
+        user = User.objects.get(pk=uid)
+        prof = UserProfile.objects.get_or_create(user=user)[0]
+    except (ValueError, IntegrityError, User.DoesNotExist) as e:
         raise Http404 from e
     if uid != request.user.id and prof.user.is_superuser:
         raise Http404('Cannot view profile of superuser')

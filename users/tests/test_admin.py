@@ -1,9 +1,11 @@
-from django.http import HttpRequest
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth.admin import User
 from django.forms.widgets import CheckboxSelectMultiple
+from django.http import HttpRequest
 
-from users.admin import *
+from users.admin import (
+    OAuthApp, OAuthAppAdmin, OAuthAppForm, UserAdmin, UserTypeFilter
+)
 
 from . import UsersTestBase
 
@@ -31,7 +33,7 @@ class TestUserTypeFilter(UsersTestBase):
     def test_queryset(self):
         queryset = self.filter.queryset(request=self.request,
                                         queryset=User.objects.all())
-        assert len(queryset.all()) == 1
+        assert len(queryset.all()) == 2
 
 
 class TestUserAdmin(UsersTestBase):
@@ -66,8 +68,8 @@ class TestOAuthApp(UsersTestBase):
 class TestOAuthAppForm(UsersTestBase):
     def test_init(self):
         form = OAuthAppForm()
-        assert type(form.fields['sites'].widget.widget)\
-               == CheckboxSelectMultiple
+        sites_widget = form.fields['sites'].widget.widget
+        assert type(sites_widget) == CheckboxSelectMultiple
 
 
 class TestOAuthAppAdmin(UsersTestBase):

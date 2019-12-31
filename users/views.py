@@ -72,16 +72,18 @@ class EditUser(TemplateView):
 
         :param request: The original request.
         """
-        self.profile = UserProfile.objects. \
-            get_or_create(user_id=request.user.id)[0]
-        super(EditUser, self).setup()
-        url = request.path
-        p_url = url.rsplit('/', 2)[0] + '/'
-        crumbs = breadcrumbs([
-            ('User', request.build_absolute_uri(p_url)),
-            ('Edit', request.build_absolute_uri(url))
-        ])
-        self.extra_context = {'breadcrumbs': crumbs}
+        super().setup(request)
+        # setup() gets called on AnonymousUsers too.
+        if request.user.is_authenticated:
+            self.profile = UserProfile.objects. \
+                get_or_create(user_id=request.user.id)[0]
+            url = request.path
+            p_url = url.rsplit('/', 2)[0] + '/'
+            crumbs = breadcrumbs([
+                ('User', request.build_absolute_uri(p_url)),
+                ('Edit', request.build_absolute_uri(url))
+            ])
+            self.extra_context = {'breadcrumbs': crumbs}
 
     def get(self, request: 'HttpRequest', *args, **kwargs) -> HttpResponse:
         """
@@ -92,15 +94,8 @@ class EditUser(TemplateView):
         :return: A response with the rendered
                  :obj:`template <EditUser.template_name>`.
         """
-        form = UserProfileForm(
-            user_id=self.request.user.id,
-            email=self.profile.user.email,
-            username=self.profile.user.username,
-            first_name=self.profile.user.first_name,
-            last_name=self.profile.user.last_name,
-            avatar=self.profile.avatar,
-            bio=self.profile.bio
-        )
+        form = UserProfileForm(instance=self.profile,
+                               initial={'user_id': self.request.user.id})
         return self.render_to_response(self.get_context_data(form=form))
 
     def post(self, request: 'HttpRequest', *args, **kwargs) -> HttpResponse:
@@ -115,7 +110,8 @@ class EditUser(TemplateView):
         :return: A response with the rendered
                  :obj:`template <EditUser.template_name>`.
         """
-        form = UserProfileForm(request.POST, request.FILES)
+        form = UserProfileForm(request.POST, request.FILES,
+                               instance=self.profile)
         if form.is_valid():
             form.save()
             email = form.cleaned_data['email']

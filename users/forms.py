@@ -10,9 +10,6 @@ from .models import UserProfile
 
 class UserProfileForm(forms.ModelForm):
     """Form used for editing a :class:``UserProfile`` model."""
-    #: The ID of the user.
-    user_id = forms.IntegerField(widget=forms.HiddenInput)
-
     #: The user's e-mail address.
     email = forms.EmailField(
         max_length=150, min_length=6, label='E-mail',
@@ -81,10 +78,14 @@ class UserProfileForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        super(UserProfileForm, self).__init__(*args)
-        for key, value in kwargs.items():
-            self.fields[key].initial = value
-        self.user = User.objects.get(id=self.fields['user_id'].initial)
+        super().__init__(*args, **kwargs)
+        if "instance" in kwargs:
+            self.fields["email"].initial = self.instance.user.email
+            self.fields["username"].initial = self.instance.user.username
+            self.fields["first_name"].initial = self.instance.user.first_name
+            self.fields["last_name"].initial = self.instance.user.last_name
+            self.fields["avatar"].initial = self.instance.avatar
+            self.fields["bio"].initial = self.instance.bio
 
     def clean_username(self) -> str:
         """
@@ -96,7 +97,7 @@ class UserProfileForm(forms.ModelForm):
         """
         username = self.cleaned_data.get('username')
         users = User.objects.filter(username=username)
-        if users.exclude(id=self.user_id).count() > 0:
+        if users.exclude(id=self.instance.user.id).count() > 0:
             raise forms.ValidationError('This username is already taken!')
         return username
 
@@ -123,7 +124,7 @@ class UserProfileForm(forms.ModelForm):
         :raises ValidationError: If the password is wrong.
         """
         password = self.cleaned_data.get('curr_password')
-        if not self.user.check_password(password):
+        if not self.instance.user.check_password(password):
             raise forms.ValidationError('Wrong password!')
         return password
 
@@ -137,25 +138,25 @@ class UserProfileForm(forms.ModelForm):
         :return: The updated ``UserProfile`` object.
         """
         self.full_clean()
-        prof = UserProfile.objects.get(user_id=self.cleaned_data['user_id'])
         if self.files.get('avatar'):
-            prof.avatar = self.files['avatar']
-        prof.bio = self.cleaned_data.get('bio')
-        prof.user.username = self.cleaned_data.get('username')
-        prof.user.first_name = self.cleaned_data.get('first_name')
-        prof.user.last_name = self.cleaned_data.get('last_name')
+            self.instance.avatar = self.files['avatar']
+        self.instance.bio = self.cleaned_data.get('bio')
+        self.instance.user.username = self.cleaned_data.get('username')
+        self.instance.user.first_name = self.cleaned_data.get('first_name')
+        self.instance.user.last_name = self.cleaned_data.get('last_name')
         if self.cleaned_data.get('new_password2'):
-            prof.user.set_password(self.cleaned_data['new_password2'])
+            self.instance.user.set_password(self.cleaned_data['new_password2'])
         if commit:
-            prof.save()
-        return prof
+            self.instance.save()
+            self.instance.user.save()
+        return self.instance
 
     class Meta:
         model = UserProfile
         fields = (
             'email', 'new_password1', 'new_password2',
             'username', 'first_name', 'last_name',
-            'bio', 'avatar', 'user_id', 'curr_password'
+            'bio', 'avatar', 'curr_password'
         )
 
 

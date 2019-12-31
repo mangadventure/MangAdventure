@@ -1,0 +1,12 @@
+- model: groups.group
+  pk: 1
+  fields:
+    name: Test Group
+    website: ''
+    description: ''
+    email: ''
+    discord: ''
+    twitter: ''
+    irc: ''
+    reddit: ''
+    logo: test.png

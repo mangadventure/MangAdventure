@@ -1,10 +1,9 @@
 """The views of the api.v1 app."""
 
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, Iterable
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Subquery
 from django.http import JsonResponse
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
@@ -17,7 +16,7 @@ from reader.models import Artist, Author, Category, Chapter, Series
 
 from ..response import JsonError, require_methods_api
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing import Union
     from django.db.models import DateTimeField  # noqa: F401
     from django.http import HttpRequest
@@ -52,19 +51,15 @@ def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
         'pages_list': [p._file_name for p in _chapter.pages.all()],
         'date': _chapter.uploaded_date,
         'final': _chapter.final,
-        'groups': []
+        'groups': [{'id': _group.id, 'name': _group.name}
+                   for _group in _chapter.groups.all()]
     }
-    for _group in _chapter.groups.all():
-        response['groups'].append({'id': _group.id, 'name': _group.name})
     return response
 
 
 def _volume_response(request: 'HttpRequest',
-                     _series: Series, vol: int) -> Dict:
+                     chapters: Iterable[Chapter]) -> Dict:
     response = {}
-    chapters = _series.chapters.filter(volume=vol)
-    if chapters.count() == 0:
-        return JsonError('Not found', 404)
     for _chapter in chapters:
         response[f'{_chapter.number:g}'] = \
             _chapter_response(request, _chapter)
@@ -88,7 +83,8 @@ def _series_response(request: 'HttpRequest', _series: Series) -> Dict:
     for _chapter in _series.chapters.all():
         if _chapter.volume not in response['volumes']:
             response['volumes'][_chapter.volume] = \
-                _volume_response(request, _series, _chapter.volume)
+                _volume_response(request, _series.chapters
+                                 .filter(volume=_chapter.volume))
     for _author in _series.authors.all():
         names = [a.alias for a in _author.aliases.all()]
         names.insert(0, _author.name)
@@ -143,14 +139,9 @@ def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
         'discord': _group.discord,
         'twitter': _group.twitter,
         'logo': logo,
-        'members': [],
+        'members': [_member_response(request, m) for m in _group.members.all()],
         'series': [],
     }
-    response['members'].append(_member_response(
-        request, Member.objects.filter(id__in=Subquery(
-            _group.roles.values('member_id')
-        ))
-    ))
     _series = []
     for _chapter in _group.releases.all():
         if _chapter.series.id not in _series:
@@ -257,7 +248,10 @@ def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
             .prefetch_related('chapters__pages').get(slug=slug)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    return JsonResponse(_volume_response(request, _series, vol))
+    chapters = _series.chapters.filter(volume=vol)
+    if not chapters:
+        return JsonError('Not found', 404)
+    return JsonResponse(_volume_response(request, chapters))
 
 
 @csrf_exempt

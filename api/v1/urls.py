@@ -15,7 +15,7 @@ _artists = 'artists'
 _groups = 'groups'
 
 #: The URL namespace of the api.v1 app.
-app_name = 'api:v1'
+app_name = 'v1'
 
 #: The URL patterns of the api.v1 app.
 urlpatterns = [

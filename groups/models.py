@@ -60,9 +60,7 @@ class Group(models.Model):
     @cached_property
     def members(self) -> models.QuerySet:
         """Get the members of the group."""
-        return Member.objects.filter(id__in=models.Subquery(
-            Role.objects.filter(group_id=self.id).values('member')
-        ))
+        return Member.objects.filter(roles__group=self)
 
     def get_absolute_url(self) -> str:
         """

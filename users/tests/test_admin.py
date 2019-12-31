@@ -1,0 +1,89 @@
+from django.http import HttpRequest
+from django.contrib.admin.sites import AdminSite
+from django.contrib.auth.admin import User
+from django.forms.widgets import CheckboxSelectMultiple
+
+from users.admin import *
+
+from . import UsersTestBase
+
+
+class TestUserTypeFilter(UsersTestBase):
+    def setup_method(self):
+        super().setup_method()
+        self.model = User
+        self.model_admin = UserAdmin
+        self.request = HttpRequest()
+        self.request.user = self.user
+        self.filter = UserTypeFilter(model=self.model,
+                                     model_admin=self.model_admin,
+                                     request=self.request,
+                                     params={'type': 'superuser'})
+
+    def test_lookups(self):
+        lookups = self.filter.lookups(self.request, self.model_admin)
+        assert lookups == [
+            ('superuser', 'Superuser'),
+            ('staff', 'Staff'),
+            ('regular', 'Regular')
+        ]
+
+    def test_queryset(self):
+        queryset = self.filter.queryset(request=self.request,
+                                        queryset=User.objects.all())
+        assert len(queryset.all()) == 1
+
+
+class TestUserAdmin(UsersTestBase):
+    def setup_method(self):
+        super().setup_method()
+        self.site = AdminSite()
+        self.admin = UserAdmin(admin_site=self.site, model=User)
+
+    def test_email(self):
+        email_link = self.admin._email(self.user)
+        assert email_link.startswith(f'<a href="mailto:{self.user.email}')
+
+    def test_email_empty(self):
+        email_link = self.admin._email(User.objects.get(pk=2))
+        assert email_link == ''
+
+    def test_full_name(self):
+        assert self.admin.full_name(self.user) == "evangelos ch"
+
+    def test_has_add_permission(self):
+        request = HttpRequest()
+        assert not self.admin.has_add_permission(request)
+
+
+class TestOAuthApp(UsersTestBase):
+    def test_str(self):
+        app = OAuthApp.objects.create(provider="reddit", name="whatever",
+                                      client_id="whatever")
+        assert str(app) == "whatever (reddit)"
+
+
+class TestOAuthAppForm(UsersTestBase):
+    def test_init(self):
+        form = OAuthAppForm()
+        assert type(form.fields['sites'].widget.widget)\
+               == CheckboxSelectMultiple
+
+
+class TestOAuthAppAdmin(UsersTestBase):
+    def setup_method(self):
+        super().setup_method()
+        self.site = AdminSite()
+        self.admin = OAuthAppAdmin(admin_site=self.site, model=OAuthApp)
+
+    def test_provider(self):
+        app = OAuthApp.objects.create(provider="reddit", name="whatever",
+                                      client_id="whatever")
+        provider_url = self.admin._provider(app)
+        assert '#reddit"' in provider_url
+        assert 'Reddit</a>' in provider_url
+
+    def test_provider_empty(self):
+        app = OAuthApp.objects.create(name="whatever", client_id="whatever")
+        provider_url = self.admin._provider(app)
+        assert provider_url == ''

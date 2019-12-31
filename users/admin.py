@@ -1,6 +1,6 @@
 """Admin models for the users app."""
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Type
 
 from django.contrib import admin
 from django.contrib.auth import models
@@ -30,7 +30,7 @@ class UserTypeFilter(admin.SimpleListFilter):
     parameter_name = 'type'
 
     def lookups(self, request: 'HttpRequest', model_admin:
-                admin.ModelAdmin) -> List[Tuple[str, str]]:
+                Type[admin.ModelAdmin]) -> List[Tuple[str, str]]:
         """
         Return a list of lookups for this filter.
 
@@ -59,7 +59,7 @@ class UserTypeFilter(admin.SimpleListFilter):
         ]
 
     def queryset(self, request: 'HttpRequest', queryset:
-                 'QuerySet') -> Dict[str, 'QuerySet']:
+                 'QuerySet') -> 'QuerySet':
         """
         Return the filtered queryset based on
         the value provided in the query string.

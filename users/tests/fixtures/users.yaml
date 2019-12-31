@@ -13,8 +13,7 @@
   pk: 2
   fields:
     password: pbkdf2_sha256$180000$dXmCnzea8rAY$VjWHkSdYjpwELyhSislsXw+Ka6U8dT8HfBcC6kY/ISw= # test2
-    is_superuser: true
+    is_superuser: false
     username: obs
-    email: test@email.com
     is_active: true
     groups: []

@@ -7,7 +7,7 @@ from django.conf import settings
 from MangAdventure import __version__ as VERSION
 from MangAdventure.jsonld import schema
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
 
 

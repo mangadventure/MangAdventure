@@ -10,7 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.template.defaultfilters import register, slice_filter
 from django.utils.html import format_html, mark_safe
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.db.models.query import QuerySet
 
 

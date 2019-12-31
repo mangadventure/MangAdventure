@@ -1,14 +1,14 @@
-from typing import Dict, Union, List, Tuple
+from typing import Dict, List, Tuple, Union
 
-from django.urls import reverse
-from django.http import JsonResponse
 from django.core.cache import cache
+from django.http import JsonResponse
+from django.urls import reverse
 
 from pytest import mark
 
 from api.response import JsonError
 from api.v1 import apps
-from groups.models import Role, Member, Group
+from groups.models import Group, Member, Role
 
 from . import APITestBase
 

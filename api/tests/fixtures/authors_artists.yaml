@@ -1,8 +1,0 @@
-- model: reader.author
-  pk: 1
-  fields:
-    name: Test Author
-- model: reader.artist
-  pk: 1
-  fields:
-    name: Test Artist

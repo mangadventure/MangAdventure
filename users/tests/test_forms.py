@@ -1,9 +1,11 @@
 from pytest import mark
 
+from MangAdventure.tests import get_big_image, get_test_image
+
 from users.forms import UserProfileForm
 from users.models import UserProfile
 
-from . import UsersTestBase, get_test_image
+from . import UsersTestBase
 
 
 class TestUserProfileForm(UsersTestBase):
@@ -71,4 +73,8 @@ class TestUserProfileForm(UsersTestBase):
         form = UserProfileForm(data=self.data, instance=self.profile)
         assert not form.is_valid()
 
-    # TODO Test that the avatar ImageField has a validator
+    def test_big_file(self):
+        self.files['avatar'] = get_big_image(3)
+        form = UserProfileForm(data=self.data, files=self.files,
+                               instance=self.profile)
+        assert not form.is_valid()

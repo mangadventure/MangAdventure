@@ -6,6 +6,9 @@ from django.core.management import call_command
 
 from PIL import Image
 
+from groups.models import Group
+from reader.models import Chapter, Page, Series
+
 from . import ConfigTestBase
 
 
@@ -27,7 +30,11 @@ class TestFS2Import(ConfigTestBase):
         out = StringIO()
         call_command('fs2import', self.fs2_root.resolve(),
                      self.fs2_xml.resolve(), '-y', stdout=out)
-        print(out.getvalue())
+        assert 'Successfully imported FoolSlide2 data.' in out.getvalue()
+        assert len(Group.objects.all()) == 2
+        assert len(Series.objects.all()) == 1
+        assert len(Chapter.objects.all()) == 1
+        assert len(Page.objects.all()) == 1
 
     def teardown_method(self):
         rmtree(self.fs2_root / 'content')

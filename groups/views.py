@@ -8,9 +8,9 @@ from django.views.decorators.cache import cache_control
 
 from MangAdventure.jsonld import breadcrumbs
 
-from .models import Group, Member
+from .models import Group
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest, HttpResponse
 
 
@@ -49,10 +49,7 @@ def group(request: 'HttpRequest', g_id: int) -> 'HttpResponse':
         _group = Group.objects.get(id=g_id)
     except Group.DoesNotExist as e:
         raise Http404 from e
-    member_ids = []
-    for role in _group.roles.values('member_id').distinct():
-        member_ids.append(role['member_id'])
-    members = Member.objects.filter(id__in=member_ids)
+    members = _group.members.all()
     url = request.path
     p_url = url.rsplit('/', 2)[0] + '/'
     crumbs = breadcrumbs([

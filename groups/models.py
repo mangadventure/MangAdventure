@@ -60,7 +60,7 @@ class Group(models.Model):
     @cached_property
     def members(self) -> models.QuerySet:
         """Get the members of the group."""
-        return Member.objects.filter(roles__group=self)
+        return Member.objects.filter(roles__group=self).distinct()
 
     def get_absolute_url(self) -> str:
         """
@@ -126,9 +126,7 @@ class Member(models.Model):
     @cached_property
     def groups(self) -> models.QuerySet:
         """Get the groups of the member."""
-        return Group.objects.filter(id__in=models.Subquery(
-            Role.objects.filter(member_id=self.id).values('group')
-        ))
+        return Group.objects.filter(roles__member=self).distinct()
 
     def __str__(self) -> str:
         """
@@ -176,7 +174,7 @@ class Role(models.Model):
 
         :return: The name and group of the role.
         """
-        return f'{self.get_role_display()} {(self.group)}'
+        return f'{self.get_role_display()} ({self.group})'
 
 
 __all__ = ['Group', 'Member', 'Role']

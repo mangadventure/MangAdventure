@@ -74,7 +74,7 @@ class GroupAdmin(admin.ModelAdmin):
             return ''
         return format_html(
             '<a href="{0}" rel="noopener noreferrer"'
-            ' target="_blank">@{0}</a>', obj.website
+            ' target="_blank">{0}</a>', obj.website
         )
 
     _website.short_description = 'website'

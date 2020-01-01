@@ -13,6 +13,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
     authors_artists_fixture = fixtures_dir / "authors_artists.json"
     groups_fixture = fixtures_dir / "groups.json"
     with django_db_blocker.unblock():
+        call_command('flush', '--no-input')
         call_command('loaddata', "categories.xml")
         call_command('loaddata', str(authors_artists_fixture.resolve()))
         call_command('loaddata', str(groups_fixture.resolve()))

@@ -27,6 +27,7 @@ class APIViewTestBase(APITestBase):
         return r.status_code, r.json()
 
     def teardown_method(self):
+        super().teardown_method()
         cache.clear()
 
 

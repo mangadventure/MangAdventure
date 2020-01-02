@@ -158,7 +158,7 @@ class Series(models.Model):
     def save(self, *args, **kwargs):
         """Save the current instance."""
         self.slug = slugify(self.slug or self.title)
-        super(Series, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         """
@@ -306,7 +306,7 @@ class Chapter(models.Model):
             self.series.slug, self.volume, self.number
         ))
 
-    def get_directory(self) -> str:
+    def get_directory(self) -> PurePath:
         """
         Get the storage directory of the object.
 
@@ -362,8 +362,8 @@ class Chapter(models.Model):
         return buf
 
     @cached_property
-    def _tuple(self) -> Tuple[int, int]:
-        return (self.volume, self.number)
+    def _tuple(self) -> Tuple[int, float]:
+        return self.volume, self.number
 
     def __str__(self) -> str:
         """
@@ -391,7 +391,7 @@ class Chapter(models.Model):
         """
         if isinstance(other, tuple):
             return self._tuple == other
-        return super(Chapter, self).__eq__(other)
+        return super().__eq__(other)
 
     def __gt__(self, other: Any) -> bool:
         """
@@ -557,7 +557,7 @@ class Page(models.Model):
         if isinstance(other, (float, int)):
             return self.number > other
 
-        if not isinstance(other, self.__class__):
+        if isinstance(other, self.__class__):
             return self.number > other.number
 
         raise TypeError(
@@ -600,7 +600,7 @@ class Page(models.Model):
         :return: An integer hash value.
         """
         name = path.splitext(self._file_name)[0]
-        if len(name) == 32:
+        if len(name) == 32:  # pragma: no cover
             return int(name, 16)
         return abs(hash(str(self)))
 

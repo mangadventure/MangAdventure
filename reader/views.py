@@ -11,7 +11,7 @@ from MangAdventure import jsonld
 
 from .models import Chapter, Page, Series
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
     from django.db.models import DateTimeField
     from django.http import (
@@ -28,10 +28,6 @@ def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
             return Series.objects.only('modified').latest().modified
         if vol is None:
             return Series.objects.only('modified').get(slug=slug).modified
-        if num is None:
-            return Chapter.objects.only('modified').filter(
-                series__slug=slug, volume=vol
-            ).latest().modified
         return Chapter.objects.only('modified').filter(
             series__slug=slug, volume=vol, number=num
         ).latest().modified

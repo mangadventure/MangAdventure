@@ -11,7 +11,7 @@ from MangAdventure import jsonld
 
 from .models import Chapter, Page, Series
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
     from django.db.models import DateTimeField
     from django.http import (

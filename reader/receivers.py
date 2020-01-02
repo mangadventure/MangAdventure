@@ -51,7 +51,7 @@ def redirect_series(sender: Type[Series], instance: Series, **kwargs):
         Redirect.objects.create(
             site_id=settings.SITE_ID, old_path=old_path, new_path=new_path
         )
-        _move(old_dir, new_dir)
+        _move(old_dir, str(new_dir))
         instance.cover = instance.cover.name.replace(
             str(old_dir), str(new_dir)
         )
@@ -84,9 +84,10 @@ def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
     new_dir = instance.get_directory()
     if old_dir != new_dir:
         if current.volume != instance.volume:
-            _move(old_dir.name, new_dir.name)
+            _move(str(old_dir.parent), str(new_dir.parent))
+            old_dir = new_dir.parent / old_dir.name
         if current.number != instance.number:
-            _move(old_dir, new_dir)
+            _move(old_dir, str(new_dir))
         for page in current.pages.all():
             page.image = page.image.name.replace(
                 str(old_dir), str(new_dir)

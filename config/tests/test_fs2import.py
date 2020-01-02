@@ -37,4 +37,5 @@ class TestFS2Import(ConfigTestBase):
         assert len(Page.objects.all()) == 1
 
     def teardown_method(self):
+        super().teardown_method()
         rmtree(self.fs2_root / 'content')

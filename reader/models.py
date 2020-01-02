@@ -330,7 +330,7 @@ class Chapter(models.Model):
         full_path.mkdir(parents=True)
         with ZipFile(self.file) as zf:
             for name in utils.natsort(zf.namelist()):
-                if zf.getinfo(name).is_dir():  # pragma: no cover
+                if zf.getinfo(name).is_dir():
                     continue
                 counter += 1
                 data = zf.read(name)

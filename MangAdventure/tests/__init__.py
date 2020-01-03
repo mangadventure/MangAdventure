@@ -81,7 +81,7 @@ def get_multi_subdir_zip() -> InMemoryUploadedFile:
         zf.writestr('test/folder/', '')
         zf.writestr('test/folder/1.jpg', img_file.getvalue())
     file.seek(0)
-    return InMemoryUploadedFile(file, None, 'file.zip', 'zip/cbz',
+    return InMemoryUploadedFile(file, None, 'file.zip', 'application/zip',
                                 len(file.getvalue()), None)
 
 

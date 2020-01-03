@@ -50,7 +50,7 @@ class TestGroupAdmin(GroupsAdminTestBase):
 
     def test_image(self):
         assert self.admin.image(self.group)\
-            .startswith('<img src="/media/groups/1/logo.jpg"')
+            .startswith('<img src="')
 
     def test_image_empty(self):
         self.group.logo = None

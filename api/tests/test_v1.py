@@ -13,16 +13,18 @@ from . import APITestBase
 
 
 class APIViewTestBase(APITestBase):
-    def get_data(self, url: str) -> Tuple[int, Union[Dict, List]]:
+    def get_data(self, url: str, params: dict = {}) -> Tuple[int,
+                                                             Union[Dict, List]]:
         """
         Helper function to get JSON data from an API URL
         in python data structures.
 
         :param url: The url to query for data.
+        :param params: Optional URL params.
 
         :return: tuple of the response code and the JSON object
         """
-        r = self.client.get(url)
+        r = self.client.get(url, params)
         assert type(r) in [JsonResponse, JsonError]
         return r.status_code, r.json()
 
@@ -62,6 +64,12 @@ class TestAllSeries(APIViewTestBase):
                       "authors", "artists", "categories", "cover",
                       "completed", "volumes"]:
             assert field in series1
+
+    def test_get_slug(self):
+        status_code, data = self.get_data(self.URL, {'slug': 'test-series'})
+        assert status_code == 200
+        assert type(data) == list
+        assert len(data) == 1
 
 
 class TestSeries(APIViewTestBase):

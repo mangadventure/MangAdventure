@@ -28,7 +28,7 @@ class CDNStorage(FileSystemStorage):
         self._debug = settings.DEBUG or site.startswith((
             '127.0.0.1', '0.0.0.0', 'localhost', '192.168.1.'
         ))
-        if self._debug:
+        if self._debug:  # pragma: no cover
             return super(CDNStorage, self).__init__()
         cdn = 'https://cdn.statically.io/img/'
         url = cdn + site + settings.MEDIA_URL
@@ -44,7 +44,7 @@ class CDNStorage(FileSystemStorage):
 
         :return: The URL of the file.
         """
-        if self._debug:
+        if self._debug:  # pragma: no cover
             return super(CDNStorage, self).url(name)
         qs = {'auto_format': 'false'}
         if self._fit:

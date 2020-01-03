@@ -14,7 +14,7 @@ class TinyMCE(Textarea):
     :param attrs: A dictionary of the widget's attributes.
     """
     def __init__(self, attrs: Dict[str, Any] = {}):
-        if 'class' in attrs:
+        if 'class' in attrs:  # pragma: no cover
             attrs['class'] += ' tinymce'
         else:
             attrs['class'] = 'tinymce'

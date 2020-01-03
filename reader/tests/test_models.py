@@ -1,8 +1,12 @@
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from pytest import raises
 
-from MangAdventure.tests import get_test_image, get_valid_zip_file
+from MangAdventure.tests import (
+    get_multi_subdir_zip, get_random_file, get_test_image,
+    get_valid_zip_file, get_zip_with_invalid_images
+)
 
 from reader.models import Artist, Author, Category, Chapter, Page, Series
 
@@ -22,6 +26,7 @@ class TestAuthor(ReaderTestBase):
         author = self.create_author()
         author.aliases.create(alias='test')
         assert len(author.aliases.all()) == 1
+        assert str(author.aliases.first()) == 'test'
 
 
 class TestArtist(ReaderTestBase):
@@ -37,6 +42,7 @@ class TestArtist(ReaderTestBase):
         artist = self.create_artist()
         artist.aliases.create(alias='test')
         assert len(artist.aliases.all()) == 1
+        assert str(artist.aliases.first()) == 'test'
 
 
 class TestCategory(ReaderTestBase):
@@ -131,6 +137,20 @@ class TestChapter(ReaderTestBase):
         chapter.save()
         assert len(chapter.pages.all()) == 1
         assert chapter.zip()
+
+    def test_file_invalid(self):
+        chapter = self.create_chapter()
+        with raises(ValidationError):
+            chapter.file = get_multi_subdir_zip()
+            chapter.save()
+
+        with raises(ValidationError):
+            chapter.file = get_random_file()
+            chapter.save()
+
+        with raises(ValidationError):
+            chapter.file = get_zip_with_invalid_images()
+            chapter.save()
 
     def test_dates(self):
         chapter = self.create_chapter()

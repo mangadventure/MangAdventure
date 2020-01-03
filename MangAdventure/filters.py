@@ -23,7 +23,7 @@ def title_filter(title: str, klass: Type[FieldListFilter] =
 
     :return: A class that inherits from ``klass``.
     """
-    class _GenericFilter(klass):
+    class _GenericFilter(klass):  # pragma: no cover
         def __new__(cls, *args, **kwargs):
             instance = super(_GenericFilter, cls).create(*args, **kwargs)
             instance.title = title
@@ -43,7 +43,7 @@ def boolean_filter(title: str, param: str, names:
 
     :return: A class that inherits from :class:`SimpleListFilter`.
     """
-    class _BooleanFilter(SimpleListFilter):
+    class _BooleanFilter(SimpleListFilter):  # pragma: no cover
         def __init__(self, *args, **kwargs):
             self.names = names
             self.title = title

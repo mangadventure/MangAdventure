@@ -109,5 +109,5 @@ def get_random_file() -> InMemoryUploadedFile:
     file = BytesIO()
     file.write(urandom(randint(10, 2000)))
     file.seek(0)
-    return InMemoryUploadedFile(file, None, 'file.zip', 'zip/cbz',
+    return InMemoryUploadedFile(file, None, 'file.zip', 'application/zip',
                                 len(file.getvalue()), None)

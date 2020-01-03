@@ -1,6 +1,10 @@
+from os.path import join
+
+from django.conf import settings
+
 from pytest import mark
 
-from MangAdventure.tests import get_big_image, get_test_image
+from MangAdventure.tests import get_test_image
 
 from users.forms import UserProfileForm
 from users.models import UserProfile
@@ -73,8 +77,14 @@ class TestUserProfileForm(UsersTestBase):
         form = UserProfileForm(data=self.data, instance=self.profile)
         assert not form.is_valid()
 
-    def test_big_file(self):
-        self.files['avatar'] = get_big_image(3)
+    def test_big_file(self, monkeypatch):
+        image = get_test_image()
+        monkeypatch.setattr(image, 'path',
+                            join(settings.MEDIA_ROOT, image.name),
+                            raising=False)
+        monkeypatch.setattr(image, 'size', 3 << 20)
+        self.files['avatar'] = image
         form = UserProfileForm(data=self.data, files=self.files,
                                instance=self.profile)
         assert not form.is_valid()
+        assert list(form.errors.keys()) == ['avatar']

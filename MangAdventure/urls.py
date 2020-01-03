@@ -21,7 +21,7 @@ urlpatterns = [
     path('robots.txt', robots, name='robots')
 ]
 
-if settings.DEBUG:
+if settings.DEBUG:  # pragma: no cover
     from django.conf.urls.static import static
     urlpatterns += static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
@@ -29,7 +29,7 @@ if settings.DEBUG:
     try:
         from debug_toolbar import urls as debug_urls
         urlpatterns.append(path('__debug__/', include(debug_urls)))
-    except ImportError:
+    except ImportError:  # pragma: no cover
         pass
 
 #: See :func:`MangAdventure.views.handler400`.

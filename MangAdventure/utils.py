@@ -1,11 +1,11 @@
 """Various utility functions."""
 
 from re import split
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, Iterable, List, Union
 
 from django.utils.html import format_html
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.db.models.fields.files import FieldFile
 
 
@@ -14,7 +14,7 @@ def img_tag(obj: 'FieldFile', alt: str,
     """
     Create an HTML ``<img>`` from an :class:`~django.db.models.ImageField`.
 
-    :param img: An ``ImageFieldFile`` instance.
+    :param obj: A ``FieldFile`` instance.
     :param alt: The alternate text of the tag.
     :param height: The height of the ``<img>``. Unset if ``0``.
     :param width: The width of the ``<img>``. Unset if ``0``.
@@ -37,7 +37,7 @@ def alnum_key(k: str) -> List[str]:
     return list(map(atoi, split('([0-9]+)', k)))
 
 
-def natsort(original: List[str]) -> List[str]:
+def natsort(original: Iterable[str]) -> List[str]:
     """
     Sort a list in natural order.
 

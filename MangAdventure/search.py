@@ -6,7 +6,7 @@ from django.db.models.query import Q
 
 from reader.models import ArtistAlias, AuthorAlias, Series, SeriesAlias
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.db.models.query import QuerySet
     from django.http import HttpRequest
 

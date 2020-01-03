@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from django.middleware.common import CommonMiddleware
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing import Callable
     from django.http import HttpRequest, HttpResponse
 
@@ -24,7 +24,7 @@ class BaseMiddleware(CommonMiddleware):
         """
         if request.path == '/robots.txt':
             return self.get_response(request)
-        return super(BaseMiddleware, self).__call__(request)
+        return super().__call__(request)
 
     def should_redirect_with_slash(self, request: 'HttpRequest') -> bool:
         """
@@ -36,7 +36,7 @@ class BaseMiddleware(CommonMiddleware):
         """
         if request.path.startswith('/api'):
             return False
-        return super(BaseMiddleware, self).should_redirect_with_slash(request)
+        return super().should_redirect_with_slash(request)
 
 
 class PreloadMiddleware:

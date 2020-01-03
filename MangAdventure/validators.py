@@ -10,7 +10,7 @@ from django.core.validators import BaseValidator, RegexValidator
 
 from PIL import Image
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.core.files import File
 
 
@@ -68,6 +68,7 @@ def zipfile_validator(file: 'File'):
         'The file must be in zip/cbz format.'
     )
     codes = ('no_multiple_subfolders', 'only_images', 'invalid_format')
+    zf = None
     try:
         zf = ZipFile(file)
     except BadZipfile as err:
@@ -89,7 +90,8 @@ def zipfile_validator(file: 'File'):
                 _remove_file(file)
                 raise ValidationError(messages[1], code=codes[1]) from exc
     finally:
-        zf.close()
+        if zf:
+            zf.close()
 
 
 def discord_server_validator(url: str):

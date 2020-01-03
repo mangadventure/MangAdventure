@@ -14,7 +14,7 @@ from .bad_bots import BOTS
 from .jsonld import breadcrumbs
 from .search import parse, query
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
 
 
@@ -51,7 +51,7 @@ def search(request: 'HttpRequest') -> HttpResponse:
     """
     results = None
     params = parse(request)
-    if any(p in ('q', 'author', 'status') for p in request.GET):
+    if any(p in ('q', 'author', 'status', 'categories') for p in request.GET):
         results = query(params)
     uri = request.build_absolute_uri(request.path)
     crumbs = breadcrumbs([('Search', uri)])
@@ -118,7 +118,9 @@ def robots(request: 'HttpRequest') -> HttpResponse:
 
 
 def handler400(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
+               template_name: str = 'error.html') \
+        -> HttpResponse:  # pragma: no cover
+    # pragma: no cover
     """
     Handler for :status:`400` responses.
 
@@ -138,7 +140,8 @@ def handler400(request: 'HttpRequest', exception: Optional[Exception] = None,
 
 
 def handler403(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
+               template_name: str = 'error.html')\
+        -> HttpResponse:  # pragma: no cover
     """
     Handler for :status:`403` responses.
 
@@ -158,7 +161,8 @@ def handler403(request: 'HttpRequest', exception: Optional[Exception] = None,
 
 
 def handler404(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
+               template_name: str = 'error.html') \
+        -> HttpResponse:  # pragma: no cover
     """
     Handler for :status:`404` responses.
 
@@ -171,7 +175,7 @@ def handler404(request: 'HttpRequest', exception: Optional[Exception] = None,
     """
     if request.path.startswith('/api'):
         return JsonError('Invalid API endpoint', 501)
-    try:
+    try:  # pragma: no cover
         from sentry_sdk import capture_message
         capture_message('Page not found', level='warning')
     except ImportError:
@@ -181,7 +185,8 @@ def handler404(request: 'HttpRequest', exception: Optional[Exception] = None,
 
 
 def handler500(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
+               template_name: str = 'error.html') \
+        -> HttpResponse:  # pragma: no cover
     """
     Handler for :status:`500` responses.
 
@@ -201,7 +206,8 @@ def handler500(request: 'HttpRequest', exception: Optional[Exception] = None,
 
 
 def handler503(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
+               template_name: str = 'error.html') \
+        -> HttpResponse:  # pragma: no cover
     """
     Handler for :status:`503` responses.
 

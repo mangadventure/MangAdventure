@@ -7,7 +7,7 @@ from MangAdventure.tests import MangadvTestBase
 from reader.models import Series
 
 
-@pytest.mark.usefixtures("django_db_setup")
+@pytest.mark.usefixtures('django_db_setup')
 class UsersTestBase(MangadvTestBase):
     def setup_method(self):
         super().setup_method()

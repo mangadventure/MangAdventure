@@ -39,8 +39,9 @@ def jsonld(value: Dict, element_id: str) -> str:
 
     .. seealso:: :tag:`json_script template tag <json-script>`
     """
+    sep = (',', ':')
     escapes = {ord('>'): '\\u003E', ord('<'): '\\u003C', ord('&'): '\\u0026'}
-    jstr = dumps(value, cls=DjangoJSONEncoder, indent=None, separators=',:')
+    jstr = dumps(value, cls=DjangoJSONEncoder, indent=None, separators=sep)
     return format_html(
         '<script id="{}" type="application/ld+json">{}</script>',
         element_id, mark_safe(jstr.translate(escapes))

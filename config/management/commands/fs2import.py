@@ -3,7 +3,7 @@
 from io import StringIO
 from os.path import abspath, join
 from typing import TYPE_CHECKING
-from xml.etree import cElementTree as eT
+from xml.etree import ElementTree as ET
 
 from django.core.files import File
 from django.core.management import BaseCommand, CommandError, call_command
@@ -15,9 +15,8 @@ from reader.models import Chapter, Page, Series
 if TYPE_CHECKING:  # pragma: no cover
     from argparse import ArgumentParser
     from typing import List
-    Elem = eT.Element
-    Tree = eT.ElementTree
-    Trees = List[eT.ElementTree]
+    Elem = ET.Element
+    Elems = List[ET.Element]
 
 
 class Command(BaseCommand):
@@ -39,8 +38,8 @@ class Command(BaseCommand):
             help="The path to FS2's exported data (in XML format)."
         )
         parser.add_argument(
-            '-y', '--yes', action='store_true',
-            help="Flag to disable the database wipe prompt."
+            '--noinput', '--no-input', action='store_true',
+            help='Do NOT prompt the user for input of any kind.'
         )
 
     def handle(self, *args: str, **options: str):
@@ -53,7 +52,7 @@ class Command(BaseCommand):
         call_command('migrate', stdout=StringIO())  # Set up database
         root = abspath(options['root'])
         data = abspath(options['data'])
-        tables = eT.parse(data).findall('database/table')
+        tables = ET.parse(data).findall('database/table')
         content = join(root, 'content', 'comics')
         directories = {'series': [], 'chapters': []}
         elements = {
@@ -63,15 +62,13 @@ class Command(BaseCommand):
             'groups': self._get_element(tables, 'teams')
         }
 
-        if not options['yes']:  # pragma: no cover
-            self._print_warning('Importing FoolSlide2 data requires an empty '
-                                'database. ')
-            self._print_warning('This calls for an IRREVERSIBLE destruction of '
-                                'all data currently in the database,\n'
-                                'and return each table to an empty state.')
-            self._print_warning('Are you sure you want to do this?\n')
-            prompt = "    Type 'yes' to continue, or 'no' to cancel: "
-            answer = input(prompt)
+        if not options['noinput']:  # pragma: no cover
+            self._print_warning(
+                'Importing FoolSlide2 data requires an empty database.\n'
+                'This command will wipe any existing data in the database.\n'
+                'Are you sure you want to proceed?\n'
+            )
+            answer = input("    Type 'yes' to continue, or 'no' to cancel: ")
             if answer != 'yes':
                 self._print('Import cancelled.')
                 return
@@ -93,7 +90,7 @@ class Command(BaseCommand):
             Group.objects.bulk_create(all_groups)
             self._print_success('Groups successfully imported.')
         except IntegrityError as e:  # pragma: no cover
-            raise CommandError(f'Failed to insert Groups: {e}')
+            raise CommandError(f'Failed to insert groups') from e
 
         self._print(f'Importing {self._sql_name("Series")}...')
         all_series = []
@@ -119,7 +116,7 @@ class Command(BaseCommand):
             Series.objects.bulk_create(all_series)
             self._print_success('Series successfully imported.')
         except IntegrityError as e:  # pragma: no cover
-            raise CommandError(f'Failed to insert Series: {e}')
+            raise CommandError(f'Failed to insert series') from e
 
         self._print(f'Importing {self._sql_name("Chapters")}...')
         all_chapters = []
@@ -138,7 +135,7 @@ class Command(BaseCommand):
                 title=self._get_column(c, 'name'),
                 volume=volume, number=number
             )
-            print(f'- Found {self._sql_name("Chapter")}: {chapter}')
+            self._print(f'- Found {self._sql_name("Chapter")}: {chapter}')
             gid = self._get_column(c, 'team_id')
             if gid:
                 chapter_groups.append(
@@ -157,7 +154,7 @@ class Command(BaseCommand):
             groups_through.objects.bulk_create(chapter_groups)
             self._print_success('Chapters successfully imported.')
         except IntegrityError as e:  # pragma: no cover
-            raise CommandError(f'Failed to insert Chapters: {e}')
+            raise CommandError('Failed to insert chapters') from e
 
         self._print(f'Importing {self._sql_name("Pages")}...')
         all_pages = []
@@ -177,22 +174,22 @@ class Command(BaseCommand):
             Page.objects.bulk_create(all_pages)
             self._print_success('Chapter pages successfully imported.')
         except IntegrityError as e:  # pragma: no cover
-            raise CommandError(f'Failed to insert Pages: {e}')
+            raise CommandError('Failed to insert pages') from e
         self._print_success('Successfully imported FoolSlide2 data.')
 
     @staticmethod
-    def _get_element(tables: 'Trees', name: str) -> 'Trees':
+    def _get_element(tables: 'Elems', name: str) -> 'Elems':
         return list(filter(
             lambda t: t.attrib['name'].endswith(name), tables
         ))
 
     @staticmethod
-    def _get_column(table: 'Tree', name: str) -> str:
-        text = table.find(f'column[@name="{name}"]').text
-        return text if text is not None else ''
+    def _get_column(table: 'Elem', name: str) -> str:
+        elem = table.find(f'column[@name="{name}"]')
+        return getattr(elem, 'text', None) or ''
 
     @staticmethod
-    def _sort_children(tables: 'Trees', name: str) -> 'Trees':
+    def _sort_children(tables: 'Elems', name: str) -> 'Elems':
         return sorted(tables, key=lambda p: Command._get_column(p, name))
 
     def _print(self, text: str, **kwargs):
@@ -201,7 +198,7 @@ class Command(BaseCommand):
     def _print_success(self, text: str, **kwargs):
         self._print(self.style.SUCCESS(text), **kwargs)
 
-    def _print_warning(self, text: str, **kwargs):  # pragma: no cover
+    def _print_warning(self, text: str, **kwargs):
         self._print(self.style.WARNING(text), **kwargs)
 
     def _sql_name(self, name: str) -> str:

@@ -13,8 +13,8 @@ from . import APITestBase
 
 
 class APIViewTestBase(APITestBase):
-    def get_data(self, url: str, params: dict = {}) -> Tuple[int,
-                                                             Union[Dict, List]]:
+    def get_data(self, url: str, params: Dict[str, str] = {}
+                 ) -> Tuple[int, Union[Dict, List]]:
         """
         Helper function to get JSON data from an API URL
         in python data structures.
@@ -25,7 +25,7 @@ class APIViewTestBase(APITestBase):
         :return: tuple of the response code and the JSON object
         """
         r = self.client.get(url, params)
-        assert type(r) in [JsonResponse, JsonError]
+        assert isinstance(r, (JsonResponse, JsonError))
         return r.status_code, r.json()
 
     def teardown_method(self):
@@ -42,13 +42,13 @@ class TestReleases(APIViewTestBase):
         assert type(data) == list
         assert len(data) == 2
         series1 = data[0]
-        for field in ["slug", "title", "url", "cover", "latest_chapter"]:
+        for field in ('slug', 'title', 'url', 'cover', 'latest_chapter'):
             assert field in series1
 
-        for field in ["title", "volume", "number", "date"]:
-            assert field in series1["latest_chapter"]
+        for field in ('title', 'volume', 'number', 'date'):
+            assert field in series1['latest_chapter']
         series2 = data[1]
-        assert series2["latest_chapter"] == {}
+        assert series2['latest_chapter'] == {}
 
 
 class TestAllSeries(APIViewTestBase):
@@ -60,15 +60,17 @@ class TestAllSeries(APIViewTestBase):
         assert type(data) == list
         assert len(data) == 2
         series1 = data[0]
-        for field in ["slug", "title", "aliases", "url", "description",
-                      "authors", "artists", "categories", "cover",
-                      "completed", "volumes"]:
+        fields = (
+            'slug', 'title', 'aliases', 'url', 'description', 'authors',
+            'artists', 'categories', 'cover', 'completed', 'volumes'
+        )
+        for field in fields:
             assert field in series1
 
     def test_get_slug(self):
         status_code, data = self.get_data(self.URL, {'slug': 'test-series'})
         assert status_code == 200
-        assert type(data) == list
+        assert isinstance(data, List)
         assert len(data) == 1
 
 
@@ -78,14 +80,18 @@ class TestSeries(APIViewTestBase):
     def test_get(self):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
-        assert type(data) == dict
-        for field in ["slug", "title", "aliases", "url", "description",
-                      "authors", "artists", "categories", "cover",
-                      "completed", "volumes"]:
+        assert isinstance(data, Dict)
+        fields = (
+            'slug', 'title', 'aliases', 'url', 'description', 'authors',
+            'artists', 'categories', 'cover', 'completed', 'volumes'
+        )
+        for field in fields:
             assert field in data
 
     def test_not_found(self):
-        status_code, data = self.get_data(reverse('api:v1:series', args=['no']))
+        status_code, data = self.get_data(
+            reverse('api:v1:series', args=('no',))
+        )
         assert status_code == 404
         assert 'error' in data
         assert data['error'] == 'Not found'
@@ -97,11 +103,14 @@ class TestVolume(APIViewTestBase):
     def test_get(self):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
-        assert type(data) == dict
-        assert "0" in data
-        for field in ['title', 'url', 'pages_root', 'pages_list', 'date',
-                      'final', 'groups']:
-            assert field in data["0"]
+        assert isinstance(data, Dict)
+        assert '0' in data
+        fields = (
+            'title', 'url', 'pages_root',
+            'pages_list', 'date', 'final', 'groups'
+        )
+        for field in fields:
+            assert field in data['0']
 
     def test_not_found_series(self):
         url = reverse('api:v1:volume', kwargs={'slug': 'testseries', 'vol': 1})
@@ -119,22 +128,27 @@ class TestVolume(APIViewTestBase):
 
 
 class TestChapter(APIViewTestBase):
-    URL = reverse('api:v1:chapter', kwargs={'slug': 'test-series', 'vol': 1,
-                                            'num': '0.0'})
+    URL = reverse('api:v1:chapter', kwargs={
+        'slug': 'test-series', 'vol': 1, 'num': 0.0
+    })
 
     def test_get(self):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
         assert type(data) == dict
-        for field in ['title', 'url', 'pages_root', 'pages_list', 'date',
-                      'final', 'groups']:
+        fields = (
+            'title', 'url', 'pages_root',
+            'pages_list', 'date', 'final', 'groups'
+        )
+        for field in fields:
             assert field in data
-        for field in ['id', 'name']:
+        for field in ('id', 'name'):
             assert field in data['groups'][0]
 
     def test_not_found(self):
-        url = reverse('api:v1:chapter', kwargs={'slug': 'test-series', 'vol': 1,
-                                                'num': '2.0'})
+        url = reverse('api:v1:chapter', kwargs={
+            'slug': 'test-series', 'vol': 1, 'num': 2.0
+        })
         status_code, data = self.get_data(url)
         print(data)
         assert status_code == 404
@@ -143,35 +157,40 @@ class TestChapter(APIViewTestBase):
 
 
 class TestAllPeople(APIViewTestBase):
-    @mark.parametrize('url', [reverse('api:v1:all_artists'),
-                              reverse('api:v1:all_authors')])
+    @mark.parametrize('url', (
+        reverse('api:v1:all_artists'), reverse('api:v1:all_authors')
+    ))
     def test_get(self, url):
         status_code, data = self.get_data(url)
         assert status_code == 200
-        assert type(data) == list
+        assert isinstance(data, List)
         assert len(data) == 1
         person = data[0]
-        for field in ['id', 'name', 'aliases', 'series']:
+        for field in ('id', 'name', 'aliases', 'series'):
             assert field in person
         assert len(person['series']) == 1
-        for field in ['slug', 'title', 'aliases']:
+        for field in ('slug', 'title', 'aliases'):
             assert field in person['series'][0]
 
 
 class TestPerson(APIViewTestBase):
-    @mark.parametrize('url', [reverse('api:v1:artist', kwargs={'p_id': 1}),
-                              reverse('api:v1:author', kwargs={'p_id': 1})])
+    @mark.parametrize('url', (
+        reverse('api:v1:artist', kwargs={'p_id': 1}),
+        reverse('api:v1:author', kwargs={'p_id': 1})
+    ))
     def test_get(self, url):
         status_code, data = self.get_data(url)
         assert status_code == 200
-        assert type(data) == dict
-        for field in ['id', 'name', 'aliases', 'series']:
+        assert isinstance(data, Dict)
+        for field in ('id', 'name', 'aliases', 'series'):
             assert field in data
-        for field in ['slug', 'title', 'aliases']:
+        for field in ('slug', 'title', 'aliases'):
             assert field in data['series'][0]
 
-    @mark.parametrize('url', [reverse('api:v1:artist', kwargs={'p_id': 4}),
-                              reverse('api:v1:author', kwargs={'p_id': 4})])
+    @mark.parametrize('url', (
+        reverse('api:v1:artist', kwargs={'p_id': 4}),
+        reverse('api:v1:author', kwargs={'p_id': 4})
+    ))
     def test_not_found(self, url):
         status_code, data = self.get_data(url)
         assert status_code == 404
@@ -185,20 +204,23 @@ class TestAllGroups(APIViewTestBase):
     def test_get_no_members(self):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
-        assert type(data) == list
+        assert isinstance(data, List)
         assert len(data) == 1
         group1 = data[0]
-        for field in ['id', 'name', 'description', 'website', 'discord',
-                      'twitter', 'logo', 'members', 'series']:
+        fields = (
+            'id', 'name', 'description', 'website',
+            'discord', 'twitter', 'logo', 'members', 'series'
+        )
+        for field in fields:
             assert field in group1
         assert len(group1['series']) == 1
         assert len(group1['members']) == 0
         series1 = group1['series'][0]
-        for field in ['slug', 'title', 'aliases']:
+        for field in ('slug', 'title', 'aliases'):
             assert field in series1
 
     def test_get_members(self):
-        member = Member.objects.create(name="test")
+        member = Member.objects.create(name='test')
         group = Group.objects.get(pk=1)
         Role.objects.create(member=member, group=group, role='LD')
         status_code, data = self.get_data(self.URL)
@@ -213,9 +235,12 @@ class TestGroup(APIViewTestBase):
     def test_get(self):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
-        assert type(data) == dict
-        for field in ['id', 'name', 'description', 'website', 'discord',
-                      'twitter', 'logo', 'members', 'series']:
+        assert isinstance(data, Dict)
+        fields = (
+            'id', 'name', 'description', 'website',
+            'discord', 'twitter', 'logo', 'members', 'series'
+        )
+        for field in fields:
             assert field in data
 
     def test_not_found(self):
@@ -232,9 +257,9 @@ class TestCategories(APIViewTestBase):
     def test_get(self):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
-        assert type(data) == list
+        assert isinstance(data, List)
         category1 = data[0]
-        for field in ['id', 'name', 'description']:
+        for field in ('id', 'name', 'description'):
             assert field in category1
 
 

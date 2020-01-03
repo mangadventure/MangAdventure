@@ -29,7 +29,7 @@ if settings.DEBUG:  # pragma: no cover
     try:
         from debug_toolbar import urls as debug_urls
         urlpatterns.append(path('__debug__/', include(debug_urls)))
-    except ImportError:  # pragma: no cover
+    except ImportError:
         pass
 
 #: See :func:`MangAdventure.views.handler400`.

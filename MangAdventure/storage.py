@@ -50,7 +50,7 @@ class CDNStorage(FileSystemStorage):
         if self._fit:
             qs['fit'] = self._fit
         if name.lower().endswith(('.jpg', '.jpeg', '.jfif')):
-            qs.update({'quality': 100, 'strip': 'all'})
+            qs.update({'quality': '100', 'strip': 'all'})
         return f'{self.base_url}{name}?{urlencode(qs, safe=",")}'
 
     def get_available_name(self, name: str, max_length:

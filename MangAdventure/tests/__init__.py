@@ -1,3 +1,4 @@
+from hashlib import shake_128
 from io import BytesIO
 from os import urandom
 from pathlib import Path
@@ -39,10 +40,13 @@ def get_test_image() -> InMemoryUploadedFile:
     """
     im = Image.new(mode='RGB', size=(200, 200))
     im_io = BytesIO()
-    im.save(im_io, 'JPEG')
+    im.save(im_io, 'PNG')
     im_io.seek(0)
-    return InMemoryUploadedFile(im_io, None, 'random-name.jpg', 'image/jpeg',
-                                len(im_io.getvalue()), None)
+    data = im_io.getvalue()
+    sha = shake_128(data).hexdigest(16)
+    return InMemoryUploadedFile(
+        im_io, None, f'{sha}.png', 'image/png', len(data), None
+    )
 
 
 def get_valid_zip_file() -> InMemoryUploadedFile:
@@ -60,8 +64,9 @@ def get_valid_zip_file() -> InMemoryUploadedFile:
         zf.writestr('test/', '')
         zf.writestr('test/1.jpg', img_file.getvalue())
     file.seek(0)
-    return InMemoryUploadedFile(file, None, 'file.zip', 'zip/cbz',
-                                len(file.getvalue()), None)
+    return InMemoryUploadedFile(
+        file, None, 'file.zip', 'application/zip', len(file.getvalue()), None
+    )
 
 
 def get_multi_subdir_zip() -> InMemoryUploadedFile:
@@ -81,8 +86,9 @@ def get_multi_subdir_zip() -> InMemoryUploadedFile:
         zf.writestr('test/folder/', '')
         zf.writestr('test/folder/1.jpg', img_file.getvalue())
     file.seek(0)
-    return InMemoryUploadedFile(file, None, 'file.zip', 'zip/cbz',
-                                len(file.getvalue()), None)
+    return InMemoryUploadedFile(
+        file, None, 'file.zip', 'application/zip', len(file.getvalue()), None
+    )
 
 
 def get_zip_with_invalid_images() -> InMemoryUploadedFile:
@@ -96,8 +102,9 @@ def get_zip_with_invalid_images() -> InMemoryUploadedFile:
         zf.writestr('test/', '')
         zf.writestr('test/1.txt', 'test')
     file.seek(0)
-    return InMemoryUploadedFile(file, None, 'file.zip', 'zip/cbz',
-                                len(file.getvalue()), None)
+    return InMemoryUploadedFile(
+        file, None, 'file.zip', 'application/zip', len(file.getvalue()), None
+    )
 
 
 def get_random_file() -> InMemoryUploadedFile:
@@ -109,5 +116,6 @@ def get_random_file() -> InMemoryUploadedFile:
     file = BytesIO()
     file.write(urandom(randint(10, 2000)))
     file.seek(0)
-    return InMemoryUploadedFile(file, None, 'file.zip', 'zip/cbz',
-                                len(file.getvalue()), None)
+    return InMemoryUploadedFile(
+        file, None, 'file.zip', 'application/zip', len(file.getvalue()), None
+    )

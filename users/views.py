@@ -3,7 +3,6 @@
 from typing import TYPE_CHECKING
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib.messages import error, info
 from django.db import IntegrityError
 from django.db.models import Subquery
@@ -45,9 +44,8 @@ def profile(request: 'HttpRequest') -> HttpResponse:
     """
     try:
         uid = int(request.GET.get('id', request.user.id))
-        user = User.objects.get(pk=uid)
-        prof = UserProfile.objects.get_or_create(user=user)[0]
-    except (ValueError, IntegrityError, User.DoesNotExist) as e:
+        prof = UserProfile.objects.get_or_create(user_id=uid)[0]
+    except (ValueError, IntegrityError) as e:
         raise Http404 from e
     if uid != request.user.id and prof.user.is_superuser:
         raise Http404('Cannot view profile of superuser')
@@ -75,10 +73,9 @@ class EditUser(TemplateView):
         :param request: The original request.
         """
         super().setup(request)
-        # setup() gets called on AnonymousUsers too.
         if request.user.is_authenticated:
-            self.profile = UserProfile.objects. \
-                get_or_create(user_id=request.user.id)[0]
+            self.profile = UserProfile.objects \
+                .get_or_create(user_id=request.user.id)[0]
             url = request.path
             p_url = url.rsplit('/', 2)[0] + '/'
             crumbs = breadcrumbs([
@@ -96,8 +93,7 @@ class EditUser(TemplateView):
         :return: A response with the rendered
                  :obj:`template <EditUser.template_name>`.
         """
-        form = UserProfileForm(instance=self.profile,
-                               initial={'user_id': self.request.user.id})
+        form = UserProfileForm(instance=self.profile)
         return self.render_to_response(self.get_context_data(form=form))
 
     def post(self, request: 'HttpRequest', *args, **kwargs) -> HttpResponse:
@@ -112,8 +108,9 @@ class EditUser(TemplateView):
         :return: A response with the rendered
                  :obj:`template <EditUser.template_name>`.
         """
-        form = UserProfileForm(request.POST, request.FILES,
-                               instance=self.profile)
+        form = UserProfileForm(
+            request.POST, request.FILES, instance=self.profile
+        )
         if form.is_valid():
             form.save()
             email = form.cleaned_data['email']

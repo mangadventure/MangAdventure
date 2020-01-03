@@ -1,7 +1,7 @@
 """Template tags of the users app."""
 
 from operator import attrgetter
-from typing import List
+from typing import Iterable, List
 
 from django.template.defaultfilters import register
 
@@ -9,9 +9,9 @@ from allauth.socialaccount.models import SocialApp
 
 
 @register.filter
-def available(providers: List[SocialApp]) -> List[SocialApp]:
+def available(providers: Iterable[SocialApp]) -> List[SocialApp]:
     """
-    Filter out the unavailable OAuth providers from a list.
+    Filter out the unavailable OAuth providers.
 
     :param providers: The original list of OAuth providers.
 

@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import TYPE_CHECKING, Tuple
 
 from django.conf import settings
@@ -21,10 +20,12 @@ def get_redirect_list() -> list:
 class TestRedirectSeries(ReaderTestBase):
     @staticmethod
     def setup_series() -> Tuple['Series', 'Chapter']:
-        series = Series.objects.create(title='series', slug='old-slug',
-                                       cover=get_test_image())
-        chapter = series.chapters.create(title='Chapter', number=1,
-                                         file=get_valid_zip_file())
+        series = Series.objects.create(
+            title='series', slug='old-slug', cover=get_test_image()
+        )
+        chapter = series.chapters.create(
+            title='Chapter', number=1, file=get_valid_zip_file()
+        )
         return series, chapter
 
     def test_redirect(self):
@@ -42,9 +43,10 @@ class TestRedirectSeries(ReaderTestBase):
         url3 = series.get_absolute_url()
         assert get_redirect_list() == [(url2, url3), (url1, url3)]
 
-        for name in ['new-slug', 'old-slug']:
+        for name in ('new-slug', 'old-slug'):
             assert name not in series.cover.name
-            assert name not in series.chapters.first().pages.first().image.name
+            chapter = series.chapters.first()
+            assert name not in chapter.pages.first().image.name
 
         series.slug = 'old-slug'
         series.save()
@@ -57,6 +59,6 @@ class TestRedirectChapter(ReaderTestBase):
         chapter.number = 2
         chapter.volume = 2
         chapter.save()
-        series_path = Path(settings.MEDIA_ROOT) / series.get_directory()
+        series_path = settings.MEDIA_ROOT / series.get_directory()
         assert (series_path / '2' / '2').exists()
         assert not (series_path / '0' / '1').exists()

@@ -36,16 +36,13 @@ class DiscordURLField(models.URLField):
     """A :class:`~django.db.models.CharField` for Discord server URLs."""
     default_validators = (validators.discord_server_validator,)
 
-    def __init__(self, *args, **kwargs):
-        super(DiscordURLField, self).__init__(*args, **kwargs)
-
 
 class AliasField(models.CharField):
     """A :class:`~django.db.models.CharField` for aliases."""
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('max_length', 100)
         kwargs['blank'] = True
         kwargs['unique'] = True
+        kwargs.setdefault('max_length', 100)
         super(AliasField, self).__init__(*args, **kwargs)
 
 
@@ -59,16 +56,16 @@ class AliasKeyField(models.ForeignKey):
 
 class Alias(models.Model):
     """An abstract :class:`~django.db.models.Model` for aliases."""
-    alias = None
+    alias: AliasField
 
     class Meta:
         abstract = True
         verbose_name = 'alias'
-        verbose_name_plural = f'{verbose_name}es'
+        verbose_name_plural = 'aliases'
 
     def __str__(self) -> str:
         """Return the alias of the instance."""
-        return self.alias
+        return self.alias or ''
 
 
 __all__ = [

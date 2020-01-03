@@ -21,16 +21,15 @@ class TestGroup(GroupsTestBase):
         Role.objects.create(group=self.group, member=self.member, role='LD')
 
     def test_get(self):
-        r = self.client.get(reverse('groups:group',
-                                    kwargs={'g_id': self.group.id}))
+        r = self.client.get(reverse(
+            'groups:group', kwargs={'g_id': self.group.id}
+        ))
         assert r.status_code == 200
 
     def test_get_not_found(self):
-        r = self.client.get(reverse('groups:group',
-                                    kwargs={'g_id': 2}))
+        r = self.client.get(reverse('groups:group', kwargs={'g_id': 2}))
         assert r.status_code == 404
 
     def test_get_zero(self):
-        r = self.client.get(reverse('groups:group',
-                                    kwargs={'g_id': 0}))
+        r = self.client.get(reverse('groups:group', kwargs={'g_id': 0}))
         assert r.status_code == 404

@@ -118,8 +118,7 @@ def robots(request: 'HttpRequest') -> HttpResponse:
 
 
 def handler400(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') \
-        -> HttpResponse:  # pragma: no cover
+               template_name: str = 'error.html') -> HttpResponse:
     # pragma: no cover
     """
     Handler for :status:`400` responses.
@@ -139,9 +138,9 @@ def handler400(request: 'HttpRequest', exception: Optional[Exception] = None,
     return render(request, template_name, context, status=400)
 
 
+# pragma: no cover
 def handler403(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html')\
-        -> HttpResponse:  # pragma: no cover
+               template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`403` responses.
 
@@ -161,8 +160,7 @@ def handler403(request: 'HttpRequest', exception: Optional[Exception] = None,
 
 
 def handler404(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') \
-        -> HttpResponse:  # pragma: no cover
+               template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`404` responses.
 
@@ -185,8 +183,7 @@ def handler404(request: 'HttpRequest', exception: Optional[Exception] = None,
 
 
 def handler500(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') \
-        -> HttpResponse:  # pragma: no cover
+               template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`500` responses.
 
@@ -205,9 +202,9 @@ def handler500(request: 'HttpRequest', exception: Optional[Exception] = None,
     return render(request, template_name, context, status=500)
 
 
+# pragma: no cover
 def handler503(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') \
-        -> HttpResponse:  # pragma: no cover
+               template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`503` responses.
 

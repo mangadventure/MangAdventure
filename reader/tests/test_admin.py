@@ -85,8 +85,9 @@ class TestCategoryAdmin(ReaderAdminTestBase):
     def setup_method(self):
         super().setup_method()
         self.admin = CategoryAdmin(admin_site=self.site, model=Category)
-        self.category = Category.objects.create(name='Adventure',
-                                                description='Test')
+        self.category = Category.objects.create(
+            name='Adventure', description='Test'
+        )
 
     def test_readonly_fields(self):
         fields = self.admin.get_readonly_fields(self.request, self.category)

@@ -25,7 +25,7 @@ class TestMemberAdmin(GroupsAdminTestBase):
         assert self.admin._twitter(self.member) == ''
 
     def test_twitter(self):
-        self.member.twitter = "Test"
+        self.member.twitter = 'Test'
         self.member.save()
         twitter_url = 'https://twitter.com'
         assert self.admin._twitter(self.member)\
@@ -49,8 +49,7 @@ class TestGroupAdmin(GroupsAdminTestBase):
         self.group = Group.objects.create(name='test', logo=get_test_image())
 
     def test_image(self):
-        assert self.admin.image(self.group)\
-            .startswith('<img src="')
+        assert self.admin.image(self.group).startswith('<img src="')
 
     def test_image_empty(self):
         self.group.logo = None
@@ -63,5 +62,5 @@ class TestGroupAdmin(GroupsAdminTestBase):
     def test_website(self):
         self.group.website = 'https://site.com'
         self.group.save()
-        assert self.admin._website(self.group)\
+        assert self.admin._website(self.group) \
             .startswith(f'<a href="{self.group.website}"')

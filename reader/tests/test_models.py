@@ -25,7 +25,7 @@ class TestAuthor(ReaderTestBase):
     def test_alias(self):
         author = self.create_author()
         author.aliases.create(alias='test')
-        assert len(author.aliases.all()) == 1
+        assert author.aliases.count() == 1
         assert str(author.aliases.first()) == 'test'
 
 
@@ -41,15 +41,16 @@ class TestArtist(ReaderTestBase):
     def test_alias(self):
         artist = self.create_artist()
         artist.aliases.create(alias='test')
-        assert len(artist.aliases.all()) == 1
+        assert artist.aliases.count() == 1
         assert str(artist.aliases.first()) == 'test'
 
 
 class TestCategory(ReaderTestBase):
     @staticmethod
     def create_category():
-        return Category.objects.get_or_create(name='Adventure',
-                                              description='Epic')[0]
+        return Category.objects.get_or_create(
+            name='Adventure', description='Epic'
+        )[0]
 
     def test_create(self):
         category = self.create_category()
@@ -72,8 +73,9 @@ class TestSeries(ReaderTestBase):
 
     def test_get_absolute_url(self):
         series = self.create_series()
-        assert series.get_absolute_url() == reverse('reader:series', kwargs={
-            'slug': series.slug})
+        assert series.get_absolute_url() == reverse(
+            'reader:series', kwargs={'slug': series.slug}
+        )
 
     def test_get_directory(self):
         series = self.create_series()
@@ -82,23 +84,22 @@ class TestSeries(ReaderTestBase):
     def test_alias(self):
         series = self.create_series()
         series.aliases.create(alias='test')
-        assert len(series.aliases.all()) == 1
+        assert series.aliases.count() == 1
 
 
 class TestChapter(ReaderTestBase):
     @staticmethod
-    def create_chapter(number: int = 0.5, volume: int = 1, **kwargs):
+    def create_chapter(volume: int = 1, number: float = 0.5, **kwargs):
         series = TestSeries.create_series()
-        chapter = Chapter.objects.get_or_create(title='Chapter', number=number,
-                                                volume=volume, series=series,
-                                                **kwargs)[0]
-        return chapter
+        return Chapter.objects.get_or_create(
+            title='Chapter', number=number,
+            volume=volume, series=series, **kwargs
+        )[0]
 
     def test_create(self):
         chapter = self.create_chapter()
         assert str(chapter) == 'My Series - 1/0.5: Chapter'
-        assert chapter._tuple == (1, 0.5)
-        assert type(hash(chapter))
+        assert hash(chapter) > 0
 
     def test_get_directory(self):
         chapter = self.create_chapter()
@@ -106,14 +107,17 @@ class TestChapter(ReaderTestBase):
 
     def test_get_absolute_url(self):
         chapter = self.create_chapter()
-        assert chapter.get_absolute_url() == reverse('reader:chapter', kwargs={
-            'slug': chapter.series.slug, 'vol': chapter.volume,
-            'num': chapter.number
-        })
+        assert chapter.get_absolute_url() == reverse(
+            'reader:chapter', kwargs={
+                'slug': chapter.series.slug,
+                'vol': chapter.volume,
+                'num': chapter.number
+            }
+        )
 
     def test_relations(self):
         chapter1 = self.create_chapter(volume=2, number=1)
-        chapter2 = self.create_chapter(volume=1, number=1)
+        chapter2 = self.create_chapter(volume=1, number=3)
         chapter3 = self.create_chapter(volume=2, number=2)
         # Next / prev
         assert chapter1.prev == chapter2
@@ -135,7 +139,7 @@ class TestChapter(ReaderTestBase):
         chapter = self.create_chapter()
         chapter.file = get_valid_zip_file()
         chapter.save()
-        assert len(chapter.pages.all()) == 1
+        assert chapter.pages.count() == 1
         assert chapter.zip()
 
     def test_file_invalid(self):
@@ -172,8 +176,9 @@ class TestPage(ReaderTestBase):
 
     def test_crate(self):
         page = self.create_page()
-        assert str(page) == 'My Series - 1/0.5 [random-name.jpg]'
-        assert hash(page)
+        name = '336e2fcfa9586c747a71e900d9b0c65a'
+        assert str(page) == f'My Series - 1/0.5 [{name}.png]'
+        assert hash(page) == 1577218085984938506
 
     def test_get_absolute_url(self):
         page = self.create_page()
@@ -185,7 +190,7 @@ class TestPage(ReaderTestBase):
         page = self.create_page()
         for i in range(2, 6):
             self.create_page(i)
-        assert len(page.preload.all()) == 3
+        assert page.preload.count() == 3
 
     def test_relations(self):
         page1 = self.create_page(1)

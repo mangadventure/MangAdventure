@@ -600,9 +600,9 @@ class Page(models.Model):
         :return: An integer hash value.
         """
         name = path.splitext(self._file_name)[0]
-        if len(name) == 32:  # pragma: no cover
-            return int(name, 16)
-        return abs(hash(str(self)))
+        if len(name) != 32:  # pragma: no cover
+            return abs(hash(str(self)))
+        return int(name, 16)
 
 
 __all__ = [

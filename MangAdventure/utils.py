@@ -14,7 +14,7 @@ def img_tag(obj: 'FieldFile', alt: str,
     """
     Create an HTML ``<img>`` from an :class:`~django.db.models.ImageField`.
 
-    :param obj: A ``FieldFile`` instance.
+    :param obj: An ``ImageFieldFile`` instance.
     :param alt: The alternate text of the tag.
     :param height: The height of the ``<img>``. Unset if ``0``.
     :param width: The width of the ``<img>``. Unset if ``0``.
@@ -32,7 +32,7 @@ def atoi(s: str) -> Union[int, str]:
     return int(s) if s.isdigit() else s.lower()
 
 
-def alnum_key(k: str) -> List[str]:
+def alnum_key(k: str) -> List[Union[int, str]]:
     """Generate an alphanumeric key for sorting."""
     return list(map(atoi, split('([0-9]+)', k)))
 

@@ -15,12 +15,13 @@ class TestBookmark(UsersTestBase):
         bookmark = Bookmark.objects.create(user=self.user, series=self.series)
         assert bookmark.series == self.series
         assert bookmark.user == self.user
-        assert len(self.user.bookmarks.all()) == 1
+        assert self.user.bookmarks.count() == 1
         assert self.user.bookmarks.get(series=self.series)
 
     def test_integrity(self):
-        """Test that series and user are unique together,
-         but not individually."""
+        """
+        Test that series and user are unique together, but not individually.
+        """
         Bookmark.objects.create(user=self.user, series=self.series)
         user2 = User.objects.get(pk=2)
         series2 = Series.objects.get(pk=2)
@@ -34,11 +35,11 @@ class TestBookmark(UsersTestBase):
 class TestUserProfile(UsersTestBase):
     def setup_method(self):
         super().setup_method()
-        self.profile = UserProfile.objects.create(user=self.user, bio="Test")
+        self.profile = UserProfile.objects.create(user=self.user, bio='Test')
 
     def test_create(self):
         """Test object creation & relations."""
-        assert self.profile.bio == "Test"
+        assert self.profile.bio == 'Test'
         assert self.profile.user == self.user
         assert self.user.profile == self.profile
 
@@ -48,5 +49,5 @@ class TestUserProfile(UsersTestBase):
 class TestUtils(UsersTestBase):
     def test_avatar_uploader(self):
         profile = UserProfile.objects.create(user=self.user)
-        upload_dir = _avatar_uploader(profile, "whatever.png")
-        assert upload_dir == f"users/{profile.pk}/avatar.png"
+        upload_dir = _avatar_uploader(profile, 'whatever.png')
+        assert upload_dir == f'users/{profile.pk}/avatar.png'

@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 from django.core.cache import cache
 from django.urls import reverse
 
@@ -17,8 +19,9 @@ class MangadvViewTestBase(MangadvTestBase):
         artist.aliases.create(alias='artist1')
         series.categories.create(name='Manga')
         category = series.categories.create(name='Adventure')
-        series.chapters.create(title='chapter', number=1,
-                               file=get_valid_zip_file())
+        series.chapters.create(
+            title='chapter', number=1, file=get_valid_zip_file()
+        )
 
         series2 = Series.objects.create(title='series2', completed=True)
         author2 = series2.authors.create(name='Author 2')
@@ -46,17 +49,18 @@ class TestIndex(MangadvViewTestBase):
 class TestSearch(MangadvViewTestBase):
     URL = reverse('search')
 
-    def _test_filter(self, _filter: dict = {}, results: list = [], empty=False):
+    def _test_filter(self, params: Dict[str, str] = {},
+                     results: List[str] = []):
         cache.clear()
-        r = self.client.get(self.URL, _filter)
+        r = self.client.get(self.URL, params)
         assert r.status_code == 200
-        if not empty:
-            assert list(r.context['results'].values_list('title',
-                                                         flat=True)) == results
+        if bool(params and results):
+            values = r.context['results'].values_list('title', flat=True)
+            assert list(values) == results
 
     def test_get_simple(self):
         self.setup_chapters()
-        self._test_filter(empty=True)
+        self._test_filter()
 
     def test_get_author_search_alias(self):
         self.setup_chapters()
@@ -82,13 +86,13 @@ class TestSearch(MangadvViewTestBase):
         self._test_filter({'q': 'first'}, ['series'])
 
 
-class TestOpensearch(MangadvViewTestBase):
+class TestOpenSearch(MangadvViewTestBase):
     URL = reverse('opensearch')
 
     def test_get(self):
         r = self.client.get(self.URL)
         assert r.status_code == 200
-        assert r['content-type'] == 'application/opesearchdescription+xml'
+        assert r['Content-Type'] == 'application/opesearchdescription+xml'
 
 
 class TestContribute(MangadvViewTestBase):
@@ -97,4 +101,4 @@ class TestContribute(MangadvViewTestBase):
     def test_get(self):
         r = self.client.get(self.URL)
         assert r.status_code == 200
-        assert r['content-type'] == 'application/json'
+        assert r['Content-Type'] == 'application/json'

@@ -51,10 +51,10 @@ def boolean_filter(title: str, param: str, names:
             super(_BooleanFilter, self).__init__(*args, **kwargs)
 
         def lookups(self, request, model_admin):
-            return (
+            return [
                 (True, self.names[0]),
                 (False, self.names[1])
-            )
+            ]
 
         def queryset(self, request, queryset):
             return {

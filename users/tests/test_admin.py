@@ -17,10 +17,10 @@ class TestUserTypeFilter(UsersTestBase):
         self.model_admin = UserAdmin
         self.request = HttpRequest()
         self.request.user = self.user
-        self.filter = UserTypeFilter(model=self.model,
-                                     model_admin=self.model_admin,
-                                     request=self.request,
-                                     params={'type': 'superuser'})
+        self.filter = UserTypeFilter(
+            model=self.model, model_admin=self.model_admin,
+            request=self.request, params={'type': 'superuser'}
+        )
 
     def test_lookups(self):
         lookups = self.filter.lookups(self.request, self.model_admin)
@@ -31,9 +31,10 @@ class TestUserTypeFilter(UsersTestBase):
         ]
 
     def test_queryset(self):
-        queryset = self.filter.queryset(request=self.request,
-                                        queryset=User.objects.all())
-        assert len(queryset.all()) == 2
+        queryset = self.filter.queryset(
+            request=self.request, queryset=User.objects.all()
+        )
+        assert queryset.count() == 2
 
 
 class TestUserAdmin(UsersTestBase):
@@ -51,7 +52,7 @@ class TestUserAdmin(UsersTestBase):
         assert email_link == ''
 
     def test_full_name(self):
-        assert self.admin.full_name(self.user) == "evangelos ch"
+        assert self.admin.full_name(self.user) == 'evangelos ch'
 
     def test_has_add_permission(self):
         request = HttpRequest()
@@ -60,16 +61,17 @@ class TestUserAdmin(UsersTestBase):
 
 class TestOAuthApp(UsersTestBase):
     def test_str(self):
-        app = OAuthApp.objects.create(provider="reddit", name="whatever",
-                                      client_id="whatever")
-        assert str(app) == "whatever (reddit)"
+        app = OAuthApp.objects.create(
+            provider='reddit', name='whatever', client_id='whatever'
+        )
+        assert str(app) == 'whatever (reddit)'
 
 
 class TestOAuthAppForm(UsersTestBase):
     def test_init(self):
         form = OAuthAppForm()
         sites_widget = form.fields['sites'].widget.widget
-        assert type(sites_widget) == CheckboxSelectMultiple
+        assert isinstance(sites_widget, CheckboxSelectMultiple)
 
 
 class TestOAuthAppAdmin(UsersTestBase):
@@ -79,13 +81,13 @@ class TestOAuthAppAdmin(UsersTestBase):
         self.admin = OAuthAppAdmin(admin_site=self.site, model=OAuthApp)
 
     def test_provider(self):
-        app = OAuthApp.objects.create(provider="reddit", name="whatever",
-                                      client_id="whatever")
+        app = OAuthApp.objects.create(
+            provider='reddit', name='whatever', client_id='whatever'
+        )
         provider_url = self.admin._provider(app)
         assert '#reddit"' in provider_url
         assert 'Reddit</a>' in provider_url
 
     def test_provider_empty(self):
-        app = OAuthApp.objects.create(name="whatever", client_id="whatever")
-        provider_url = self.admin._provider(app)
-        assert provider_url == ''
+        app = OAuthApp.objects.create(name='whatever', client_id='whatever')
+        assert self.admin._provider(app) == ''

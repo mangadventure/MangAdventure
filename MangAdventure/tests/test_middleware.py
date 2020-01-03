@@ -41,6 +41,6 @@ class TestPreloadMiddleware(MangadvTestBase):
 
     def test_preload(self):
         r = self.client.get(reverse('index'))
-        assert 'style.css;> as=style' in r['Link']
+        assert 'style.css>; as=style' in r['Link']
         r = self.client.get(reverse('opensearch'))
-        assert 'Link' not in r.headers
+        assert 'Link' not in r

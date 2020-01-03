@@ -7,6 +7,7 @@ v0.6.0
 * Dropped support for Python<3.6
 * Dropped support for Django<3.0
 * Dropped support for non-ES6 browsers
+* Added testing via ``pytest``
 * Added Sentry integration
 * Added Statically image CDN
 * Added chapter download

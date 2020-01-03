@@ -9,8 +9,8 @@ from . import MangadvTestBase, get_test_image, get_valid_zip_file
 
 
 class MangadvViewTestBase(MangadvTestBase):
-    @staticmethod
-    def setup_chapters():
+    def setup_method(self):
+        super().setup_method()
         series = Series.objects.create(title='series', cover=get_test_image())
         series.aliases.create(alias='first series')
         author = series.authors.create(name='Author')
@@ -41,7 +41,6 @@ class TestIndex(MangadvViewTestBase):
     URL = reverse('index')
 
     def test_get(self):
-        self.setup_chapters()
         r = self.client.get(self.URL)
         assert r.status_code == 200
 
@@ -59,30 +58,25 @@ class TestSearch(MangadvViewTestBase):
             assert list(values) == results
 
     def test_get_simple(self):
-        self.setup_chapters()
         self._test_filter()
 
     def test_get_author_search_alias(self):
-        self.setup_chapters()
         self._test_filter({'author': 'author1'}, ['series'])
         self._test_filter({'author': 'artist1'}, ['series'])
         self._test_filter({'author': 'author2'}, ['series2'])
         self._test_filter({'author': 'artist2'}, ['series2'])
 
     def test_get_completed(self):
-        self.setup_chapters()
         self._test_filter({'status': 'completed'}, ['series2'])
         self._test_filter({'status': 'any'}, ['series', 'series2'])
 
     def test_get_categories(self):
-        self.setup_chapters()
         self._test_filter({'categories': 'adventure'}, ['series', 'series2'])
         self._test_filter({'categories': 'manga'}, ['series'])
         self._test_filter({'categories': 'yaoi'}, ['series2'])
         self._test_filter({'categories': '-yaoi,adventure'}, ['series'])
 
     def test_get_query(self):
-        self.setup_chapters()
         self._test_filter({'q': 'first'}, ['series'])
 
 

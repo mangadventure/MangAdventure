@@ -44,10 +44,7 @@ handler404 = 'MangAdventure.views.handler404'
 #: See :func:`MangAdventure.views.handler500`.
 handler500 = 'MangAdventure.views.handler500'
 
-#: See :func:`MangAdventure.views.handler503`.
-handler503 = 'MangAdventure.views.handler503'
-
 __all__ = [
-    'urlpatterns', 'handler400', 'handler403',
-    'handler404', 'handler500', 'handler503'
+    'urlpatterns', 'handler400',
+    'handler403', 'handler404', 'handler500',
 ]

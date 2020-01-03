@@ -1,5 +1,3 @@
-from typing import TYPE_CHECKING, Tuple
-
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
 
@@ -9,56 +7,56 @@ from reader.models import Series
 
 from . import ReaderTestBase
 
-if TYPE_CHECKING:
-    from reader.models import Chapter  # noqa
-
 
 def get_redirect_list() -> list:
     return list(Redirect.objects.values_list('old_path', 'new_path'))
 
 
 class TestRedirectSeries(ReaderTestBase):
-    @staticmethod
-    def setup_series() -> Tuple['Series', 'Chapter']:
-        series = Series.objects.create(
+    def setup_method(self):
+        super().setup_method()
+        self.series = Series.objects.create(
             title='series', slug='old-slug', cover=get_test_image()
         )
-        chapter = series.chapters.create(
+        self.chapter = self.series.chapters.create(
             title='Chapter', number=1, file=get_valid_zip_file()
         )
-        return series, chapter
 
     def test_redirect(self):
-        series = self.setup_series()[0]
+        url1 = self.series.get_absolute_url()
 
-        url1 = series.get_absolute_url()
-
-        series.slug = 'new-slug'
-        series.save()
-        url2 = series.get_absolute_url()
+        self.series.slug = 'new-slug'
+        self.series.save()
+        url2 = self.series.get_absolute_url()
         assert get_redirect_list() == [(url1, url2)]
 
-        series.slug = 'another-slug'
-        series.save()
-        url3 = series.get_absolute_url()
+        self.series.slug = 'another-slug'
+        self.series.save()
+        url3 = self.series.get_absolute_url()
         assert get_redirect_list() == [(url2, url3), (url1, url3)]
 
         for name in ('new-slug', 'old-slug'):
-            assert name not in series.cover.name
-            chapter = series.chapters.first()
-            assert name not in chapter.pages.first().image.name
+            assert name not in self.series.cover.name
+            assert name not in self.chapter.pages.first().image.name
 
-        series.slug = 'old-slug'
-        series.save()
+        self.series.slug = 'old-slug'
+        self.series.save()
         assert get_redirect_list() == [(url3, url1), (url2, url1)]
 
 
 class TestRedirectChapter(ReaderTestBase):
+    def setup_method(self):
+        self.series = Series.objects.create(
+            title='series', slug='old-slug', cover=get_test_image()
+        )
+        self.chapter = self.series.chapters.create(
+            title='Chapter', number=1, file=get_valid_zip_file()
+        )
+
     def test_redirect(self):
-        series, chapter = TestRedirectSeries.setup_series()
-        chapter.number = 2
-        chapter.volume = 2
-        chapter.save()
-        series_path = settings.MEDIA_ROOT / series.get_directory()
+        self.chapter.number = 2
+        self.chapter.volume = 2
+        self.chapter.save()
+        series_path = settings.MEDIA_ROOT / self.series.get_directory()
         assert (series_path / '2' / '2').exists()
         assert not (series_path / '0' / '1').exists()

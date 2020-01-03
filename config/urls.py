@@ -8,7 +8,7 @@ try:  # pragma: no cover
     info_page = csp_update(
         style_src="'unsafe-inline'", img_src="https:"
     )(flatpage)
-except ImportError:
+except ImportError:  # pragma: no cover
     info_page = flatpage
 
 info_page.__doc__ = """

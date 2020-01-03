@@ -1,20 +1,11 @@
-# -- Create .env file if missing --
-
-from pathlib import Path
-
-env = Path(__file__).parent.with_name('.env')
-if not env.exists():
-    example = env.with_suffix('.example')
-    env.write_bytes(example.read_bytes())
-
-
 # -- Setup Django --
 
 from sys import path
-from os import environ
+from os import environ as env
+from os.path import dirname
 
-path.insert(0, str(env.parent))
-environ['DJANGO_SETTINGS_MODULE'] = 'MangAdventure.settings'
+path.insert(0, dirname(__file__))
+env['DJANGO_SETTINGS_MODULE'] = 'MangAdventure.tests.settings'
 __import__('django').setup()
 
 
@@ -57,20 +48,14 @@ def skip_django_junk(app: Sphinx, what: str, name: str,
 def annotate_attributes(app: Sphinx, what: str, name: str,
                         obj: Any, options: Options, lines: List[str]):
 
-    if obj is None:
+    if obj is None or not lines:
         return
-    cls = None
     if what == 'attribute':
-        if hasattr(obj, 'field'):
-            cls = obj.field.__class__
-        else:
-            cls = obj.__class__
-    if what == 'property':
-        if hasattr(obj, 'func'):
-            cls = get_type_hints(obj.func)['return']
-        else:
-            cls = get_type_hints(obj.fget)['return']
-    if not cls:
+        cls = getattr(obj, 'field', obj).__class__
+    elif what == 'property':
+        func = obj.func if hasattr(obj, 'func') else obj.fget
+        cls = get_type_hints(func)['return']
+    else:
         return
     mod = cls.__module__
     if mod == 'builtins':
@@ -81,8 +66,7 @@ def annotate_attributes(app: Sphinx, what: str, name: str,
         qname = f'{mod}.{cls.__name__}'
     if qname in ('dict', 'list', 'tuple'):
         qname = f'typing.{qname.capitalize()}'
-    if lines:
-        lines[0] = f':class:`~{qname}` – {lines[0]}'
+    lines[0] = f':class:`~{qname}` – {lines[0]}'
 
 def setup(app: Sphinx):
     app.connect('autodoc-skip-member', skip_django_junk)

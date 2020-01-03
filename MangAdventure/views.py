@@ -117,9 +117,9 @@ def robots(request: 'HttpRequest') -> HttpResponse:
     return HttpResponse(content=_robots, content_type=ctype)
 
 
-def handler400(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
-    # pragma: no cover
+def handler400(request: 'HttpRequest', exception: Optional[Exception]
+               = None, template_name: str = 'error.html'
+               ) -> HttpResponse:  # pragma: no cover
     """
     Handler for :status:`400` responses.
 
@@ -138,9 +138,8 @@ def handler400(request: 'HttpRequest', exception: Optional[Exception] = None,
     return render(request, template_name, context, status=400)
 
 
-# pragma: no cover
-def handler403(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
+def handler403(request: 'HttpRequest', exception: Optional[Exception]
+               = None, template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`403` responses.
 
@@ -151,7 +150,7 @@ def handler403(request: 'HttpRequest', exception: Optional[Exception] = None,
     :return: A :class:`~api.response.JsonError` for API URLs,
              otherwise a response with the rendered error template.
     """
-    if request.path.startswith('/api'):
+    if request.path.startswith('/api'):  # pragma: no cover
         return JsonError('Forbidden', 403)
     context = _error_context(
         'You do not have permission to access this page.', 403
@@ -159,8 +158,8 @@ def handler403(request: 'HttpRequest', exception: Optional[Exception] = None,
     return render(request, template_name, context, status=403)
 
 
-def handler404(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
+def handler404(request: 'HttpRequest', exception: Optional[Exception]
+               = None, template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`404` responses.
 
@@ -176,14 +175,15 @@ def handler404(request: 'HttpRequest', exception: Optional[Exception] = None,
     try:  # pragma: no cover
         from sentry_sdk import capture_message
         capture_message('Page not found', level='warning')
-    except ImportError:
+    except ImportError:  # pragma: no cover
         pass
     context = _error_context("Sorry. This page doesn't exist.", 404)
     return render(request, template_name, context, status=404)
 
 
-def handler500(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
+def handler500(request: 'HttpRequest', exception: Optional[Exception]
+               = None, template_name: str = 'error.html'
+               ) -> HttpResponse:  # pragma: no cover
     """
     Handler for :status:`500` responses.
 
@@ -202,30 +202,7 @@ def handler500(request: 'HttpRequest', exception: Optional[Exception] = None,
     return render(request, template_name, context, status=500)
 
 
-# pragma: no cover
-def handler503(request: 'HttpRequest', exception: Optional[Exception] = None,
-               template_name: str = 'error.html') -> HttpResponse:
-    """
-    Handler for :status:`503` responses.
-
-    :param request: The original request.
-    :param exception: The exception that occurred.
-    :param template_name: The name of the error template.
-
-    :return: A :class:`~api.response.JsonError` for API URLs,
-             otherwise a response with the rendered error template.
-    """
-    if request.path.startswith('/api'):
-        return JsonError('Service unavailable', 503)
-    context = _error_context(
-        'The site is currently under maintenance.'
-        ' Please try again later.', 503
-    )
-    return render(request, template_name, context, status=503)
-
-
 __all__ = [
-    'index', 'search', 'opensearch', 'contribute',
-    'robots', 'handler400', 'handler403',
-    'handler404', 'handler500', 'handler503'
+    'index', 'search', 'opensearch', 'contribute', 'robots',
+    'handler400', 'handler403', 'handler404', 'handler500'
 ]

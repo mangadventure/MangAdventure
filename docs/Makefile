@@ -9,7 +9,8 @@ BUILDDIR    = _build
 APIEXCLUDE  = '../*migrations*' \
               '../setup.py' \
               '../manage.py' \
-              '../*bad_bots.py'
+              '../*bad_bots.py' \
+              '../*tests*'
 
 .PHONY: help modules Makefile
 

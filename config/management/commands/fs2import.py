@@ -198,7 +198,7 @@ class Command(BaseCommand):
     def _print_success(self, text: str, **kwargs):
         self._print(self.style.SUCCESS(text), **kwargs)
 
-    def _print_warning(self, text: str, **kwargs):
+    def _print_warning(self, text: str, **kwargs):  # pragma: no cover
         self._print(self.style.WARNING(text), **kwargs)
 
     def _sql_name(self, name: str) -> str:

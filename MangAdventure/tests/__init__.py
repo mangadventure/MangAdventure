@@ -1,25 +1,22 @@
 from hashlib import shake_128
 from io import BytesIO
-from os import urandom
-from pathlib import Path
+from os import makedirs, urandom
 from random import randint
 from shutil import rmtree
 from zipfile import ZipFile
 
+from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.test import Client
 
 import pytest
 from PIL import Image
 
-media_dir = Path(__file__).parent / 'media'
-
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures('custom_test_settings')
 class MangadvTestBase:
     def setup_class(self):
-        media_dir.mkdir(exist_ok=True)
+        makedirs(settings.MEDIA_ROOT, exist_ok=True)
 
     def setup_method(self):
         self.client = Client()
@@ -28,7 +25,7 @@ class MangadvTestBase:
         pass
 
     def teardown_class(self):
-        rmtree(media_dir)
+        rmtree(settings.MEDIA_ROOT)
 
 
 def get_test_image() -> InMemoryUploadedFile:

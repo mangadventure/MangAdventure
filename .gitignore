@@ -33,6 +33,7 @@ _templates/
 
 # Coverage stuff
 htmlcov/
+coverage.xml
 .coverage
 
 # Editor stuff

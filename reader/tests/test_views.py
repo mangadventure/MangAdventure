@@ -99,7 +99,7 @@ class TestChapterDownload(ReaderViewTestBase):
                                             'num': 1})
         r = self.client.get(url)
         assert r.status_code == 200
-        assert type(r) == FileResponse
+        assert isinstance(r, FileResponse)
         assert r.filename.endswith('c1.cbz')
 
     def test_get_not_found(self):

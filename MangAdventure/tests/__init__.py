@@ -60,7 +60,7 @@ def get_valid_zip_file() -> InMemoryUploadedFile:
         zf.writestr('test/', '')
         zf.writestr('test/1.jpg', img_file.getvalue())
     file.seek(0)
-    return InMemoryUploadedFile(file, None, 'file.zip', 'zip/cbz',
+    return InMemoryUploadedFile(file, None, 'file.zip', 'application/zip',
                                 len(file.getvalue()), None)
 
 

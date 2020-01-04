@@ -93,6 +93,11 @@ class TestProfile(UsersViewTestBase):
             r = self.client.get(self.URL, data={'id': 5})
             assert r.status_code == 404
 
+    def test_invalid_id(self):
+        from math import nan
+        r = self.client.get(self.URL, data={'id': nan})
+        assert r.status_code == 404
+
 
 class TestBookmarks(UsersViewTestBase):
     URL = reverse('user_bookmarks')

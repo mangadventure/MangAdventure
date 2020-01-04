@@ -48,7 +48,7 @@ def natsort(original: Iterable[str]) -> List[str]:
        >>> natsort(map(str, range(12)))
        ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']
 
-    :param original: The original list.
+    :param original: The original iterable.
 
     :return: The sorted list.
 

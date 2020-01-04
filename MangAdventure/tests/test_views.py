@@ -3,6 +3,8 @@ from typing import Dict, List
 from django.core.cache import cache
 from django.urls import reverse
 
+from MangAdventure.utils import natsort
+
 from reader.models import Series
 
 from . import MangadvTestBase, get_test_image, get_valid_zip_file
@@ -55,7 +57,7 @@ class TestSearch(MangadvViewTestBase):
         assert r.status_code == 200
         if bool(params and results):
             values = r.context['results'].values_list('title', flat=True)
-            assert list(values) == results
+            assert natsort(values) == results
 
     def test_get_simple(self):
         self._test_filter()

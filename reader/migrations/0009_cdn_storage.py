@@ -69,5 +69,10 @@ class Migration(migrations.Migration):
                 ), storage=CDNStorage((300, 300)),
                 upload_to=reader.models._cover_uploader,
                 validators=[FileSizeValidator(2)])
+        ),
+        migrations.AlterField(
+            model_name='category',
+            name='description',
+            field=models.TextField(help_text='A description for the category.')
         )
     ]

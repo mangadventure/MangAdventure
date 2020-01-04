@@ -74,9 +74,7 @@ class Category(models.Model):
                   'unique and cannot be changed once set.'
     )
     #: The description of the category.
-    description = models.CharField(
-        max_length=250, help_text='A description for the category.'
-    )
+    description = models.TextField(help_text='A description for the category.')
 
     class Meta:
         verbose_name_plural = 'categories'

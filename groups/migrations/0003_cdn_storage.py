@@ -23,5 +23,13 @@ class Migration(migrations.Migration):
                 upload_to=groups.models._logo_uploader,
                 validators=[FileSizeValidator(2)]
             )
+        ),
+        migrations.AddField(
+            model_name='member',
+            name='groups',
+            field=models.ManyToManyField(
+                blank=False, related_name='members',
+                through='groups.Role', to='groups.Group'
+            )
         )
     ]

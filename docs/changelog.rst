@@ -12,11 +12,13 @@ v0.6.0
 * Added Statically image CDN
 * Added chapter download
 * Added table indexes for searching
+* Added ``Member`` <--> ``Group`` relation
 * Added links & actions to admin interface
 * Added ``Cache-Control`` headers
 * Added type hints and docstrings
 * Added auto-generated modules documentation
 * Added ``modules`` Makefile directive
+* Converted ``Role`` choices to an enum
 * Converted multi-method views to class-based
 * Restructured ``utils``
 * Removed unused stuff

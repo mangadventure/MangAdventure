@@ -1,10 +1,10 @@
 """Database models for the groups app."""
 
+from enum import Enum, EnumMeta
 from pathlib import PurePath
 
 from django.db import models
 from django.shortcuts import reverse
-from django.utils.functional import cached_property
 
 from MangAdventure.models import (
     DiscordNameField, DiscordURLField, RedditField, TwitterField
@@ -16,6 +16,16 @@ from MangAdventure.validators import FileSizeValidator
 def _logo_uploader(obj: 'Group', name: str) -> str:
     name = f'logo.{name.split(".")[-1]}'
     return str(obj.get_directory() / name)
+
+
+class _ChoiceMeta(EnumMeta):
+    def __new__(cls, name, bases, attrs):
+        klass = super().__new__(cls, name, (Enum,) + bases, attrs)
+        klass.do_not_call_in_templates = True
+        return klass
+
+    def __iter__(cls):
+        return ((e.name, e.value) for e in super().__iter__())
 
 
 class Group(models.Model):
@@ -56,11 +66,6 @@ class Group(models.Model):
         upload_to=_logo_uploader, validators=(FileSizeValidator(2),),
         help_text="Upload the group's logo. Its size must not exceed 2 MBs.",
     )
-
-    @cached_property
-    def members(self) -> models.QuerySet:
-        """Get the members of the group."""
-        return Member.objects.filter(roles__group=self).distinct()
 
     def get_absolute_url(self) -> str:
         """
@@ -122,11 +127,8 @@ class Member(models.Model):
     reddit = RedditField(
         blank=True, help_text="The member's Reddit username."
     )
-
-    @cached_property
-    def groups(self) -> models.QuerySet:
-        """Get the groups of the member."""
-        return Group.objects.filter(roles__member=self).distinct()
+    #: The groups of this member.
+    groups = models.ManyToManyField(Group, 'members', through='Role')
 
     def __str__(self) -> str:
         """
@@ -139,20 +141,19 @@ class Member(models.Model):
 
 class Role(models.Model):
     """A model representing a role."""
-    #: A list of possible role choices.
-    #:
-    #: The first element of each tuple is the value and
-    #: the second is its human-readable representation.
-    ROLES = [
-        ('LD', 'Leader'),
-        ('TL', 'Translator'),
-        ('PR', 'Proofreader'),
-        ('CL', 'Cleaner'),
-        ('RD', 'Redrawer'),
-        ('TS', 'Typesetter'),
-        ('RP', 'Raw Provider'),
-        ('QC', 'Quality Checker')
-    ]
+
+    class Choices(metaclass=_ChoiceMeta):
+        """The possible role choices."""
+
+        LD = 'Leader'
+        TL = 'Translator'
+        PR = 'Proofreader'
+        CL = 'Cleaner'
+        RD = 'Redrawer'
+        TS = 'Typesetter'
+        RP = 'Raw Provider'
+        QC = 'Quality Checker'
+
     #: The member this role belongs to.
     member = models.ForeignKey(
         Member, on_delete=models.CASCADE, related_name='roles'
@@ -162,7 +163,7 @@ class Role(models.Model):
         Group, on_delete=models.CASCADE, related_name='roles'
     )
     #: The value of the role.
-    role = models.CharField(blank=False, max_length=2, choices=ROLES)
+    role = models.CharField(blank=False, max_length=2, choices=Choices)
 
     class Meta:
         verbose_name = 'Role'

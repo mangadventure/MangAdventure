@@ -363,9 +363,6 @@ thead {
   .member {
     padding-left: 0.5em;
     padding-bottom: 1em;
-    &-roles .comma:last-of-type {
-      &::after { display: none }
-    }
     &-name { color: $alter-bg }
     div { padding-left: 0.5em }
   }
@@ -699,8 +696,6 @@ thead {
 .no-display { display: none }
 
 .divider::before { content: quote('\00a0|\00a0') }
-
-.comma::after { content: quote(',') }
 
 #forgot-password { margin-bottom: 3px }
 

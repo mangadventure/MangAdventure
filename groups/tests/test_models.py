@@ -36,11 +36,11 @@ class TestGroup(GroupsTestBase):
         )
 
     def test_members(self):
-        assert self.group.members.count() == 0
+        assert self.group.members.distinct().count() == 0
         member = TestMember.create_member()
         TestRole.create_role(self.group, member)
         TestRole.create_role(self.group, member, 'TS')
-        assert self.group.members.count() == 1
+        assert self.group.members.distinct().count() == 1
 
 
 class TestMember(GroupsTestBase):
@@ -60,11 +60,11 @@ class TestMember(GroupsTestBase):
         assert str(self.member) == 'test'
 
     def test_groups(self):
-        assert self.member.groups.count() == 0
+        assert self.member.groups.distinct().count() == 0
         group = TestGroup.create_group()
         TestRole.create_role(group, self.member)
         TestRole.create_role(group, self.member, 'TS')
-        assert self.member.groups.count() == 1
+        assert self.member.groups.distinct().count() == 1
 
 
 class TestRole(GroupsTestBase):

@@ -139,7 +139,10 @@ def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
         'discord': _group.discord,
         'twitter': _group.twitter,
         'logo': logo,
-        'members': [_member_response(request, m) for m in _group.members.all()],
+        'members': [
+            _member_response(request, m)
+            for m in _group.members.distinct()
+        ],
         'series': [],
     }
     _series = []

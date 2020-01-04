@@ -1,0 +1,1 @@
+"""Groups app template tags."""

@@ -6,6 +6,13 @@ groups package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+   groups.templatetags
+
 Submodules
 ----------
 

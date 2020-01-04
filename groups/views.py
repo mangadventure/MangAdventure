@@ -49,7 +49,7 @@ def group(request: 'HttpRequest', g_id: int) -> 'HttpResponse':
         _group = Group.objects.get(id=g_id)
     except Group.DoesNotExist as e:
         raise Http404 from e
-    members = _group.members.all()
+    members = _group.members.distinct()
     url = request.path
     p_url = url.rsplit('/', 2)[0] + '/'
     crumbs = breadcrumbs([

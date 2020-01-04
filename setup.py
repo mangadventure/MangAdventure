@@ -31,7 +31,7 @@ setup(
     url='https://mangadventure.readthedocs.io',
     download_url='https://github.com/mangadventure/MangAdventure',
     keywords=['manga', 'scanlation', 'reader'],
-    packages=find_packages(exclude=['*tests*']),
+    packages=find_packages(),
     python_requires='>=3.6',
     install_requires=read('requirements.txt').splitlines(),
     extras_require={

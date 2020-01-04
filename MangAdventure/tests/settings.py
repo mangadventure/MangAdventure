@@ -1,17 +1,18 @@
 """The project's test settings."""
 
-from os import environ as env
 import re
+from os import environ as env
 from pathlib import Path
+from secrets import token_urlsafe
 
 from MangAdventure import __version__ as VERSION
 from MangAdventure.bad_bots import BOTS
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 
-SECRET_KEY = 'LH6oxK_FblEpOuJdNSdY5WCgXtOc4AIQsHHyY95dklilpA-JwA'
+SECRET_KEY = env.get('SECRET_KEY', token_urlsafe(37))
 
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '[::1]']
 
 DEBUG = env.get('MANGADV_DEBUG', False)
 
@@ -73,12 +74,22 @@ TEMPLATES = [{
 
 WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 
-DATABASES = {
-    'default': {
+DATABASES = {'default': {
+    'sqlite3': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': ':memory:'
+    },
+    'mysql': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mangadv',
+        'USER': 'root'
+    },
+    'postgresql': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mangadv',
+        'USER': 'postgres'
     }
-}
+}.get(env.get('DB', 'sqlite3'))}
 
 STATIC_URL = '/static/'
 

@@ -1,4 +1,8 @@
-# MangAdventure [![release](https://img.shields.io/github/release/mangadventure/MangAdventure/all.svg)](https://github.com/mangadventure/MangAdventure/releases)
+# MangAdventure
+
+[![Release](https://img.shields.io/github/release/mangadventure/MangAdventure.svg?include_prereleases&label=Release&logo=github)](https://github.com/mangadventure/MangAdventure/releases)
+[![Tests](https://img.shields.io/travis/mangadventure/MangAdventure?label=Tests&logo=travis)](https://travis-ci.org/mangadventure/django-commentary)
+[![Coverage](https://img.shields.io/coveralls/github/mangadventure/MangAdventure?label=Coverage&logo=coveralls)](https://coveralls.io/github/mangadventure/MangAdventure)
 
 MangAdventure, aka MangADV, is a simple manga hosting CMS.
 
@@ -23,13 +27,6 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
 The documentation is available on [Read the Docs][rtfd].
 
 [rtfd]: https://mangadventure.rtfd.io
-
-## Configuration
-
-You can configure the site via the admin panel.
-
-To override the styling of the site, you can write some
-SCSS (or regular CSS) in the `static/extra/styles.scss` file.
 
 ## Sites
 
@@ -59,7 +56,7 @@ You shouldn't use the development server during production.
 
 ## License
 
-    Copyright (c) 2018-2019 MangAdventure
+    Copyright (c) 2018-2020 MangAdventure
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

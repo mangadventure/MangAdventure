@@ -1,5 +1,9 @@
 """The project's settings."""
 
+# NOTE: When this file is modified,
+# MangAdventure/tests/settings.py
+# should also be modified accordingly.
+
 import re
 from pathlib import Path
 

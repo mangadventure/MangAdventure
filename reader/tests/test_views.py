@@ -1,3 +1,5 @@
+from os import getenv
+
 from django.core.cache import cache
 from django.db.utils import InterfaceError
 from django.http import FileResponse
@@ -5,7 +7,7 @@ from django.urls import reverse
 
 from pytest import mark
 
-from MangAdventure.tests import get_test_image, get_valid_zip_file
+from MangAdventure.tests.utils import get_test_image, get_valid_zip_file
 
 from reader.models import Series
 
@@ -105,7 +107,7 @@ class TestChapterDownload(ReaderViewTestBase):
         assert r.filename.endswith('c1.cbz')
 
     @mark.xfail(
-        'os.getenv("DB") == "postgresql"', raises=InterfaceError,
+        getenv('DB') == 'postgresql', raises=InterfaceError,
         reason='PostgreSQL closes the connection too soon'
     )  # TODO: figure out how to fix this
     def test_get_not_found(self):

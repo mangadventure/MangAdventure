@@ -4,11 +4,11 @@ from random import randint
 from django.test import Client
 from django.urls import reverse
 
-import pytest
+from pytest import mark
 
 from MangAdventure.bad_bots import BOTS
 
-from . import MangadvTestBase
+from .base import MangadvTestBase
 
 
 class TestBaseMiddleware(MangadvTestBase):
@@ -31,7 +31,7 @@ class TestBaseMiddleware(MangadvTestBase):
         assert 'Location' not in r
 
 
-@pytest.mark.skipif(
+@mark.skipif(
     getenv('wsgi.url_scheme') != 'https',
     reason='PreloadMiddleware requires HTTPS'
 )

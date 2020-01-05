@@ -9,12 +9,13 @@ jobs:
   include:
     - python: 3.6
       env: DB=sqlite3
+      before_install:
+        - pip install 'git+https://github.com/mozilla/django-csp'
     - python: 3.7
       env: DB=mysql
       services: mysql
       before_install:
-        - |
-          mysql -u root -e 'CREATE DATABASE IF NOT EXISTS mangadv;'
+        - mysql -u root -e 'CREATE DATABASE IF NOT EXISTS mangadv;'
         - pip install mysqlclient
     - python: 3.8
       env: DB=postgresql
@@ -28,6 +29,9 @@ install: pip install -e .[dev]
 before_script:
   - pip install coveralls
 script:
+  - set -e
   - python setup.py flake8
   - python setup.py isort
-  - py.test && coveralls
+  - py.test
+  - coveralls
+  - set +e

@@ -1,7 +1,7 @@
 from django.contrib.admin.sites import AdminSite
 from django.http import HttpRequest
 
-from MangAdventure.tests import get_test_image
+from MangAdventure.tests.utils import get_test_image
 
 from groups.admin import GroupAdmin, MemberAdmin
 from groups.models import Group, Member

@@ -2,7 +2,7 @@ from django.conf import settings
 
 from pytest import mark
 
-from MangAdventure.tests import get_test_image
+from MangAdventure.tests.utils import get_test_image
 
 from users.forms import UserProfileForm
 from users.models import UserProfile

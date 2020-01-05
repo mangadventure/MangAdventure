@@ -5,6 +5,7 @@
 # should also be modified accordingly.
 
 import re
+from importlib.util import find_spec
 from pathlib import Path
 
 from yaenv import Env
@@ -425,12 +426,9 @@ if env.bool('HTTPS', True):
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 # Optional django-csp module
-try:
-    __import__('csp')
-    MIDDLEWARE.append('csp.contrib.rate_limiting.RateLimitedCSPMiddleware')
-except ImportError:
-    pass
-else:
+if find_spec('csp'):
+    MIDDLEWARE.append('csp.middleware.CSPMiddleware')
+
     #: Set the :csp:`default-src` CSP directive.
     CSP_DEFAULT_SRC = ("'none'",)
 
@@ -468,8 +466,11 @@ else:
     #: Set the :csp:`report-uri` CSP directive.
     CSP_REPORT_URI = env.list('CSP_REPORT_URI')
 
-    #: Percentage of requests that should see the ``report-uri`` directive.
-    CSP_REPORT_PERCENTAGE = env.float('CSP_REPORT_PERCENTAGE', 1.0) / 100
+    if CSP_REPORT_URI:
+        MIDDLEWARE[-1] = 'csp.contrib.rate_limiting.RateLimitedCSPMiddleware'
+
+        #: Percentage of requests that should see the ``report-uri`` directive.
+        CSP_REPORT_PERCENTAGE = env.float('CSP_REPORT_PERCENTAGE', 1.0) / 100
 
     #: URLs beginning with any of these will not get the CSP headers.
     CSP_EXCLUDE_URL_PREFIXES = (
@@ -526,26 +527,20 @@ COMMENTS_WIDGET = 'users.widgets.TinyMCEComment'
 if DEBUG:
     INTERNAL_IPS = env.list('INTERNAL_IPS', ['127.0.0.1'])
     ALLOWED_HOSTS += [f'192.168.1.{i}' for i in range(2, 256)]
-    try:
-        __import__('debug_toolbar')
+    if find_spec('debug_toolbar'):
         INSTALLED_APPS.append('debug_toolbar')
         MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
         TEMPLATES[0]['OPTIONS']['context_processors'].append(
             'django.template.context_processors.debug'
         )
-    except ImportError:
-        pass
 
 ################
 #    Sentry    #
 ################
 
-try:
+if find_spec('sentry_sdk'):
     from sentry_sdk.hub import init as sentry_init
     from sentry_sdk.integrations.django import DjangoIntegration
-except ImportError:
-    pass
-else:
     sentry_init(
         dsn=env['SENTRY_DSN'],
         send_default_pii=True,

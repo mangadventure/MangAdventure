@@ -1,9 +1,9 @@
 from urllib.parse import urlencode
 
-from pytest import mark
-
 from django.db import transaction
 from django.urls import reverse
+
+from pytest import mark
 
 from reader.models import Series
 from users.models import Bookmark, User

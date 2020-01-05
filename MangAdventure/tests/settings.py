@@ -1,6 +1,7 @@
 """The project's test settings."""
 
 import re
+from importlib.util import find_spec
 from os import environ as env
 from pathlib import Path
 from secrets import token_urlsafe
@@ -212,6 +213,27 @@ env.setdefault('wsgi.url_scheme', 'https')
 
 # XXX: No SSL on localhost
 SECURE_SSL_REDIRECT = env.get('HTTPS', False)
+
+if find_spec('csp'):
+    MIDDLEWARE.append('csp.middleware.CSPMiddleware')
+    CSP_DEFAULT_SRC = ("'none'",)
+    CSP_CONNECT_SRC = ("'self'",)
+    CSP_SCRIPT_SRC = ("'self'",)
+    CSP_STYLE_SRC = (
+        "'self'", "https://fonts.googleapis.com", "https://cdn.statically.io"
+    )
+    CSP_FONT_SRC = (
+        "'self'", "https://fonts.gstatic.com", "https://cdn.statically.io"
+    )
+    CSP_IMG_SRC = ("'self'", "https://cdn.statically.io")
+    CSP_FORM_ACTION = ("'self'",)
+    CSP_FRAME_SRC = ("'self'",)
+    CSP_FRAME_ANCESTORS = ("'self'",)
+    CSP_BASE_URI = ("'none'",)
+    CSP_EXCLUDE_URL_PREFIXES = (
+        '/api', '/admin-panel', '/robots.txt',
+        '/opensearch.xml', '/contribute.json',
+    )
 
 CONFIG = {
     'NAME': 'MangAdventure',

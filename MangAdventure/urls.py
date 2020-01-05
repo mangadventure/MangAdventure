@@ -1,5 +1,7 @@
 """The root URLconf."""
 
+from importlib.util import find_spec
+
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
@@ -26,11 +28,10 @@ if settings.DEBUG:  # pragma: no cover
     urlpatterns += static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
     )
-    try:
-        from debug_toolbar import urls as debug_urls
-        urlpatterns.append(path('__debug__/', include(debug_urls)))
-    except ImportError:
-        pass
+    if find_spec('debug_toolbar'):
+        from debug_toolbar import urls as djdt_urls
+        urlpatterns.append(path('__debug__/', include(djdt_urls)))
+
 
 #: See :func:`MangAdventure.views.handler400`.
 handler400 = 'MangAdventure.views.handler400'

@@ -1,13 +1,17 @@
+from importlib.util import find_spec
 from typing import Dict, List
 
 from django.core.cache import cache
 from django.urls import reverse
 
+from pytest import mark
+
 from MangAdventure.utils import natsort
 
 from reader.models import Series
 
-from . import MangadvTestBase, get_test_image, get_valid_zip_file
+from .base import MangadvTestBase
+from .utils import get_test_image, get_valid_zip_file
 
 
 class MangadvViewTestBase(MangadvTestBase):
@@ -45,6 +49,13 @@ class TestIndex(MangadvViewTestBase):
     def test_get(self):
         r = self.client.get(self.URL)
         assert r.status_code == 200
+
+    @mark.skipif(not find_spec('csp'), reason='requires django-csp')
+    def test_csp(self):
+        r = self.client.get(self.URL)
+        assert r.status_code == 200
+        assert 'Content-Security-Policy' in r
+        assert 'unsafe-inline' not in r['Content-Security-Policy']
 
 
 class TestSearch(MangadvViewTestBase):

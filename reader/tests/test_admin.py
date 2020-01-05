@@ -1,7 +1,7 @@
 from django.contrib.admin import AdminSite
 from django.http import HttpRequest
 
-from MangAdventure.tests import get_test_image
+from MangAdventure.tests.utils import get_test_image
 
 from reader.admin import (
     ArtistAdmin, AuthorAdmin, CategoryAdmin, ChapterAdmin, SeriesAdmin

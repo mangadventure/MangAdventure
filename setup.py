@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 
+from importlib.util import find_spec
 from pathlib import PurePath
 
 from setuptools import find_packages, setup
 
 import MangAdventure
 
-try:
+if find_spec('isort'):
     from isort.settings import default
-except ImportError:
-    pass
-else:
     default['known_django'] = 'django'
     default['known_mangadv'] = 'MangAdventure'
 
@@ -40,7 +38,7 @@ setup(
         'debug': 'django-debug-toolbar',
         'mysql': 'mysqlclient',
         'pgsql': 'psycopg2',
-        'csp': 'django-csp',
+        'csp': 'django-csp>=3.6',
         'uwsgi': 'uwsgi',
         'sentry': 'sentry-sdk',
     },

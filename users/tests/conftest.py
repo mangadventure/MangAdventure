@@ -2,10 +2,10 @@ from pathlib import Path
 
 from django.core.management import call_command
 
-import pytest
+from pytest import fixture
 
 
-@pytest.fixture(scope='class')
+@fixture(scope='class')
 def django_db_setup(django_db_setup, django_db_blocker):
     fixtures_dir = Path(__file__).resolve().parent / 'fixtures'
     user_fixture = fixtures_dir / 'users.json'

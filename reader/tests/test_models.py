@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from pytest import raises
 
-from MangAdventure.tests import (
+from MangAdventure.tests.utils import (
     get_multi_subdir_zip, get_random_file, get_test_image,
     get_valid_zip_file, get_zip_with_invalid_images
 )

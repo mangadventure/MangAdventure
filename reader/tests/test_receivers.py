@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
 
-from MangAdventure.tests import get_test_image, get_valid_zip_file
+from MangAdventure.tests.utils import get_test_image, get_valid_zip_file
 
 from reader.models import Series
 

@@ -1,8 +1,8 @@
 # -- Setup Django --
 
-from sys import path
 from os import environ as env
 from os.path import dirname
+from sys import path
 
 path.insert(0, dirname(__file__))
 env['DJANGO_SETTINGS_MODULE'] = 'MangAdventure.tests.settings'
@@ -150,6 +150,7 @@ autodoc_default_options = {
         '__annotations__',
     ))
 }
+autodoc_mock_imports = ['pytest']
 autodoc_inherit_docstrings = True
 always_document_param_types = True
 set_type_checking_flag = True

@@ -1,8 +1,8 @@
-import pytest
+from pytest import mark
 
-from MangAdventure.tests import MangadvTestBase
+from MangAdventure.tests.base import MangadvTestBase
 
 
-@pytest.mark.usefixtures('django_db_setup')
+@mark.usefixtures('django_db_setup')
 class ReaderTestBase(MangadvTestBase):
     pass

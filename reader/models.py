@@ -95,8 +95,6 @@ class Category(models.Model):
 
 
 class Series(models.Model):
-    #: The series' ID.
-    id = models.AutoField(primary_key=True)
     #: The title of the series.
     title = models.CharField(
         max_length=250, db_index=True, help_text='The title of the series.'

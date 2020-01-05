@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         ('socialaccount', '0003_extra_data_default_dict'),
     ]
 
-    replaces = [('users', '0002_progress_userprofile')]
+    replaces = []
 
     operations = [
         migrations.CreateModel(

@@ -1,7 +1,7 @@
 # MangAdventure
 
 [![Release](https://img.shields.io/github/release/mangadventure/MangAdventure.svg?include_prereleases&label=Release&logo=github)](https://github.com/mangadventure/MangAdventure/releases)
-[![Tests](https://img.shields.io/travis/mangadventure/MangAdventure?label=Tests&logo=travis)](https://travis-ci.org/mangadventure/django-commentary)
+[![Tests](https://img.shields.io/travis/mangadventure/MangAdventure?label=Tests&logo=travis)](https://travis-ci.org/mangadventure/MangAdventure)
 [![Coverage](https://img.shields.io/coveralls/github/mangadventure/MangAdventure?label=Coverage&logo=coveralls)](https://coveralls.io/github/mangadventure/MangAdventure)
 
 MangAdventure, aka MangADV, is a simple manga hosting CMS.
@@ -13,7 +13,7 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
 * [x] Is open source.
 * [x] Is fully configurable.
 * [x] Includes JSON API.
-* [x] Works even without JavaScript.
+* [x] Doesn't require JavaScript.
 * [x] Supports searching for series.
 * [x] Supports users.
   * [x] OAuth.

@@ -20,7 +20,6 @@ class Migration(migrations.Migration):
     replaces = [
         ('users', '0001_initial'),
         ('users', '0002_progress_userprofile'),
-        ('users', '0002_userprofile'),
         ('users', '0003_cdn_storage'),
     ]
 

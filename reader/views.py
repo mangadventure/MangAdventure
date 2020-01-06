@@ -112,7 +112,9 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
         'illustrator': [{
             '@type': 'Person',
             'name': ar.name,
-            'alternateName': ar.aliases.all()
+            'alternateName': [
+                al.alias for al in ar.aliases.all()
+            ]
         } for ar in _series.artists.all()],
         'alternateName': [
             al.alias for al in _series.aliases.all()

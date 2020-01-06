@@ -9,7 +9,8 @@ from pytest import mark
 
 @mark.django_db
 class MangadvTestBase:
-    def setup_class(self):
+    @classmethod
+    def setup_class(cls):
         makedirs(settings.MEDIA_ROOT, exist_ok=True)
 
     def setup_method(self):
@@ -18,5 +19,6 @@ class MangadvTestBase:
     def teardown_method(self):
         pass
 
-    def teardown_class(self):
+    @classmethod
+    def teardown_class(cls):
         rmtree(settings.MEDIA_ROOT)

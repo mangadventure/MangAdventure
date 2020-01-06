@@ -1,5 +1,4 @@
 from datetime import datetime
-from os import path, rename
 
 from django.db import migrations, models
 from django.utils import timezone
@@ -8,32 +7,6 @@ from MangAdventure import storage, validators
 from MangAdventure.models import AliasField, AliasKeyField
 
 from reader.models import _cover_uploader
-
-
-def hash_pages(apps, schema_editor):
-    from hashlib import shake_128
-    Page = apps.get_model('reader', 'Page')
-    for page in Page.objects.all():
-        old_path = page.image.path
-        with open(old_path, 'rb') as img:
-            sha = shake_128(img.read()).hexdigest(16)
-        name, ext = path.splitext(old_path)
-        parent = path.split(name)[0]
-        page.image.name = path.join(parent, sha + ext)
-        rename(old_path, page.image.path)
-        page.image.save(page.image.name, page.image)
-
-
-def counter_pages(apps, schema_editor):
-    Page = apps.get_model('reader', 'Page')
-    for page in Page.objects.all():
-        old_path = page.image.path
-        cnt = f'{page.number:03d}'
-        name, ext = path.splitext(page.image.name)
-        parent = path.split(name)[0]
-        page.image.name = path.join(parent, cnt + ext)
-        rename(old_path, page.image.path)
-        page.image.save(page.image.name, page.image)
 
 
 class Migration(migrations.Migration):
@@ -180,7 +153,8 @@ class Migration(migrations.Migration):
                     serialize=False, verbose_name='ID'
                 )),
                 ('image', models.ImageField(
-                    storage=storage.CDNStorage(), upload_to=''
+                    storage=storage.CDNStorage(),
+                    upload_to='', max_length=255
                 )),
                 ('number', models.PositiveSmallIntegerField()),
                 ('chapter', models.ForeignKey(
@@ -322,6 +296,4 @@ class Migration(migrations.Migration):
             name='chapter',
             unique_together={('series', 'volume', 'number')},
         ),
-        # TODO: remove renaming operation after application
-        migrations.RunPython(hash_pages, counter_pages),
     ]

@@ -51,8 +51,10 @@ def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
         'pages_list': [p._file_name for p in _chapter.pages.all()],
         'date': _chapter.uploaded_date,
         'final': _chapter.final,
-        'groups': [{'id': _group.id, 'name': _group.name}
-                   for _group in _chapter.groups.all()]
+        'groups': [
+            {'id': _group.id, 'name': _group.name}
+            for _group in _chapter.groups.all()
+        ]
     }
     return response
 
@@ -82,9 +84,9 @@ def _series_response(request: 'HttpRequest', _series: Series) -> Dict:
     }
     for _chapter in _series.chapters.all():
         if _chapter.volume not in response['volumes']:
-            response['volumes'][_chapter.volume] = \
-                _volume_response(request, _series.chapters
-                                 .filter(volume=_chapter.volume))
+            response['volumes'][_chapter.volume] = _volume_response(
+                request, _series.chapters.filter(volume=_chapter.volume)
+            )
     for _author in _series.authors.all():
         names = [a.alias for a in _author.aliases.all()]
         names.insert(0, _author.name)

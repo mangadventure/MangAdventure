@@ -69,9 +69,10 @@ class Category(models.Model):
     )
     #: The unique name of the category.
     name = models.CharField(
-        max_length=25, unique=True,
-        help_text='The name of the category. Must be '
-                  'unique and cannot be changed once set.'
+        unique=True, help_text=(
+            'The name of the category. Must be '
+            'unique and cannot be changed once set.'
+        ), max_length=25
     )
     #: The description of the category.
     description = models.TextField(help_text='A description for the category.')
@@ -321,7 +322,7 @@ class Chapter(models.Model):
             str(self.volume), f'{self.number:g}'
         )
         full_path = settings.MEDIA_ROOT / dir_path
-        if path.exists(full_path):
+        if full_path.exists():
             rmtree(full_path)
         full_path.mkdir(parents=True)
         with ZipFile(self.file) as zf:
@@ -338,6 +339,7 @@ class Chapter(models.Model):
                 pages.append(Page(
                     chapter_id=self.id, number=counter, image=file_path
                 ))
+        self.pages.all().delete()
         self.pages.bulk_create(pages)
         self.file.delete(save=True)
 
@@ -461,7 +463,7 @@ class Page(models.Model):
         Chapter, related_name='pages', on_delete=models.CASCADE
     )
     #: The image of the page.
-    image = models.ImageField(storage=storage.CDNStorage())
+    image = models.ImageField(storage=storage.CDNStorage(), max_length=255)
     #: The number of the page.
     number = models.PositiveSmallIntegerField()
 

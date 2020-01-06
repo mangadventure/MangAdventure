@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List, Tuple, Union
 
 from django.core.cache import cache
@@ -9,10 +10,19 @@ from pytest import mark
 from api.response import JsonError
 from groups.models import Group, Member, Role
 
+from MangAdventure.storage import CDNStorage
+
 from . import APITestBase
 
 
 class APIViewTestBase(APITestBase):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        # TODO: figure out how to do this properly with mock
+        CDNStorage._original_get_modified_time = CDNStorage.get_modified_time
+        CDNStorage.get_modified_time = lambda *_: datetime.now()
+
     def get_data(self, url: str, params: Dict[str, str] = {}
                  ) -> Tuple[int, Union[Dict, List]]:
         """
@@ -32,6 +42,12 @@ class APIViewTestBase(APITestBase):
         super().teardown_method()
         cache.clear()
 
+    @classmethod
+    def teardown_class(self):
+        super().teardown_class()
+        CDNStorage.get_modified_time = CDNStorage._original_get_modified_time
+        del CDNStorage._original_get_modified_time
+
 
 class TestReleases(APIViewTestBase):
     URL = reverse('api:v1:releases')
@@ -39,7 +55,7 @@ class TestReleases(APIViewTestBase):
     def test_get(self):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
-        assert type(data) == list
+        assert isinstance(data, List)
         assert len(data) == 2
         series1 = data[0]
         for field in ('slug', 'title', 'url', 'cover', 'latest_chapter'):
@@ -57,7 +73,7 @@ class TestAllSeries(APIViewTestBase):
     def test_get(self):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
-        assert type(data) == list
+        assert isinstance(data, List)
         assert len(data) == 2
         series1 = data[0]
         fields = (
@@ -135,7 +151,7 @@ class TestChapter(APIViewTestBase):
     def test_get(self):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
-        assert type(data) == dict
+        assert isinstance(data, Dict)
         fields = (
             'title', 'url', 'pages_root',
             'pages_list', 'date', 'final', 'groups'
@@ -150,7 +166,6 @@ class TestChapter(APIViewTestBase):
             'slug': 'test-series', 'vol': 1, 'num': 2.0
         })
         status_code, data = self.get_data(url)
-        print(data)
         assert status_code == 404
         assert 'error' in data
         assert data['error'] == 'Not found'

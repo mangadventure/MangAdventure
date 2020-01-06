@@ -9,7 +9,7 @@ import users.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0002_userprofile'),
+        ('users', '0002_progress_userprofile'),
     ]
 
     operations = [

@@ -46,7 +46,11 @@ class CDNStorage(FileSystemStorage):
         """
         if self._debug:  # pragma: no cover
             return super(CDNStorage, self).url(name)
-        qs = {'auto_format': 'false'}
+        try:
+            time = self.get_modified_time(name)
+            qs = {'t': f'{time.timestamp():.0f}'}
+        except NotImplementedError:
+            qs = {}
         if self._fit:
             qs['fit'] = self._fit
         if name.lower().endswith(('.jpg', '.jpeg', '.jfif')):

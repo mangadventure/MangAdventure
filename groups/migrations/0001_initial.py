@@ -1,7 +1,9 @@
 from django.db import migrations, models
 
+from MangAdventure import storage, validators
 from MangAdventure.models import DiscordNameField, DiscordURLField, TwitterField
-from MangAdventure.utils import storage, uploaders, validators
+
+from groups.models import _logo_uploader
 
 
 class Migration(migrations.Migration):
@@ -38,8 +40,8 @@ class Migration(migrations.Migration):
                 ('logo', models.ImageField(
                     blank=True, help_text="Upload the group's logo."
                     " Its size must not exceed 2 MBs.",
-                    storage=storage.OverwriteStorage(),
-                    upload_to=uploaders.group_logo_uploader,
+                    storage=storage.CDNStorage(),
+                    upload_to=_logo_uploader,
                     validators=(validators.FileSizeValidator(max_mb=2),)
                 )),
             ],

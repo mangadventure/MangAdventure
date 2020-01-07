@@ -1,20 +1,29 @@
+"""The URLconf of the reader app."""
+
+from django.urls import path, register_converter
+
+from MangAdventure.converters import FloatConverter
+
 from . import views
 
-try:
-    from django.urls import re_path as url
-except ImportError:
-    from django.conf.urls import url
+register_converter(FloatConverter, 'float')
 
+#: The URL namespace of the reader app.
 app_name = 'reader'
 
-_slug = '^(?P<slug>[A-Za-z0-9_-]+)'
-_chapter = '%s/(?P<vol>[0-9]+)/(?P<num>[0-9]+([.][0-9]+|))' % _slug
-_page = '%s/(?P<page>[0-9]+)' % _chapter
+_slug = '<slug:slug>/'
+_chapter = f'{_slug}<int:vol>/<float:num>/'
+_page = f'{_chapter}<int:page>/'
+_cbz = f'{_chapter[:-1]}.cbz'
 
+#: The URL namespace of the reader app.
 urlpatterns = [
-    url('^$', views.directory, name='directory'),
-    url('%s/$' % _slug, views.series, name='series'),
-    url('%s/$' % _chapter, views.chapter_redirect, name='chapter'),
-    url('%s/$' % _page, views.chapter_page, name='page'),
-    # url('%s/comments/$' % _chapter, views.chapter_comments, name='comments'),
+    path('', views.directory, name='directory'),
+    path(_slug, views.series, name='series'),
+    path(_chapter, views.chapter_redirect, name='chapter'),
+    path(_page, views.chapter_page, name='page'),
+    path(_cbz, views.chapter_download, name='cbz')
+    # path(f'{_chapter}comments/', views.chapter_comments, name='comments'),
 ]
+
+__all__ = ['app_name', 'urlpatterns']

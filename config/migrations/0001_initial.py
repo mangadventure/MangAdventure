@@ -26,7 +26,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(
-            create_info_pages, reverse_code=remove_info_pages
-        ),
+        migrations.RunPython(create_info_pages, remove_info_pages),
     ]

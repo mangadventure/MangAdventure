@@ -1,6 +1,9 @@
+"""App configuration."""
+
 from django.apps import AppConfig
 from django.db import connection
 
+#: Variables used to generate ``static/styles/_variables.scss``.
 SCSS_VARS = """\
 $main-bg: %(MAIN_BG_COLOR)s;
 $alter-bg: %(ALTER_BG_COLOR)s;
@@ -12,11 +15,13 @@ $font-family: %(FONT_NAME)s;
 
 
 class SiteConfig(AppConfig):
+    """Configuration for the config app."""
     name = 'config'
     verbose_name = 'Configuration'
     verbose_name_plural = 'Configuration'
 
     def ready(self):
+        """Configure the site when the app is ready."""
         super(SiteConfig, self).ready()
 
         if 'django_site' in connection.introspection.table_names():
@@ -34,18 +39,20 @@ class SiteConfig(AppConfig):
         self._compile_scss(settings)
 
     def _compile_scss(self, settings):
-        from os import path
         from sass import compile as sassc
 
-        src = path.join(settings.STATIC_ROOT, 'styles')
-        dst = path.join(settings.STATIC_ROOT, 'COMPILED', 'styles')
+        src = settings.STATIC_ROOT / 'styles'
+        dst = settings.STATIC_ROOT / 'COMPILED' / 'styles'
 
-        with open(path.join(src, '_variables.scss'), 'w') as f:
+        with open(src / '_variables.scss', 'w') as f:
             f.write(SCSS_VARS % settings.CONFIG)
 
         sassc(dirname=(src, dst), output_style='compressed')
 
-        src = path.join(settings.STATIC_ROOT, 'extra')
-        dst = path.join(settings.STATIC_ROOT, 'COMPILED', 'extra')
+        src = settings.STATIC_ROOT / 'extra'
+        dst = settings.STATIC_ROOT / 'COMPILED' / 'extra'
 
         sassc(dirname=(src, dst), output_style='compressed')
+
+
+__all__ = ['SCSS_VARS', 'SiteConfig']

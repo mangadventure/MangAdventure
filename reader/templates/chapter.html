@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static custom_tags reader_tags %}
+{% load static %}
 {% block robots %}
   <meta name="robots" content="nosnippet">
 {% endblock %}
@@ -10,8 +10,9 @@
 {% endblock %}
 {% block image %}
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:creator" content="{{ chapter.twitter_creators }}">
-  {% with cover=PAGE_URL|urljoin:curr_chapter.series.cover.url %}
+  {# TODO: is it possible to show multiple creators? #}
+  <meta name="twitter:creator" content="{{ chapter.twitter_creator }}">
+  {% with cover=curr_chapter.series.cover.url %}
     <meta name="twitter:image" content="{{ cover }}">
     <meta property="og:image" content="{{ cover }}">
     <meta name="twitter:image:alt" content="Series Cover">
@@ -49,7 +50,7 @@
     <h1>
       <a href="{{ curr_chapter.series.get_absolute_url }}">
         {{ curr_chapter.series.title }}
-      </a><br>V{{ vol }} / C{{ num|floatformat }}
+      </a><br>V{{ vol }} / C{{ num|stringformat:'g' }}
     </h1>
   {% endwith %}
   <div id="chapter">
@@ -62,7 +63,7 @@
           <i class="mi mi-down"></i>
           {% with vol=curr_chapter.volume num=curr_chapter.number %}
             <span{% if curr_chapter.final %} class="end"{% endif %}>
-              V{{ vol }} / C{{ num|floatformat }}: {{ curr_chapter.title }}
+              V{{ vol }} / C{{ num|stringformat:'g' }}: {{ curr_chapter.title }}
             </span>
           {% endwith %}
         </a>
@@ -73,13 +74,17 @@
               <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
                  {% if chapter.final %} class="end"{% endif %}>
                 {% with vol=chapter.volume num=chapter.number %}
-                  V{{ vol }} / C{{ num|floatformat }}: {{ chapter.title }}
+                  V{{ vol }} / C{{ num|stringformat:'g' }}: {{ chapter.title }}
                 {% endwith %}
               </a>
             </li>
           {% endfor %}
         </ul>
       </div>
+      <a id="download" title="Download chapter"
+        {% with slug=curr_chapter.series.slug vol=curr_chapter.volume num=curr_chapter.number %}
+          href="{% url 'reader:cbz' slug vol num %}"><i class="mi mi-download"></i></a>
+        {% endwith %}
       <div class="dropdown page-list main-bg" aria-haspopup="true">
         <span class="dropdown-title alter-fg">
           Pages <i class="mi mi-down"></i>
@@ -107,7 +112,7 @@
                {% endif %}{% if curr_page.number == 1 %}
                  {% if prev_chapter %} data-prev="{{ prev_chapter.get_absolute_url }}"
                  {% else %} data-prev="{{ series_url }}"{% endif %}
-               {% endif %} data-img="{{ MEDIA_URL|urljoin:curr_page.image.url }}">
+               {% endif %} data-img="{{ curr_page.image.url }}">
         <i class="mi mi-spin"></i>
       </section>
     {% endwith %}
@@ -115,7 +120,7 @@
             rel="preload" as="script" type="application/javascript">
     </script>
     <noscript>
-      <img src="{{ MEDIA_URL|urljoin:curr_page.image.url }}" rel="preload" as="image"
+      <img src="{{ curr_page.image.url }}" rel="preload" as="image"
            class="chapter-page" alt="Page {{ curr_page.number }}">
     </noscript>
     <section id="controls" class="no-display">
@@ -161,7 +166,7 @@
     {# <a href="../comments" id="comments" class="link"><i class="mi mi-chat"></i>Comments</a> #}
   </div>
   <div id="preload" class="no-display">
-    {% for page in all_pages|preload_pages:curr_page.number %}
+    {% for page in curr_page.preload %}
       <img alt="preload" src="{{ page.image.url }}">
     {% endfor %}
   </div>

@@ -1,6 +1,29 @@
 Changelog
 ---------
 
+v0.6.0
+^^^^^^
+
+* Dropped support for Python<3.6
+* Dropped support for Django<3.0
+* Dropped support for non-ES6 browsers
+* Fixed ``Category`` description length
+* Added testing & Travis CI
+* Added Sentry integration
+* Added Statically image CDN
+* Added chapter download
+* Added table indexes for searching
+* Added ``Member`` <--> ``Group`` relation
+* Added links & actions to admin interface
+* Added ``Cache-Control`` headers
+* Added type hints and docstrings
+* Added auto-generated modules documentation
+* Added ``modules`` Makefile directive
+* Converted ``Role`` choices to an enum
+* Converted multi-method views to class-based
+* Restructured ``utils``
+* Removed unused stuff
+
 v0.5.3
 ^^^^^^
 

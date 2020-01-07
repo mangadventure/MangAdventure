@@ -1,32 +1,41 @@
+"""Convenience classes and functions for API responses."""
+
 from functools import wraps
+from typing import TYPE_CHECKING, Tuple
 
 from django.http import JsonResponse
+from django.utils.log import log_response
 from django.views.decorators.vary import vary_on_headers
 
-try:
-    from django.utils.log import log_response
-except ImportError:
-    from django.views.decorators.http import logger
-
-    def log_response(*args, **kwargs):
-        return logger.warning(*args, extra=kwargs)
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Callable
+    from django.http import HttpRequest
 
 
 class JsonError(JsonResponse):
-    def __init__(self, message, status=500, **kwargs):
+    """
+    A JSON-formatted error response.
+
+    :param message: The error message of the response.
+    :param status: The HTTP status of the response.
+    """
+    def __init__(self, message: str, status: int = 500, **kwargs):
         data = {'error': message, 'status': status}
         kwargs.setdefault('status', status)
         super(JsonError, self).__init__(data, **kwargs)
 
 
-def require_methods_api(allowed_methods=('GET', 'HEAD')):
+def require_methods_api(allowed_methods: Tuple[str, ...] =
+                        ('GET', 'HEAD')) -> 'Callable':
     """
-    Decorator to make an API view only accept particular request methods.
-    Based on :func:`~django.views.decorators.http.require_http_request`.
+    | Decorator to make an API view only accept particular request methods.
+    | Based on :func:`django.views.decorators.http.require_http_request`.
+
+    :param allowed_methods: The allowed request methods.
     """
-    def decorator(func):
+    def decorator(func: 'Callable') -> 'Callable':
         @wraps(func)
-        def inner(request, *args, **kwargs):
+        def inner(request: 'HttpRequest', *args, **kwargs) -> JsonError:
             if request.method not in allowed_methods:
                 response = JsonError('Method not allowed', 405)
                 response['Allow'] = ', '.join(allowed_methods)
@@ -37,8 +46,8 @@ def require_methods_api(allowed_methods=('GET', 'HEAD')):
                 )
                 return response
             return func(request, *args, **kwargs)
-        return (vary_on_headers('Allow'))(inner)
+        return vary_on_headers('Allow')(inner)
     return decorator
 
 
-__all__ = ['require_methods_api', 'JsonError', 'JsonResponse']
+__all__ = ['require_methods_api', 'JsonError']

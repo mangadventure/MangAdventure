@@ -1,167 +1,237 @@
-from os.path import join
-from shutil import move
-from time import mktime
+"""Database models for the reader app."""
 
+from hashlib import shake_128
+from io import BytesIO
+from os import path
+from pathlib import PurePath
+from shutil import rmtree
+from typing import Any, Tuple
+from zipfile import ZipFile
+
+from django.conf import settings
 from django.db import models
-from django.db.models import Value as V
-from django.db.models.functions import Concat as C
 from django.db.models.query import Q
 from django.shortcuts import reverse
 from django.utils.functional import cached_property
 from django.utils.http import http_date
 from django.utils.text import slugify
 
-from groups.models import Group
+from MangAdventure import storage, utils, validators
 from MangAdventure.models import Alias, AliasField, AliasKeyField
-from MangAdventure.utils import images, storage, uploaders, validators
+
+from groups.models import Group
 
 
-def _move(old, new):
-    try:
-        move(old.get_directory, new.get_directory)
-    except OSError as e:
-        if e.errno != 2:
-            raise e
-
-
-def _alias_help(name, identifier='name'):
-    return 'Another %s for the %s.' % (identifier, name)
+def _cover_uploader(obj: 'Series', name: str) -> str:
+    name = f'cover.{name.split(".")[-1]}'
+    return str(obj.get_directory() / name)
 
 
 class Author(models.Model):
+    """A model representing an author."""
+    #: The name of the author.
     name = models.CharField(
-        max_length=100, help_text="The author's full name."
+        max_length=100, db_index=True,
+        help_text="The author's full name."
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Return a string representing the object.
+
+        :return: The name of the author.
+        """
         return self.name
 
 
 class Artist(models.Model):
+    """A model representing an artist."""
+    #: The name of the artist.
     name = models.CharField(
-        max_length=100, help_text="The artist's full name."
+        max_length=100, db_index=True,
+        help_text="The artist's full name."
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Return a string representing the object.
+
+        :return: The name of the artist.
+        """
         return self.name
 
 
 class Category(models.Model):
+    """A model representing a category."""
+    #: The category's ID.
     id = models.CharField(
         primary_key=True, default='', max_length=25, auto_created=True
     )
+    #: The unique name of the category.
     name = models.CharField(
-        max_length=25, unique=True,
-        help_text='The name of the category. Must be '
-                  'unique and cannot be changed once set.'
+        unique=True, help_text=(
+            'The name of the category. Must be '
+            'unique and cannot be changed once set.'
+        ), max_length=25
     )
-    description = models.CharField(
-        max_length=250, help_text='A description for the category.'
-    )
+    #: The description of the category.
+    description = models.TextField(help_text='A description for the category.')
 
     class Meta:
         verbose_name_plural = 'categories'
 
     def save(self, *args, **kwargs):
+        """Save the current instance."""
         if not self.id:
             self.id = self.name.lower()
         super(Category, self).save(*args, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Return a string representing the object.
+
+        :return: The name of the category.
+        """
         return self.name
 
 
 class Series(models.Model):
-    _validator = validators.FileSizeValidator(max_mb=2)
-    id = models.AutoField(primary_key=True)
+    #: The title of the series.
     title = models.CharField(
-        max_length=250, help_text='The title of the series.'
+        max_length=250, db_index=True, help_text='The title of the series.'
     )
+    #: The unique slug of the series.
     slug = models.SlugField(
         blank=True, unique=True, verbose_name='Custom slug',
         help_text='The unique slug of the series. Will be used in the URL.'
     )
+    #: The description of the series.
     description = models.TextField(
         blank=True, help_text='The description of the series.'
     )
+    #: The cover image of the series.
     cover = models.ImageField(
-        storage=storage.OverwriteStorage(),
-        upload_to=uploaders.cover_uploader,
-        help_text='Upload a cover image for the series. Its size '
-                  'must not exceed %d MBs.' % _validator.max_mb,
-        validators=(_validator,)
+        help_text=(
+            'Upload a cover image for the series.'
+            ' Its size must not exceed 2 MBs.'
+        ), upload_to=_cover_uploader,
+        validators=(validators.FileSizeValidator(2),),
+        storage=storage.CDNStorage((300, 300))
     )
+    #: The authors of the series.
     authors = models.ManyToManyField(Author, blank=True)
+    #: The artists of the series.
     artists = models.ManyToManyField(Artist, blank=True)
+    #: The categories of the series.
     categories = models.ManyToManyField(Category, blank=True)
+    #: The status of the series.
     completed = models.BooleanField(
         default=False, help_text='Is the series completed?'
     )
+    #: The modification date of the series.
     modified = models.DateTimeField(auto_now=True)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
+        """
+        Get the absolute URL of the object.
+
+        :return: The URL of :func:`reader.views.series`.
+        """
         return reverse('reader:series', args=(self.slug,))
 
-    def get_directory(self):
-        return join('series', self.slug)
+    def get_directory(self) -> PurePath:
+        """
+        Get the storage directory of the object.
+
+        :return: A path relative to
+                 :const:`~MangAdventure.settings.MEDIA_ROOT`.
+        """
+        return PurePath('series', self.slug)
 
     class Meta:
         verbose_name_plural = 'series'
         get_latest_by = 'modified'
 
     def save(self, *args, **kwargs):
+        """Save the current instance."""
         self.slug = slugify(self.slug or self.title)
-        if self.cover:
-            self.cover = images.thumbnail(self.cover, 300)
-        super(Series, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Return a string representing the object.
+
+        :return: The title of the series.
+        """
         return self.title
 
 
 class AuthorAlias(Alias):
+    """A model representing an author's alias."""
+    #: The author this alias belongs to.
     author = AliasKeyField(Author)
-    alias = AliasField(help_text=_alias_help('author'))
+    #: The alias of the author.
+    alias = AliasField(db_index=True, help_text='Another name for the author.')
 
 
 class ArtistAlias(Alias):
+    """A model representing an author's alias."""
+    #: The artist this alias belongs to.
     artist = AliasKeyField(Artist)
-    alias = AliasField(help_text=_alias_help('artist'))
+    #: The alias of the artist.
+    alias = AliasField(db_index=True, help_text='Another name for the artist.')
 
 
 class SeriesAlias(Alias):
+    """A model representing a series' alias."""
+    #: The series this alias belongs to.
     series = AliasKeyField(Series)
+    #: The alias of the series.
     alias = AliasField(
-        max_length=250, help_text=_alias_help('series', 'title')
+        max_length=250, db_index=True,
+        help_text='Another title for the series.'
     )
 
 
 class Chapter(models.Model):
-    _help = 'The %s of the chapter.'
-    _vol_help = _help % 'volume' + ' Leave as 0 if the series has no volumes.'
-    _file_help = (
-        'Upload a zip or cbz file containing the chapter pages.',
-        'Its size cannot exceed 50 MBs and it must not',
-        'contain more than 1 subfolder.'
+    """A model representing a chapter."""
+    #: The title of the chapter.
+    title = models.CharField(
+        max_length=250, help_text='The title of the chapter.'
     )
-    title = models.CharField(max_length=250, help_text=_help % 'title')
-    number = models.FloatField(default=0, help_text=_help % 'number')
-    volume = models.PositiveSmallIntegerField(default=0, help_text=_vol_help)
+    #: The number of the chapter.
+    number = models.FloatField(
+        default=0, help_text='The number of the chapter.'
+    )
+    #: The volume of the chapter.
+    volume = models.PositiveSmallIntegerField(default=0, help_text=(
+        'The volume of the chapter. Leave as 0 if the series has no volumes.'
+    ))
+    #: The series this chapter belongs to.
     series = models.ForeignKey(
         Series, on_delete=models.CASCADE, related_name='chapters',
         help_text='The series this chapter belongs to.'
     )
+    #: The file which contains the chapter's pages.
     file = models.FileField(
-        help_text=' '.join(_file_help), validators=(
-            validators.FileSizeValidator(max_mb=50),
+        help_text=(
+            'Upload a zip or cbz file containing the chapter pages.'
+            ' Its size cannot exceed 50 MBs and it'
+            ' must not contain more than 1 subfolder.'
+        ), validators=(
+            validators.FileSizeValidator(50),
             validators.zipfile_validator
         ), blank=True
     )
+    #: The status of the chapter.
     final = models.BooleanField(
         default=False, help_text='Is this the final chapter?'
     )
-    uploaded = models.DateTimeField(auto_now_add=True)
+    #: The upload date of the chapter.
+    uploaded = models.DateTimeField(auto_now_add=True, db_index=True)
+    #: The modification date of the chapter.
     modified = models.DateTimeField(auto_now=True)
+    #: The groups that worked on this chapter.
     groups = models.ManyToManyField(
         Group, blank=True, related_name='releases'
     )
@@ -172,16 +242,18 @@ class Chapter(models.Model):
         get_latest_by = ('uploaded', 'modified')
 
     def save(self, *args, **kwargs):
+        """Save the current instance."""
         super(Chapter, self).save(*args, **kwargs)
         if self.file:
             validators.zipfile_validator(self.file)
-            Page.objects.filter(chapter=self).delete()
-            images.unzip(self)
+            Page.objects.filter(chapter_id=self.id).delete()
+            self.unzip()
         self.series.completed = self.final
         self.series.save()
 
     @cached_property
-    def next(self):
+    def next(self) -> 'Chapter':
+        """Get the next chapter in the series."""
         q = Q(series_id=self.series_id) & (
             Q(volume__gt=self.volume) |
             Q(volume=self.volume, number__gt=self.number)
@@ -190,7 +262,8 @@ class Chapter(models.Model):
             .order_by('volume', 'number').first()
 
     @cached_property
-    def prev(self):
+    def prev(self) -> 'Chapter':
+        """Get the previous chapter in the series."""
         q = Q(series_id=self.series_id) & (
             Q(volume__lt=self.volume) |
             Q(volume=self.volume, number__lt=self.number)
@@ -199,99 +272,262 @@ class Chapter(models.Model):
             .order_by('-volume', '-number').first()
 
     @cached_property
-    def uploaded_date(self):
-        return http_date(mktime(self.uploaded.timetuple()))
+    def uploaded_date(self) -> str:
+        """
+        Get the upload date of the chapter
+        in :rfc:`2616#section-3.3.1` format.
+        """
+        return http_date(self.uploaded.timestamp())
 
     @cached_property
-    def modified_date(self):
-        return http_date(mktime(self.modified.timetuple()))
+    def modified_date(self) -> str:
+        """
+        Get the modification date of the chapter
+        in :rfc:`2616#section-3.3.1` format.
+        """
+        return http_date(self.modified.timestamp())
 
     @cached_property
-    def twitter_creators(self):
-        return ', '.join(
-            Group.objects.filter(releases__id=self.id)
-            .exclude(twitter='').only('twitter')
-            .annotate(creator=C(V('@'), 'twitter'))
-            .values_list('creator', flat=True)
-        )
+    def twitter_creator(self) -> str:
+        """Get the Twitter username of the chapter's first group."""
+        return '@' + Group.objects.filter(releases__id=self.id) \
+            .exclude(twitter='').only('twitter').first().twitter
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
+        """
+        Get the absolute URL of the object.
+
+        :return: The URL of :func:`reader.views.chapter_redirect`.
+        """
         return reverse('reader:chapter', args=(
-            self.series.slug, self.volume, '%g' % self.number
+            self.series.slug, self.volume, self.number
         ))
 
-    def get_directory(self):
-        return join(
-            self.series.get_directory(), str(self.volume), '%g' % self.number
-        )
+    def get_directory(self) -> PurePath:
+        """
+        Get the storage directory of the object.
 
-    def __str__(self):
+        :return: A path relative to
+                 :const:`~MangAdventure.settings.MEDIA_ROOT`.
+        """
+        return self.series.get_directory() / \
+            str(self.volume) / f'{self.number:g}'
+
+    def unzip(self):
+        """Unzip the chapter and save its images."""
+        counter = 0
+        pages = []
+        dir_path = path.join(
+            'series', self.series.slug,
+            str(self.volume), f'{self.number:g}'
+        )
+        full_path = settings.MEDIA_ROOT / dir_path
+        if full_path.exists():
+            rmtree(full_path)
+        full_path.mkdir(parents=True)
+        with ZipFile(self.file) as zf:
+            for name in utils.natsort(zf.namelist()):
+                if zf.getinfo(name).is_dir():
+                    continue
+                counter += 1
+                data = zf.read(name)
+                sha = shake_128(data).hexdigest(16)
+                filename = sha + path.splitext(name)[-1]
+                file_path = path.join(dir_path, filename)
+                with open(full_path / filename, 'wb') as img:
+                    img.write(data)
+                pages.append(Page(
+                    chapter_id=self.id, number=counter, image=file_path
+                ))
+        self.pages.all().delete()
+        self.pages.bulk_create(pages)
+        self.file.delete(save=True)
+
+    def zip(self) -> BytesIO:
+        """
+        Generate a zip file containing the pages of this chapter.
+
+        :return: The file-like object of the generated file.
+        """
+        buf = BytesIO()
+        with ZipFile(buf, 'a', compression=8) as zf:
+            for page in self.pages.all():
+                img = page.image.path
+                name = f'{page.number:03d}'
+                ext = path.splitext(img)[-1]
+                zf.write(img, name + ext)
+        buf.seek(0)
+        return buf
+
+    @cached_property
+    def _tuple(self) -> Tuple[int, float]:
+        return self.volume, self.number
+
+    def __str__(self) -> str:
+        """
+        Return a string representing the object.
+
+        :return: The title of the series and the
+                 volume, number, title of the chapter.
+        """
         return '{0.series.title} - {0.volume}/' \
                '{0.number:g}: {0.title}'.format(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
+        """
+        Check whether this object is equal to another.
+
+        If the other object is a tuple, the objects are equal if
+        the tuple consists of the volume and number of the chapter.
+
+        Otherwise, the objects are equal if they have the
+        same base model and their primary keys are equal.
+
+        :param other: Any other object.
+
+        :return: ``True`` if the objects are equal.
+        """
         if isinstance(other, tuple):
-            return (self.volume, self.number) == other
-        return super(Chapter, self).__eq__(other)
+            return self._tuple == other
+        return super().__eq__(other)
 
-    def __gt__(self, other):
+    def __gt__(self, other: Any) -> bool:
+        """
+        Check whether this object is greater than another.
+
+        If the other object is a tuple, this object is greater
+        if its volume and number is greater than the tuple.
+
+        Otherwise, it's greater if the objects have the same base model and
+        the tuple of its ``volume`` and ``number`` is greater than the other's.
+
+        :param other: Any other object.
+
+        :return: ``True`` if this object is greater.
+
+        :raises TypeError: If the other object is neither a tuple,
+                           nor a ``Chapter`` model.
+        """
         if isinstance(other, tuple):
-            if self.volume == other[0]:
-                return self.number > other[1]
-            return self.volume > other[1]
+            return self._tuple > other
 
-        if not isinstance(other, self.__class__):
-            raise TypeError(
-                "'>' not supported between instances of '{}' and '{}'".format(
-                    self.__class__, other.__class__
-                )
-            )
+        if isinstance(other, self.__class__):
+            return self._tuple > other._tuple
 
-        if self.volume == other.volume:
-            return self.number > other.number
-        return self.volume > other.volume
+        raise TypeError(
+            "'>' not supported between instances of '{}' and '{}'"
+            .format(self.__class__, other.__class__)
+        )
 
     def __lt__(self, other):
+        """
+        Check whether this object is less than another.
+
+        If the other object is a tuple, this object is lesser
+        if its volume and number is less than the tuple.
+
+        Otherwise, it's lesser if the objects have the same base model and
+        the tuple of its ``volume`` and ``number`` is less than the other's.
+
+        :param other: Any other object.
+
+        :return: ``True`` if this object is lesser.
+
+        :raises TypeError: If the other object is neither a tuple,
+                           nor a ``Chapter`` model.
+        """
         if isinstance(other, tuple):
-            if self.volume == other[0]:
-                return self.number < other[1]
-            return self.volume < other[1]
+            return self._tuple < other
 
-        if not isinstance(other, self.__class__):
-            raise TypeError(
-                "'<' not supported between instances of '{}' and '{}'".format(
-                    self.__class__, other.__class__
-                )
-            )
+        if isinstance(other, self.__class__):
+            return self._tuple < other._tuple
 
-        if self.volume == other.volume:
-            return self.number < other.number
-        return self.volume < other.volume
+        raise TypeError(
+            "'<' not supported between instances of '{}' and '{}'"
+            .format(self.__class__, other.__class__)
+        )
+
+    def __hash__(self) -> int:
+        """
+        Return the hash of the object.
+
+        :return: An integer hash value.
+        """
+        return abs(hash(str(self)))
 
 
 class Page(models.Model):
+    """A model representing a page."""
+    #: The chapter this page belongs to.
     chapter = models.ForeignKey(
         Chapter, related_name='pages', on_delete=models.CASCADE
     )
-    image = models.ImageField()
+    #: The image of the page.
+    image = models.ImageField(storage=storage.CDNStorage(), max_length=255)
+    #: The number of the page.
     number = models.PositiveSmallIntegerField()
 
-    def get_file_name(self):
-        return self.image.name.split('/')[-1]
+    class Meta:
+        ordering = ('chapter', 'number')
 
-    def get_absolute_url(self):
+    @cached_property
+    def _file_name(self) -> str:
+        return self.image.name.rsplit('/')[-1]
+
+    def get_absolute_url(self) -> str:
+        """
+        Get the absolute URL of the object.
+
+        :return: The URL of :func:`reader.views.chapter_page`.
+        """
         return reverse('reader:page', args=(
             self.chapter.series.slug, self.chapter.volume,
-            '%g' % self.chapter.number, self.number
+            self.chapter.number, self.number
         ))
 
-    def __str__(self):
+    @cached_property
+    def preload(self) -> models.QuerySet:
+        """
+        Get the pages that will be preloaded.
+
+        .. admonition:: TODO
+           :class: warning
+
+           Make the number of preloaded pages configurable.
+
+        :return: The three next pages of the chapter.
+        """
+        return self.__class__.objects.filter(
+            chapter_id=self.chapter_id,
+            number__range=(self.number + 1, self.number + 3)
+        ).only('image')
+
+    def __str__(self) -> str:
+        """
+        Return a string representing the object.
+
+        :return: The title of the series, the volume, number, title
+                 of the chapter, and the file name of the page.
+        """
         return '{0.series.title} - {0.volume}/{0.number} [{1}]'.format(
-            self.chapter, self.get_file_name()
+            self.chapter, self._file_name
         )
 
-    def __eq__(self, other):
-        if isinstance(other, int):
+    def __eq__(self, other: Any) -> bool:
+        """
+        Check whether this object is equal to another.
+
+        If the other object is a number, the objects are equal if
+        the ``number`` of this object is equal to the other object.
+
+        Otherwise, the objects are equal if they have the same base model
+        and their ``chapter`` and ``number`` are respectively equal.
+
+        :param other: Any other object.
+
+        :return: ``True`` if the objects are equal.
+        """
+        if isinstance(other, (float, int)):
             return self.number == other
 
         if not isinstance(other, self.__class__):
@@ -299,31 +535,72 @@ class Page(models.Model):
 
         return self.chapter == other.chapter and self.number == other.number
 
-    def __gt__(self, other):
+    def __gt__(self, other: Any) -> bool:
+        """
+        Check whether this object is greater than another.
+
+        If the other object is a number, this object is greater
+        if its ``number`` is greater than the other object.
+
+        Otherwise, it's greater if the objects have the same base model
+        and the ``number`` of this object is greater than the other's.
+
+        :param other: Any other object.
+
+        :return: ``True`` if this object is greater.
+
+        :raises TypeError: If the other object is neither a tuple,
+                           nor a ``Page`` model.
+        """
         if isinstance(other, (float, int)):
             return self.number > other
 
-        if not isinstance(other, self.__class__):
-            raise TypeError(
-                "'>' not supported between instances of '{}' and '{}'".format(
-                    self.__class__, other.__class__
-                )
-            )
+        if isinstance(other, self.__class__):
+            return self.number > other.number
 
-        return self.number > other.number
+        raise TypeError(
+            "'>' not supported between instances of '{}' and '{}'"
+            .format(self.__class__, other.__class__)
+        )
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any) -> bool:
+        """
+        Check whether this object is less than another.
+
+        If the other object is a number, this object is lesser
+        if its ``number`` is less than the other object.
+
+        Otherwise, it's lesser if the objects have the same base model
+        and the ``number`` of this object is less than the other's.
+
+        :param other: Any other object.
+
+        :return: ``True`` if this object is lesser.
+
+        :raises TypeError: If the other object is neither a tuple,
+                           nor a ``Page`` model.
+        """
         if isinstance(other, (float, int)):
             return self.number < other
 
-        if not isinstance(other, self.__class__):
-            raise TypeError(
-                "'<' not supported between instances of '{}' and '{}'".format(
-                    self.__class__, other.__class__
-                )
-            )
+        if isinstance(other, self.__class__):
+            return self.number < other.number
 
-        return self.number < other.number
+        raise TypeError(
+            "'<' not supported between instances of '{}' and '{}'"
+            .format(self.__class__, other.__class__)
+        )
+
+    def __hash__(self) -> int:
+        """
+        Return the hash of the object.
+
+        :return: An integer hash value.
+        """
+        name = path.splitext(self._file_name)[0]
+        if len(name) != 32:  # pragma: no cover
+            return abs(hash(str(self)))
+        return int(name, 16)
 
 
 __all__ = [

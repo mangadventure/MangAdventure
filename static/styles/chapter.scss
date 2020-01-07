@@ -83,14 +83,27 @@
   }
 }
 
-#comments {
+#download {
+  display: block;
+  width: 1em;
+  margin: auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  .mi {
+    line-height: 1.75em;
+    margin: 0;
+  }
+}
+
+/* #comments {
   text-align: center;
   font-size: 1.1em;
   padding: 0.2em 0.4em;
   border: 1px solid $alter-bg;
   border-radius: 5px;
   text-decoration: none;
-}
+} */
 
 .curr-page input {
   font-size: 1em;

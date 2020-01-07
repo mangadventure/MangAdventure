@@ -1,47 +1,74 @@
+"""The views of the api.v1 app."""
+
+from typing import TYPE_CHECKING, Dict, Iterable, Optional
+
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
+from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import last_modified
 
-from api.response import JsonError, JsonResponse, require_methods_api
+from MangAdventure.search import get_response
+
 from groups.models import Group, Member
-from MangAdventure.utils.search import get_response
 from reader.models import Artist, Author, Category, Chapter, Series
 
+from ..response import JsonError, require_methods_api
 
-def _chapter_response(request, _chapter):
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Union
+    from django.db.models import DateTimeField  # noqa: F401
+    from django.http import HttpRequest
+    Person = Union[Author, Artist]
+
+
+def _latest(request: 'HttpRequest', slug: Optional[str] = None,
+            vol: Optional[int] = None, num: Optional[float] = None
+            ) -> Optional['DateTimeField']:
+    try:
+        if slug is None:
+            return Series.objects.only('modified').latest().modified
+        if vol is None:
+            return Series.objects.only('modified').get(slug=slug).modified
+        if num is None:
+            return Chapter.objects.only('modified').filter(
+                series__slug=slug, volume=vol
+            ).latest().modified
+        return Chapter.objects.only('modified').filter(
+            series__slug=slug, volume=vol, number=num
+        ).latest().modified
+    except ObjectDoesNotExist:
+        return None
+
+
+def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
     url = request.build_absolute_uri(_chapter.get_absolute_url())
     response = {
         'title': _chapter.title,
         'url': url,
-        'pages_root': url.replace(
-            '/reader', '%s%s' % (settings.MEDIA_URL, 'series')
-        ),
-        'pages_list': [p.get_file_name() for p in _chapter.pages.all()],
+        'pages_root': url.replace('/reader', f'{settings.MEDIA_URL}series'),
+        'pages_list': [p._file_name for p in _chapter.pages.all()],
         'date': _chapter.uploaded_date,
         'final': _chapter.final,
-        'groups': []
+        'groups': [
+            {'id': _group.id, 'name': _group.name}
+            for _group in _chapter.groups.all()
+        ]
     }
-    for _group in _chapter.groups.all():
-        response['groups'].append({
-            'id': _group.id,
-            'name': _group.name,
-        })
     return response
 
 
-def _volume_response(request, _series, vol):
+def _volume_response(request: 'HttpRequest',
+                     chapters: Iterable[Chapter]) -> Dict:
     response = {}
-    chapters = _series.chapters.filter(volume=vol)
-    if chapters.count() == 0:
-        return JsonError('Not found', 404)
     for _chapter in chapters:
-        response['%g' % _chapter.number] = \
+        response[f'{_chapter.number:g}'] = \
             _chapter_response(request, _chapter)
     return response
 
 
-def _series_response(request, _series):
+def _series_response(request: 'HttpRequest', _series: Series) -> Dict:
     response = {
         'slug': _series.slug,
         'title': _series.title,
@@ -57,8 +84,9 @@ def _series_response(request, _series):
     }
     for _chapter in _series.chapters.all():
         if _chapter.volume not in response['volumes']:
-            response['volumes'][_chapter.volume] = \
-                _volume_response(request, _series, _chapter.volume)
+            response['volumes'][_chapter.volume] = _volume_response(
+                request, _series.chapters.filter(volume=_chapter.volume)
+            )
     for _author in _series.authors.all():
         names = [a.alias for a in _author.aliases.all()]
         names.insert(0, _author.name)
@@ -75,7 +103,7 @@ def _series_response(request, _series):
     return response
 
 
-def _person_response(request, _person):
+def _person_response(request: 'HttpRequest', _person: 'Person') -> Dict:
     response = {
         'id': _person.id,
         'name': _person.name,
@@ -91,7 +119,7 @@ def _person_response(request, _person):
     return response
 
 
-def _member_response(request, _member):
+def _member_response(request: 'HttpRequest', _member: Member) -> Dict:
     return {
         'id': _member.id,
         'name': _member.name,
@@ -101,7 +129,7 @@ def _member_response(request, _member):
     }
 
 
-def _group_response(request, _group):
+def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
     logo = ''
     if _group.logo:
         logo = request.build_absolute_uri(_group.logo.url)
@@ -113,16 +141,12 @@ def _group_response(request, _group):
         'discord': _group.discord,
         'twitter': _group.twitter,
         'logo': logo,
-        'members': [],
+        'members': [
+            _member_response(request, m)
+            for m in _group.members.distinct()
+        ],
         'series': [],
     }
-    member_ids = _group.roles.values_list(
-        'member_id', flat=True
-    ).distinct()
-    for m_id in member_ids:
-        response['members'].append(_member_response(
-            request, Member.objects.get(id=m_id)
-        ))
     _series = []
     for _chapter in _group.releases.all():
         if _chapter.series.id not in _series:
@@ -137,8 +161,16 @@ def _group_response(request, _group):
 
 @csrf_exempt
 @require_methods_api()
-@last_modified(lambda request: Series.objects.latest().modified)
-def all_releases(request):
+@last_modified(_latest)
+@cache_control(public=True, max_age=600, must_revalidate=True)
+def all_releases(request: 'HttpRequest') -> JsonResponse:
+    """
+     View that serves all the releases in a JSON array.
+
+    :param request: The original request.
+
+    :return: A JSON-formatted response with the releases.
+    """
     _series = Series.objects.prefetch_related('chapters').all()
     response = []
     for s in _series:
@@ -163,27 +195,18 @@ def all_releases(request):
     return JsonResponse(response, safe=False)
 
 
-def _latest(request, slug=None, vol=None, num=None):
-    try:
-        if slug is None:
-            return Series.objects.only('modified').latest().modified
-        if vol is None:
-            return Series.objects.only('modified').get(slug=slug).modified
-        if num is None:
-            return Chapter.objects.only('modified').filter(
-                series__slug=slug, volume=vol
-            ).latest().modified
-        return Chapter.objects.only('modified').filter(
-            series__slug=slug, volume=vol, number=num
-        ).latest().modified
-    except ObjectDoesNotExist:
-        return None
-
-
 @csrf_exempt
 @require_methods_api()
 @last_modified(_latest)
-def all_series(request):
+@cache_control(public=True, max_age=600, must_revalidate=True)
+def all_series(request: 'HttpRequest') -> JsonResponse:
+    """
+     View that serves all the series in a JSON array.
+
+    :param request: The original request.
+
+    :return: A JSON-formatted response with the series.
+    """
     response = [
         _series_response(request, s)
         for s in get_response(request)
@@ -194,7 +217,16 @@ def all_series(request):
 @csrf_exempt
 @require_methods_api()
 @last_modified(_latest)
-def series(request, slug):
+@cache_control(public=True, max_age=600, must_revalidate=True)
+def series(request: 'HttpRequest', slug: str) -> JsonResponse:
+    """
+     View that serves a single series as a JSON object.
+
+    :param request: The original request.
+    :param slug: The slug of the series.
+
+    :return: A JSON-formatted response with the series.
+    """
     try:
         _series = Series.objects.get(slug=slug)
     except ObjectDoesNotExist:
@@ -205,44 +237,67 @@ def series(request, slug):
 @csrf_exempt
 @require_methods_api()
 @last_modified(_latest)
-def volume(request, slug, vol):
+@cache_control(public=True, max_age=600, must_revalidate=True)
+def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
+    """
+     View that serves a single volume as a JSON object.
+
+    :param request: The original request.
+    :param slug: The slug of the series.
+    :param vol: The number of the volume.
+
+    :return: A JSON-formatted response with the volume.
+    """
     try:
-        vol = int(vol)
-        if vol < 0:
-            raise ValueError
         _series = Series.objects \
             .prefetch_related('chapters__pages').get(slug=slug)
-    except (ValueError, TypeError):
-        return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    return JsonResponse(_volume_response(request, _series, vol))
+    chapters = _series.chapters.filter(volume=vol)
+    if not chapters:
+        return JsonError('Not found', 404)
+    return JsonResponse(_volume_response(request, chapters))
 
 
 @csrf_exempt
 @require_methods_api()
 @last_modified(_latest)
-def chapter(request, slug, vol, num):
+@cache_control(public=True, max_age=600, must_revalidate=True)
+def chapter(request: 'HttpRequest', slug: str,
+            vol: int, num: float) -> JsonResponse:
+    """
+     View that serves a single chapter as a JSON object.
+
+    :param request: The original request.
+    :param slug: The slug of the series.
+    :param vol: The number of the volume.
+    :param num: The number of the chapter.
+
+    :return: A JSON-formatted response with the chapter.
+    """
     try:
-        vol, num = int(vol), float(num)
-        if vol < 0 or num < 0:
-            raise ValueError
         _chapter = Chapter.objects.prefetch_related('pages') \
             .get(series__slug=slug, volume=vol, number=num)
-    except (ValueError, TypeError):
-        return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_chapter_response(request, _chapter))
 
 
-def _is_author(request):
-    return request.path.startswith('/api/v1/authors')
+def _is_author(request: 'HttpRequest') -> bool:
+    return request.path[:16] == '/api/v1/authors'
 
 
 @csrf_exempt
 @require_methods_api()
-def all_people(request):
+@cache_control(public=True, max_age=1800, must_revalidate=True)
+def all_people(request: 'HttpRequest') -> JsonResponse:
+    """
+     View that serves all the authors/artists in a JSON array.
+
+    :param request: The original request.
+
+    :return: A JSON-formatted response with the authors/artists.
+    """
     prefetch = ('aliases', 'series_set__aliases')
     _type = Author if _is_author(request) else Artist
     people = _type.objects.prefetch_related(*prefetch).all()
@@ -252,16 +307,20 @@ def all_people(request):
 
 @csrf_exempt
 @require_methods_api()
-def person(request, p_id):
+@cache_control(public=True, max_age=1800, must_revalidate=True)
+def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
+    """
+     View that serves a single author/artist as a JSON object.
+
+    :param request: The original request.
+    :param p_id: The ID of the author/artist.
+
+    :return: A JSON-formatted response with the author/artist.
+    """
     prefetch = ('aliases', 'series_set__aliases')
     try:
-        p_id = int(p_id)
-        if p_id < 1:
-            raise ValueError
         _type = Author if _is_author(request) else Artist
         _person = _type.objects.prefetch_related(*prefetch).get(id=p_id)
-    except (ValueError, TypeError):
-        return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_person_response(request, _person))
@@ -269,7 +328,15 @@ def person(request, p_id):
 
 @csrf_exempt
 @require_methods_api()
-def all_groups(request):
+@cache_control(public=True, max_age=1800, must_revalidate=True)
+def all_groups(request: 'HttpRequest') -> JsonResponse:
+    """
+     View that serves all the groups in a JSON array.
+
+    :param request: The original request.
+
+    :return: A JSON-formatted response with the groups.
+    """
     prefetch = ('releases__series', 'roles__member')
     _groups = Group.objects.prefetch_related(*prefetch).all()
     response = [_group_response(request, g) for g in _groups]
@@ -278,15 +345,19 @@ def all_groups(request):
 
 @csrf_exempt
 @require_methods_api()
-def group(request, g_id):
+@cache_control(public=True, max_age=1800, must_revalidate=True)
+def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
+    """
+     View that serves a single group as a JSON object.
+
+    :param request: The original request.
+    :param g_id: The ID of the group.
+
+    :return: A JSON-formatted response with the group.
+    """
     prefetch = ('releases__series', 'roles__member')
     try:
-        g_id = int(g_id)
-        if g_id < 1:
-            raise ValueError
         _group = Group.objects.prefetch_related(*prefetch).get(id=g_id)
-    except (ValueError, TypeError):
-        return JsonError('Bad request', 400)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_group_response(request, _group))
@@ -294,12 +365,34 @@ def group(request, g_id):
 
 @csrf_exempt
 @require_methods_api()
-def categories(request):
+@cache_control(public=True, max_age=1800, must_revalidate=True)
+def categories(request: 'HttpRequest') -> JsonResponse:
+    """
+     View that serves all the categories in a JSON array.
+
+    :param request: The original request.
+
+    :return: A JSON-formatted response with the categories.
+    """
     values = list(Category.objects.values())
     return JsonResponse(values, safe=False)
 
 
 @csrf_exempt
 @require_methods_api()
-def invalid_endpoint(request):
+def invalid_endpoint(request: 'HttpRequest') -> JsonError:
+    """
+     View that serves a :status:`501` error as a JSON object.
+
+    :param request: The original request.
+
+    :return: A JSON-formatted response with the error.
+    """
     return JsonError('Invalid API endpoint', 501)
+
+
+__all__ = [
+    'all_releases', 'all_series', 'series', 'volume',
+    'chapter', 'all_people', 'person', 'all_groups',
+    'group', 'categories', 'invalid_endpoint'
+]

@@ -265,6 +265,8 @@ thead {
   }
   h3 { margin: 0.5em 0 }
   .cover {
+    width: auto;
+    height: 100%;
     position: relative;
     left: -0.3em;
     float: left;
@@ -363,9 +365,6 @@ thead {
   .member {
     padding-left: 0.5em;
     padding-bottom: 1em;
-    &-roles .comma:last-of-type {
-      &::after { display: none }
-    }
     &-name { color: $alter-bg }
     div { padding-left: 0.5em }
   }
@@ -433,7 +432,7 @@ thead {
   &-bio div { text-indent: 1em }
 }
 
-#comments {
+/* #comments {
   width: 100%;
   &-links {
     padding-top: 0.3em;
@@ -449,7 +448,7 @@ thead {
       border: 1px solid $alter-fg;
     }
   }
-}
+} */
 
 #oauth {
   .provider {
@@ -700,11 +699,9 @@ thead {
 
 .divider::before { content: quote('\00a0|\00a0') }
 
-.comma::after { content: quote(',') }
-
 #forgot-password { margin-bottom: 3px }
 
-#dropdowns { height: 30px }
+#dropdowns { height: 1.75em }
 
 #search {
   &-options {
@@ -759,6 +756,7 @@ thead {
   margin: 0 auto 0.5em;
   .category {
     display: inline-block;
+    margin-right: 0.2em;
     cursor: pointer;
   }
 }

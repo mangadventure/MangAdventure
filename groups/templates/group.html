@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load cache static custom_tags %}
+{% load cache static group_tags %}
 {% block description %}
   {% if group.twitter %}
     <meta name="twitter:creator" content="@{{ group.twitter }}">
@@ -11,7 +11,7 @@
 {% block image %}
   <meta name="twitter:card" content="summary">
   {% if group.logo %}
-    {% with logo=PAGE_URL|urljoin:group.logo.url %}
+    {% with logo=group.logo.url %}
       <meta name="twitter:image" content="{{ logo }}">
       <meta property="og:image" content="{{ logo }}">
       <meta name="twitter:image:alt" content="Group Logo">
@@ -129,18 +129,8 @@
                 <span>{{ member.irc|default:'N/A' }}</span>
               </div>
               <div class="member-roles">
-                <strong>Roles:</strong>
-                {% with member_roles=member.roles.all  %}
-                  {% if member_roles %}
-                    {% for role in member_roles %}
-                      {% if role.group == group %}
-                        <span class="comma">{{ role.get_role_display }}</span>
-                      {% endif %}
-                    {% endfor %}
-                  {% else %}
-                    <span>N/A</span>
-                  {% endif %}
-                {% endwith %}
+                <strong>Roles: </strong>
+                <span>{{ member|group_roles:group }}</span>
               </div>
             </div>
           {% endfor %}

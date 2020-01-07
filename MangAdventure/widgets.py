@@ -1,14 +1,20 @@
+"""Custom form widgets."""
+
 from json import dumps
+from typing import Any, Dict
 
-from django.forms import Widget
+from django.forms import Textarea
 
 
-class TinyMCE(Widget):
-    template_name = 'django/forms/widgets/textarea.html'
+class TinyMCE(Textarea):
+    """
+    A textarea :class:`~django.forms.Widget`
+    for `TinyMCE <https://www.tiny.cloud/>`_.
 
-    def __init__(self, attrs=None):
-        attrs = attrs or {}
-        if 'class' in attrs:
+    :param attrs: A dictionary of the widget's attributes.
+    """
+    def __init__(self, attrs: Dict[str, Any] = {}):
+        if 'class' in attrs:  # pragma: no cover
             attrs['class'] += ' tinymce'
         else:
             attrs['class'] = 'tinymce'

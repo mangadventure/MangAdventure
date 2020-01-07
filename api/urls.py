@@ -1,11 +1,16 @@
+"""The main URLconf of the api app."""
+
+from django.urls import include, path
+
 from .v1.views import invalid_endpoint
 
-try:
-    from django.urls import include, re_path as url
-except ImportError:
-    from django.conf.urls import include, url
+#: The URL namespace of the API app.
+app_name = "api"
 
+#: The main URL patterns of the API app.
 urlpatterns = [
-    url('^$', invalid_endpoint, name='root'),
-    url('^v1/', include('api.v1.urls')),
+    path('', invalid_endpoint, name='root'),
+    path('v1/', include('api.v1.urls')),
 ]
+
+__all__ = ['urlpatterns']

@@ -1,0 +1,32 @@
+[
+  {
+    "model": "flatpages.flatpage",
+    "pk": 1,
+    "fields": {
+      "url": "/info/",
+      "title": "About us",
+      "content": "",
+      "enable_comments": false,
+      "template_name": "",
+      "registration_required": false,
+      "sites": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "flatpages.flatpage",
+    "pk": 2,
+    "fields": {
+      "url": "/privacy/",
+      "title": "Privacy",
+      "content": "",
+      "enable_comments": false,
+      "template_name": "",
+      "registration_required": false,
+      "sites": [
+        1
+      ]
+    }
+  }
+]

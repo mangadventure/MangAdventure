@@ -1,15 +1,15 @@
 /* global tinyMCE */
 
-window.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.tinymce').forEach(function(el) {
-    var mce_conf = JSON.parse(el.getAttribute('data-tinymce-config'));
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.tinymce').forEach(el => {
+    const mce_conf = JSON.parse(el.getAttribute('data-tinymce-config'));
     if('replace_icons' in mce_conf) {
-      var old_setup = mce_conf.setup;
-      mce_conf.setup = function(editor) {
+      const old_setup = mce_conf.setup;
+      mce_conf.setup = editor => {
         if(typeof old_setup === 'function') old_setup(editor);
-        editor.on('init', function(evt) {
+        editor.on('init', evt => {
           evt.target.editorContainer.querySelectorAll('i')
-            .forEach(function(ico) {
+            .forEach(ico => {
               if(ico.className === 'mce-caret') {
                 ico.className = 'mi mi-down';
               } else if(ico.className.endsWith('save')) {

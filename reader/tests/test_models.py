@@ -176,9 +176,8 @@ class TestPage(ReaderTestBase):
 
     def test_crate(self):
         page = self.create_page()
-        name = '336e2fcfa9586c747a71e900d9b0c65a'
-        assert str(page) == f'My Series - 1/0.5 [{name}.png]'
-        assert hash(page) == 1577218085984938506
+        assert str(page) == f'My Series - 1/0.5 #001'
+        assert hash(page) == 0x15e3677e24742a0a
 
     def test_get_absolute_url(self):
         page = self.create_page()

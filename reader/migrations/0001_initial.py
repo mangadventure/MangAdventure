@@ -5,7 +5,7 @@ from django.db import migrations, models
 from MangAdventure import storage, validators
 from MangAdventure.models import AliasField, AliasKeyField
 
-from reader.models import _cover_uploader
+from reader.models import _cover_uploader, _PageNumberField
 
 
 class Migration(migrations.Migration):
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
                     serialize=False, verbose_name='ID'
                 )),
                 ('image', models.ImageField(upload_to='')),
-                ('number', models.PositiveSmallIntegerField()),
+                ('number', _PageNumberField()),
                 ('chapter', models.ForeignKey(
                     on_delete=models.deletion.CASCADE,
                     related_name='pages', to='reader.Chapter'

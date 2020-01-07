@@ -1,5 +1,6 @@
 """The URLconf of the reader app."""
 
+from django.conf import settings
 from django.urls import path, register_converter
 
 from MangAdventure.converters import FloatConverter
@@ -14,7 +15,6 @@ app_name = 'reader'
 _slug = '<slug:slug>/'
 _chapter = f'{_slug}<int:vol>/<float:num>/'
 _page = f'{_chapter}<int:page>/'
-_cbz = f'{_chapter[:-1]}.cbz'
 
 #: The URL namespace of the reader app.
 urlpatterns = [
@@ -22,8 +22,12 @@ urlpatterns = [
     path(_slug, views.series, name='series'),
     path(_chapter, views.chapter_redirect, name='chapter'),
     path(_page, views.chapter_page, name='page'),
-    path(_cbz, views.chapter_download, name='cbz')
     # path(f'{_chapter}comments/', views.chapter_comments, name='comments'),
 ]
+
+if settings.CONFIG['ALLOW_DLS']:
+    urlpatterns.append(
+        path(f'{_chapter[:-1]}.cbz', views.chapter_download, name='cbz')
+    )
 
 __all__ = ['app_name', 'urlpatterns']

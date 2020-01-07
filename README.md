@@ -16,8 +16,9 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
 * [x] Doesn't require JavaScript.
 * [x] Supports searching for series.
 * [x] Supports users.
-  * [x] OAuth.
-  * [x] Bookmarks.
+  * [x] OAuth registration.
+  * [x] Series bookmarks.
+  * [x] Chapter downloads.
   * [ ] Comments.
 * [x] Allows for migration from FoolSlide2.
 * [ ] More features coming soon...

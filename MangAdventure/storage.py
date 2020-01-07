@@ -25,10 +25,8 @@ class CDNStorage(FileSystemStorage):
     """
     def __init__(self, fit: Optional[Tuple[int, int]] = None):
         site = settings.CONFIG['DOMAIN']
-        self._debug = settings.DEBUG or site.startswith((
-            '127.0.0.1', '0.0.0.0', 'localhost', '192.168.1.'
-        ))
-        if self._debug:  # pragma: no cover
+        self._nocdn = not settings.CONFIG['USE_CDN'] or settings.DEBUG
+        if self._nocdn:  # pragma: no cover
             return super(CDNStorage, self).__init__()
         cdn = 'https://cdn.statically.io/img/'
         url = cdn + site + settings.MEDIA_URL
@@ -44,12 +42,12 @@ class CDNStorage(FileSystemStorage):
 
         :return: The URL of the file.
         """
-        if self._debug:  # pragma: no cover
+        if self._nocdn:  # pragma: no cover
             return super(CDNStorage, self).url(name)
         try:
             time = self.get_modified_time(name)
             qs = {'t': f'{time.timestamp():.0f}'}
-        except NotImplementedError:
+        except NotImplementedError:  # pragma: no cover
             qs = {}
         if self._fit:
             qs['fit'] = self._fit

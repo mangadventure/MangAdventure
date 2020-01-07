@@ -4,10 +4,10 @@ from typing import Type
 
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 
-from .models import Chapter, Series
+from .models import Chapter, Page, Series
 
 
 def _move(old_dir: str, new_dir: str):
@@ -95,4 +95,17 @@ def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
             page.save()
 
 
-__all__ = ['redirect_series', 'redirect_chapter']
+@receiver(post_delete, sender=Page)
+def remove_page(sender: Type[Page], instance: Page, **kwargs):
+    """
+    Receive a signal when a page is about to be deleted.
+
+    Remove the image file of the page.
+
+    :param sender: The model class that sent the signal.
+    :param instance: The instance of the model.
+    """
+    instance.image.storage.delete(instance.image.name)
+
+
+__all__ = ['redirect_series', 'redirect_chapter', 'remove_page']

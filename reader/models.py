@@ -9,6 +9,7 @@ from typing import Any, Tuple
 from zipfile import ZipFile
 
 from django.conf import settings
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.query import Q
 from django.shortcuts import reverse
@@ -456,6 +457,16 @@ class Chapter(models.Model):
         return abs(hash(str(self)))
 
 
+class _PageNumberField(models.PositiveSmallIntegerField):
+    default_validators = (MinValueValidator(1),)
+
+    def formfield(self, **kwargs):  # pragma: no cover
+        # bypass parent to set min_value to 1
+        return super(
+            models.PositiveSmallIntegerField, self
+        ).formfield(**{'min_value': 1, **kwargs})
+
+
 class Page(models.Model):
     """A model representing a page."""
     #: The chapter this page belongs to.
@@ -465,7 +476,7 @@ class Page(models.Model):
     #: The image of the page.
     image = models.ImageField(storage=storage.CDNStorage(), max_length=255)
     #: The number of the page.
-    number = models.PositiveSmallIntegerField()
+    number = _PageNumberField()
 
     class Meta:
         ordering = ('chapter', 'number')
@@ -509,9 +520,8 @@ class Page(models.Model):
         :return: The title of the series, the volume, number, title
                  of the chapter, and the file name of the page.
         """
-        return '{0.series.title} - {0.volume}/{0.number} [{1}]'.format(
-            self.chapter, self._file_name
-        )
+        return '{0.series.title} - {0.volume}/{0.number} #{1:03d}' \
+            .format(self.chapter, self.number)
 
     def __eq__(self, other: Any) -> bool:
         """

@@ -1,6 +1,15 @@
 Changelog
 ---------
 
+v0.6.1
+^^^^^^
+
+* Added inline page editing to the admin panel
+* Added a setting to disable the image CDN
+* Added a setting to disable chapter downloads
+* Restricted downloads to logged-in users
+* Improved the query filter used in search
+
 v0.6.0
 ^^^^^^
 

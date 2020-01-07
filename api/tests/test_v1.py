@@ -7,10 +7,10 @@ from django.urls import reverse
 
 from pytest import mark
 
+from MangAdventure.storage import CDNStorage
+
 from api.response import JsonError
 from groups.models import Group, Member, Role
-
-from MangAdventure.storage import CDNStorage
 
 from . import APITestBase
 

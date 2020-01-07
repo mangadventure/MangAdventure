@@ -81,10 +81,12 @@
           {% endfor %}
         </ul>
       </div>
-      <a id="download" title="Download chapter"
+      {% if config.ALLOW_DLS and request.user.is_authenticated %}
         {% with slug=curr_chapter.series.slug vol=curr_chapter.volume num=curr_chapter.number %}
-          href="{% url 'reader:cbz' slug vol num %}"><i class="mi mi-download"></i></a>
+          <a href="{% url 'reader:cbz' slug vol num %}" id="download"
+             title="Download chapter"><i class="mi mi-download"></i></a>
         {% endwith %}
+      {% endif %}
       <div class="dropdown page-list main-bg" aria-haspopup="true">
         <span class="dropdown-title alter-fg">
           Pages <i class="mi mi-down"></i>
@@ -126,7 +128,7 @@
     <section id="controls" class="no-display">
       {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
         <div id="controls-top">
-          <a href="../{{ all_pages.first.number }}" title="First page" class="control">
+          <a href="{{ all_pages.first.get_absolute_url }}" title="First page" class="control">
             <i class="mi mi-rewind"></i>
           </a>
           {% if prev == 0 %}
@@ -156,7 +158,7 @@
             {% endif %}
               <i class="mi mi-right"></i>
             </a>
-            <a href="../{{ all_pages.last.number }}" title="Last page" class="control">
+            <a href="{{ all_pages.last.get_absolute_url }}" title="Last page" class="control">
               <i class="mi mi-forward"></i>
             </a>
           {% endwith %}

@@ -1,4 +1,5 @@
 from django.contrib.admin import AdminSite
+from django.contrib.auth.models import User
 from django.http import HttpRequest
 
 from MangAdventure.tests.utils import get_test_image
@@ -16,6 +17,9 @@ class ReaderAdminTestBase(ReaderTestBase):
         super().setup_method()
         self.site = AdminSite()
         self.request = HttpRequest()
+        self.user = User.objects.get(pk=1)
+        self.client.force_login(self.user)
+        self.request.user = self.user
 
 
 class TestChapterAdmin(ReaderAdminTestBase):
@@ -23,8 +27,9 @@ class TestChapterAdmin(ReaderAdminTestBase):
         super().setup_method()
         self.admin = ChapterAdmin(admin_site=self.site, model=Chapter)
         self.series = Series.objects.create(title='test')
-        self.chapter = Chapter.objects.create(title='Chapter', number=1.5,
-                                              series=self.series)
+        self.chapter = Chapter.objects.create(
+            title='Chapter', number=1.5, series=self.series
+        )
 
     def test_number(self):
         assert self.admin._number(self.chapter) == '1.5'
@@ -37,11 +42,18 @@ class TestChapterAdmin(ReaderAdminTestBase):
         assert self.admin.preview(self.chapter) == ''
 
     def test_toggle_final(self):
-        Series.objects.create(title='test2').chapters.create(title='Chapter',
-                                                             number=2)
-        self.admin.toggle_final(request=self.request,
-                                queryset=Chapter.objects.all())
+        Series.objects.create(title='test2').chapters \
+            .create(title='Chapter', number=2)
+        self.admin.toggle_final(
+            request=self.request, queryset=Chapter.objects.all()
+        )
         assert not Chapter.objects.filter(final=False)
+
+    def test_pages(self):
+        page = self.chapter.pages.create(number=1, image=get_test_image())
+        inline = self.admin.get_inline_instances(self.request, self.chapter)
+        assert inline[0].preview(page).startswith('<img src="')
+        # TODO: validate formset
 
 
 class TestSeriesAdmin(ReaderAdminTestBase):

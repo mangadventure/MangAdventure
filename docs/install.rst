@@ -35,7 +35,7 @@ Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.0#egg=mangadventure"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.1#egg=mangadventure"
 
 MangAdventure also provides the following extras:
 
@@ -49,7 +49,7 @@ For example, you can install ``csp`` & ``uwsgi`` like so:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.0#egg=mangadventure[csp,uwsgi]"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.1#egg=mangadventure[csp,uwsgi]"
 
 .. _MySQL database support:
    https://mysql.com/
@@ -73,7 +73,7 @@ Before proceeding, there are some settings you will need to configure.
 To configure them, copy the ``.env.example`` file to ``.env`` and edit it.
 
 You can also override the styling of the site by writing some SCSS
-(or regular CSS) in the `static/extra/style.scss` file.
+(or regular CSS) in the ``static/extra/style.scss`` file.
 
 Create the database
 ^^^^^^^^^^^^^^^^^^^
@@ -202,7 +202,7 @@ Updating
    # Don't forget to activate the virtualenv
    source /var/www/my-site.com/bin/activate
 
-   pip install -U "git+https://github.com/mangadventure/MangAdventure@{tag}#egg=MangAdventure"
+   pip install -U -e "git+https://github.com/mangadventure/MangAdventure@{tag}#egg=MangAdventure"
 
 Then, check ``.env.example`` for new variables. If there are any, set them in ``.env``.
 

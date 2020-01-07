@@ -73,14 +73,18 @@ class TestSearch(MangadvViewTestBase):
     def test_get_simple(self):
         self._test_filter()
 
-    def test_get_author_search_alias(self):
+    def test_get_query(self):
+        self._test_filter({'q': 'first'}, ['series'])
+
+    def test_get_author(self):
         self._test_filter({'author': 'author1'}, ['series'])
         self._test_filter({'author': 'artist1'}, ['series'])
         self._test_filter({'author': 'author2'}, ['series2'])
         self._test_filter({'author': 'artist2'}, ['series2'])
 
-    def test_get_completed(self):
+    def test_get_status(self):
         self._test_filter({'status': 'completed'}, ['series2'])
+        self._test_filter({'status': 'ongoing'}, ['series'])
         self._test_filter({'status': 'any'}, ['series', 'series2'])
 
     def test_get_categories(self):
@@ -88,9 +92,6 @@ class TestSearch(MangadvViewTestBase):
         self._test_filter({'categories': 'manga'}, ['series'])
         self._test_filter({'categories': 'yaoi'}, ['series2'])
         self._test_filter({'categories': '-yaoi,adventure'}, ['series'])
-
-    def test_get_query(self):
-        self._test_filter({'q': 'first'}, ['series'])
 
 
 class TestOpenSearch(MangadvViewTestBase):

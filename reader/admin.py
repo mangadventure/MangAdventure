@@ -4,6 +4,7 @@ from typing import Optional, Tuple
 
 from django.contrib import admin
 from django.db.models.query import Q, QuerySet
+from django.forms.models import BaseInlineFormSet
 # XXX: Forward reference warning when under TYPE_CHECKING
 from django.http import HttpRequest
 
@@ -11,7 +12,7 @@ from MangAdventure import filters, utils
 
 from .models import (
     Artist, ArtistAlias, Author, AuthorAlias,
-    Category, Chapter, Series, SeriesAlias
+    Category, Chapter, Page, Series, SeriesAlias
 )
 
 
@@ -33,8 +34,54 @@ class ArtistAliasInline(admin.StackedInline):
     extra = 1
 
 
+class PageFormset(BaseInlineFormSet):
+    """Formset for :class:`~reader.admin.PageInline`."""
+
+    def clean(self):  # pragma: no cover
+        """Ensure that page numbers don't have duplicates."""
+        super().clean()
+        numbers = []
+        for form in self.forms:
+            num = form.cleaned_data.get('number')
+            if num in numbers:
+                form._errors['number'] = \
+                    self.error_class([self.get_form_error()])
+                del form.cleaned_data['number']
+            if not form.cleaned_data.get('DELETE'):
+                numbers.append(num)
+
+
+class PageInline(admin.TabularInline):
+    """
+    Inline admin model for :class:`~reader.models.Page`.
+
+    .. admonition:: TODO
+       :class: warning
+
+       Add a way to delete all the pages.
+    """
+    model = Page
+    extra = 1
+    formset = PageFormset
+    fields = ('image', 'preview', 'number')
+    readonly_fields = ('preview',)
+
+    def preview(self, obj: Page) -> str:
+        """
+        Get the image of the page as an HTML ``<img>``.
+
+        :param obj: A ``Page`` model instance.
+
+        :return: An ``<img>`` tag with the page image.
+        """
+        return utils.img_tag(obj.image, 'preview', height=150)
+
+    preview.short_description = ''
+
+
 class ChapterAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Chapter`."""
+    inlines = (PageInline,)
     date_hierarchy = 'uploaded'
     list_display = (
         'preview', 'title', 'volume', '_number',

@@ -10,7 +10,7 @@ jobs:
     - python: 3.6
       env: DB=sqlite3
       before_install:
-        - pip install 'git+https://github.com/mozilla/django-csp'
+        - pip install django-csp>=3.6
     - python: 3.7
       env: DB=mysql
       services: mysql

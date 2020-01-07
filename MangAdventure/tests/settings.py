@@ -251,6 +251,8 @@ CONFIG = {
     'SHADOW_COLOR': '#444',
     'FONT_NAME': 'Lato',
     'FONT_URL': 'https://fonts.googleapis.com/css?family=Lato&display=swap',
+    'USE_CDN': True,
+    'ALLOW_DLS': True,
     'MAX_RELEASES': 10,
     'MAX_CHAPTERS': 1,
     'SHOW_CREDITS': True,

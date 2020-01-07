@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
 
@@ -8,7 +10,7 @@ from reader.models import Series
 from . import ReaderTestBase
 
 
-def get_redirect_list() -> list:
+def get_redirect_list() -> List[Tuple[str, str]]:
     return list(Redirect.objects.values_list('old_path', 'new_path'))
 
 
@@ -46,6 +48,7 @@ class TestRedirectSeries(ReaderTestBase):
 
 class TestRedirectChapter(ReaderTestBase):
     def setup_method(self):
+        super().setup_method()
         self.series = Series.objects.create(
             title='series', slug='old-slug', cover=get_test_image()
         )
@@ -60,3 +63,18 @@ class TestRedirectChapter(ReaderTestBase):
         series_path = settings.MEDIA_ROOT / self.series.get_directory()
         assert (series_path / '2' / '2').exists()
         assert not (series_path / '0' / '1').exists()
+
+
+class TestRemovePage(ReaderTestBase):
+    def setup_method(self):
+        super().setup_method()
+        series = Series.objects.create(title='series')
+        chapter = series.chapters.create(title='Chapter', number=1)
+        self.page = chapter.pages.create(number=1, image=get_test_image())
+
+    def test_delete(self):
+        from os.path import exists
+        path = self.page.image.path
+        assert exists(path)
+        self.page.delete()
+        assert not exists(path)

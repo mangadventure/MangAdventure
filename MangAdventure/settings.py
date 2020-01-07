@@ -499,6 +499,8 @@ CONFIG = {
     'SHADOW_COLOR': env['SHADOW_COLOR'],
     'FONT_NAME': env['FONT_NAME'],
     'FONT_URL': env['FONT_URL'],
+    'USE_CDN': env.bool('USE_CDN', True),
+    'ALLOW_DLS': env.bool('ALLOW_DLS', True),
     'MAX_RELEASES': env.int('MAX_RELEASES', 10),
     'MAX_CHAPTERS': env.int('MAX_CHAPTERS', 1),
     'SHOW_CREDITS': env.bool('SHOW_CREDITS', True),

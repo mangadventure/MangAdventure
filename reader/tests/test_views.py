@@ -1,7 +1,6 @@
 from os import getenv
 
 from django.core.cache import cache
-from django.db.utils import InterfaceError
 from django.http import FileResponse
 from django.urls import reverse
 
@@ -107,8 +106,8 @@ class TestChapterDownload(ReaderViewTestBase):
         assert r.filename.endswith('c1.cbz')
 
     @mark.xfail(
-        getenv('DB') == 'postgresql', raises=InterfaceError,
-        reason='PostgreSQL closes the connection too soon'
+        getenv('DB') == 'postgresql',
+        reason='PostgreSQL hates us'
     )  # TODO: figure out how to fix this
     def test_get_not_found(self):
         self.series.chapters.all().delete()

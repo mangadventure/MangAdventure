@@ -1,6 +1,9 @@
 {% extends 'layout.html' %}
-{% load cache %}
+{% load cache flatpage_tags %}
 {% cache 604800 info_page flatpage.title flatpage.content %}
+  {% block breadcrumbs %}
+    {{ request|breadcrumbs_ld:flatpage }}
+  {% endblock %}
   {% block description %}
     {% with desc=flatpage.content|striptags %}
       <meta name="twitter:description" content="{{ desc }}">

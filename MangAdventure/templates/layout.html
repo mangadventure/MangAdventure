@@ -25,12 +25,10 @@
     {% endblock %}
     {% block image %}
       <meta name="twitter:card" content="summary_large_image">
-      {% with logo=PAGE_URL|urljoin:config.LOGO %}
-        <meta name="twitter:image" content="{{ logo }}">
-        <meta property="og:image" content="{{ logo }}">
-        <meta name="twitter:image:alt" content="Site logo">
-        <meta property="og:image:alt" content="Site logo">
-      {% endwith %}
+      <meta name="twitter:image" content="{{ PAGE_URL|urljoin:config.LOGO_TW }}">
+      <meta property="og:image" content="{{ PAGE_URL|urljoin:config.LOGO_OG }}">
+      <meta name="twitter:image:alt" content="Site logo">
+      <meta property="og:image:alt" content="Site logo">
     {% endblock %}
     {% block url %}
       <meta name="url" content="{{ PAGE_URL }}">
@@ -72,7 +70,9 @@
     {% block head_extras %}{% endblock %}
     {{ searchbox|jsonld:'website' }}
     {{ organization|jsonld:'organization' }}
-    {{ breadcrumbs|jsonld:'breadcrumbs' }}
+    {% block breadcrumbs %}
+      {{ breadcrumbs|jsonld:'breadcrumbs' }}
+    {% endblock %}
     {% block title %}
       <meta name="twitter:title" content="{{ config.NAME }}">
       <meta property="og:title" content="{{ config.NAME }}">

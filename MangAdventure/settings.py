@@ -506,6 +506,9 @@ CONFIG = {
     'SHOW_CREDITS': env.bool('SHOW_CREDITS', True),
 }
 
+CONFIG['LOGO_TW'] = env.get('LOGO_TW', CONFIG['LOGO'])
+CONFIG['LOGO_OG'] = env.get('LOGO_OG', CONFIG['LOGO'])
+
 ##################
 #    Comments    #
 ##################

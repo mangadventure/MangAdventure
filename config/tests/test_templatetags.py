@@ -3,9 +3,12 @@ from unittest.mock import MagicMock
 
 from pytest import fixture, mark
 
+from django.contrib.flatpages.models import FlatPage
+
 from config.templatetags.custom_tags import (
     get_type, jsonld, order_by, urljoin, vslice
 )
+from config.templatetags.flatpage_tags import breadcrumbs_ld
 from reader.models import Series
 
 
@@ -47,6 +50,13 @@ def mock_urlopen(monkeypatch):
     monkeypatch.setattr('config.templatetags.custom_tags.urlopen', fake_urlopen)
 
 
+@fixture
+def mock_request(monkeypatch):
+    fake_request = MagicMock()
+    fake_request().build_absolute_uri.return_value = 'https://example.com'
+    monkeypatch.setattr('django.http.request.HttpRequest', fake_request)
+
+
 @mark.django_db
 def test_order_by():
     Series.objects.create(title='d')
@@ -67,3 +77,11 @@ def test_get_type_no_network():
 
 def test_get_type_invalid():
     assert get_type('my_link.flif') == 'image/jpeg'
+
+
+@mark.django_db
+@mark.usefixtures('django_db_setup')
+def test_breadcrumbs_ld(mock_request):
+    from django.http.request import HttpRequest
+    page = FlatPage.objects.first()
+    assert 'About us' in breadcrumbs_ld(HttpRequest(), page)

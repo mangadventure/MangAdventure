@@ -244,6 +244,8 @@ CONFIG = {
     'TWITTER': '',
     'FAVICON': '',
     'LOGO': '',
+    'LOGO_TW': '',
+    'LOGO_OG': '',
     'MAIN_BG_COLOR': '#FFF',
     'MAIN_TEXT_COLOR': '#000',
     'ALTER_BG_COLOR': '#AAA',

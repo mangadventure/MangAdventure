@@ -5,6 +5,8 @@ v0.6.2
 ^^^^^^
 
 * Fixed info & privacy breadcrumbs
+* Fixed ``FloatConverter`` not accepting 10+
+* Changed image hashing algorithm to BLAKE2
 
 v0.6.1
 ^^^^^^

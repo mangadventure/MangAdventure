@@ -1,6 +1,6 @@
 """Database models for the reader app."""
 
-from hashlib import shake_128
+from hashlib import blake2b
 from io import BytesIO
 from os import path
 from pathlib import PurePath
@@ -332,8 +332,8 @@ class Chapter(models.Model):
                     continue
                 counter += 1
                 data = zf.read(name)
-                sha = shake_128(data).hexdigest(16)
-                filename = sha + path.splitext(name)[-1]
+                blk = blake2b(data, digest_size=16).hexdigest()
+                filename = blk + path.splitext(name)[-1]
                 file_path = path.join(dir_path, filename)
                 with open(full_path / filename, 'wb') as img:
                     img.write(data)

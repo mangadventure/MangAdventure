@@ -1,4 +1,4 @@
-from hashlib import shake_128
+from hashlib import blake2b
 from io import BytesIO
 from os import urandom
 from random import randint
@@ -21,9 +21,9 @@ def get_test_image() -> InMemoryUploadedFile:
     im.save(im_io, 'PNG')
     im_io.seek(0)
     data = im_io.getvalue()
-    sha = shake_128(data).hexdigest(16)
+    blk = blake2b(data, digest_size=16).hexdigest()
     return InMemoryUploadedFile(
-        im_io, None, f'{sha}.png', 'image/png', len(data), None
+        im_io, None, f'{blk}.png', 'image/png', len(data), None
     )
 
 

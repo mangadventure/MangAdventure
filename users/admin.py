@@ -88,7 +88,11 @@ class User(models.User):
 class UserAdmin(admin.ModelAdmin):
     """Admin model for :class:`User`."""
     exclude = ('password', 'groups')
-    list_display = ('username', '_email', 'full_name', 'date_joined')
+    list_display = (
+        'username', '_email', 'full_name',
+        'date_joined', 'is_active'
+    )
+    list_editable = ('is_active',)
     search_fields = ('username', 'email', 'first_name', 'last_name')
     list_filter = (
         boolean_filter('status', 'is_active', ('Active', 'Inactive')),

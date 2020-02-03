@@ -9,7 +9,7 @@
 class FloatConverter:
     """Path converter that matches a float number."""
     #: The pattern to match.
-    regex = r'\d(\.\d+)?'
+    regex = r'\d+(\.\d+)?'
 
     def to_python(self, value: str) -> float:
         """

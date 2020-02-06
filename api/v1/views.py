@@ -44,10 +44,10 @@ def _latest(request: 'HttpRequest', slug: Optional[str] = None,
 
 def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
     url = request.build_absolute_uri(_chapter.get_absolute_url())
-    response = {
+    return {
         'title': _chapter.title,
         'url': url,
-        'pages_root': url.replace('/reader', f'{settings.MEDIA_URL}series'),
+        'pages_root': url.replace('/reader/', f'{settings.MEDIA_URL}series/'),
         'pages_list': [p._file_name for p in _chapter.pages.all()],
         'date': _chapter.uploaded_date,
         'final': _chapter.final,
@@ -56,7 +56,6 @@ def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
             for _group in _chapter.groups.all()
         ]
     }
-    return response
 
 
 def _volume_response(request: 'HttpRequest',
@@ -207,11 +206,10 @@ def all_series(request: 'HttpRequest') -> JsonResponse:
 
     :return: A JSON-formatted response with the series.
     """
-    response = [
+    return JsonResponse([
         _series_response(request, s)
         for s in get_response(request)
-    ]
-    return JsonResponse(response, safe=False)
+    ], safe=False)
 
 
 @csrf_exempt

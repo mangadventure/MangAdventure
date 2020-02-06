@@ -26,18 +26,6 @@ class BaseMiddleware(CommonMiddleware):
             return self.get_response(request)
         return super().__call__(request)
 
-    def should_redirect_with_slash(self, request: 'HttpRequest') -> bool:
-        """
-        Patched to disable redirects under ``/api``.
-
-        :param request: The original request.
-
-        :return: ``True`` if the response should be a redirect.
-        """
-        if request.path.startswith('/api'):
-            return False
-        return super().should_redirect_with_slash(request)
-
 
 class PreloadMiddleware:
     """Middleware that allows for preloading resources."""

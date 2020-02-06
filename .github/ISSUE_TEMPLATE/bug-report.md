@@ -28,4 +28,5 @@ about: Did something not work as expected?
 * Python version:
 * Web server and version:
 * Browser type and version:
+* Database type and version:
 * Link to your website: <!-- If applicable. -->

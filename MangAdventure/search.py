@@ -26,6 +26,19 @@ class _SearchParams(NamedTuple):
     status: str
     categories: Tuple[List[str], List[str]]
 
+    def __bool__(self) -> bool:
+        """
+        Check whether the parameters can be used in a filter.
+
+        :return: ``True`` if any parameter has a usable value.
+        """
+        return bool(
+            self.query != '' or
+            self.author != '' or
+            self.status != 'any' or
+            self.categories != ([], [])
+        )
+
 
 def parse(request: 'HttpRequest') -> _SearchParams:
     """
@@ -38,12 +51,12 @@ def parse(request: 'HttpRequest') -> _SearchParams:
     """
     categories = request.GET.get('categories', '').split(',')
     return _SearchParams(
-        query=request.GET.get('q', ''),
-        author=request.GET.get('author', ''),
-        status=request.GET.get('status', 'any').lower(),
+        query=request.GET.get('q', '').strip(),
+        author=request.GET.get('author', '').strip(),
+        status=request.GET.get('status', 'any').lower().strip(),
         categories=(
-            [c.lower() for c in categories if len(c) and c[0] != '-'],
-            [c[1:].lower() for c in categories if len(c) and c[0] == '-']
+            [c.lower() for c in categories if c and c[0] != '-'],
+            [c[1:].lower() for c in categories if c and c[0] == '-']
         )
     )
 
@@ -93,6 +106,8 @@ def query(params: _SearchParams) -> 'QuerySet':
 
     :return: A queryset of series matching the given parameters.
     """
+    if not params:
+        return Series.objects.none()
     return Series.objects.filter(qsfilter(params)).distinct()
 
 
@@ -107,7 +122,10 @@ def get_response(request: 'HttpRequest') -> 'QuerySet':
     slug = request.GET.get('slug')
     if slug:
         return Series.objects.filter(slug=slug)
-    return query(parse(request))
+    params = parse(request)
+    if params:
+        return query(params)
+    return Series.objects.all()
 
 
 __all__ = ['parse', 'qsfilter', 'query', 'get_response']

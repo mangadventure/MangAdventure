@@ -1,6 +1,13 @@
 Changelog
 ---------
 
+v0.6.3
+^^^^^^
+
+* Fixed OAuth option showing without providers
+* Fixed ``pages_root`` URL replacement in API
+* Disabled full search when query is missing
+
 v0.6.2
 ^^^^^^
 

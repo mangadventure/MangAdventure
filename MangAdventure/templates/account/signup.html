@@ -33,9 +33,9 @@
       <input class="button" type="submit" value="Register">
     </form>
     <section id="oauth">
-      <div id="oauth-or">Or, sign up with:</div>
       {% get_providers as socialaccount_providers %}
       {% for provider in socialaccount_providers|available %}
+        {% if forloop.first %}<div id="oauth-or">Or, sign up with:</div>{% endif %}
         <a title="{{ provider.name }}" class="provider main-fg"
            rel="noopener nofollow" href="{% provider_login_url provider.id %}">
           <i class="mi mi-{{ provider.id }}"></i><span>{{ provider.name }}</span>

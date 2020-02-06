@@ -3,8 +3,6 @@
 {% block canonical %}{% endblock %}
 {% block head_extras %}
   <meta name="totalResults" content="{{ total }}">
-  <script src="{% static 'vendor/tablesort.min.js' %}"
-          type="application/javascript" async></script>
   <script src="{% static 'scripts/search.js' %}"
           type="application/javascript" defer></script>
 {% endblock %}
@@ -20,15 +18,15 @@
     <section id="search-options">
       <form action="{% url 'search' %}" id="search-form" method="GET">
         <div id="search-title">
-          <label for="query">Series Title:</label>
+          <label for="query">Series Title: </label>
           <input name="q" value="{{ query }}" id="query" type="text">
         </div>
         <div id="search-author">
-          <label for="author">Author/Artist:</label>
+          <label for="author">Author/Artist: </label>
           <input name="author" value="{{ author }}" id="author" type="text">
         </div>
         <div id="search-status">
-          <span>Series Status:</span>
+          <label for="status">Series Status: </label>
           <input {% if status == 'any' %}checked="checked"{% endif %}
                  name="status" id="status-any" value="any" type="radio">
           <label for="status-any">Any</label>
@@ -119,6 +117,8 @@
             {% endif %}
           {% endfor %}
         </table>
+        <script src="{% static 'vendor/tablesort.min.js' %}"
+                type="application/javascript"></script>
       {% endif %}
     </section>
   </article>

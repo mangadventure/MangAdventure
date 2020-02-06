@@ -23,13 +23,6 @@ class TestBaseMiddleware(MangadvTestBase):
         r = self.bot.get(reverse('index'))
         assert r.status_code == 403
 
-    def test_redirect(self):
-        r = self.client.get('/reader')
-        assert r.status_code == 301
-        assert r['Location'].endswith('/reader/')
-        r = self.client.get('/api')
-        assert 'Location' not in r
-
 
 @mark.skipif(
     getenv('wsgi.url_scheme') != 'https',

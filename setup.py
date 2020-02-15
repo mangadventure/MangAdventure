@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 from importlib.util import find_spec
-from pathlib import PurePath
+from pathlib import Path
 
 from setuptools import find_packages, setup
+from setuptools.command.develop import develop
 
 import MangAdventure
 
@@ -14,8 +15,20 @@ if find_spec('isort'):
 
 
 def read(fname):
-    with open(PurePath(__file__).parent / fname) as f:
+    with open(Path(__file__).parent / fname) as f:
         return f.read()
+
+
+class Develop(develop):
+    def _post_install(self):
+        with open(self.egg_link, 'r') as lnk:
+            path = Path(lnk.readline()[:-1], 'static', 'extra')
+        path.mkdir(exist_ok=True)
+        (path / 'style.scss').open('a').close()
+
+    def run(self):
+        super().run()
+        self._post_install()
 
 
 setup(
@@ -47,6 +60,7 @@ setup(
             'mangadventure = MangAdventure.__main__:main'
         ]
     },
+    cmdclass={'develop': Develop},
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

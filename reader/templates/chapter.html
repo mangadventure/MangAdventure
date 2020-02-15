@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static %}
+{% load static custom_tags %}
 {% block robots %}
   <meta name="robots" content="nosnippet">
 {% endblock %}
@@ -12,7 +12,7 @@
   <meta name="twitter:card" content="summary">
   {# TODO: is it possible to show multiple creators? #}
   <meta name="twitter:creator" content="{{ chapter.twitter_creator }}">
-  {% with cover=curr_chapter.series.cover.url %}
+  {% with cover=PAGE_URL|urljoin:curr_chapter.series.cover.url %}
     <meta name="twitter:image" content="{{ cover }}">
     <meta property="og:image" content="{{ cover }}">
     <meta name="twitter:image:alt" content="Series Cover">

@@ -222,7 +222,9 @@ thead {
     padding: 10px 0 0;
     width: 100%;
     .cover {
-      max-width: 100%;
+      max-width: 300px;
+      max-height: 300px;
+      width: auto;
       height: auto;
       float: left;
       &-container { max-width: calc(100vw / 3) }
@@ -265,8 +267,10 @@ thead {
   }
   h3 { margin: 0.5em 0 }
   .cover {
+    max-width: 300px;
+    max-height: 300px;
     width: auto;
-    height: 100%;
+    height: auto;
     position: relative;
     left: -0.3em;
     float: left;

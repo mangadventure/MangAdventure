@@ -4,6 +4,8 @@ Changelog
 v0.6.3
 ^^^^^^
 
+* Fixed image meta tags & searchbox
+* Fixed extra SCSS getting reset on update
 * Fixed OAuth option showing without providers
 * Fixed ``pages_root`` URL replacement in API
 * Disabled full search when query is missing

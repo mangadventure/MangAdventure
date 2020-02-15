@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load cache account %}
+{% load cache account custom_tags %}
 {% user_display request.user as user_display %}
 {% block robots %}
   <meta name="robots" content="noindex">
@@ -7,7 +7,7 @@
 {% block image %}
   <meta name="twitter:card" content="summary">
   {% if profile.avatar %}
-    {% with avatar=profile.avatar.url %}
+    {% with avatar=PAGE_URL|urljoin:profile.avatar.url %}
       <meta name="twitter:image" content="{{ avatar }}">
       <meta property="og:image" content="{{ avatar }}">
       <meta name="twitter:image:alt" content="Avatar">

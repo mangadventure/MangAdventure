@@ -27,12 +27,12 @@ def extra_settings(request: 'HttpRequest') -> Dict:
     full_uri = request.build_absolute_uri()
     base_uri = request.build_absolute_uri('/')
     path_uri = request.build_absolute_uri(request.path)
-    logo_uri = request.build_absolute_uri(settings.CONFIG['LOGO'])
+    logo_uri = request.build_absolute_uri(settings.CONFIG['LOGO_OG'])
     searchbox = schema('WebSite', {
         'url': base_uri,
         'potentialAction': [{
             '@type': 'SearchAction',
-            'target': f'{path_uri}?q={{query}}',
+            'target': f'{base_uri}search/?q={{query}}',
             'query-input': 'required name=query'
         }]
     })

@@ -1,5 +1,7 @@
 include LICENSE
 include README.md
-recursive-include static *
+recursive-include static/scripts *
+recursive-include static/styles *
+recursive-include static/vendor *
 recursive-include */templates *
 recursive-exclude */tests *

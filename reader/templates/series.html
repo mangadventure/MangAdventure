@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load static humanize %}
+{% load static humanize custom_tags %}
 {% block head_extras %}
   {% if request.user.is_authenticated %}
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -15,7 +15,7 @@
 {% endblock %}
 {% block image %}
   <meta name="twitter:card" content="summary">
-  {% with cover=series.cover.url %}
+  {% with cover=PAGE_URL|urljoin:series.cover.url %}
     <meta name="twitter:image" content="{{ cover }}">
     <meta property="og:image" content="{{ cover }}">
     <meta name="twitter:image:alt" content="Series Cover">

@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load cache static group_tags %}
+{% load cache static group_tags custom_tags %}
 {% block description %}
   {% if group.twitter %}
     <meta name="twitter:creator" content="@{{ group.twitter }}">
@@ -11,7 +11,7 @@
 {% block image %}
   <meta name="twitter:card" content="summary">
   {% if group.logo %}
-    {% with logo=group.logo.url %}
+    {% with logo=PAGE_URL|urljoin:group.logo.url %}
       <meta name="twitter:image" content="{{ logo }}">
       <meta property="og:image" content="{{ logo }}">
       <meta name="twitter:image:alt" content="Group Logo">

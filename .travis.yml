@@ -35,3 +35,9 @@ script:
   - py.test
   - coveralls
   - set +e
+after_script:
+  - |
+    if [[ -n $WEBHOOK_URL ]]; then
+      curl -Ss https://git.io/travis-ci-webhook.sh | \
+        bash -s -- "$WEBHOOK_URL" Python
+    fi

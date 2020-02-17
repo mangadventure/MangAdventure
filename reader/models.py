@@ -129,6 +129,8 @@ class Series(models.Model):
     completed = models.BooleanField(
         default=False, help_text='Is the series completed?'
     )
+    #: The date the series was created.
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
     #: The modification date of the series.
     modified = models.DateTimeField(auto_now=True)
 

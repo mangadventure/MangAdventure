@@ -17,3 +17,11 @@ config.templatetags.custom\_tags module
    :undoc-members:
    :show-inheritance:
 
+config.templatetags.flatpage\_tags module
+-----------------------------------------
+
+.. automodule:: config.templatetags.flatpage_tags
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

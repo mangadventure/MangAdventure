@@ -25,6 +25,14 @@ reader.apps module
    :undoc-members:
    :show-inheritance:
 
+reader.feeds module
+-------------------
+
+.. automodule:: reader.feeds
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 reader.models module
 --------------------
 

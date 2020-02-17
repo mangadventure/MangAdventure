@@ -8,6 +8,7 @@
       "description": "",
       "cover": "series/test-series/cover.png",
       "completed": false,
+      "created": "2019-12-30T13:58:18.645Z",
       "modified": "2019-12-30T13:58:18.645Z",
       "authors": [
         1
@@ -29,6 +30,7 @@
       "description": "",
       "cover": "series/test-series/cover.png",
       "completed": false,
+      "created": "2019-12-30T13:58:18.645Z",
       "modified": "2019-12-30T13:58:18.645Z",
       "authors": [],
       "artists": [],

@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.6.4
+^^^^^^
+
+* Added creation date to series
+
 v0.6.3
 ^^^^^^
 

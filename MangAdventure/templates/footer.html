@@ -1,0 +1,37 @@
+{% load cache %}{% cache 604800 footer rss_url %}
+  <footer id="footer">
+    <nav id="links">
+      <a href="{% url 'info' %}" class="link" title="About us">
+        <i class="mi mi-info-circle"></i><span>About us</span>
+      </a>
+      <a href="{% url 'privacy' %}" class="link" title="Privacy">
+        <i class="mi mi-lock"></i><span>Privacy</span>
+      </a>
+      {% if config.TWITTER %}
+        <a href="https://twitter.com/{{ config.TWITTER }}"
+           class="link" rel="noopener noreferrer" title="Twitter">
+          <i class="mi mi-twitter"></i><span>Twitter</span>
+        </a>
+      {% endif %}
+      {% if config.DISCORD %}
+        <a href="{{ config.DISCORD }}" class="link"
+           rel="noopener noreferrer" title="Discord">
+          <i class="mi mi-discord"></i><span>Discord</span>
+        </a>
+      {% endif %}
+      {% if rss_url %}
+        <a href="{% url rss_url %}" class="link" title="RSS"
+           rel="alternate" type="application/rss+xml">
+          <i class="mi mi-rss"></i><span>RSS</span>
+        </a>
+      {% endif %}
+    </nav>
+    {% if config.SHOW_CREDITS %}
+      <div id="credits">
+        This site was created using
+        <a href="https://github.com/mangadventure/MangAdventure"
+           rel="noopener" target="_blank">MangAdventure</a>.
+      </div>
+    {% endif %}
+  </footer>
+{% endcache %}

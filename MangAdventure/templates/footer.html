@@ -20,8 +20,8 @@
         </a>
       {% endif %}
       {% if rss_url %}
-        <a href="{% url rss_url %}" class="link" title="RSS"
-           rel="alternate" type="application/rss+xml">
+        <a href="{% if arg %}{% url rss_url arg %}{% else %}{% url rss_url %}{% endif %}"
+           class="link" rel="alternate" type="application/rss+xml" title="RSS">
           <i class="mi mi-rss"></i><span>RSS</span>
         </a>
       {% endif %}

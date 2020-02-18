@@ -6,6 +6,8 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
+from reader import feeds
+
 from .views import contribute, index, opensearch, robots, search
 
 #: The main URL patterns.
@@ -20,7 +22,11 @@ urlpatterns = [
     path('user/', include('users.urls')),
     path('opensearch.xml', opensearch, name='opensearch'),
     path('contribute.json', contribute, name='contribute'),
-    path('robots.txt', robots, name='robots')
+    path('robots.txt', robots, name='robots'),
+    path('releases.atom', feeds.ReleasesAtom(), name='releases.atom'),
+    path('releases.rss', feeds.ReleasesRSS(), name='releases.rss'),
+    path('library.atom', feeds.LibraryAtom(), name='library.atom'),
+    path('library.rss', feeds.LibraryAtom(), name='library.rss'),
 ]
 
 if settings.DEBUG:  # pragma: no cover

@@ -47,3 +47,6 @@
     </article>
   {% endcache %}
 {% endblock %}
+{% block footer %}
+  {% include 'footer.html' with rss_url='releases.rss' %}
+{% endblock %}

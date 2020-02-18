@@ -33,7 +33,7 @@ def index(request: 'HttpRequest') -> HttpResponse:
     :return: A response with the rendered ``index.html`` template.
     """
     latest = Chapter.objects.prefetch_related('groups', 'series') \
-        .order_by('-uploaded')[:settings.CONFIG['MAX_RELEASES']:1]
+        .order_by('-uploaded')[:settings.CONFIG['MAX_RELEASES']]
     uri = request.build_absolute_uri('/')
     crumbs = breadcrumbs([('Home', uri)])
     return render(request, 'index.html', {

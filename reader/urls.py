@@ -22,8 +22,8 @@ urlpatterns = [
     path(_slug, views.series, name='series'),
     path(_chapter, views.chapter_redirect, name='chapter'),
     path(_page, views.chapter_page, name='page'),
-    path('feed.atom', feeds.LibraryAtom(), name='library.atom'),
-    path('feed.rss', feeds.LibraryRSS(), name='library.rss'),
+    path(f'{_slug[:-1]}.atom', feeds.ReleasesAtom(), name='series.atom'),
+    path(f'{_slug[:-1]}.rss', feeds.ReleasesRSS(), name='series.rss'),
     # path(f'{_chapter}comments/', views.chapter_comments, name='comments'),
 ]
 

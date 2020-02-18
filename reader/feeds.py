@@ -1,38 +1,34 @@
 from mimetypes import guess_type
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Optional
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
 
-from .models import Series
+from .models import Chapter, Series
 
 if TYPE_CHECKING:
     from datetime import datetime
+    from django.http import HttpRequest
+
+_max = settings.CONFIG['MAX_RELEASES']
 
 
 class LibraryRSS(Feed):
     """RSS feed for the series library."""
-    #: The TTL of the feed.
     ttl = 600
-    #: The link of the feed.
     link = '/reader/'
-    #: The title of the feed.
-    title = 'Library feed'
-    #: The description of the feed.
     description = 'Updates when a new series is added'
-    #: The name of the site.
     author_name = settings.CONFIG['NAME']
-    #: The GUID of items is a link.
+    title = f'Library - {author_name}'
     item_guid_is_permalink = True
 
     def items(self) -> Iterable[Series]:
         """
         Get an iterable of the feed's items.
 
-        :return: An iterable of ``Series``.
+        :return: An iterable of ``Series`` objects.
         """
-        _max = settings.CONFIG['MAX_RELEASES']
         return Series.objects.order_by('-created')[:_max]
 
     def item_title(self, item: Series) -> str:
@@ -64,6 +60,26 @@ class LibraryRSS(Feed):
         :return: The names of the series' categories.
         """
         return item.categories.values_list('name', flat=True)
+
+    def item_pubdate(self, item: Series) -> 'datetime':
+        """
+        Get the publication date of the item.
+
+        :param item: A ``Series`` object.
+
+        :return: The date the series was created.
+        """
+        return item.created
+
+    def item_updateddate(self, item: Series) -> 'datetime':
+        """
+        Get the update date of the item.
+
+        :param item: A ``Series`` object.
+
+        :return: The date the series was modified.
+        """
+        return item.modified
 
     def item_enclosure_url(self, item: Series) -> str:
         """
@@ -98,30 +114,117 @@ class LibraryRSS(Feed):
         """
         return guess_type(item.cover.path)[0]
 
-    def item_pubdate(self, item: Series) -> 'datetime':
+
+class LibraryAtom(LibraryRSS):
+    """Atom feed for the series library."""
+    feed_type = Atom1Feed
+    subtitle = LibraryRSS.description
+
+
+class ReleasesRSS(Feed):
+    """RSS feed for chapter releases."""
+    ttl = 600
+    description = 'Updates when a new chapter is added'
+    author_name = settings.CONFIG['NAME']
+    item_guid_is_permalink = True
+
+    def get_object(self, request: 'HttpRequest', slug:
+                   Optional[str] = None) -> Optional[Series]:
+        """
+        Get a ``Series`` object from the request.
+
+        :param request: The original request.
+        :param slug: The slug of the series.
+
+        :return: The series that has the given slug,
+                 or ``None`` if the slug is ``None``.
+        """
+        if slug is None:
+            return None
+        return Series.objects.prefetch_related('chapters').get(slug=slug)
+
+    def link(self, obj: Optional[Series]) -> str:
+        """
+        Get the link of the feed's page.
+
+        :param obj: The object of the feed.
+
+        :return: The URL of the series, or the home page.
+        """
+        return obj.get_absolute_url() if obj else '/'
+
+    def title(self, obj: Optional[Series]) -> str:
+        """
+        Get the title of the feed.
+
+        :param obj: The object of the feed.
+
+        :return: The title of the series, or ``Releases``.
+        """
+        title = obj.title if obj else 'Releases'
+        return f'{title} - {self.author_name}'
+
+    def items(self, obj: Optional[Series]) -> Iterable[Chapter]:
+        """
+        Get an iterable of the feed's items.
+
+        :param obj: The object of the feed.
+
+        :return: An iterable of ``Chapter`` objects.
+        """
+        return getattr(obj, 'chapters', Chapter.objects) \
+            .prefetch_related('series').order_by('-uploaded')[:_max]
+
+    def item_title(self, item: Chapter) -> str:
+        """
+        Get the title of the item.
+
+        :param item: A ``Chapter`` object.
+
+        :return: The title of the chapter.
+        """
+        return item.title
+
+    def item_description(self, item: Chapter) -> str:
+        """
+        Get the description of the item.
+
+        :param item: A ``Chapter`` object.
+
+        :return: The ``Chapter`` object as a string.
+        """
+        desc = str(item)
+        if settings.CONFIG['ALLOW_DLS']:
+            domain = settings.CONFIG["DOMAIN"]
+            url = item.get_absolute_url()[:-1] + '.cbz'
+            desc = f'<a href="http://{domain}{url}">{desc}</a>'
+        return desc
+
+    def item_pubdate(self, item: Chapter) -> 'datetime':
         """
         Get the publication date of the item.
 
-        :param item: A ``Series`` object.
+        :param item: A ``Chapter`` object.
 
-        :return: The date the series was created.
+        :return: The date the chapter was uploaded.
         """
-        return item.created
+        return item.uploaded
 
-    def item_updateddate(self, item: Series) -> 'datetime':
+    def item_updateddate(self, item: Chapter) -> 'datetime':
         """
         Get the update date of the item.
 
-        :param item: A ``Series`` object.
+        :param item: A ``Chapter`` object.
 
-        :return: The date the series was modified.
+        :return: The date the chapter was modified.
         """
         return item.modified
 
 
-class LibraryAtom(LibraryRSS):
-    """Atom feed for the series library."""
-    #: The type of the feed.
+class ReleasesAtom(ReleasesRSS):
+    """Atom feed for chapter releases."""
     feed_type = Atom1Feed
-    #: The subtitle of the feed.
-    subtitle = LibraryRSS.description
+    subtitle = ReleasesRSS.description
+
+
+__all__ = ['LibraryRSS', 'LibraryAtom', 'ReleasesRSS', 'ReleasesAtom']

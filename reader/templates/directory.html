@@ -2,7 +2,7 @@
 {% load cache custom_tags humanize %}
 {% block head_extras %}
   {{ library|jsonld:'library' }}
-  <link href="{% url 'reader:library.atom' %}"
+  <link href="{% url 'library.atom' %}"
         rel="alternate" type="application/atom+xml">
 {% endblock %}
 {% block title %}
@@ -66,5 +66,5 @@
   {% endcache %}
 {% endblock %}
 {% block footer %}
-  {% include 'footer.html' with rss_url='reader:library.rss' %}
+  {% include 'footer.html' with rss_url='library.rss' %}
 {% endblock %}

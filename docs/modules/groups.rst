@@ -32,6 +32,14 @@ groups.apps module
    :undoc-members:
    :show-inheritance:
 
+groups.feeds module
+-------------------
+
+.. automodule:: groups.feeds
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 groups.models module
 --------------------
 

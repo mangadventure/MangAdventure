@@ -37,3 +37,6 @@
     {% endfor %}
   </article>
 {% endblock %}
+{% block footer %}
+  {% include 'footer.html' with rss_url='user_bookmarks.rss' token=token %}
+{% endblock %}

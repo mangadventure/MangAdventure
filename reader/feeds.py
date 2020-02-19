@@ -31,16 +31,6 @@ class LibraryRSS(Feed):
         """
         return Series.objects.order_by('-created')[:_max]
 
-    def item_title(self, item: Series) -> str:
-        """
-        Get the title of the item.
-
-        :param item: A ``Series`` object.
-
-        :return: The title of the series.
-        """
-        return item.title
-
     def item_description(self, item: Series) -> str:
         """
         Get the description of the item.
@@ -124,7 +114,6 @@ class LibraryAtom(LibraryRSS):
 class ReleasesRSS(Feed):
     """RSS feed for chapter releases."""
     ttl = 600
-    description = 'Updates when a new chapter is added'
     author_name = settings.CONFIG['NAME']
     item_guid_is_permalink = True
 
@@ -164,6 +153,18 @@ class ReleasesRSS(Feed):
         title = obj.title if obj else 'Releases'
         return f'{title} - {self.author_name}'
 
+    def description(self, obj: Optional[Series]) -> str:
+        """
+        Get the description of the feed.
+
+        :param obj: The object of the feed.
+
+        :return: A description with the title of the series, if available.
+        """
+        if obj is None:
+            return 'Updates when a new chapter is added'
+        return f'Updates when a new chapter of {obj.title} is added'
+
     def items(self, obj: Optional[Series]) -> Iterable[Chapter]:
         """
         Get an iterable of the feed's items.
@@ -172,18 +173,9 @@ class ReleasesRSS(Feed):
 
         :return: An iterable of ``Chapter`` objects.
         """
-        return getattr(obj, 'chapters', Chapter.objects) \
-            .prefetch_related('series').order_by('-uploaded')[:_max]
-
-    def item_title(self, item: Chapter) -> str:
-        """
-        Get the title of the item.
-
-        :param item: A ``Chapter`` object.
-
-        :return: The title of the chapter.
-        """
-        return item.title
+        return getattr(
+            obj, 'chapters', Chapter.objects
+        ).order_by('-uploaded')[:_max]
 
     def item_description(self, item: Chapter) -> str:
         """

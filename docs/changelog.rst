@@ -5,6 +5,7 @@ v0.6.4
 ^^^^^^
 
 * Added creation date to series
+* Added library, releases, bookmarks RSS feeds
 
 v0.6.3
 ^^^^^^

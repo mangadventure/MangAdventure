@@ -60,7 +60,6 @@ class TestReleases(APIViewTestBase):
         series1 = data[0]
         for field in ('slug', 'title', 'url', 'cover', 'latest_chapter'):
             assert field in series1
-
         for field in ('title', 'volume', 'number', 'date'):
             assert field in series1['latest_chapter']
         series2 = data[1]
@@ -85,6 +84,14 @@ class TestAllSeries(APIViewTestBase):
 
     def test_get_slug(self):
         status_code, data = self.get_data(self.URL, {'slug': 'test-series'})
+        assert status_code == 200
+        assert isinstance(data, List)
+        assert len(data) == 1
+
+    def test_search(self):
+        status_code, data = self.get_data(
+            self.URL, {'categories': 'adventure'}
+        )
         assert status_code == 200
         assert isinstance(data, List)
         assert len(data) == 1

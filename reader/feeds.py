@@ -7,7 +7,7 @@ from django.utils.feedgenerator import Atom1Feed
 
 from .models import Chapter, Series
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime
     from django.http import HttpRequest
 
@@ -71,38 +71,39 @@ class LibraryRSS(Feed):
         """
         return item.modified
 
-    def item_enclosure_url(self, item: Series) -> str:
+    def item_enclosure_url(self, item: Series) -> Optional[str]:
         """
         Get the enclosure URL of the item.
 
         :param item: A ``Series`` object.
 
-        :return: The URL of the series' cover image.
+        :return: The URL of the series' cover image, if available.
         """
+        if not item.cover:
+            return None
         url = item.cover.url
-        if url[:4] == 'http':
-            return url
-        return f'http://{settings.CONFIG["DOMAIN"]}{url}'
+        return url if url[:4] == 'http' else \
+            f'http://{settings.CONFIG["DOMAIN"]}{url}'
 
-    def item_enclosure_length(self, item: Series) -> int:
+    def item_enclosure_length(self, item: Series) -> Optional[int]:
         """
         Get the enclosure length of the item.
 
         :param item: A ``Series`` object.
 
-        :return: The size of the series' cover image.
+        :return: The size of the series' cover image, if available.
         """
-        return item.cover.size
+        return item.cover.size if item.cover else None
 
-    def item_enclosure_mime_type(self, item: Series) -> str:
+    def item_enclosure_mime_type(self, item: Series) -> Optional[str]:
         """
         Get the enclosure type of the item.
 
         :param item: A ``Series`` object.
 
-        :return: The mime type of the series' cover image.
+        :return: The mime type of the series' cover image, if available.
         """
-        return guess_type(item.cover.path)[0]
+        return guess_type(item.cover.path)[0] if item.cover else None
 
 
 class LibraryAtom(LibraryRSS):

@@ -11,7 +11,7 @@ from django.utils.feedgenerator import Atom1Feed
 
 from reader.models import Chapter
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime
     from django.http import HttpRequest
 
@@ -48,7 +48,7 @@ class BookmarksRSS(Feed):
             if header[:7] != 'Bearer ':
                 return HttpResponse(
                     b'Authorization header format is invalid.',
-                    status=403, content='text/plain'
+                    status=403, content_type='text/plain'
                 )
             token = header[7:]
         try:

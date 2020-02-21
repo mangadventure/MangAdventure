@@ -10,9 +10,9 @@ from MangAdventure import storage, validators
 
 from reader.models import Series
 
-try:
+try:  # pragma: no cover
     from hmac import digest
-except ImportError:
+except ImportError:  # pragma: no cover
     # XXX: hmac.digest is not available in 3.6
     from hmac import HMAC, new as digest
     HMAC.hex = HMAC.hexdigest
@@ -92,7 +92,7 @@ class UserProfile(models.Model):
         """
         return str(self.user)
 
-    def __hash__(self) -> int:
+    def __hash__(self) -> int:  # pragma: no cover
         """
         Return the hash of the object.
 

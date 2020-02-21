@@ -7,6 +7,8 @@
             type="application/javascript" async></script>
   {% endif %}
   {{ book_ld|jsonld:'book-ld' }}
+  <link href="{% url 'reader:series.atom' series.slug %}"
+        rel="alternate" type="application/atom+xml">
 {% endblock %}
 {% block keywords %}
   {% with tags=series.categories.all|join:',' %}
@@ -131,4 +133,7 @@
       </div>
     {% endcomment %}
   </article>
+{% endblock %}
+{% block footer %}
+  {% include 'footer.html' with rss_url='reader:series.rss' arg=series.slug %}
 {% endblock %}

@@ -134,9 +134,9 @@ class ChapterAdmin(admin.ModelAdmin):
 class SeriesAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Series`."""
     inlines = (SeriesAliasInline,)
-    list_display = ('cover_image', 'title', 'modified', 'completed')
+    list_display = ('cover_image', 'title', 'created', 'modified', 'completed')
     list_display_links = ('title',)
-    date_hierarchy = 'modified'
+    date_hierarchy = 'created'
     ordering = ('-modified',)
     search_fields = ('title',)
     autocomplete_fields = ('categories',)

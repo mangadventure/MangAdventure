@@ -33,7 +33,7 @@ def index(request: 'HttpRequest') -> HttpResponse:
     :return: A response with the rendered ``index.html`` template.
     """
     latest = Chapter.objects.prefetch_related('groups', 'series') \
-        .order_by('-uploaded')[:settings.CONFIG['MAX_RELEASES']:1]
+        .order_by('-uploaded')[:settings.CONFIG['MAX_RELEASES']]
     uri = request.build_absolute_uri('/')
     crumbs = breadcrumbs([('Home', uri)])
     return render(request, 'index.html', {
@@ -171,7 +171,7 @@ def handler404(request: 'HttpRequest', exception: Optional[Exception]
     :return: A :class:`~api.response.JsonError` for API URLs,
              otherwise a response with the rendered error template.
     """
-    if request.path.startswith('/api'):
+    if request.path.startswith('/api'):  # pragma: no cover
         return JsonError('Invalid API endpoint', 501)
     if find_spec('sentry_sdk'):  # pragma: no cover
         from sentry_sdk import capture_message

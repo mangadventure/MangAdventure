@@ -157,8 +157,10 @@ class Bookmarks(TemplateView):
         chapters = Chapter.objects.filter(series_id__in=Subquery(
             Bookmark.objects.filter(user_id=request.user.id).values('series')
         )).order_by('-uploaded')
+        token = UserProfile.objects.only('token') \
+            .get_or_create(user_id=request.user.id)[0].token
         return self.render_to_response(self.get_context_data(
-            releases=chapters, breadcrumbs=crumbs
+            releases=chapters, breadcrumbs=crumbs, token=token
         ))
 
     def post(self, request: 'HttpRequest', *args, **kwargs) -> HttpResponse:

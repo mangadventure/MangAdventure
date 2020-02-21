@@ -5,7 +5,6 @@ from django.urls import reverse
 
 from pytest import mark
 
-from reader.models import Series
 from users.models import Bookmark, User
 
 from . import UsersTestBase
@@ -120,9 +119,7 @@ class TestBookmarks(UsersViewTestBase):
         assert r.status_code == 201
 
     def test_post_create(self):
-        Bookmark.objects.create(
-            user=self.user, series=Series.objects.get(pk=2)
-        )
+        Bookmark.objects.create(user_id=self.user.id, series_id=2)
         r = self.client.post(
             self.URL, data=urlencode({'series': 2}),
             content_type=self.CONTENT_TYPE

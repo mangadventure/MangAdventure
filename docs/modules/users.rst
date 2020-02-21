@@ -40,6 +40,14 @@ users.apps module
    :undoc-members:
    :show-inheritance:
 
+users.feeds module
+------------------
+
+.. automodule:: users.feeds
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 users.forms module
 ------------------
 

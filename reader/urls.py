@@ -5,7 +5,7 @@ from django.urls import path, register_converter
 
 from MangAdventure.converters import FloatConverter
 
-from . import views
+from . import feeds, views
 
 register_converter(FloatConverter, 'float')
 
@@ -22,6 +22,8 @@ urlpatterns = [
     path(_slug, views.series, name='series'),
     path(_chapter, views.chapter_redirect, name='chapter'),
     path(_page, views.chapter_page, name='page'),
+    path(f'{_slug[:-1]}.atom', feeds.ReleasesAtom(), name='series.atom'),
+    path(f'{_slug[:-1]}.rss', feeds.ReleasesRSS(), name='series.rss'),
     # path(f'{_chapter}comments/', views.chapter_comments, name='comments'),
 ]
 

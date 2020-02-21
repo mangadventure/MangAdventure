@@ -2,12 +2,20 @@
 
 from pathlib import PurePath
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 
 from MangAdventure import storage, validators
 
 from reader.models import Series
+
+try:  # pragma: no cover
+    from hmac import digest
+except ImportError:  # pragma: no cover
+    # XXX: hmac.digest is not available in 3.6
+    from hmac import HMAC, new as digest
+    HMAC.hex = HMAC.hexdigest
 
 
 def _avatar_uploader(obj: 'UserProfile', name: str) -> str:
@@ -53,6 +61,19 @@ class UserProfile(models.Model):
         storage=storage.CDNStorage((150, 150)),
         upload_to=_avatar_uploader, blank=True
     )
+    #: The token of the user. Used in the bookmarks feed.
+    token = models.CharField(
+        auto_created=True, max_length=32, unique=True, editable=False
+    )
+
+    def save(self, *args, **kwargs):
+        """Save the current instance."""
+        data = f'{self.user.username}:{self.user.password}'
+        self.token = digest(
+            settings.SECRET_KEY.encode(),
+            data.encode(), 'shake128'
+        ).hex()
+        super(UserProfile, self).save(*args, **kwargs)
 
     def get_directory(self) -> PurePath:
         """
@@ -70,6 +91,14 @@ class UserProfile(models.Model):
         :return: The user as a string.
         """
         return str(self.user)
+
+    def __hash__(self) -> int:  # pragma: no cover
+        """
+        Return the hash of the object.
+
+        :return: An integer hash value.
+        """
+        return abs(int(self.token, 16))
 
 
 __all__ = ['Bookmark', 'UserProfile']

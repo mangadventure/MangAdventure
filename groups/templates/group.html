@@ -139,3 +139,6 @@
     </article>
   {% endcache %}
 {% endblock %}
+{% block footer %}
+  {% include 'footer.html' with rss_url='groups:group.rss' arg=group.id %}
+{% endblock %}

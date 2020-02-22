@@ -30,4 +30,13 @@ class Migration(migrations.Migration):
                 auto_now_add=True, db_index=True, null=False
             )
         ),
+        migrations.AddField(
+            model_name='series',
+            name='format',
+            field=models.CharField(
+                max_length=100, default='Vol. {volume}, Ch. {number}: {title}',
+                help_text='The format used to render the chapter names.',
+                verbose_name='chapter name format'
+            )
+        ),
     ]

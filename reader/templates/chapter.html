@@ -20,17 +20,9 @@
   {% endwith %}
 {% endblock %}
 {% block description %}
-  {% with vol=curr_chapter.volume|stringformat:'s' %}
-    {% with num=curr_chapter.number|stringformat:'g' %}
-      {% with tmp='Volume '|add:vol|add:', Chapter '|add:num %}
-        {% with desc=tmp|add:' - '|add:curr_chapter.title  %}
-          <meta name="twitter:description" content="{{ desc }}">
-          <meta property="og:description" content="{{ desc }}">
-          <meta name="description" content="{{ desc }}">
-        {% endwith %}
-      {% endwith %}
-    {% endwith %}
-  {% endwith %}
+  <meta name="twitter:description" content="{{ curr_chapter }}">
+  <meta property="og:description" content="{{ curr_chapter }}">
+  <meta name="description" content="{{ curr_chapter }}">
 {% endblock %}
 {% block stylesheets %}
   {{ block.super }}
@@ -61,22 +53,14 @@
         </span>
         <a href="#" title="{{ curr_chapter.title }}" class="faux-link">
           <i class="mi mi-down"></i>
-          {% with vol=curr_chapter.volume num=curr_chapter.number %}
-            <span{% if curr_chapter.final %} class="end"{% endif %}>
-              V{{ vol }} / C{{ num|stringformat:'g' }}: {{ curr_chapter.title }}
-            </span>
-          {% endwith %}
+          <span{% if curr_chapter.final %} class="end"{% endif %}>{{ curr_chapter }}</span>
         </a>
         <ul class="dropdown-list main-bg">
           {% for chapter in all_chapters %}
             <li class="dropdown-element chapter-details"
               {% if chapter == curr_chapter %}data-current="true"{% endif %}>
               <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
-                 {% if chapter.final %} class="end"{% endif %}>
-                {% with vol=chapter.volume num=chapter.number %}
-                  V{{ vol }} / C{{ num|stringformat:'g' }}: {{ chapter.title }}
-                {% endwith %}
-              </a>
+                 {% if chapter.final %} class="end"{% endif %}>{{ chapter }}</a>
             </li>
           {% endfor %}
         </ul>

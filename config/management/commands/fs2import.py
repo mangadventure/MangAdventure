@@ -135,7 +135,10 @@ class Command(BaseCommand):
                 title=self._get_column(c, 'name'),
                 volume=volume, number=number
             )
-            self._print(f'- Found {self._sql_name("Chapter")}: {chapter}')
+            self._print(
+                f'- Found {self._sql_name("Chapter")}: {chapter.series} '
+                f'- {chapter.volume}/{chapter.number:g} - {chapter.title}'
+            )
             gid = self._get_column(c, 'team_id')
             if gid:
                 chapter_groups.append(

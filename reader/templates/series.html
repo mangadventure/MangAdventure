@@ -93,29 +93,26 @@
       {% with chapters=series.chapters.reverse %}
         {% for chapter in chapters %}
           <div class="chapter">
-            {% with vol=chapter.volume num=chapter.number %}
-              <a {% if chapter.final %}class="end"{% endif %}
-                 href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}">
-                Vol. {{ vol }}, Ch. {{ num|stringformat:'g' }}: {{ chapter.title }}
-              </a>
-              <div class="chapter-metadata">
-                {% with groups=chapter.groups.all %}
-                  <span class="divider" title="{{ groups|join:', ' }}"></span>
-                  <span class="chapter-groups" title="{{ groups|join:', ' }}">
-                    {% for group in groups %}
-                      <a {% if not forloop.last %}class="comma"{% endif %}
-                         href="{{ group.get_absolute_url }}" title="{{ group.name }}">
-                        {{ group.name }}</a>
-                    {% endfor %}
-                  </span>
-                {% endwith %}
-                <span class="divider" title="{{ chapter.uploaded|naturaltime }}">
+            <a {% if chapter.final %}class="end"{% endif %}
+               href="{{ chapter.get_absolute_url }}"
+               title="{{ chapter.title }}">{{ chapter }}</a>
+            <div class="chapter-metadata">
+              {% with groups=chapter.groups.all %}
+                <span class="divider" title="{{ groups|join:', ' }}"></span>
+                <span class="chapter-groups" title="{{ groups|join:', ' }}">
+                  {% for group in groups %}
+                    <a {% if not forloop.last %}class="comma"{% endif %}
+                       href="{{ group.get_absolute_url }}" title="{{ group.name }}">
+                      {{ group.name }}</a>
+                  {% endfor %}
                 </span>
-                <span class="chapter-date" title="{{ chapter.uploaded|naturaltime }}">
-                  {{ chapter.uploaded|naturaltime }}
-                </span>
-              </div>
-            {% endwith %}
+              {% endwith %}
+              <span class="divider" title="{{ chapter.uploaded|naturaltime }}">
+              </span>
+              <span class="chapter-date" title="{{ chapter.uploaded|naturaltime }}">
+                {{ chapter.uploaded|naturaltime }}
+              </span>
+            </div>
           </div>
         {% endfor %}
       {% endwith %}

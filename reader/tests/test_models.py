@@ -98,7 +98,7 @@ class TestChapter(ReaderTestBase):
 
     def test_create(self):
         chapter = self.create_chapter()
-        assert str(chapter) == 'My Series - 1/0.5: Chapter'
+        assert str(chapter) == 'Vol. 1, Ch. 0.5: Chapter'
         assert hash(chapter) > 0
 
     def test_get_directory(self):
@@ -134,6 +134,11 @@ class TestChapter(ReaderTestBase):
         # eq
         assert chapter1 == chapter1
         assert chapter1 == (2, 1)
+
+    def test_format(self):
+        chapter = self.create_chapter(number=1.0)
+        chapter.series.format = '{series} - {volume}/{number}: {title}'
+        assert str(chapter) == 'My Series - 1/1: Chapter'
 
     def test_file(self):
         chapter = self.create_chapter()

@@ -39,8 +39,9 @@ Example response
    Content-Length: 181
 
    {
-     "title": "Prologue",
      "url": "http://example.com/reader/some-manga/1/0/",
+     "title": "Prologue",
+     "full_title": "Vol. 1, Ch. 0: Prologue",
      "pages_list": [
        "001.jpg",
        "002.jpg",

@@ -160,7 +160,7 @@ class TestChapter(APIViewTestBase):
         assert status_code == 200
         assert isinstance(data, Dict)
         fields = (
-            'title', 'url', 'pages_root',
+            'url', 'title', 'full_title', 'pages_root',
             'pages_list', 'date', 'final', 'groups'
         )
         for field in fields:

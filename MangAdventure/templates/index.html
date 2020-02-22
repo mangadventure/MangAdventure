@@ -20,9 +20,7 @@
           <div class="release-info">
             {% with vol=release.volume num=release.number %}
               <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
-                 class="release-link{% if release.final %} end{% endif %}">
-                Vol. {{ vol }}, Ch. {{ num|stringformat:'g' }}: {{ release.title }}
-              </a>
+                 class="release-link{% if release.final %} end{% endif %}">{{ release }}</a>
             {% endwith %}
             <div class="chapter-metadata">
               {% with groups=release.groups.all  %}

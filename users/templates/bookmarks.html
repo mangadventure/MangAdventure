@@ -23,9 +23,7 @@
             </h2>
             {% with vol=release.volume num=release.number %}
               <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
-                 {% if release.final %}class="end"{% endif %}>
-                Vol. {{ vol }}, Ch. {{ num|stringformat:'g' }}: {{ release.title }}
-              </a>
+                 {% if release.final %}class="end"{% endif %}>{{ release }}</a>
             {% endwith %}
             <span class="divider" title="{{ release.uploaded|naturaltime }}"></span>
             <span class="chapter-date" title="{{ release.uploaded|naturaltime }}">

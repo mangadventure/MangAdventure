@@ -45,8 +45,9 @@ def _latest(request: 'HttpRequest', slug: Optional[str] = None,
 def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
     url = request.build_absolute_uri(_chapter.get_absolute_url())
     return {
-        'title': _chapter.title,
         'url': url,
+        'title': _chapter.title,
+        'full_title': str(_chapter),
         'pages_root': url.replace('/reader/', f'{settings.MEDIA_URL}series/'),
         'pages_list': [p._file_name for p in _chapter.pages.all()],
         'date': _chapter.uploaded_date,

@@ -33,18 +33,14 @@
                   {% with vol=chapter.volume num=chapter.number %}
                     <div class="series-chapter">
                       <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
-                         {% if chapter.final %}class="end"{% endif %}>
-                        {% if vol > 0 %} Vol. {{ vol }},{% endif %}
-                        Ch. {{ num|stringformat:'g' }}: {{ chapter.title }}
-                      </a>
+                         {% if chapter.final %}class="end"{% endif %}>{{ chapter }}</a>
                       <div class="chapter-metadata">
                         {% with groups=chapter.groups.all %}
                           <span class="divider" title="{{ groups|join:', ' }}"></span>
                           <span class="chapter-groups" title="{{ groups|join:', ' }}">
                             {% for group in groups %}
                               <a href="{{ group.get_absolute_url }}" title="{{ group.name }}"
-                                 {% if not forloop.last %}class="comma"{% endif %}>
-                                {{ group.name }}</a>
+                                 {% if not forloop.last %}class="comma"{% endif %}>{{ group.name }}</a>
                             {% endfor %}
                         {% endwith %}
                         </span>

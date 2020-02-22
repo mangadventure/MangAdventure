@@ -14,6 +14,7 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
 * [x] Is open source.
 * [x] Is fully configurable.
 * [x] Includes JSON API.
+* [x] Includes RSS & Atom feeds.
 * [x] Doesn't require JavaScript.
 * [x] Supports searching for series.
 * [x] Supports users.
@@ -21,6 +22,7 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
   * [x] Series bookmarks.
   * [x] Chapter downloads.
   * [ ] Comments.
+* [x] Supports custom chapter names.
 * [x] Allows for migration from FoolSlide2.
 * [ ] More features coming soon...
 

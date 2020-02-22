@@ -42,8 +42,8 @@ class TestUserProfile(UsersTestBase):
         assert self.profile.bio == 'Test'
         assert self.profile.user == self.user
         assert self.user.profile == self.profile
-
         assert str(self.profile) == str(self.user)
+        assert hash(self.profile) > 0
 
 
 class TestUtils(UsersTestBase):

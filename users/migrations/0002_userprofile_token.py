@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
             model_name='userprofile',
             name='token',
             field=models.CharField(
-                auto_created=True, blank=True,
+                auto_created=True, blank=True, null=True,
                 editable=False, unique=False, max_length=32
             )
         ),
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
             model_name='userprofile',
             name='token',
             field=models.CharField(
-                auto_created=True, blank=False,
+                auto_created=True, blank=False, null=False,
                 editable=False, unique=True, max_length=32
             )
         )

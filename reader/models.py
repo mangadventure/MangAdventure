@@ -133,6 +133,12 @@ class Series(models.Model):
     created = models.DateTimeField(auto_now_add=True, db_index=True)
     #: The modification date of the series.
     modified = models.DateTimeField(auto_now=True)
+    #: The chapter name format of the series.
+    format = models.CharField(
+        max_length=100, default='Vol. {volume}, Ch. {number}: {title}',
+        help_text='The format used to render the chapter names.',
+        verbose_name='chapter name format'
+    )
 
     def get_absolute_url(self) -> str:
         """
@@ -334,8 +340,8 @@ class Chapter(models.Model):
                     continue
                 counter += 1
                 data = zf.read(name)
-                blk = blake2b(data, digest_size=16).hexdigest()
-                filename = blk + path.splitext(name)[-1]
+                dgst = blake2b(data, digest_size=16).hexdigest()
+                filename = dgst + path.splitext(name)[-1]
                 file_path = path.join(dir_path, filename)
                 with open(full_path / filename, 'wb') as img:
                     img.write(data)
@@ -370,11 +376,23 @@ class Chapter(models.Model):
         """
         Return a string representing the object.
 
-        :return: The title of the series and the
-                 volume, number, title of the chapter.
+        :return: The chapter formatted according to the
+                 :attr:`~reader.models.Series.format`.
         """
-        return '{0.series.title} - {0.volume}/' \
-               '{0.number:g}: {0.title}'.format(self)
+        if not self.series:  # pragma: no cover
+            return Series.format.default.format(
+                title=self.title or 'N/A',
+                volume=self.volume,
+                number=f'{self.number:g}',
+                date='', series=''
+            )
+        return self.series.format.format(
+            title=self.title,
+            volume=self.volume,
+            number=f'{self.number:g}',
+            date=self.uploaded.strftime('%F'),
+            series=self.series.title
+        )
 
     def __eq__(self, other: Any) -> bool:
         """

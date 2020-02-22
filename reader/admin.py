@@ -4,9 +4,10 @@ from typing import Optional, Tuple
 
 from django.contrib import admin
 from django.db.models.query import Q, QuerySet
-from django.forms.models import BaseInlineFormSet
+from django.forms.models import BaseInlineFormSet, ModelForm
 # XXX: Forward reference warning when under TYPE_CHECKING
 from django.http import HttpRequest
+from django.utils.html import mark_safe
 
 from MangAdventure import filters, utils
 
@@ -131,8 +132,28 @@ class ChapterAdmin(admin.ModelAdmin):
     toggle_final.short_description = 'Toggle status of selected chapters'
 
 
+class SeriesForm(ModelForm):
+    """Admin form for :class:`~reader.models.Series`."""
+    def __init__(self, *args, **kwargs):  # pragma: no cover
+        super().__init__(*args, **kwargs)
+        self.fields['format'].help_text = mark_safe('<br>'.join((
+            'The format used to render the chapter names.'
+            ' The following variables are available:',
+            '<b>{title}</b>: The title of the chapter.',
+            '<b>{volume}</b>: The volume of the chapter.',
+            '<b>{number}</b>: The number of the chapter.',
+            '<b>{date}</b>: The chapter\'s upload date (YYYY-MM-DD).',
+            '<b>{series}</b>: The title of the series.'
+        )))
+
+    class Meta:
+        model = Series
+        fields = '__all__'
+
+
 class SeriesAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Series`."""
+    form = SeriesForm
     inlines = (SeriesAliasInline,)
     list_display = ('cover_image', 'title', 'created', 'modified', 'completed')
     list_display_links = ('title',)

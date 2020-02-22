@@ -92,7 +92,7 @@ class UserProfile(models.Model):
         """
         return str(self.user)
 
-    def __hash__(self) -> int:  # pragma: no cover
+    def __hash__(self) -> int:
         """
         Return the hash of the object.
 

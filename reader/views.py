@@ -12,8 +12,8 @@ from MangAdventure import jsonld
 from .models import Chapter, Page, Series
 
 if TYPE_CHECKING:  # pragma: no cover
+    from datetime import datetime
     from typing import Optional
-    from django.db.models import DateTimeField
     from django.http import (
         HttpRequest, HttpResponse,
         HttpResponsePermanentRedirect
@@ -22,7 +22,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
             vol: 'Optional[int]' = None, num: 'Optional[float]' = None,
-            page: 'Optional[int]' = None) -> 'Optional[DateTimeField]':
+            page: 'Optional[int]' = None) -> 'Optional[datetime]':
     try:
         if slug is None:
             return Series.objects.only('modified').latest().modified
@@ -82,7 +82,8 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
         ).get(slug=slug)
     except Series.DoesNotExist as e:
         raise Http404 from e
-    if not (request.user.is_staff or _series.chapters.count()):
+    chapters = _series.chapters.reverse()
+    if not (request.user.is_staff or chapters):
         return render(request, 'error.html', {
             'error_message': 'Sorry. This series is not yet available.',
             'error_status': 403
@@ -105,31 +106,25 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
         'author': [{
             '@type': 'Person',
             'name': au.name,
-            'alternateName': [
-                al.alias for al in au.aliases.all()
-            ]
-        } for au in _series.authors.all()],
+            'alternateName': au.aliases.names()
+        } for au in _series.authors.iterator()],
         'illustrator': [{
             '@type': 'Person',
             'name': ar.name,
-            'alternateName': [
-                al.alias for al in ar.aliases.all()
-            ]
-        } for ar in _series.artists.all()],
-        'alternateName': [
-            al.alias for al in _series.aliases.all()
-        ],
-        'genre': [
-            c.name for c in _series.categories.all()
-        ],
+            'alternateName': ar.aliases.names()
+        } for ar in _series.artists.iterator()],
+        'alternateName': _series.aliases.names(),
+        'genre': list(_series.categories.values_list('name', flat=True)),
         'creativeWorkStatus': (
             'Published' if _series.completed else 'Incomplete'
         ),
-        'dateModified': _series.modified,
+        'dateCreated': _series.created.strftime('%F'),
+        'dateModified': _series.modified.strftime('%F'),
         'bookFormat': 'GraphicNovel',
     })
     return render(request, 'series.html', {
         'series': _series,
+        'chapters': chapters,
         'marked': marked,
         'breadcrumbs': crumbs,
         'book_ld': book
@@ -160,8 +155,8 @@ def chapter_page(request: 'HttpRequest', slug: str, vol: int,
         current = chapters.select_related('series') \
             .prefetch_related('pages').get(volume=vol, number=num)
         all_pages = current.pages.all()
-        curr_page = all_pages.get(number=page)
-    except (Chapter.DoesNotExist, Page.DoesNotExist) as e:
+        curr_page = next(p for p in all_pages if p.number == page)
+    except (Chapter.DoesNotExist, Page.DoesNotExist, StopIteration) as e:
         raise Http404 from e
     url = request.path
     p_url = url.rsplit('/', 4)[0] + '/'

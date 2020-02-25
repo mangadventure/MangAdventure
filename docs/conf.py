@@ -23,37 +23,45 @@ copyright = f'2018-2020, {project}, {MA.__license__} license'
 
 from typing import get_type_hints, Any, List, Optional, Type, Tuple
 
+from django.db.models.base import Model
+from django.db.models.fields import AutoField
 from django.db.models.fields.related_descriptors import (
-    ReverseManyToOneDescriptor, ReverseOneToOneDescriptor,
+    ForeignKeyDeferredAttribute,
+    ReverseManyToOneDescriptor,
+    ReverseOneToOneDescriptor,
 )
+from django.db.models.manager import ManagerDescriptor
 from django.db.models.query_utils import DeferredAttribute
 
 from sphinx.application import Sphinx
-from sphinx.ext.autodoc import DataDocumenter, Options, PropertyDocumenter
+from sphinx.ext.autodoc import (
+    ClassDocumenter, DataDocumenter, Options, PropertyDocumenter
+)
 
 
 def skip_django_junk(app: Sphinx, what: str, name: str,
                      obj: Any, skip: bool, options: Options) -> bool:
     junk = (
-        DeferredAttribute,
+        ForeignKeyDeferredAttribute,
         ReverseManyToOneDescriptor,
         ReverseOneToOneDescriptor,
     )
     if isinstance(obj, junk):
         return True
+    if isinstance(obj, DeferredAttribute):
+        return isinstance(obj.field, AutoField) or skip
     if isinstance(obj, property) and name == 'media':
         return True
     return skip
 
-def annotate_attributes(app: Sphinx, what: str, name: str,
-                        obj: Any, options: Options, lines: List[str]):
-
+def annotate_attrs(app: Sphinx, what: str, name: str, obj:
+                   Any, options: Options, lines: List[str]):
     if obj is None or not lines:
         return
     if what == 'attribute':
         cls = getattr(obj, 'field', obj).__class__
     elif what == 'property':
-        func = obj.func if hasattr(obj, 'func') else obj.fget
+        func = getattr(obj, 'fget', obj.func)
         cls = get_type_hints(func)['return']
     else:
         return
@@ -68,9 +76,17 @@ def annotate_attributes(app: Sphinx, what: str, name: str,
         qname = f'typing.{qname.capitalize()}'
     lines[0] = f':class:`~{qname}` – {lines[0]}'
 
+def annotate_params(app: Sphinx, what: str, name: str, obj: Any, options:
+                    Options, signature: Optional[str], return_annotation:
+                    Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+    if what == 'class' and issubclass(obj, Model):
+        return '(*args, **kwargs)', None
+    return signature, return_annotation
+
 def setup(app: Sphinx):
     app.connect('autodoc-skip-member', skip_django_junk)
-    app.connect('autodoc-process-docstring', annotate_attributes)
+    app.connect('autodoc-process-docstring', annotate_attrs)
+    app.connect('autodoc-process-signature', annotate_params)
     app.add_stylesheet('css/style.css')
 
 PropertyDocumenter._original_can_document_member = \
@@ -97,6 +113,7 @@ def _patched_add_directive_header(self: DataDocumenter, sig: str):
 
 DataDocumenter.add_directive_header = _patched_add_directive_header
 
+ManagerDescriptor.__get__ = lambda self, *args, **kwargs: self.manager
 
 # -- General configuration --
 

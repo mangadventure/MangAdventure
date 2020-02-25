@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING, List, NamedTuple, Tuple
 
-from django.db.models.query import Q
+from django.db.models import Count, Max, Q
 
 from reader.models import Series
 
@@ -108,7 +108,10 @@ def query(params: _SearchParams) -> 'QuerySet':
     """
     if not params:
         return Series.objects.none()
-    return Series.objects.filter(qsfilter(params)).distinct()
+    return Series.objects.filter(qsfilter(params)).annotate(
+        chapter_count=Count('chapters'),
+        latest_upload=Max('chapters__uploaded')
+    ).distinct()
 
 
 def get_response(request: 'HttpRequest') -> 'QuerySet':

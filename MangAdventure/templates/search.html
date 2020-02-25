@@ -77,7 +77,7 @@
             </tr>
           </thead>
           {% for series in results|order_by:'title' %}
-            {% if series.chapters.all %}
+            {% if series.chapter_count > 0 %}
               <tr class="result">
                 <td class="result-title">
                   {% if series.completed %}
@@ -104,15 +104,15 @@
                 <td class="result-categories s-hidden">
                   {{ series.categories.all|join:', '|default:'N/A' }}
                 </td>
-                {% with chapters=series.chapters.all %}
-                  <td class="result-chapters s-hidden" data-sort-method="number">
-                    {{ chapters|length }}
-                  </td>
-                  <td class="result-date s-hidden" data-sort-method="date">
-                    {% if chapters %}{{ chapters.latest.uploaded|naturaltime }}
-                    {% else %}N/A{% endif %}
-                  </td>
-                {% endwith %}
+                <td class="result-chapters s-hidden" data-sort-method="number">
+                  {{ series.chapter_count }}
+                </td>
+                <td class="result-date s-hidden" data-sort-method="number"
+                  {% if series.latest_upload %}
+                    data-sort="{{ series.latest_upload.timestamp }}">
+                    {{ series.latest_upload|naturaltime }}
+                  {% else %}data-sort="0">N/A{% endif %}
+                </td>
               </tr>
             {% endif %}
           {% endfor %}

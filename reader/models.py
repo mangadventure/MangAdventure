@@ -14,7 +14,6 @@ from django.db import models
 from django.db.models.query import Q
 from django.shortcuts import reverse
 from django.utils.functional import cached_property
-from django.utils.http import http_date
 from django.utils.text import slugify
 
 from MangAdventure import storage, utils, validators
@@ -281,22 +280,6 @@ class Chapter(models.Model):
             .order_by('-volume', '-number').first()
 
     @cached_property
-    def uploaded_date(self) -> str:
-        """
-        Get the upload date of the chapter
-        in :rfc:`2616#section-3.3.1` format.
-        """
-        return http_date(self.uploaded.timestamp())
-
-    @cached_property
-    def modified_date(self) -> str:
-        """
-        Get the modification date of the chapter
-        in :rfc:`2616#section-3.3.1` format.
-        """
-        return http_date(self.modified.timestamp())
-
-    @cached_property
     def twitter_creator(self) -> str:
         """Get the Twitter username of the chapter's first group."""
         return '@' + Group.objects.filter(releases__id=self.id) \
@@ -360,7 +343,7 @@ class Chapter(models.Model):
         """
         buf = BytesIO()
         with ZipFile(buf, 'a', compression=8) as zf:
-            for page in self.pages.all():
+            for page in self.pages.iterator():
                 img = page.image.path
                 name = f'{page.number:03d}'
                 ext = path.splitext(img)[-1]

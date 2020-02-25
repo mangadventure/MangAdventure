@@ -97,7 +97,7 @@ class UserProfileForm(forms.ModelForm):
         """
         username = self.cleaned_data.get('username')
         users = User.objects.filter(username=username)
-        if users.exclude(id=self.instance.user.id).count() > 0:
+        if users.exclude(id=self.instance.user_id).exists():
             raise forms.ValidationError('This username is already taken!')
         return username
 

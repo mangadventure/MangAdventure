@@ -5,20 +5,19 @@ from django.db import migrations, models
 
 
 def populate_tokens(apps, schema_editor):
-    profile = apps.get_model('users', 'UserProfile')
-    for p in profile.objects.all():
+    user_profile = apps.get_model('users', 'UserProfile')
+    profiles = user_profile.objects.all()
+    for p in profiles:
         data = f'{p.user.username}:{p.user.password}'
         p.token = digest(
             settings.SECRET_KEY.encode(),
             data.encode(), 'shake128'
         ).hexdigest()
-        p.save()
+    user_profile.objects.bulk_update(profiles, ('token',))
 
 
 class Migration(migrations.Migration):
-    dependencies = [
-        ('users', '0001_squashed'),
-    ]
+    dependencies = [('users', '0001_squashed')]
 
     operations = [
         migrations.AddField(

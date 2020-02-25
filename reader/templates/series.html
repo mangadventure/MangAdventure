@@ -90,32 +90,29 @@
     {% endif %}
     <div id="series-chapters">
       <h3 class="alter-fg">Chapters:</h3>
-      {% with chapters=series.chapters.reverse %}
-        {% for chapter in chapters %}
-          <div class="chapter">
-            <a {% if chapter.final %}class="end"{% endif %}
-               href="{{ chapter.get_absolute_url }}"
-               title="{{ chapter.title }}">{{ chapter }}</a>
-            <div class="chapter-metadata">
-              {% with groups=chapter.groups.all %}
-                <span class="divider" title="{{ groups|join:', ' }}"></span>
-                <span class="chapter-groups" title="{{ groups|join:', ' }}">
-                  {% for group in groups %}
-                    <a {% if not forloop.last %}class="comma"{% endif %}
-                       href="{{ group.get_absolute_url }}" title="{{ group.name }}">
-                      {{ group.name }}</a>
-                  {% endfor %}
-                </span>
-              {% endwith %}
-              <span class="divider" title="{{ chapter.uploaded|naturaltime }}">
+      {% for chapter in chapters %}
+        <div class="chapter">
+          <a {% if chapter.final %}class="end"{% endif %}
+             href="{{ chapter.get_absolute_url }}"
+             title="{{ chapter.title }}">{{ chapter }}</a>
+          <div class="chapter-metadata">
+            {% with groups=chapter.groups.all %}
+              <span class="divider" title="{{ groups|join:', ' }}"></span>
+              <span class="chapter-groups" title="{{ groups|join:', ' }}">
+                {% for group in groups %}
+                  <a {% if not forloop.last %}class="comma"{% endif %}
+                     href="{{ group.get_absolute_url }}" title="{{ group.name }}">
+                    {{ group.name }}</a>
+                {% endfor %}
               </span>
-              <span class="chapter-date" title="{{ chapter.uploaded|naturaltime }}">
-                {{ chapter.uploaded|naturaltime }}
-              </span>
-            </div>
+            {% endwith %}
+            {% with uploaded=chapter.uploaded|naturaltime %}
+              <span class="divider" title="{{ uploaded }}"></span>
+              <span class="chapter-date" title="{{ uploaded }}">{{ uploaded }}</span>
+            {% endwith %}
           </div>
-        {% endfor %}
-      {% endwith %}
+        </div>
+      {% endfor %}
     </div>
     {% comment %}
       <div id="comments">

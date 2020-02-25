@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Dict, Iterable, Optional
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
+from django.utils.http import http_date
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import last_modified
@@ -49,57 +50,46 @@ def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
         'title': _chapter.title,
         'full_title': str(_chapter),
         'pages_root': url.replace('/reader/', f'{settings.MEDIA_URL}series/'),
-        'pages_list': [p._file_name for p in _chapter.pages.all()],
-        'date': _chapter.uploaded_date,
+        'pages_list': [p._file_name for p in _chapter.pages.iterator()],
+        'date': http_date(_chapter.uploaded.timestamp()),
         'final': _chapter.final,
-        'groups': [
-            {'id': _group.id, 'name': _group.name}
-            for _group in _chapter.groups.all()
-        ]
+        'groups': list(_chapter.groups.values('id', 'name'))
     }
 
 
 def _volume_response(request: 'HttpRequest',
                      chapters: Iterable[Chapter]) -> Dict:
-    response = {}
-    for _chapter in chapters:
-        response[f'{_chapter.number:g}'] = \
-            _chapter_response(request, _chapter)
-    return response
+    return {
+        f'{c.number:g}': _chapter_response(request, c)
+        for c in chapters
+    }
 
 
 def _series_response(request: 'HttpRequest', _series: Series) -> Dict:
     response = {
         'slug': _series.slug,
         'title': _series.title,
-        'aliases': [a.alias for a in _series.aliases.all()],
+        'aliases': _series.aliases.names(),
         'url': request.build_absolute_uri(_series.get_absolute_url()),
         'description': _series.description,
         'authors': [],
         'artists': [],
-        'categories': [],
+        'categories': list(
+            _series.categories.values('name', 'description')
+        ),
         'cover': request.build_absolute_uri(_series.cover.url),
         'completed': _series.completed,
         'volumes': {},
     }
-    for _chapter in _series.chapters.all():
+    for _chapter in _series.chapters.iterator():
         if _chapter.volume not in response['volumes']:
             response['volumes'][_chapter.volume] = _volume_response(
                 request, _series.chapters.filter(volume=_chapter.volume)
             )
-    for _author in _series.authors.all():
-        names = [a.alias for a in _author.aliases.all()]
-        names.insert(0, _author.name)
-        response['authors'].append(names)
-    for _artist in _series.artists.all():
-        names = [a.alias for a in _artist.aliases.all()]
-        names.insert(0, _artist.name)
-        response['artists'].append(names)
-    for _category in _series.categories.all():
-        response['categories'].append({
-            'name': _category.name,
-            'description': _category.description
-        })
+    for _author in _series.authors.prefetch_related('aliases').iterator():
+        response['authors'].append([_author.name, *_author.aliases.names()])
+    for _artist in _series.artists.prefetch_related('aliases').iterator():
+        response['artists'].append([_artist.name, *_artist.aliases.names()])
     return response
 
 
@@ -107,14 +97,14 @@ def _person_response(request: 'HttpRequest', _person: 'Person') -> Dict:
     response = {
         'id': _person.id,
         'name': _person.name,
-        'aliases': [a.alias for a in _person.aliases.all()],
+        'aliases': _person.aliases.names(),
         'series': [],
     }
-    for _series in _person.series_set.all():
+    for _series in _person.series_set.prefetch_related('aliases').iterator():
         response['series'].append({
             'slug': _series.slug,
             'title': _series.title,
-            'aliases': [a.alias for a in _series.aliases.all()],
+            'aliases': _series.aliases.names(),
         })
     return response
 
@@ -123,7 +113,7 @@ def _member_response(request: 'HttpRequest', _member: Member) -> Dict:
     return {
         'id': _member.id,
         'name': _member.name,
-        'roles': [r.get_role_display() for r in _member.roles.all()],
+        'roles': [r.get_role_display() for r in _member.roles.iterator()],
         'twitter': _member.twitter,
         'discord': _member.discord,
     }
@@ -142,20 +132,21 @@ def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
         'twitter': _group.twitter,
         'logo': logo,
         'members': [
-            _member_response(request, m)
-            for m in _group.members.distinct()
+            _member_response(request, m) for m
+            in _group.members.distinct().iterator()
         ],
         'series': [],
     }
     _series = []
-    for _chapter in _group.releases.all():
-        if _chapter.series.id not in _series:
+    for _chapter in _group.releases \
+            .prefetch_related('series__aliases').iterator():
+        if _chapter.series_id not in _series:
             response['series'].append({
                 'slug': _chapter.series.slug,
                 'title': _chapter.series.title,
-                'aliases': [a.alias for a in _chapter.series.aliases.all()]
+                'aliases': _chapter.series.aliases.names()
             })
-            _series.append(_chapter.series.id)
+            _series.append(_chapter.series_id)
     return response
 
 
@@ -171,9 +162,8 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
 
     :return: A JSON-formatted response with the releases.
     """
-    _series = Series.objects.prefetch_related('chapters').all()
     response = []
-    for s in _series:
+    for s in Series.objects.prefetch_related('chapters').iterator():
         series_res = {
             'slug': s.slug,
             'title': s.title,
@@ -182,15 +172,15 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
             'latest_chapter': {},
         }
         try:
-            last_chapter = s.chapters.latest()
-            series_res['latest_chapter'] = {
-                'title': last_chapter.title,
-                'volume': last_chapter.volume,
-                'number': last_chapter.number,
-                'date': last_chapter.uploaded_date,
-            }
+            series_res['latest_chapter'] = s.chapters.values(
+                'title', 'volume', 'number', 'uploaded'
+            ).latest()
         except ObjectDoesNotExist:
             pass
+        else:
+            series_res['latest_chapter']['date'] = http_date(
+                series_res['latest_chapter'].pop('uploaded').timestamp()
+            )
         response.append(series_res)
     return JsonResponse(response, safe=False)
 
@@ -297,11 +287,13 @@ def all_people(request: 'HttpRequest') -> JsonResponse:
 
     :return: A JSON-formatted response with the authors/artists.
     """
-    prefetch = ('aliases', 'series_set__aliases')
     _type = Author if _is_author(request) else Artist
-    people = _type.objects.prefetch_related(*prefetch).all()
-    response = [_person_response(request, p) for p in people]
-    return JsonResponse(response, safe=False)
+    return JsonResponse([
+        _person_response(request, p) for p in
+        _type.objects.prefetch_related(
+            'aliases', 'series_set__aliases'
+        ).iterator()
+    ], safe=False)
 
 
 @csrf_exempt
@@ -316,10 +308,11 @@ def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
 
     :return: A JSON-formatted response with the author/artist.
     """
-    prefetch = ('aliases', 'series_set__aliases')
     try:
         _type = Author if _is_author(request) else Artist
-        _person = _type.objects.prefetch_related(*prefetch).get(id=p_id)
+        _person = _type.objects.prefetch_related(
+            'aliases', 'series_set__aliases'
+        ).get(id=p_id)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_person_response(request, _person))
@@ -336,10 +329,12 @@ def all_groups(request: 'HttpRequest') -> JsonResponse:
 
     :return: A JSON-formatted response with the groups.
     """
-    prefetch = ('releases__series', 'roles__member')
-    _groups = Group.objects.prefetch_related(*prefetch).all()
-    response = [_group_response(request, g) for g in _groups]
-    return JsonResponse(response, safe=False)
+    return JsonResponse([
+        _group_response(request, g) for g in
+        Group.objects.prefetch_related(
+            'releases__series', 'roles__member'
+        ).iterator()
+    ], safe=False)
 
 
 @csrf_exempt
@@ -373,8 +368,7 @@ def categories(request: 'HttpRequest') -> JsonResponse:
 
     :return: A JSON-formatted response with the categories.
     """
-    values = list(Category.objects.values())
-    return JsonResponse(values, safe=False)
+    return JsonResponse(list(Category.objects.values()), safe=False)
 
 
 @csrf_exempt

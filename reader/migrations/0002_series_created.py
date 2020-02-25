@@ -3,11 +3,12 @@ from django.db import migrations, models
 
 def populate_dates(apps, schema_editor):
     series = apps.get_model('reader', 'Series')
+    chapter = apps.get_model('reader', 'Chapter')
     series._meta.get_field('modified').auto_now = False
-    for s in series.objects.prefetch_related('chapters').all():
-        ch = s.chapters.only('uploaded').earliest('uploaded')
-        s.created = ch.uploaded
-        s.save()
+    series.objects.update(created=models.Subquery(
+        chapter.objects.filter(series_id=models.OuterRef('id'))
+        .only('uploaded').order_by('uploaded').values('uploaded')[:1]
+    ))
     series._meta.get_field('modified').auto_now = True
 
 

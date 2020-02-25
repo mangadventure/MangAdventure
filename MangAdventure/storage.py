@@ -16,7 +16,7 @@ from django.core.files.storage import FileSystemStorage
 class CDNStorage(FileSystemStorage):
     """
     Storage class that uses the `statically image CDN`_ unless
-    :const:`debug mode <MangAdventure.settings.DEBUG>` is on.
+    :const:`~MangAdventure.settings.DEBUG` mode is on.
 
     :param fit: A tuple of width & height to fit the image in.
 

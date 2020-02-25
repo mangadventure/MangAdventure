@@ -19,7 +19,7 @@ def group_roles(member: 'Member', group: 'Group') -> str:
     """
     return ', '.join([
         role.get_role_display() for role in
-        member.roles.all() if role.group == group
+        member.roles.iterator() if role.group == group
     ]) or 'N/A'
 
 

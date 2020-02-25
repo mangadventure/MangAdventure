@@ -1,4 +1,4 @@
-{% load cache %}{% cache 604800 footer rss_url %}
+{% load cache %}{% cache 604800 footer rss_url arg token %}
   <footer id="footer">
     <nav id="links">
       <a href="{% url 'info' %}" class="link" title="About us">

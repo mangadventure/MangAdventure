@@ -85,6 +85,7 @@ class TestSeries(ReaderTestBase):
         series = self.create_series()
         series.aliases.create(alias='test')
         assert series.aliases.count() == 1
+        assert series.aliases.names() == ['test']
 
 
 class TestChapter(ReaderTestBase):
@@ -160,11 +161,6 @@ class TestChapter(ReaderTestBase):
         with raises(ValidationError):
             chapter.file = get_zip_with_invalid_images()
             chapter.save()
-
-    def test_dates(self):
-        chapter = self.create_chapter()
-        assert chapter.uploaded_date.endswith('GMT')
-        assert chapter.uploaded_date == chapter.modified_date
 
     def test_twitter(self):
         chapter = self.create_chapter()

@@ -1,5 +1,7 @@
 """Custom database models & model fields."""
 
+from typing import List
+
 from django.db import models
 
 from . import validators
@@ -37,6 +39,19 @@ class DiscordURLField(models.URLField):
     default_validators = (validators.discord_server_validator,)
 
 
+class AliasManager(models.Manager):
+    """A :class:`~django.db.models.Manager` for aliases."""
+    use_for_related_fields = True
+
+    def names(self) -> List[str]:
+        """
+        Get the names of the aliases.
+
+        :return: The values of the ``alias`` field.
+        """
+        return list(self.get_queryset().values_list('alias', flat=True))
+
+
 class AliasField(models.CharField):
     """A :class:`~django.db.models.CharField` for aliases."""
     def __init__(self, *args, **kwargs):
@@ -57,6 +72,7 @@ class AliasKeyField(models.ForeignKey):
 class Alias(models.Model):
     """An abstract :class:`~django.db.models.Model` for aliases."""
     alias: AliasField
+    objects = AliasManager()
 
     class Meta:
         abstract = True

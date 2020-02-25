@@ -55,12 +55,13 @@ def redirect_series(sender: Type[Series], instance: Series, **kwargs):
         instance.cover = instance.cover.name.replace(
             str(old_dir), str(new_dir)
         )
-        for chapter in instance.chapters.prefetch_related('pages').all():
-            for page in chapter.pages.all():
+        for chapter in instance.chapters.prefetch_related('pages').iterator():
+            pages = chapter.pages.all()
+            for page in pages:
                 page.image = page.image.name.replace(
                     str(old_dir), str(new_dir)
                 )
-                page.save()
+            Page.objects.bulk_update(pages, ('image',))
 
 
 @receiver(pre_save, sender=Chapter)
@@ -88,11 +89,12 @@ def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
             old_dir = new_dir.parent / old_dir.name
         if current.number != instance.number:
             _move(old_dir, str(new_dir))
-        for page in current.pages.all():
-            page.image = page.image.name.replace(
-                str(old_dir), str(new_dir)
-            )
-            page.save()
+            pages = current.pages.all()
+            for page in pages:
+                page.image = page.image.name.replace(
+                    str(old_dir), str(new_dir)
+                )
+            Page.objects.bulk_update(pages, ('image',))
 
 
 @receiver(post_delete, sender=Page)

@@ -37,15 +37,16 @@
                  name="status" id="status-ongoing" value="ongoing" type="radio">
           <label for="status-ongoing">Ongoing</label>
         </div>
-        <div id="search-categories">
-          <div>Categories:</div>
+        <fieldset id="search-categories">
+          <legend>Categories:</legend>
           <div>(
             <i class="mi mi-ok-circle"></i> = include /
             <i class="mi mi-x-circle"></i> = exclude )
           </div>
+          <input type="hidden" class="no-display" id="categories" name="categories">
           <div id="category-container">
             {% for category in all_categories %}
-              <span class="tooltip category" data-tooltip="{{ category.description }}">
+              <label class="tooltip category" data-tooltip="{{ category.description }}">
                 {% if category.id in in_categories %}
                   <i class="mi mi-ok-circle"></i> {{ category }}
                 {% elif category.id in ex_categories %}
@@ -53,11 +54,11 @@
                 {% else %}
                   <i class="mi mi-circle"></i> {{ category }}
                 {% endif %}
-              </span>
+                <input type="checkbox" class="no-display" name="categories[]" value="{{ category.id }}" disabled>
+              </label>
             {% endfor %}
           </div>
-          <input type="hidden" class="no-display" id="categories" name="categories">
-        </div>
+        </fieldset>
         <button id="search-submit" type="submit">
           <i class="mi mi-send"></i> Submit Search
         </button>

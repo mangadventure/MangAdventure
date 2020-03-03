@@ -1,10 +1,4 @@
-/* global Tablesort */
-
-(function(form, url) {
-  const getSearchParam = param => url.searchParams.get(param) || '';
-
-  const regFilter = (arr, reg) => arr.filter(e => !reg.test(e));
-
+(function(query) {
   function appendInfo(row, cln, title, text) {
     const sel = `tr:nth-child(${row}) .result-title`;
     const mi = document.createElement('i');
@@ -17,8 +11,8 @@
     document.querySelector(sel).appendChild(div);
   }
 
-  function matchQuery(query) {
-    if(query.matches) {
+  function matchQuery(q) {
+    if(q.matches) {
       document.querySelectorAll('td.s-hidden').forEach((elem, i) => {
         const n = Math.floor(i / 5) + 1;
         switch(elem.className) {
@@ -40,61 +34,97 @@
         }
       });
     } else {
-      document.querySelectorAll('.result-info').forEach(elem => {
-        elem.parentElement.removeChild(elem);
+      document.querySelectorAll('.result-info').forEach(el => el.remove());
+    }
+  }
+
+  function initialize() {
+    const url = new URL(window.location);
+    const form = document.getElementById('search-form');
+    const table = document.getElementById('result-table');
+
+    if(table && window.Tablesort) {
+      new window.Tablesort(table);
+      table.querySelector('th').removeAttribute('data-sort-default');
+    }
+
+    matchQuery(query);
+
+    form['categories[]'].forEach(c => {c.indeterminate = true});
+    (url.searchParams.get('categories') || '').split(',')
+      .filter(e => e !== '').forEach(c => {
+        c = c.trim().toLowerCase();
+        const val = c[0] === '-' ? c.slice(1) : c;
+        const input = Array.from(form['categories[]']).find(e => e.value === val);
+        input.indeterminate = false;
+        input.checked = c[0] !== '-';
       });
-    }
-  }
-
-  const query = window.matchMedia('(max-width: 690px)');
-  matchQuery(query);
-  query.addListener(matchQuery);
-
-  const table = document.getElementById('result-table');
-  if(table) {
-    new Tablesort(table);
-    table.querySelector('th').removeAttribute('data-sort-default');
-  }
-
-  const categ = document.getElementById('category-container');
-  let values = getSearchParam('categories')
-    .split(',').filter(e => e !== '');
-  categ.addEventListener('click', evt => {
-    let el = evt.target;
-    if(el.tagName === 'I' || el.nodeType === 3)
-      el = el.parentNode;
-    if(el.className !== 'tooltip category') return;
-    const state = el.children[0];
-    const text = el.textContent.trim().toLowerCase();
-    const reg = new RegExp('-?' + text.replace(
-      /[-\/\\^$*+?.()|[\]{}]/g, '\\$&'
-    ));
-    switch(state.className) {
-      case 'mi mi-circle':
-        values = regFilter(values, reg).concat(text);
-        state.className = 'mi mi-ok-circle';
-        break;
-      case 'mi mi-ok-circle':
-        values = regFilter(values, reg).concat(`-${text}`);
-        state.className = 'mi mi-x-circle';
-        break;
-      case 'mi mi-x-circle':
-        values = regFilter(values, reg);
-        state.className = 'mi mi-circle';
-        break;
-    }
-    form.categories.value = values.join(',');
-  });
-
-  form.addEventListener('submit', evt => {
-    evt.preventDefault();
-    evt.stopPropagation();
-    const elem = form.querySelectorAll('input');
-    elem.forEach(el => {
-      if(el.value) return;
-      el.setAttribute('disabled', 'disabled');
+    form.elements[5].lastChild.addEventListener('click', evt => {
+      let el = evt.target;
+      if(el.tagName === 'I' || el.nodeType === 3)
+        el = el.parentNode;
+      if(el.className !== 'tooltip category') return;
+      const [state, input] = el.children;
+      switch(state.className) {
+        case 'mi mi-circle':
+          state.className = 'mi mi-ok-circle';
+          input.indeterminate = false;
+          input.checked = true;
+          break;
+        case 'mi mi-ok-circle':
+          state.className = 'mi mi-x-circle';
+          input.indeterminate = false;
+          input.checked = false;
+          break;
+        case 'mi mi-x-circle':
+          state.className = 'mi mi-circle';
+          input.indeterminate = true;
+          input.checked = false;
+          break;
+      }
     });
-    form.submit();
-    elem.forEach(el => el.removeAttribute('disabled'));
-  });
-})(document.getElementById('search-form'), new URL(location));
+
+    form.addEventListener('submit', evt => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      form.categories.value = Array.from(form['categories[]'])
+        .reduce((acc, cur) => {
+          if(cur.indeterminate) return acc;
+          if(acc !== '') acc += ',';
+          if(!cur.checked) acc += '-';
+          return acc + cur.value;
+        }, '');
+      Array.from(form.elements).slice(0, 5).concat(form.categories)
+        .forEach(el => {el.disabled = !el.value});
+      const search = form.action + '?' +
+        new URLSearchParams(new FormData(form)).toString();
+      const xhr = new XMLHttpRequest();
+      xhr.open(form.method, search, true);
+      xhr.onload = function() {
+        if(this.status !== 200) {
+          document.open();
+          document.write(this.responseText);
+          document.close();
+          return;
+        }
+        const dom = new DOMParser()
+          .parseFromString(this.responseText, 'text/html');
+        document.getElementById('search').innerHTML =
+          dom.getElementById('search').innerHTML;
+        document.head.querySelector('meta[name="totalResults"]').outerHTML =
+          dom.head.querySelector('meta[name="totalResults"]').outerHTML;
+        document.head.querySelector('meta[name="url"]').outerHTML =
+          dom.head.querySelector('meta[name="url"]').outerHTML;
+        document.head.querySelector('meta[property="og:url"]').outerHTML =
+          dom.head.querySelector('meta[property="og:url"]').outerHTML;
+        history.replaceState({name: 'search'}, document.title, search);
+        initialize();
+      };
+      xhr.onerror = function() {console.error(this.statusText)};
+      xhr.send(null);
+    });
+  }
+
+  initialize();
+  query.addListener(matchQuery);
+})(window.matchMedia('(max-width: 690px)'));

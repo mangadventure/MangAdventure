@@ -111,6 +111,7 @@ thead {
   .dropdown {
     a {
       color: inherit;
+      display: inline-block;
       text-decoration: unset;
       line-height: 1.15em;
     }
@@ -130,6 +131,7 @@ thead {
       background-color: $main-bg;
     }
     &-element {
+      width: 100%;
       float: right;
       margin: 0.1em 0;
       @include touch() {
@@ -702,6 +704,8 @@ thead {
 
 .no-display { display: none }
 
+.comma::after { content: ',\00a0' }
+
 .divider::before { content: quote('\00a0|\00a0') }
 
 #forgot-password { margin-bottom: 3px }
@@ -735,6 +739,10 @@ thead {
       }
     }
   }
+  &-categories {
+    border: none;
+    legend { margin: auto }
+  }
   &-submit {
     padding: 3px 5px;
     border: 2px solid $alter-bg;
@@ -761,10 +769,12 @@ thead {
   margin: 0 auto 0.5em;
   .category {
     display: inline-block;
-    margin-right: 0.2em;
+    margin-right: 0.3em;
     cursor: pointer;
+    .mi { margin: 0 }
   }
 }
+
 
 i[data-pcount='100+'] { padding: 0 0.5em }
 
@@ -924,10 +934,6 @@ i[data-pcount='100+'] { padding: 0 0.5em }
   }
   #search {
     label { display: block }
-    &-status {
-      span { display: block }
-      label { display: inline-block }
-    }
   }
   #group {
     text-align: center;

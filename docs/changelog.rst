@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.6.5
+^^^^^^
+
+* Rewrote search script to use XHR
+
 v0.6.4
 ^^^^^^
 

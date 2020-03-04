@@ -4,6 +4,7 @@ Changelog
 v0.6.5
 ^^^^^^
 
+* Implemented bidirectional page clicks
 * Rewrote search script to use XHR
 
 v0.6.4

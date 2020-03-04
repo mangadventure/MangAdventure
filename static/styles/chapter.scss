@@ -8,15 +8,6 @@
 
 #chapter {
   text-align: center;
-  .chapter-page {
-    display: block;
-    width: auto;
-    cursor: pointer;
-    position: relative;
-    top: 0.5em;
-    border: 3px solid $alter-bg;
-    border-radius: 5px;
-  }
   .chapter-list {
     float: left;
     .dropdown-list {
@@ -60,6 +51,18 @@
   cursor: wait;
   border: 3px solid $alter-bg;
   border-radius: 5px;
+  + #page-image { display: none }
+}
+
+#page-image {
+  display: inline-block;
+  position: relative;
+  top: 0.5em;
+  border: 3px solid $alter-bg;
+  border-radius: 5px;
+  width: auto;
+  max-width: 95vw;
+  cursor: pointer;
 }
 
 #controls {
@@ -136,7 +139,7 @@
       &-title { display: inline-block }
     }
   }
-  #placeholder, .chapter-page { border-width: 2px }
   #controls .mi { font-size: 1.5em }
+  #placeholder, #page-image { border-width: 2px }
   .mi-spin { color: transparentize($main-fg, 0.25) }
 }

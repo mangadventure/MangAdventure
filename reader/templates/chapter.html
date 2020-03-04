@@ -68,7 +68,7 @@
       {% if config.ALLOW_DLS and request.user.is_authenticated %}
         {% with slug=curr_chapter.series.slug vol=curr_chapter.volume num=curr_chapter.number %}
           <a href="{% url 'reader:cbz' slug vol num %}" id="download"
-             title="Download chapter"><i class="mi mi-download"></i></a>
+             title="Download chapter" download><i class="mi mi-download"></i></a>
         {% endwith %}
       {% endif %}
       <div class="dropdown page-list main-bg" aria-haspopup="true">
@@ -90,39 +90,22 @@
         </ul>
       </div>
     </section>
-    {% with series_url=curr_chapter.series.get_absolute_url %}
-      <section id="placeholder" class="main-bg" data-num="{{ curr_page.number }}"
-               {% if curr_page.number == all_pages.count %}
-                 {% if next_chapter %} data-next="{{ next_chapter.get_absolute_url }}"
-                 {% else %} data-next="{{ series_url }}"{% endif %}
-               {% endif %}{% if curr_page.number == 1 %}
-                 {% if prev_chapter %} data-prev="{{ prev_chapter.get_absolute_url }}"
-                 {% else %} data-prev="{{ series_url }}"{% endif %}
-               {% endif %} data-img="{{ curr_page.image.url }}">
-        <i class="mi mi-spin"></i>
-      </section>
-    {% endwith %}
-    <script src="{% static 'scripts/chapter.js' %}"
-            rel="preload" as="script" type="application/javascript">
-    </script>
-    <noscript>
-      <img src="{{ curr_page.image.url }}" rel="preload" as="image"
-           class="chapter-page" alt="Page {{ curr_page.number }}">
-    </noscript>
-    <section id="controls" class="no-display">
-      {% with prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
+    <section id="placeholder" class="main-bg"><i class="mi mi-spin"></i></section>
+    <img id="page-image" src="{{ curr_page.image.url }}" rel="preload" as="image" alt="Page {{ curr_page.number }}">
+    <script src="{% static 'scripts/chapter.js' %}" rel="preload" as="script" type="application/javascript"></script>
+    {% with series_url=curr_chapter.series.get_absolute_url prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
+      <section id="controls" class="no-display">
         <div id="controls-top">
-          <a href="{{ all_pages.first.get_absolute_url }}" title="First page" class="control">
-            <i class="mi mi-rewind"></i>
-          </a>
+          <a href="{{ all_pages.first.get_absolute_url }}" rel="first"
+             title="First page" class="control"><i class="mi mi-rewind"></i></a>
           {% if prev == 0 %}
             {% if prev_chapter %}
-              <a href="{{ prev_chapter.get_absolute_url }}" title="Previous chapter" class="control">
+              <a href="{{ prev_chapter.get_absolute_url }}" title="Previous chapter" rel="prev" class="control">
             {% else %}
-              <a href="{{ curr_chapter.series.get_absolute_url }}" title="No previous chapters" class="control">
+              <a href="{{ series_url }}" title="No previous chapters" rel="prev" class="control">
             {% endif %}
           {% else %}
-            <a href="../{{ prev }}/" title="Previous page" class="control">
+            <a href="../{{ prev }}/" title="Previous page" rel="prev" class="control">
           {% endif %}
             <i class="mi mi-left"></i>
           </a>
@@ -133,22 +116,21 @@
             </span>
             {% if next > max %}
               {% if next_chapter %}
-                <a href="{{ next_chapter.get_absolute_url }}" title="Next chapter" class="control">
+                <a href="{{ next_chapter.get_absolute_url }}" title="Next chapter" rel="next" class="control">
               {% else %}
-                <a href="{{ curr_chapter.series.get_absolute_url }}" title="No more chapters" class="control">
+                <a href="{{ series_url }}" title="No more chapters" rel="next" class="control">
               {% endif %}
             {% else %}
-              <a href="../{{ next }}/" title="Next page" class="control">
+              <a href="../{{ next }}/" title="Next page" rel="next" class="control">
             {% endif %}
               <i class="mi mi-right"></i>
             </a>
-            <a href="{{ all_pages.last.get_absolute_url }}" title="Last page" class="control">
-              <i class="mi mi-forward"></i>
-            </a>
+            <a href="{{ all_pages.last.get_absolute_url }}" rel="last"
+               title="Last page" class="control"><i class="mi mi-forward"></i></a>
           {% endwith %}
         </div>
-      {% endwith %}
-    </section>
+      </section>
+    {% endwith %}
     {# <a href="../comments" id="comments" class="link"><i class="mi mi-chat"></i>Comments</a> #}
   </div>
   <div id="preload" class="no-display">

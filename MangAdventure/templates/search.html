@@ -3,6 +3,8 @@
 {% block canonical %}{% endblock %}
 {% block head_extras %}
   <meta name="totalResults" content="{{ total }}">
+  <script src="{% static 'vendor/tablesort.min.js' %}"
+          type="application/javascript" async></script>
   <script src="{% static 'scripts/search.js' %}"
           type="application/javascript" defer></script>
 {% endblock %}
@@ -110,16 +112,15 @@
                 </td>
                 <td class="result-date s-hidden" data-sort-method="number"
                   {% if series.latest_upload %}
-                    data-sort="{{ series.latest_upload.timestamp }}">
-                    {{ series.latest_upload|naturaltime }}
+                    {% with latest=series.latest_upload %}data-sort="{{ latest.timestamp }}">
+                      <time datetime="{{ latest|date:'Y-m-d' }}">{{ latest|naturaltime }}</time>
+                    {% endwith %}
                   {% else %}data-sort="0">N/A{% endif %}
                 </td>
               </tr>
             {% endif %}
           {% endfor %}
         </table>
-        <script src="{% static 'vendor/tablesort.min.js' %}"
-                type="application/javascript"></script>
       {% endif %}
     </section>
   </article>

@@ -1,5 +1,6 @@
 #search-categories { display: none !important }
 #placeholder { display: none !important }
+#page-image { display: block !important }
 #dropdowns, #controls { display: block !important }
 /* #comments form { text-align: center }
 #comments .tinymce {

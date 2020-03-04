@@ -23,8 +23,8 @@
                  class="release-link{% if release.final %} end{% endif %}">{{ release }}</a>
             {% endwith %}
             <div class="chapter-metadata">
+              <span class="divider"></span>
               {% with groups=release.groups.all  %}
-                <span class="divider" title="{{ groups|join:', ' }}"></span>
                 <span class="chapter-groups" title="{{ groups|join:', ' }}">
                   {% for group in groups %}
                     <a href="{{ group.get_absolute_url }}" title="{{ group.name }}"
@@ -34,10 +34,11 @@
                   {% endfor %}
               {% endwith %}
               </span>
-              <span class="divider" title="{{ release.uploaded|naturaltime }}"></span>
-              <span class="chapter-date" title="{{ release.uploaded|naturaltime }}">
-                {{ release.uploaded|naturaltime }}
-              </span>
+              <span class="divider"></span>
+              {% with uploaded=release.uploaded %}
+                <time class="chapter-date" datetime="{{ uploaded|date:'Y-m-d' }}"
+                      title="{{ uploaded|naturaltime }}">{{ uploaded|naturaltime }}</time>
+              {% endwith %}
             </div>
           </div>
         </section>

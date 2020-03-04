@@ -25,10 +25,11 @@
               <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
                  {% if release.final %}class="end"{% endif %}>{{ release }}</a>
             {% endwith %}
-            <span class="divider" title="{{ release.uploaded|naturaltime }}"></span>
-            <span class="chapter-date" title="{{ release.uploaded|naturaltime }}">
-              {{ release.uploaded|naturaltime }}
-            </span>
+            <span class="divider"></span>
+            {% with uploaded=release.uploaded %}
+              <time class="chapter-date" datetime="{{ uploaded|date:'Y-m-d' }}"
+                    title="{{ uploaded|naturaltime }}">{{ uploaded|naturaltime }}</time>
+            {% endwith %}
           </div>
         </section>
         <span class="alter-bg separator"></span>

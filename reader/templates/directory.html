@@ -35,8 +35,8 @@
                       <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
                          {% if chapter.final %}class="end"{% endif %}>{{ chapter }}</a>
                       <div class="chapter-metadata">
+                        <span class="divider"></span>
                         {% with groups=chapter.groups.all %}
-                          <span class="divider" title="{{ groups|join:', ' }}"></span>
                           <span class="chapter-groups" title="{{ groups|join:', ' }}">
                             {% for group in groups %}
                               <a href="{{ group.get_absolute_url }}" title="{{ group.name }}"
@@ -44,9 +44,10 @@
                             {% endfor %}
                         {% endwith %}
                         </span>
-                        {% with date=chapter.uploaded|naturaltime %}
-                          <span class="divider" title="{{ date }}"></span>
-                          <span class="chapter-date" title="{{ date }}">{{ date }}</span>
+                        <span class="divider"></span>
+                        {% with uploaded=chapter.uploaded %}
+                          <time class="chapter-date" datetime="{{ uploaded|date:'Y-m-d' }}"
+                                title="{{ uploaded|naturaltime }}">{{ uploaded|naturaltime }}</time>
                         {% endwith %}
                       </div>
                     </div>

@@ -156,7 +156,7 @@ class Bookmarks(TemplateView):
         ])
         chapters = Chapter.objects.filter(series_id__in=Subquery(
             Bookmark.objects.filter(user_id=request.user.id).values('series')
-        )).order_by('-uploaded')
+        )).order_by('-published')
         token = UserProfile.objects.only('token') \
             .get_or_create(user_id=request.user.id)[0].token
         return self.render_to_response(self.get_context_data(

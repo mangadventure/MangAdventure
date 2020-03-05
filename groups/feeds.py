@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Iterable
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
+from django.utils import timezone as tz
 from django.utils.feedgenerator import Atom1Feed
 
 from reader.models import Chapter
@@ -69,7 +70,9 @@ class GroupRSS(Feed):
         :return: An iterable of ``Chapter`` objects.
         """
         _max = settings.CONFIG['MAX_RELEASES']
-        return obj.releases.order_by('-uploaded')[:_max]
+        return obj.releases.filter(
+            published__lte=tz.now()
+        ).order_by('-published')[:_max]
 
     def item_description(self, item: Chapter) -> str:
         """
@@ -92,9 +95,9 @@ class GroupRSS(Feed):
 
         :param item: A ``Chapter`` object.
 
-        :return: The date the chapter was uploaded.
+        :return: The date the chapter was published.
         """
-        return item.uploaded
+        return item.published
 
     def item_updateddate(self, item: Chapter) -> 'datetime':
         """

@@ -13,6 +13,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.query import Q
 from django.shortcuts import reverse
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 
@@ -235,8 +236,13 @@ class Chapter(models.Model):
     final = models.BooleanField(
         default=False, help_text='Is this the final chapter?'
     )
-    #: The upload date of the chapter.
-    uploaded = models.DateTimeField(auto_now_add=True, db_index=True)
+    #: The publication date of the chapter.
+    published = models.DateTimeField(
+        db_index=True, help_text=(
+            'You can select a future date to schedule'
+            ' the publication of the chapter.'
+        ), default=timezone.now
+    )
     #: The modification date of the chapter.
     modified = models.DateTimeField(auto_now=True)
     #: The groups that worked on this chapter.
@@ -247,7 +253,7 @@ class Chapter(models.Model):
     class Meta:
         unique_together = ('series', 'volume', 'number')
         ordering = ('series', 'volume', 'number')
-        get_latest_by = ('uploaded', 'modified')
+        get_latest_by = ('published', 'modified')
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
@@ -373,7 +379,7 @@ class Chapter(models.Model):
             title=self.title,
             volume=self.volume,
             number=f'{self.number:g}',
-            date=self.uploaded.strftime('%F'),
+            date=self.published.strftime('%F'),
             series=self.series.title
         )
 

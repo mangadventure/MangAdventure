@@ -3,6 +3,7 @@
 from typing import TYPE_CHECKING, List, NamedTuple, Tuple
 
 from django.db.models import Count, Max, Q
+from django.utils import timezone as tz
 
 from reader.models import Series
 
@@ -108,9 +109,10 @@ def query(params: _SearchParams) -> 'QuerySet':
     """
     if not params:
         return Series.objects.none()
-    return Series.objects.filter(qsfilter(params)).annotate(
+    filters = qsfilter(params) & Q(chapters__published__lte=tz.now())
+    return Series.objects.filter(filters).annotate(
         chapter_count=Count('chapters'),
-        latest_upload=Max('chapters__uploaded')
+        latest_upload=Max('chapters__published')
     ).distinct()
 
 

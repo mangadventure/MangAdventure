@@ -22,7 +22,7 @@ class TestGroup(GroupsTestBase):
         assert list(feed.items(self.group)) == [self.chapter]
         assert str(self.chapter) in feed.item_description(self.chapter)
         assert feed.item_title(self.chapter) == str(self.chapter)
-        assert feed.item_pubdate(self.chapter) == self.chapter.uploaded
+        assert feed.item_pubdate(self.chapter) == self.chapter.published
         assert feed.item_updateddate(self.chapter) == self.chapter.modified
 
     def setup_method(self):

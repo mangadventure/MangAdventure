@@ -43,12 +43,11 @@ v0.5.x
 v0.6.x
 ^^^^^^
 
-| |u| More reading modes:
-|    |u| Long strip mode.
-|    |u| Fit page to screen.
-|    |u| Double page.
-|    |u| Right to left.
-| |u| RSS feeds.
+| |c| RSS & Atom feeds.
+| |c| Chapter downloads.
+| |c| Customizable chapter names.
+| |c| Bidirectional page clicks.
+| |c| Scheduling releases.
 
 v0.7.x
 ^^^^^^
@@ -62,11 +61,40 @@ v0.7.x
 v0.8.x
 ^^^^^^
 
-| |u| Serialize models into JSON-LD.
-|    |u| Use comics-manifest_ for series.
-| |u| Heroku Procfile & app.json_.
+| |u| Caching.
+| |u| Heroku demo.
+| |u| Docker container.
 | |u| Web App Manifest.
-| |u| Sitemap.
+| |u| Sitemaps.
+
+v0.9.x
+^^^^^^
+
+| |u| Redesign.
+|    |u| Pagination.
+|    |u| Mobile-friendly.
+| |u| Series types:
+|    |u| Manga.
+|    |u| Comic.
+|    |u| Webtoon.
+|    |u| Novel.
+| |u| webpub_ manifests.
+| |u| More reading modes:
+|    |u| Long strip mode.
+|    |u| Fit page to screen.
+|    |u| Double page.
+|    |u| Right to left.
+| |u| 18+ filter.
+
+v0.10.x
+^^^^^^^
+
+| |u| AniList/MAL/Kitsu tracking.
+| |u| Twitter/Reddit link sharing.
+| |u| GDPR compliance.
+|    |u| Respect DNT.
+| |u| Comments.
+| |u| News feeds.
 
 .. unchecked
 .. |u| unicode:: U+00A0 U+00A0 U+2610
@@ -74,5 +102,4 @@ v0.8.x
 .. checked
 .. |c| unicode:: U+00A0 U+00A0 U+2611
 
-.. _comics-manifest: https://github.com/HadrienGardeur/comics-manifest
-.. _app.json: https://devcenter.heroku.com/articles/app-json-schema
+.. _webpub: https://readium.org/webpub-manifest/extensions/divina.html

@@ -51,7 +51,8 @@ Example response
 Response body
 ~~~~~~~~~~~~~
 
-The response body is an array of JSON objects. Each object contains the following:
+The response body is an array of JSON objects.
+Each object contains the following:
 
 * **slug** (*string*) - The slug of the series.
 * **title** (*string*) - The title of the series.
@@ -62,6 +63,6 @@ The response body is an array of JSON objects. Each object contains the followin
    * **title** (*string*) - The title of the chapter.
    * **volume** (*int*) - The volume of the chapter.
    * **number** (*int*) - The number of the chapter.
-   * **date** (*string*) - The date the chapter was uploaded.
+   * **date** (*string*) - The date the chapter was published.
 
 .. include:: includes/status.rst

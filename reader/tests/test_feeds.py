@@ -61,7 +61,7 @@ class TestReleases(FeedsTestBase):
     def _test_feed(self, feed, chapter):
         assert feed.author_name == 'MangAdventure'
         assert feed.item_title(chapter) == str(chapter)
-        assert feed.item_pubdate(chapter) == chapter.uploaded
+        assert feed.item_pubdate(chapter) == chapter.published
         assert feed.item_updateddate(chapter) == chapter.modified
 
     def test_atom_all(self):

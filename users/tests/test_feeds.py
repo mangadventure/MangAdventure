@@ -36,7 +36,7 @@ class TestBookmarks(UsersTestBase):
             assert feed.description == desc
         assert feed.item_title(chapter) == str(chapter)
         assert str(chapter) in feed.item_description(chapter)
-        assert feed.item_pubdate(chapter) == chapter.uploaded
+        assert feed.item_pubdate(chapter) == chapter.published
         assert feed.item_updateddate(chapter) == chapter.modified
 
     def test_atom(self):

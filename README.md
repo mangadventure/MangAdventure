@@ -22,6 +22,7 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
   * [x] Series bookmarks.
   * [x] Chapter downloads.
   * [ ] Comments.
+* [x] Supports scheduled releases.
 * [x] Supports custom chapter names.
 * [x] Allows for migration from FoolSlide2.
 * [ ] More features coming soon...

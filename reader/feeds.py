@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Iterable, Optional
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
+from django.utils import timezone as tz
 from django.utils.feedgenerator import Atom1Feed
 
 from .models import Chapter, Series
@@ -174,9 +175,8 @@ class ReleasesRSS(Feed):
 
         :return: An iterable of ``Chapter`` objects.
         """
-        return getattr(
-            obj, 'chapters', Chapter.objects
-        ).order_by('-uploaded')[:_max]
+        return getattr(obj, 'chapters', Chapter.objects) \
+            .filter(published__lte=tz.now()).order_by('-published')[:_max]
 
     def item_description(self, item: Chapter) -> str:
         """
@@ -199,9 +199,9 @@ class ReleasesRSS(Feed):
 
         :param item: A ``Chapter`` object.
 
-        :return: The date the chapter was uploaded.
+        :return: The date the chapter was published.
         """
-        return item.uploaded
+        return item.published
 
     def item_updateddate(self, item: Chapter) -> 'datetime':
         """

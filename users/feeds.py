@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.syndication.views import Feed
 from django.db.models.expressions import Subquery
 from django.http import HttpResponse
+from django.utils import timezone as tz
 from django.utils.cache import patch_vary_headers
 from django.utils.http import http_date
 from django.utils.feedgenerator import Atom1Feed
@@ -75,9 +76,11 @@ class BookmarksRSS(Feed):
 
         :return: An iterable of ``Chapter`` objects.
         """
-        return Chapter.objects.filter(id__in=Subquery(
-            obj.bookmarks.values('series__chapters')
-        )).select_related('series').order_by('-uploaded')
+        return Chapter.objects.filter(
+            published__lte=tz.now(), id__in=Subquery(
+                obj.bookmarks.values('series__chapters')
+            )
+        ).select_related('series').order_by('-published')
 
     def item_description(self, item: Chapter) -> str:
         """
@@ -100,9 +103,9 @@ class BookmarksRSS(Feed):
 
         :param item: A ``Chapter`` object.
 
-        :return: The date the chapter was uploaded.
+        :return: The date the chapter was published.
         """
-        return item.uploaded
+        return item.published
 
     def item_updateddate(self, item: Chapter) -> 'datetime':
         """

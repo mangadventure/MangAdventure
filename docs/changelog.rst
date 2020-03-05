@@ -4,8 +4,9 @@ Changelog
 v0.6.5
 ^^^^^^
 
-* Implemented bidirectional page clicks
 * Rewrote search script to use XHR
+* Implemented bidirectional page clicks
+* Made chapter publication dates editable
 
 v0.6.4
 ^^^^^^

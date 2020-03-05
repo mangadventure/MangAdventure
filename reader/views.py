@@ -6,6 +6,7 @@ from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import condition
+from django.utils import timezone as tz
 
 from MangAdventure import jsonld
 
@@ -29,7 +30,7 @@ def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
         if vol is None:
             return Series.objects.only('modified').get(slug=slug).modified
         return Chapter.objects.only('modified').filter(
-            series__slug=slug, volume=vol, number=num
+            series__slug=slug, volume=vol, number=num, published__lte=tz.now()
         ).latest().modified
     except (Series.DoesNotExist, Chapter.DoesNotExist):
         return None
@@ -82,7 +83,7 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
         ).get(slug=slug)
     except Series.DoesNotExist as e:
         raise Http404 from e
-    chapters = _series.chapters.reverse()
+    chapters = _series.chapters.filter(published__lte=tz.now()).reverse()
     if not (request.user.is_staff or chapters):
         return render(request, 'error.html', {
             'error_message': 'Sorry. This series is not yet available.',
@@ -150,7 +151,9 @@ def chapter_page(request: 'HttpRequest', slug: str, vol: int,
     """
     if page == 0:
         raise Http404('Page cannot be 0')
-    chapters = Chapter.objects.filter(series__slug=slug)
+    chapters = Chapter.objects.filter(
+        series__slug=slug, published__lte=tz.now()
+    )
     try:
         current = chapters.select_related('series') \
             .prefetch_related('pages').get(volume=vol, number=num)
@@ -208,7 +211,8 @@ def chapter_download(request: 'HttpRequest', slug: str,
     """
     try:
         _chapter = Chapter.objects.get(
-            series__slug=slug, volume=vol, number=num
+            series__slug=slug, volume=vol,
+            number=num, published__lte=tz.now()
         )
     except Chapter.DoesNotExist as e:
         raise Http404 from e

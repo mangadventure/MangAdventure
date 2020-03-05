@@ -7,6 +7,7 @@ from django.db.models.query import Q, QuerySet
 from django.forms.models import BaseInlineFormSet, ModelForm
 # XXX: Forward reference warning when under TYPE_CHECKING
 from django.http import HttpRequest
+from django.utils import timezone as tz
 from django.utils.html import mark_safe
 
 from MangAdventure import filters, utils
@@ -15,6 +16,16 @@ from .models import (
     Artist, ArtistAlias, Author, AuthorAlias,
     Category, Chapter, Page, Series, SeriesAlias
 )
+
+
+class DateFilter(admin.DateFieldListFilter):
+    """Admin interface filter for dates."""
+    def __init__(self, *args, **kwargs):  # pragma: no cover
+        super().__init__(*args, **kwargs)
+        self.title = 'date'
+        self.links += (('Scheduled', {
+            self.lookup_kwarg_since: tz.now()
+        }),)
 
 
 class SeriesAliasInline(admin.StackedInline):
@@ -83,10 +94,10 @@ class PageInline(admin.TabularInline):
 class ChapterAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Chapter`."""
     inlines = (PageInline,)
-    date_hierarchy = 'uploaded'
+    date_hierarchy = 'published'
     list_display = (
         'preview', 'title', 'volume', '_number',
-        'uploaded', 'modified', 'final'
+        'published', 'modified', 'final'
     )
     list_display_links = ('title',)
     ordering = ('-modified',)
@@ -96,7 +107,8 @@ class ChapterAdmin(admin.ModelAdmin):
         ('groups', filters.related_filter('group')),
         filters.boolean_filter(
             'status', 'final', ('Final', 'Not final')
-        )
+        ),
+        ('published', DateFilter),
     )
     actions = ('toggle_final',)
     empty_value_display = 'N/A'

@@ -28,7 +28,7 @@
             </div>
             <div class="series-info">
               <strong>Latest Chapter{{ config.MAX_CHAPTERS|pluralize }}:</strong>
-              {% with chapters=series.chapters|order_by:'-uploaded' %}
+              {% with chapters=series.chapters|order_by:'-published' %}
                 {% for chapter in chapters|vslice:config.MAX_CHAPTERS %}
                   {% with vol=chapter.volume num=chapter.number %}
                     <div class="series-chapter">
@@ -45,9 +45,9 @@
                         {% endwith %}
                         </span>
                         <span class="divider"></span>
-                        {% with uploaded=chapter.uploaded %}
-                          <time class="chapter-date" datetime="{{ uploaded|date:'Y-m-d' }}"
-                                title="{{ uploaded|naturaltime }}">{{ uploaded|naturaltime }}</time>
+                        {% with published=chapter.published %}
+                          <time class="chapter-date" datetime="{{ published|date:'c' }}"
+                                title="{{ published|naturaltime }}">{{ published|naturaltime }}</time>
                         {% endwith %}
                       </div>
                     </div>

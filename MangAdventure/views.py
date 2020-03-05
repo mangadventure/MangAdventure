@@ -7,6 +7,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.cache import cache_control
+from django.utils import timezone as tz
 
 from api.response import JsonError
 from reader.models import Category, Chapter
@@ -32,8 +33,9 @@ def index(request: 'HttpRequest') -> HttpResponse:
 
     :return: A response with the rendered ``index.html`` template.
     """
+    _max = settings.CONFIG['MAX_RELEASES']
     latest = Chapter.objects.prefetch_related('groups', 'series') \
-        .order_by('-uploaded')[:settings.CONFIG['MAX_RELEASES']]
+        .filter(published__lte=tz.now()).order_by('-published')[:_max]
     uri = request.build_absolute_uri('/')
     crumbs = breadcrumbs([('Home', uri)])
     return render(request, 'index.html', {

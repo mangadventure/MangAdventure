@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Dict, Iterable, Optional
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
+from django.utils import timezone as tz
 from django.utils.http import http_date
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
@@ -18,15 +19,15 @@ from reader.models import Artist, Author, Category, Chapter, Series
 from ..response import JsonError, require_methods_api
 
 if TYPE_CHECKING:  # pragma: no cover
+    from datetime import datetime
     from typing import Union
-    from django.db.models import DateTimeField  # noqa: F401
     from django.http import HttpRequest
     Person = Union[Author, Artist]
 
 
 def _latest(request: 'HttpRequest', slug: Optional[str] = None,
             vol: Optional[int] = None, num: Optional[float] = None
-            ) -> Optional['DateTimeField']:
+            ) -> 'Optional[datetime]':
     try:
         if slug is None:
             return Series.objects.only('modified').latest().modified
@@ -34,10 +35,11 @@ def _latest(request: 'HttpRequest', slug: Optional[str] = None,
             return Series.objects.only('modified').get(slug=slug).modified
         if num is None:
             return Chapter.objects.only('modified').filter(
-                series__slug=slug, volume=vol
+                series__slug=slug, volume=vol, published__lte=tz.now()
             ).latest().modified
         return Chapter.objects.only('modified').filter(
-            series__slug=slug, volume=vol, number=num
+            series__slug=slug, volume=vol,
+            number=num, published__lte=tz.now()
         ).latest().modified
     except ObjectDoesNotExist:
         return None
@@ -51,7 +53,7 @@ def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
         'full_title': str(_chapter),
         'pages_root': url.replace('/reader/', f'{settings.MEDIA_URL}series/'),
         'pages_list': [p._file_name for p in _chapter.pages.iterator()],
-        'date': http_date(_chapter.uploaded.timestamp()),
+        'date': http_date(_chapter.published.timestamp()),
         'final': _chapter.final,
         'groups': list(_chapter.groups.values('id', 'name'))
     }
@@ -81,10 +83,11 @@ def _series_response(request: 'HttpRequest', _series: Series) -> Dict:
         'completed': _series.completed,
         'volumes': {},
     }
-    for _chapter in _series.chapters.iterator():
+    chapters = _series.chapters.filter(published__lte=tz.now())
+    for _chapter in chapters:
         if _chapter.volume not in response['volumes']:
             response['volumes'][_chapter.volume] = _volume_response(
-                request, _series.chapters.filter(volume=_chapter.volume)
+                request, chapters.filter(volume=_chapter.volume)
             )
     for _author in _series.authors.prefetch_related('aliases').iterator():
         response['authors'].append([_author.name, *_author.aliases.names()])
@@ -138,8 +141,8 @@ def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
         'series': [],
     }
     _series = []
-    for _chapter in _group.releases \
-            .prefetch_related('series__aliases').iterator():
+    for _chapter in _group.releases.prefetch_related('series__aliases') \
+            .filter(published__lte=tz.now()).iterator():
         if _chapter.series_id not in _series:
             response['series'].append({
                 'slug': _chapter.series.slug,
@@ -172,14 +175,14 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
             'latest_chapter': {},
         }
         try:
-            series_res['latest_chapter'] = s.chapters.values(
-                'title', 'volume', 'number', 'uploaded'
-            ).latest()
+            series_res['latest_chapter'] = s.chapters.filter(
+                published__lte=tz.now()
+            ).values('title', 'volume', 'number', 'published').latest()
         except ObjectDoesNotExist:
             pass
         else:
             series_res['latest_chapter']['date'] = http_date(
-                series_res['latest_chapter'].pop('uploaded').timestamp()
+                series_res['latest_chapter'].pop('published').timestamp()
             )
         response.append(series_res)
     return JsonResponse(response, safe=False)
@@ -242,7 +245,7 @@ def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
             .prefetch_related('chapters__pages').get(slug=slug)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    chapters = _series.chapters.filter(volume=vol)
+    chapters = _series.chapters.filter(volume=vol, published__lte=tz.now())
     if not chapters:
         return JsonError('Not found', 404)
     return JsonResponse(_volume_response(request, chapters))
@@ -265,8 +268,10 @@ def chapter(request: 'HttpRequest', slug: str,
     :return: A JSON-formatted response with the chapter.
     """
     try:
-        _chapter = Chapter.objects.prefetch_related('pages') \
-            .get(series__slug=slug, volume=vol, number=num)
+        _chapter = Chapter.objects.prefetch_related('pages').get(
+            series__slug=slug, volume=vol,
+            number=num, published__lte=tz.now()
+        )
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_chapter_response(request, _chapter))
@@ -349,9 +354,10 @@ def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
 
     :return: A JSON-formatted response with the group.
     """
-    prefetch = ('releases__series', 'roles__member')
     try:
-        _group = Group.objects.prefetch_related(*prefetch).get(id=g_id)
+        _group = Group.objects.prefetch_related(
+            'releases__series', 'roles__member'
+        ).get(id=g_id)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
     return JsonResponse(_group_response(request, _group))

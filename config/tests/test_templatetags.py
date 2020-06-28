@@ -1,9 +1,9 @@
 from re import match
 from unittest.mock import MagicMock
 
-from pytest import fixture, mark
-
 from django.contrib.flatpages.models import FlatPage
+
+from pytest import fixture, mark
 
 from config.templatetags.custom_tags import (
     get_type, jsonld, order_by, urljoin, vslice

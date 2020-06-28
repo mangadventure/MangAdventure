@@ -7,8 +7,8 @@ from django.db.models.expressions import Subquery
 from django.http import HttpResponse
 from django.utils import timezone as tz
 from django.utils.cache import patch_vary_headers
-from django.utils.http import http_date
 from django.utils.feedgenerator import Atom1Feed
+from django.utils.http import http_date
 
 from reader.models import Chapter
 

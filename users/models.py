@@ -1,5 +1,6 @@
 """Database models for the users app."""
 
+from hashlib import blake2b
 from pathlib import PurePath
 
 from django.conf import settings
@@ -9,13 +10,6 @@ from django.db import models
 from MangAdventure import storage, validators
 
 from reader.models import Series
-
-try:  # pragma: no cover
-    from hmac import digest
-except ImportError:  # pragma: no cover
-    # XXX: hmac.digest is not available in 3.6
-    from hmac import HMAC, new as digest
-    HMAC.hex = HMAC.hexdigest
 
 
 def _avatar_uploader(obj: 'UserProfile', name: str) -> str:
@@ -69,10 +63,10 @@ class UserProfile(models.Model):
     def save(self, *args, **kwargs):
         """Save the current instance."""
         data = f'{self.user.username}:{self.user.password}'
-        self.token = digest(
-            settings.SECRET_KEY.encode(),
-            data.encode(), 'shake128'
-        ).hex()
+        self.token = blake2b(
+            data.encode(), digest_size=16,
+            key=settings.SECRET_KEY.encode()
+        ).hexdigest()
         super(UserProfile, self).save(*args, **kwargs)
 
     def get_directory(self) -> PurePath:
@@ -98,7 +92,7 @@ class UserProfile(models.Model):
 
         :return: An integer hash value.
         """
-        return abs(int(self.token, 16))
+        return int(self.token, 16) & 0x7FFFFFFF
 
 
 __all__ = ['Bookmark', 'UserProfile']

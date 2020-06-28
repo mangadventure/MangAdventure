@@ -1,5 +1,6 @@
 """Admin models for the reader app."""
 
+from hashlib import blake2b
 from typing import Optional, Tuple
 
 from django.contrib import admin
@@ -61,6 +62,22 @@ class PageFormset(BaseInlineFormSet):
                 del form.cleaned_data['number']
             if not form.cleaned_data.get('DELETE'):
                 numbers.append(num)
+
+    def save_existing(self, form: ModelForm, instance: Page,
+                      commit: bool = True) -> Page:
+        """Replace an existing chapter page."""
+        with form.instance.image.open('rb') as img:
+            dgst = blake2b(img.read(), digest_size=16)
+            ext = form.instance.image.name.split(".")[-1]
+            path = form.instance.chapter.get_directory()
+            name = str(path / f'{dgst.hexdigest()}.{ext}')
+            form.instance.image.name = name
+            return form.save(commit=commit)
+
+    def save_new(self, form: ModelForm, commit: bool = True) -> Page:
+        """Add a new page to the chapter."""
+        setattr(form.instance, self.fk.name, self.instance)
+        return self.save_existing(form, self.instance, commit)
 
 
 class PageInline(admin.TabularInline):

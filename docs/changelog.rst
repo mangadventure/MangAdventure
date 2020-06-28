@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+v0.6.6
+^^^^^^
+
+* Fixed individual page uploads
+* Changed user token hashing algorithm to BLAKE2
+
 v0.6.5
 ^^^^^^
 

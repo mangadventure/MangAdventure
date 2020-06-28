@@ -90,7 +90,7 @@ class Command(BaseCommand):
             Group.objects.bulk_create(all_groups)
             self._print_success('Groups successfully imported.')
         except IntegrityError as e:  # pragma: no cover
-            raise CommandError(f'Failed to insert groups') from e
+            raise CommandError('Failed to insert groups') from e
 
         self._print(f'Importing {self._sql_name("Series")}...')
         all_series = []
@@ -116,7 +116,7 @@ class Command(BaseCommand):
             Series.objects.bulk_create(all_series)
             self._print_success('Series successfully imported.')
         except IntegrityError as e:  # pragma: no cover
-            raise CommandError(f'Failed to insert series') from e
+            raise CommandError('Failed to insert series') from e
 
         self._print(f'Importing {self._sql_name("Chapters")}...')
         all_chapters = []

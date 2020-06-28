@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, Any, Dict, Optional
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.decorators.cache import cache_control
 from django.utils import timezone as tz
+from django.views.decorators.cache import cache_control
 
 from api.response import JsonError
 from reader.models import Category, Chapter

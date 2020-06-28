@@ -35,7 +35,7 @@ Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.5#egg=mangadventure"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.6#egg=mangadventure"
 
 MangAdventure also provides the following extras:
 
@@ -49,7 +49,7 @@ For example, you can install ``csp`` & ``uwsgi`` like so:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.5#egg=mangadventure[csp,uwsgi]"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.6.6#egg=mangadventure[csp,uwsgi]"
 
 .. _MySQL database support:
    https://mysql.com/

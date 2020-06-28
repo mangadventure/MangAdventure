@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
+from django.utils import timezone as tz
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import condition
-from django.utils import timezone as tz
 
 from MangAdventure import jsonld
 

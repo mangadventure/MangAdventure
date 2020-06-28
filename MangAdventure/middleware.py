@@ -53,8 +53,8 @@ class PreloadMiddleware:
 
         for link in findall(pattern, content, MULTILINE):
             src = search(
-                r'href="(.+?)"' if link[1] == 'link'
-                else r'src="(.+?)"', link[0]
+                r'href="(/.+?)"' if link[1] == 'link'
+                else r'src="(/.+?)"', link[0]
             )
             as_ = search(r'as="(.+?)"', link[0])
             if src and as_:

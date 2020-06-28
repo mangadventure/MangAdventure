@@ -1,4 +1,4 @@
-from hmac import new as digest
+from hashlib import blake2b
 
 from django.conf import settings
 from django.db import migrations, models
@@ -9,9 +9,9 @@ def populate_tokens(apps, schema_editor):
     profiles = user_profile.objects.all()
     for p in profiles:
         data = f'{p.user.username}:{p.user.password}'
-        p.token = digest(
-            settings.SECRET_KEY.encode(),
-            data.encode(), 'shake128'
+        p.token = blake2b(
+            data.encode(), digest_size=16,
+            key=settings.SECRET_KEY.encode()
         ).hexdigest()
     user_profile.objects.bulk_update(profiles, ('token',))
 

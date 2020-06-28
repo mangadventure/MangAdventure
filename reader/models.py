@@ -2,7 +2,7 @@
 
 from hashlib import blake2b
 from io import BytesIO
-from os import path
+from os import path, remove
 from pathlib import PurePath
 from shutil import rmtree
 from typing import Any, Tuple
@@ -25,7 +25,10 @@ from groups.models import Group
 
 def _cover_uploader(obj: 'Series', name: str) -> str:
     name = f'cover.{name.split(".")[-1]}'
-    return str(obj.get_directory() / name)
+    name = str(obj.get_directory() / name)
+    if path.exists(name):
+        remove(name)
+    return name
 
 
 class Author(models.Model):
@@ -80,6 +83,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = 'categories'
+        ordering = ('id',)
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
@@ -463,7 +467,7 @@ class Chapter(models.Model):
 
         :return: An integer hash value.
         """
-        return abs(hash(str(self)))
+        return hash(str(self)) & 0x7FFFFFFF
 
 
 class _PageNumberField(models.PositiveSmallIntegerField):
@@ -473,7 +477,7 @@ class _PageNumberField(models.PositiveSmallIntegerField):
         # bypass parent to set min_value to 1
         return super(
             models.PositiveSmallIntegerField, self
-        ).formfield(**{'min_value': 1, **kwargs})
+        ).formfield(min_value=1, **kwargs)
 
 
 class Page(models.Model):

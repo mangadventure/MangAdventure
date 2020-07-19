@@ -18,11 +18,11 @@ class MangadvViewTestBase(MangadvTestBase):
     def setup_method(self):
         super().setup_method()
         series = Series.objects.create(title='series', cover=get_test_image())
-        series.aliases.create(alias='first series')
+        series.aliases.create(name='first series')
         author = series.authors.create(name='Author')
-        author.aliases.create(alias='author1')
+        author.aliases.create(name='author1')
         artist = series.artists.create(name='Artist')
-        artist.aliases.create(alias='artist1')
+        artist.aliases.create(name='artist1')
         series.categories.create(name='Manga')
         category = series.categories.create(name='Adventure')
         series.chapters.create(
@@ -31,9 +31,9 @@ class MangadvViewTestBase(MangadvTestBase):
 
         series2 = Series.objects.create(title='series2', completed=True)
         author2 = series2.authors.create(name='Author 2')
-        author2.aliases.create(alias='author2')
+        author2.aliases.create(name='author2')
         artist2 = series2.artists.create(name='Artist 2')
-        artist2.aliases.create(alias='artist2')
+        artist2.aliases.create(name='artist2')
         series2.chapters.create(title='chapter', number=1, final=True)
         series2.categories.create(name='Yaoi')
         series2.categories.add(category)

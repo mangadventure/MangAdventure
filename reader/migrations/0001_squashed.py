@@ -4,7 +4,6 @@ from django.db import migrations, models
 from django.utils import timezone
 
 from MangAdventure import storage, validators
-from MangAdventure.models import AliasField, AliasKeyField
 
 from reader.models import _cover_uploader, _PageNumberField
 
@@ -17,7 +16,6 @@ class Migration(migrations.Migration):
         ('groups', '0001_initial'),
     ]
 
-    # TODO: remove squashed migrations after application
     replaces = [
         ('reader', '0001_initial'),
         ('reader', '0002_reader_dates'),
@@ -51,11 +49,11 @@ class Migration(migrations.Migration):
                     auto_created=True, primary_key=True,
                     serialize=False, verbose_name='ID'
                 )),
-                ('alias', AliasField(
+                ('alias', models.CharField(
                     blank=True, help_text='Another name for the artist.',
                     max_length=100, unique=True, db_index=True
                 )),
-                ('artist', AliasKeyField(
+                ('artist', models.ForeignKey(
                     on_delete=models.deletion.CASCADE,
                     related_name='aliases', to='reader.Artist'
                 )),
@@ -86,11 +84,11 @@ class Migration(migrations.Migration):
                     auto_created=True, primary_key=True,
                     serialize=False, verbose_name='ID'
                 )),
-                ('alias', AliasField(
+                ('alias', models.CharField(
                     blank=True, help_text='Another name for the author.',
                     max_length=100, unique=True, db_index=True
                 )),
-                ('author', AliasKeyField(
+                ('author', models.ForeignKey(
                     on_delete=models.deletion.CASCADE,
                     related_name='aliases', to='reader.Author'
                 )),
@@ -220,11 +218,11 @@ class Migration(migrations.Migration):
                     auto_created=True, primary_key=True,
                     serialize=False, verbose_name='ID'
                 )),
-                ('alias', AliasField(
+                ('alias', models.CharField(
                     blank=True, help_text='Another title for the series.',
                     max_length=250, unique=True, db_index=True
                 )),
-                ('series', AliasKeyField(
+                ('series', models.ForeignKey(
                     on_delete=models.deletion.CASCADE,
                     related_name='aliases', to='reader.Series'
                 )),

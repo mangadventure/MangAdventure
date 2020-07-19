@@ -5,10 +5,14 @@ from io import BytesIO
 from os import path, remove
 from pathlib import PurePath
 from shutil import rmtree
-from typing import Any, Tuple
+from typing import Any, List, Tuple
 from zipfile import ZipFile
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import (
+    GenericForeignKey, GenericRelation
+)
+from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.query import Q
@@ -18,7 +22,6 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 
 from MangAdventure import storage, utils, validators
-from MangAdventure.models import Alias, AliasField, AliasKeyField
 
 from groups.models import Group
 
@@ -26,9 +29,42 @@ from groups.models import Group
 def _cover_uploader(obj: 'Series', name: str) -> str:
     name = f'cover.{name.split(".")[-1]}'
     name = str(obj.get_directory() / name)
-    if path.exists(name):
+    if path.exists(name):  # pragma: no cover
         remove(name)
     return name
+
+
+class AliasManager(models.Manager):
+    """A :class:`~django.db.models.Manager` for aliases."""
+    use_for_related_fields = True
+
+    def names(self) -> List[str]:
+        """
+        Get the names of the aliases.
+
+        :return: The values of the ``alias`` field.
+        """
+        return list(self.get_queryset().values_list('name', flat=True))
+
+
+class Alias(models.Model):
+    """A generic alias :class:`~django.db.models.Model`."""
+    name = models.CharField(
+        blank=True, max_length=255, db_index=True, verbose_name='alias'
+    )
+    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    objects = AliasManager()
+
+    class Meta:
+        verbose_name_plural = 'aliases'
+        unique_together = ('name', 'content_type', 'object_id')
+
+    def __str__(self) -> str:
+        """Return the alias of the instance."""
+        return self.name or ''
 
 
 class Author(models.Model):
@@ -37,6 +73,10 @@ class Author(models.Model):
     name = models.CharField(
         max_length=100, db_index=True,
         help_text="The author's full name."
+    )
+    #: The aliases of the author.
+    aliases = GenericRelation(
+        to=Alias, blank=True, related_query_name='main'
     )
 
     def __str__(self) -> str:
@@ -54,6 +94,10 @@ class Artist(models.Model):
     name = models.CharField(
         max_length=100, db_index=True,
         help_text="The artist's full name."
+    )
+    #: The aliases of the artist.
+    aliases = GenericRelation(
+        to=Alias, blank=True, related_query_name='main'
     )
 
     def __str__(self) -> str:
@@ -143,6 +187,10 @@ class Series(models.Model):
         help_text='The format used to render the chapter names.',
         verbose_name='chapter name format'
     )
+    #: The aliases of the series.
+    aliases = GenericRelation(
+        to=Alias, blank=True, related_query_name='alias'
+    )
 
     def get_absolute_url(self) -> str:
         """
@@ -177,33 +225,6 @@ class Series(models.Model):
         :return: The title of the series.
         """
         return self.title
-
-
-class AuthorAlias(Alias):
-    """A model representing an author's alias."""
-    #: The author this alias belongs to.
-    author = AliasKeyField(Author)
-    #: The alias of the author.
-    alias = AliasField(db_index=True, help_text='Another name for the author.')
-
-
-class ArtistAlias(Alias):
-    """A model representing an author's alias."""
-    #: The artist this alias belongs to.
-    artist = AliasKeyField(Artist)
-    #: The alias of the artist.
-    alias = AliasField(db_index=True, help_text='Another name for the artist.')
-
-
-class SeriesAlias(Alias):
-    """A model representing a series' alias."""
-    #: The series this alias belongs to.
-    series = AliasKeyField(Series)
-    #: The alias of the series.
-    alias = AliasField(
-        max_length=250, db_index=True,
-        help_text='Another title for the series.'
-    )
 
 
 class Chapter(models.Model):
@@ -627,6 +648,6 @@ class Page(models.Model):
 
 
 __all__ = [
-    'Author', 'AuthorAlias', 'Artist', 'ArtistAlias',
-    'Series', 'SeriesAlias', 'Chapter', 'Page', 'Category'
+    'Author', 'Artist', 'Series', 'Chapter',
+    'Page', 'Category', 'Alias'
 ]

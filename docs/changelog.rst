@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.7.0
+^^^^^^
+
+* Merged all aliases to a single DB table
+
 v0.6.6
 ^^^^^^
 

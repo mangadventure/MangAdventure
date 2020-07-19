@@ -1,9 +1,10 @@
 """Admin models for the reader app."""
 
 from hashlib import blake2b
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Type
 
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db.models.query import Q, QuerySet
 from django.forms.models import BaseInlineFormSet, ModelForm
 # XXX: Forward reference warning when under TYPE_CHECKING
@@ -13,10 +14,7 @@ from django.utils.html import mark_safe
 
 from MangAdventure import filters, utils
 
-from .models import (
-    Artist, ArtistAlias, Author, AuthorAlias,
-    Category, Chapter, Page, Series, SeriesAlias
-)
+from .models import Alias, Artist, Author, Category, Chapter, Page, Series
 
 
 class DateFilter(admin.DateFieldListFilter):
@@ -29,28 +27,10 @@ class DateFilter(admin.DateFieldListFilter):
         }),)
 
 
-class SeriesAliasInline(admin.StackedInline):
-    """Inline admin model for :class:`~reader.models.SeriesAlias`."""
-    model = SeriesAlias
-    extra = 1
-
-
-class AuthorAliasInline(admin.StackedInline):
-    """Inline admin model for :class:`~reader.models.AuthorAlias`."""
-    model = AuthorAlias
-    extra = 1
-
-
-class ArtistAliasInline(admin.StackedInline):
-    """Inline admin model for :class:`~reader.models.ArtistAlias`."""
-    model = ArtistAlias
-    extra = 1
-
-
-class PageFormset(BaseInlineFormSet):
+class PageFormset(BaseInlineFormSet):  # pragma: no cover
     """Formset for :class:`~reader.admin.PageInline`."""
 
-    def clean(self):  # pragma: no cover
+    def clean(self):
         """Ensure that page numbers don't have duplicates."""
         super().clean()
         numbers = []
@@ -180,15 +160,39 @@ class SeriesForm(ModelForm):
         fields = '__all__'
 
 
+# TODO: find a cleaner way to adapt the help_text
+def alias_inline(model: str) -> Type[GenericStackedInline]:
+    """
+    Get an inline admin model for :class:`~reader.models.Alias`.
+
+    :param model: The name of the model that holds the alias.
+    """
+    class _AliasForm(ModelForm):
+        def __init__(self, *args, **kwargs):  # pragma: no cover
+            super().__init__(*args, **kwargs)
+            self.fields['name'].help_text = f'Another name for this {model}.'
+
+        class Meta:
+            model = Alias
+            fields = '__all__'
+
+    class _AliasInline(GenericStackedInline):  # pragma: no cover
+        form = _AliasForm
+        model = Alias
+        extra = 1
+
+    return _AliasInline
+
+
 class SeriesAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Series`."""
     form = SeriesForm
-    inlines = (SeriesAliasInline,)
+    inlines = (alias_inline('series'),)
     list_display = ('cover_image', 'title', 'created', 'modified', 'completed')
     list_display_links = ('title',)
     date_hierarchy = 'created'
     ordering = ('-modified',)
-    search_fields = ('title',)
+    search_fields = ('title', 'aliases__name')
     autocomplete_fields = ('categories',)
     list_filter = (
         ('authors', filters.related_filter('author')),
@@ -227,9 +231,9 @@ class SeriesAdmin(admin.ModelAdmin):
 
 class AuthorAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Author`."""
-    inlines = (AuthorAliasInline,)
+    inlines = (alias_inline('author'),)
     list_display = ('name', 'aliases')
-    search_fields = ('name', 'aliases__alias')
+    search_fields = ('name', 'aliases__name')
 
     def aliases(self, obj: Author) -> str:
         """
@@ -239,14 +243,18 @@ class AuthorAdmin(admin.ModelAdmin):
 
         :return: A comma-separated list of aliases.
         """
-        return ', '.join(obj.aliases.values_list('alias', flat=True))
+        return ', '.join(obj.aliases.names())
 
 
 class ArtistAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Artist`."""
-    inlines = (ArtistAliasInline,)
+    inlines = (alias_inline('artist'),)
+    exclude = ('aliases',)
     list_display = ('name', 'aliases')
-    search_fields = ('name', 'aliases__alias')
+    search_fields = ('name', 'aliases__name')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def aliases(self, obj: Artist) -> str:
         """
@@ -256,7 +264,7 @@ class ArtistAdmin(admin.ModelAdmin):
 
         :return: A comma-separated list of aliases.
         """
-        return ', '.join(obj.aliases.values_list('alias', flat=True))
+        return ', '.join(obj.aliases.names())
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -288,7 +296,6 @@ admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Category, CategoryAdmin)
 
 __all__ = [
-    'SeriesAliasInline', 'AuthorAliasInline',
-    'ArtistAliasInline', 'ChapterAdmin', 'SeriesAdmin',
+    'alias_inline', 'ChapterAdmin', 'SeriesAdmin',
     'AuthorAdmin', 'ArtistAdmin', 'CategoryAdmin'
 ]

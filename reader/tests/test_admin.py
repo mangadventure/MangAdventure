@@ -82,11 +82,11 @@ class TestPersonAdmin(ReaderAdminTestBase):
         self.author_admin = AuthorAdmin(admin_site=self.site, model=Author)
         self.artist_admin = ArtistAdmin(admin_site=self.site, model=Artist)
         self.author = Author.objects.create(name='author')
-        self.author.aliases.create(alias='author1')
-        self.author.aliases.create(alias='author2')
+        self.author.aliases.create(name='author1')
+        self.author.aliases.create(name='author2')
         self.artist = Artist.objects.create(name='artist')
-        self.artist.aliases.create(alias='artist1')
-        self.artist.aliases.create(alias='artist2')
+        self.artist.aliases.create(name='artist1')
+        self.artist.aliases.create(name='artist2')
 
     def test_aliases(self):
         assert self.author_admin.aliases(self.author) == 'author1, author2'

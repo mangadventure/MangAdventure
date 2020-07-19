@@ -24,7 +24,7 @@ class TestAuthor(ReaderTestBase):
 
     def test_alias(self):
         author = self.create_author()
-        author.aliases.create(alias='test')
+        author.aliases.create(name='test')
         assert author.aliases.count() == 1
         assert str(author.aliases.first()) == 'test'
 
@@ -40,7 +40,7 @@ class TestArtist(ReaderTestBase):
 
     def test_alias(self):
         artist = self.create_artist()
-        artist.aliases.create(alias='test')
+        artist.aliases.create(name='test')
         assert artist.aliases.count() == 1
         assert str(artist.aliases.first()) == 'test'
 
@@ -83,7 +83,7 @@ class TestSeries(ReaderTestBase):
 
     def test_alias(self):
         series = self.create_series()
-        series.aliases.create(alias='test')
+        series.aliases.create(name='test')
         assert series.aliases.count() == 1
         assert series.aliases.names() == ['test']
 

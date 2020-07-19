@@ -1,9 +1,6 @@
 from django.db import migrations, models
 
-from MangAdventure import storage, validators
-from MangAdventure.models import (
-    DiscordNameField, DiscordURLField, RedditField, TwitterField
-)
+from MangAdventure import fields, storage, validators
 
 from groups.models import _logo_uploader
 
@@ -38,10 +35,10 @@ class Migration(migrations.Migration):
                     blank=True, max_length=254,
                     help_text="The group's E-mail address."
                 )),
-                ('discord', DiscordURLField(
+                ('discord', fields.DiscordURLField(
                     blank=True, help_text="The group's Discord link."
                 )),
-                ('twitter', TwitterField(
+                ('twitter', fields.TwitterField(
                     blank=True, max_length=15,
                     help_text="The group's Twitter username."
                 )),
@@ -60,7 +57,7 @@ class Migration(migrations.Migration):
                     blank=True, max_length=63,
                     help_text="The group's IRC."
                 )),
-                (('reddit', RedditField(
+                (('reddit', fields.RedditField(
                     blank=True, help_text=(
                         "The group's Reddit username or "
                         "subreddit. (Include /u/ or /r/)"
@@ -78,11 +75,11 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(
                     help_text="The member's name.", max_length=100
                 )),
-                ('twitter', TwitterField(
+                ('twitter', fields.TwitterField(
                     blank=True, max_length=15,
                     help_text="The member's Twitter username."
                 )),
-                ('discord', DiscordNameField(
+                ('discord', fields.DiscordNameField(
                     blank=True, max_length=37,
                     help_text="The member's Discord username and discriminator."
                 )),
@@ -90,7 +87,7 @@ class Migration(migrations.Migration):
                     blank=True, max_length=63,
                     help_text="The member's IRC username."
                 )),
-                (('reddit', RedditField(
+                (('reddit', fields.RedditField(
                     blank=True, max_length=21,
                     help_text="The member's Reddit username."
                 )))

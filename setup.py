@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
 
-from importlib.util import find_spec
 from pathlib import Path
 
 from setuptools import find_packages, setup
 from setuptools.command.develop import develop
 
 import MangAdventure
-
-if find_spec('isort'):
-    from isort.settings import default
-    default['known_django'] = 'django'
-    default['known_mangadv'] = 'MangAdventure'
 
 
 def read(fname):

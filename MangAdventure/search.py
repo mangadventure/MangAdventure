@@ -78,14 +78,14 @@ def qsfilter(params: _SearchParams) -> Q:
     if params.query:
         filters = (
             Q(title__icontains=params.query) |
-            Q(aliases__alias__icontains=params.query)
+            Q(aliases__name__icontains=params.query)
         )
     if params.author:
         filters &= (
             Q(authors__name__icontains=params.author) |
             Q(artists__name__icontains=params.author) |
-            Q(authors__aliases__alias__icontains=params.author) |
-            Q(artists__aliases__alias__icontains=params.author)
+            Q(authors__aliases__name__icontains=params.author) |
+            Q(artists__aliases__name__icontains=params.author)
         )
     if params.status == 'completed':
         filters &= Q(completed=True)

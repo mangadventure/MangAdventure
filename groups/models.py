@@ -6,7 +6,7 @@ from pathlib import PurePath
 from django.db import models
 from django.shortcuts import reverse
 
-from MangAdventure.models import (
+from MangAdventure.fields import (
     DiscordNameField, DiscordURLField, RedditField, TwitterField
 )
 from MangAdventure.storage import CDNStorage

@@ -29,7 +29,7 @@ install: pip install -e .[dev]
 before_script:
   - pip install coveralls
 script:
-  - "flake8 && isort -c -df && py.test && coveralls"
+  - "flake8 && isort -c --diff && py.test && coveralls"
 after_script:
   - >-
     if [[ -n $WEBHOOK_URL ]]; then

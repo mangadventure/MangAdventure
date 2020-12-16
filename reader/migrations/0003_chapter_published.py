@@ -3,9 +3,7 @@ from django.utils import timezone as tz
 
 
 class Migration(migrations.Migration):
-    dependencies = [
-        ('reader', '0002_series_created'),
-    ]
+    dependencies = [('reader', '0002_series_created')]
 
     operations = [
         migrations.AlterModelOptions(

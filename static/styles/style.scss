@@ -885,7 +885,8 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       text-align: center;
       padding-top: 0.5em;
       &-metadata {
-        display: inline-block;
+        display: flex;
+        flex-direction: column-reverse;
         max-width: unset;
         span {
           display: block;
@@ -898,6 +899,7 @@ i[data-pcount='100+'] { padding: 0 0.5em }
         .divider { display: none }
       }
       > a {
+        display: block;
         max-width: unset;
         padding: 0 1em;
         white-space: normal;

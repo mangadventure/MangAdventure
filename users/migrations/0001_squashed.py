@@ -7,20 +7,12 @@ from users.models import _avatar_uploader
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('reader', '0001_initial'),
+        ('reader', '0001_squashed'),
         ('socialaccount', '0003_extra_data_default_dict'),
-    ]
-
-    # TODO: remove squashed migrations after application
-    replaces = [
-        ('users', '0001_initial'),
-        ('users', '0002_progress_userprofile'),
-        ('users', '0003_cdn_storage'),
     ]
 
     operations = [

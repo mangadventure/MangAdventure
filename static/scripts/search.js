@@ -121,6 +121,7 @@
         initialize();
       };
       xhr.onerror = function() {console.error(this.statusText)};
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
       xhr.send(null);
     });
   }

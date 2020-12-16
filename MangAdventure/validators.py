@@ -7,6 +7,7 @@ from zipfile import BadZipfile, ZipFile
 
 from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator, RegexValidator
+from django.utils.deconstruct import deconstructible
 
 from PIL import Image
 
@@ -21,6 +22,7 @@ def _remove_file(file: 'File'):
         pass
 
 
+@deconstructible
 class FileSizeValidator(BaseValidator):
     """
     Validates that a file's size is not greater than ``max_mb``.

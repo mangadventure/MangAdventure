@@ -45,7 +45,7 @@ setup(
         'debug': 'django-debug-toolbar',
         'mysql': 'mysqlclient',
         'pgsql': 'psycopg2',
-        'csp': 'django-csp>=3.6',
+        'csp': 'django-csp>=3.7',
         'uwsgi': 'uwsgi',
         'sentry': 'sentry-sdk',
     },

@@ -6,17 +6,9 @@ from groups.models import _logo_uploader
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = []
-
-    # TODO: remove squashed migrations after application
-    replaces = [
-        ('groups', '0001_initial'),
-        ('groups', '0002_irc_reddit'),
-        ('groups', '0003_cdn_storage'),
-    ]
 
     operations = [
         migrations.CreateModel(

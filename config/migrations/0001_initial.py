@@ -9,7 +9,7 @@ def create_info_pages(apps, schema_editor):
         flatpage(pk=2, url='/privacy/', title='Privacy')
     ])
     for page in pages:
-        page.sites.set(site.objects.filter(pk=1))
+        page.sites.set(site.objects.all())
 
 
 def remove_info_pages(apps, schema_editor):
@@ -18,13 +18,8 @@ def remove_info_pages(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-        ('flatpages', '0001_initial'),
-    ]
+    dependencies = [('flatpages', '0001_initial')]
 
-    operations = [
-        migrations.RunPython(create_info_pages, remove_info_pages),
-    ]
+    operations = [migrations.RunPython(create_info_pages, remove_info_pages)]

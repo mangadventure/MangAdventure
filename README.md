@@ -61,7 +61,7 @@ You shouldn't use the development server during production.
 
 ## License
 
-    Copyright (c) 2018-2020 MangAdventure
+    Copyright (c) 2018-2021 MangAdventure
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

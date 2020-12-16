@@ -9,24 +9,9 @@ from reader.models import _cover_uploader, _PageNumberField
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-        ('groups', '0001_initial'),
-    ]
-
-    replaces = [
-        ('reader', '0001_initial'),
-        ('reader', '0002_reader_dates'),
-        ('reader', '0003_chapter_groups'),
-        ('reader', '0004_float_numbers'),
-        ('reader', '0005_categories'),
-        ('reader', '0006_remove_chapter_url'),
-        ('reader', '0007_editable_slugs'),
-        ('reader', '0008_add_indexes'),
-        ('reader', '0009_cdn_storage'),
-    ]
+    dependencies = [('groups', '0001_squashed')]
 
     operations = [
         migrations.CreateModel(

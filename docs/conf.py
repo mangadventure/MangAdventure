@@ -16,7 +16,7 @@ import MangAdventure as MA
 project = 'MangAdventure'
 author = MA.__author__
 release = MA.__version__
-copyright = f'2018-2020, {project}, {MA.__license__} license'
+copyright = f'2018-2021, {project}, {MA.__license__} license'
 
 
 # -- Add setup function & patch documenters --
@@ -133,7 +133,7 @@ pygments_style = 'manni'
 
 # -- InterSphinx & extlinks configuration --
 
-_django = 'https://docs.djangoproject.com/en/3.0/'
+_django = 'https://docs.djangoproject.com/en/3.1/'
 _mdn = 'https://developer.mozilla.org/en-US/docs/Web/'
 
 intersphinx_mapping = {

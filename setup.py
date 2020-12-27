@@ -59,7 +59,7 @@ setup(
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 3.0',
+        'Framework :: Django :: 3.1',
         'Intended Audience :: Other Audience',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',

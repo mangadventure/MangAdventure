@@ -19,9 +19,9 @@ from reader.models import Artist, Author, Category, Chapter, Series
 from ..response import JsonError, require_methods_api
 
 if TYPE_CHECKING:  # pragma: no cover
-    from datetime import datetime
-    from typing import Union
-    from django.http import HttpRequest
+    from datetime import datetime  # isort:skip
+    from typing import Union  # isort:skip
+    from django.http import HttpRequest  # isort:skip
     Person = Union[Author, Artist]
 
 

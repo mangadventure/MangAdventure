@@ -36,8 +36,6 @@ def _cover_uploader(obj: 'Series', name: str) -> str:
 
 class AliasManager(models.Manager):
     """A :class:`~django.db.models.Manager` for aliases."""
-    use_for_related_fields = True
-
     def names(self) -> List[str]:
         """
         Get the names of the aliases.

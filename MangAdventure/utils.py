@@ -3,10 +3,29 @@
 from re import split
 from typing import TYPE_CHECKING, Iterable, List, Union
 
+from django.http import HttpResponse
 from django.utils.html import format_html
 
 if TYPE_CHECKING:  # pragma: no cover
     from django.db.models.fields.files import FieldFile
+
+
+class HttpResponseUnauthorized(HttpResponse):
+    """
+    A response class for HTTP :status:`401`.
+
+    :param realm: The realm of the :header:`WWW-Authenticate` header.
+    :type realm: str
+    :param type: The type of the :header:`WWW-Authenticate` header.
+    :type type: str
+    """
+    def __init__(self, *args, **kwargs):
+        type_ = kwargs.pop('type', 'Bearer')
+        realm = kwargs.pop('realm', 'private')
+        super().__init__(*args, **kwargs)
+        self['WWW-Authenticate'] = \
+            f'{type_} realm="{realm}", charset="{self.charset}"'
+        self.status_code = 401
 
 
 def img_tag(obj: 'FieldFile', alt: str,
@@ -59,4 +78,4 @@ def natsort(original: Iterable[str]) -> List[str]:
     return sorted(original, key=alnum_key)
 
 
-__all__ = ['img_tag', 'natsort']
+__all__ = ['HttpResponseUnauthorized', 'img_tag', 'natsort']

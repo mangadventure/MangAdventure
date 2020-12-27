@@ -4,6 +4,7 @@ Changelog
 v0.7.0
 ^^^^^^
 
+* Fixed unpublished chapter filtering
 * Fixed series page appearance on mobile
 * Merged all aliases to a single DB table
 

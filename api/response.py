@@ -8,8 +8,8 @@ from django.utils.log import log_response
 from django.views.decorators.vary import vary_on_headers
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Callable
-    from django.http import HttpRequest
+    from typing import Callable  # isort:skip
+    from django.http import HttpRequest  # isort:skip
 
 
 class JsonError(JsonResponse):

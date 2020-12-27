@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING
 
+from django.db.models import Count, Prefetch, Q
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
 from django.utils import timezone as tz
@@ -9,15 +10,15 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.http import condition
 
 from MangAdventure import jsonld
+from MangAdventure.utils import HttpResponseUnauthorized
 
 from .models import Chapter, Page, Series
 
 if TYPE_CHECKING:  # pragma: no cover
-    from datetime import datetime
-    from typing import Optional
-    from django.http import (
-        HttpRequest, HttpResponse,
-        HttpResponsePermanentRedirect
+    from datetime import datetime  # isort:skip
+    from typing import Optional, Union  # isort:skip
+    from django.http import (  # isort:skip
+        HttpRequest, HttpResponse, HttpResponsePermanentRedirect
     )
 
 
@@ -26,11 +27,17 @@ def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
             page: 'Optional[int]' = None) -> 'Optional[datetime]':
     try:
         if slug is None:
-            return Series.objects.only('modified').latest().modified
+            q = Q(chapters__published__lte=tz.now())
+            return Series.objects.only('modified').annotate(
+                chapter_count=Count('chapters', filter=q)
+            ).filter(q & Q(chapter_count__gt=0)).latest().modified
         if vol is None:
-            return Series.objects.only('modified').get(slug=slug).modified
+            return Series.objects.only('modified').filter(
+                chapters__published__lte=tz.now(), slug=slug
+            ).get().modified
         return Chapter.objects.only('modified').filter(
-            series__slug=slug, volume=vol, number=num, published__lte=tz.now()
+            series__slug=slug, volume=vol,
+            number=num, published__lte=tz.now()
         ).latest().modified
     except (Series.DoesNotExist, Chapter.DoesNotExist):
         return None
@@ -50,7 +57,11 @@ def directory(request: 'HttpRequest') -> 'HttpResponse':
 
     :return: A response with the rendered ``all_series.html`` template.
     """
-    _series = Series.objects.prefetch_related('chapters').order_by('title')
+    qs = Chapter.objects.filter(published__lte=tz.now())
+    pre = Prefetch('chapters', queryset=qs.order_by('-published'))
+    _series = Series.objects.annotate(chapter_count=Count(
+        'chapters', filter=Q(chapters__published__lte=tz.now())
+    )).filter(chapter_count__gt=0).prefetch_related(pre).order_by('title')
     uri = request.build_absolute_uri(request.path)
     crumbs = jsonld.breadcrumbs([('Reader', uri)])
     library = jsonld.carousel([s.get_absolute_url() for s in _series])
@@ -84,15 +95,13 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
     except Series.DoesNotExist as e:
         raise Http404 from e
     chapters = _series.chapters.filter(published__lte=tz.now()).reverse()
-    if not (request.user.is_staff or chapters):
+    if not chapters:
         return render(request, 'error.html', {
             'error_message': 'Sorry. This series is not yet available.',
             'error_status': 403
         }, status=403)
-    marked = (
-        request.user.is_authenticated and
+    marked = request.user.is_authenticated and \
         request.user.bookmarks.filter(series=_series).exists()
-    )
     url = request.path
     p_url = url.rsplit('/', 2)[0] + '/'
     uri = request.build_absolute_uri(url)
@@ -100,6 +109,7 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
         ('Reader', request.build_absolute_uri(p_url)),
         (_series.title, uri)
     ])
+    tags = list(_series.categories.values_list('name', flat=True))
     book = jsonld.schema('Book', {
         'url': uri,
         'name': _series.title,
@@ -115,20 +125,21 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
             'alternateName': ar.aliases.names()
         } for ar in _series.artists.iterator()],
         'alternateName': _series.aliases.names(),
-        'genre': list(_series.categories.values_list('name', flat=True)),
         'creativeWorkStatus': (
             'Published' if _series.completed else 'Incomplete'
         ),
         'dateCreated': _series.created.strftime('%F'),
         'dateModified': _series.modified.strftime('%F'),
         'bookFormat': 'GraphicNovel',
+        'genre': tags,
     })
     return render(request, 'series.html', {
         'series': _series,
         'chapters': chapters,
         'marked': marked,
         'breadcrumbs': crumbs,
-        'book_ld': book
+        'book_ld': book,
+        'tags': ','.join(tags)
     })
 
 
@@ -159,6 +170,7 @@ def chapter_page(request: 'HttpRequest', slug: str, vol: int,
             .prefetch_related('pages').get(volume=vol, number=num)
         all_pages = current.pages.all()
         curr_page = next(p for p in all_pages if p.number == page)
+        tags = list(current.series.categories.values_list('name', flat=True))
     except (Chapter.DoesNotExist, Page.DoesNotExist, StopIteration) as e:
         raise Http404 from e
     url = request.path
@@ -176,7 +188,8 @@ def chapter_page(request: 'HttpRequest', slug: str, vol: int,
         'prev_chapter': current.prev,
         'all_pages': all_pages,
         'curr_page': curr_page,
-        'breadcrumbs': crumbs
+        'breadcrumbs': crumbs,
+        'tags': ','.join(tags)
     })
 
 
@@ -197,8 +210,8 @@ def chapter_redirect(request: 'HttpRequest', slug: str, vol: int,
 
 @condition(etag_func=_cbz_etag, last_modified_func=_latest)
 @cache_control(public=True, max_age=3600)
-def chapter_download(request: 'HttpRequest', slug: str,
-                     vol: int, num: float) -> FileResponse:
+def chapter_download(request: 'HttpRequest', slug: str, vol: int, num: float
+                     ) -> 'Union[FileResponse, HttpResponseUnauthorized]':
     """
     View that generates a ``.cbz`` file from a chapter.
 
@@ -207,10 +220,17 @@ def chapter_download(request: 'HttpRequest', slug: str,
     :param vol: The volume of the chapter.
     :param num: The number of the chapter.
 
-    :return: A response with the ``.cbz`` file.
+    :return: A response with the ``.cbz`` file if the user is logged in.
+
+    :raises Http404: If the chapter does not exist.
     """
+    if not request.user.is_authenticated:
+        return HttpResponseUnauthorized(
+            b'You must be logged in to download this file.',
+            content_type='text/plain', realm='chapter archive'
+        )
     try:
-        _chapter = Chapter.objects.get(
+        _chapter = Chapter.objects.prefetch_related('pages').get(
             series__slug=slug, volume=vol,
             number=num, published__lte=tz.now()
         )

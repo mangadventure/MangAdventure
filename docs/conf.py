@@ -4,7 +4,7 @@ from os import environ as env
 from os.path import dirname
 from sys import path
 
-path.insert(0, dirname(__file__))
+path.insert(0, dirname(dirname(__file__)))
 env['DJANGO_SETTINGS_MODULE'] = 'MangAdventure.tests.settings'
 __import__('django').setup()
 
@@ -87,7 +87,7 @@ def setup(app: Sphinx):
     app.connect('autodoc-skip-member', skip_django_junk)
     app.connect('autodoc-process-docstring', annotate_attrs)
     app.connect('autodoc-process-signature', annotate_params)
-    app.add_stylesheet('css/style.css')
+    app.add_css_file('css/style.css')
 
 PropertyDocumenter._original_can_document_member = \
     PropertyDocumenter.can_document_member
@@ -115,6 +115,7 @@ DataDocumenter.add_directive_header = _patched_add_directive_header
 
 ManagerDescriptor.__get__ = lambda self, *args, **kwargs: self.manager
 
+
 # -- General configuration --
 
 extensions = [
@@ -129,6 +130,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 language = 'en'
 pygments_style = 'manni'
+needs_sphinx = '3.2'
 
 
 # -- InterSphinx & extlinks configuration --
@@ -147,6 +149,7 @@ extlinks = {
     'auth': ('https://django-allauth.rtfd.io/en/latest/%s', ''),
     'csp': (f'{_mdn}HTTP/Headers/Content-Security-Policy/%s', ''),
     'status': (f'{_mdn}HTTP/Status/%s', ''),
+    'header': (f'{_mdn}HTTP/Headers/%s', ''),
     'schema': ('https://schema.org/%s', ''),
 }
 

@@ -28,11 +28,11 @@ def populate_aliases(apps, schema_editor):
 
 
 def populate_aliases_reverse(apps, schema_editor):
-    from sys import argv
-    from django.core.management.color import color_style
+    from sys import argv  # isort:skip
+    from django.core.management import color  # isort:skip
     answer = None
     if not set(argv) & {'--noinput', '--no-input'}:
-        answer = input(color_style().WARNING(
+        answer = input(color.color_style().WARNING(
             "\n  Aliases will be lost. Type 'yes'"
             " to continue, or 'no' to cancel: "
         ))

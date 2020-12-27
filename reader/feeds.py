@@ -9,8 +9,8 @@ from django.utils.feedgenerator import Atom1Feed
 from .models import Chapter, Series
 
 if TYPE_CHECKING:  # pragma: no cover
-    from datetime import datetime
-    from django.http import HttpRequest
+    from datetime import datetime  # isort:skip
+    from django.http import HttpRequest  # isort:skip
 
 _max = settings.CONFIG['MAX_RELEASES']
 

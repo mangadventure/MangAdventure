@@ -17,6 +17,14 @@ MangAdventure.converters module
    :undoc-members:
    :show-inheritance:
 
+MangAdventure.fields module
+---------------------------
+
+.. automodule:: MangAdventure.fields
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 MangAdventure.filters module
 ----------------------------
 
@@ -45,14 +53,6 @@ MangAdventure.middleware module
 -------------------------------
 
 .. automodule:: MangAdventure.middleware
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-MangAdventure.models module
----------------------------
-
-.. automodule:: MangAdventure.models
    :members:
    :undoc-members:
    :show-inheritance:
@@ -128,4 +128,3 @@ MangAdventure.wsgi module
    :members:
    :undoc-members:
    :show-inheritance:
-

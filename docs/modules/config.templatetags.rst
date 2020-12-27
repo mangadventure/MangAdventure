@@ -24,4 +24,3 @@ config.templatetags.flatpage\_tags module
    :members:
    :undoc-members:
    :show-inheritance:
-

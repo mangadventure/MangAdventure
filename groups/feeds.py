@@ -10,8 +10,8 @@ from reader.models import Chapter
 from .models import Group
 
 if TYPE_CHECKING:  # pragma: no cover
-    from datetime import datetime
-    from django.http import HttpRequest
+    from datetime import datetime  # isort:skip
+    from django.http import HttpRequest  # isort:skip
 
 
 class GroupRSS(Feed):

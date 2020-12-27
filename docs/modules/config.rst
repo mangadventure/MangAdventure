@@ -10,6 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    config.management
    config.templatetags
@@ -48,4 +49,3 @@ config.urls module
    :members:
    :undoc-members:
    :show-inheritance:
-

@@ -2,16 +2,13 @@
 
 from json import dumps
 from os.path import splitext
-from typing import TYPE_CHECKING, Dict, List
+from typing import Dict, List
 from urllib.parse import urljoin as join
 from urllib.request import urlopen
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.defaultfilters import register, slice_filter
 from django.utils.html import format_html, mark_safe
-
-if TYPE_CHECKING:  # pragma: no cover
-    from django.db.models.query import QuerySet
 
 
 @register.filter
@@ -62,19 +59,6 @@ def vslice(value: List, var: int) -> List:
 
 
 @register.filter
-def order_by(qs: 'QuerySet', order: str) -> 'QuerySet':
-    """
-    Order a queryset by a given column.
-
-    :param qs: The original queryset.
-    :param order: The column used to order the queryset.
-
-    :return: The ordered queryset.
-    """
-    return qs.order_by(order)
-
-
-@register.filter
 def get_type(link: str) -> str:
     """
     Get the type of an image given its URL.
@@ -114,4 +98,4 @@ def get_type(link: str) -> str:
         }.get(splitext(link.lower())[-1], 'image/jpeg')
 
 
-__all__ = ['urljoin', 'vslice', 'jsonld', 'order_by', 'get_type']
+__all__ = ['urljoin', 'vslice', 'jsonld', 'get_type']

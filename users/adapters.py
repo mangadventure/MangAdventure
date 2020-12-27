@@ -6,8 +6,8 @@ from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 if TYPE_CHECKING:  # pragma: no cover
-    from django.http import HttpRequest
-    from allauth.socialaccount.models import SocialAccount
+    from django.http import HttpRequest  # isort:skip
+    from allauth.socialaccount.models import SocialAccount  # isort:skip
 
 
 class AccountAdapter(DefaultAccountAdapter):

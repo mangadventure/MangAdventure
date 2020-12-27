@@ -1,3 +1,4 @@
+os: linux
 dist: bionic
 language: python
 env:
@@ -10,7 +11,7 @@ jobs:
     - python: 3.6
       env: DB=sqlite3
       before_install:
-        - pip install django-csp>=3.6
+        - pip install django-csp>=3.7
     - python: 3.7
       env: DB=mysql
       services: mysql
@@ -29,7 +30,7 @@ install: pip install -e .[dev]
 before_script:
   - pip install coveralls
 script:
-  - "flake8 && isort -c --diff && py.test && coveralls"
+  - "flake8 && isort -c --df . && py.test && coveralls"
 after_script:
   - >-
     if [[ -n $WEBHOOK_URL ]]; then

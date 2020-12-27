@@ -5,11 +5,8 @@ from django.contrib.flatpages.models import FlatPage
 
 from pytest import fixture, mark
 
-from config.templatetags.custom_tags import (
-    get_type, jsonld, order_by, urljoin, vslice
-)
+from config.templatetags.custom_tags import get_type, jsonld, urljoin, vslice
 from config.templatetags.flatpage_tags import breadcrumbs_ld
-from reader.models import Series
 
 
 def test_url_join():
@@ -55,16 +52,6 @@ def mock_request(monkeypatch):
     fake_request = MagicMock()
     fake_request().build_absolute_uri.return_value = 'https://example.com'
     monkeypatch.setattr('django.http.request.HttpRequest', fake_request)
-
-
-@mark.django_db
-def test_order_by():
-    Series.objects.create(title='d')
-    Series.objects.create(title='a')
-    qs = Series.objects.filter(title__in=('d', 'a'))
-    ordered = order_by(qs, 'title')
-    assert ordered[0].title == 'a'
-    assert ordered[1].title == 'd'
 
 
 def test_get_type(mock_urlopen):

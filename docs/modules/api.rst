@@ -10,6 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    api.v1
 
@@ -31,4 +32,3 @@ api.urls module
    :members:
    :undoc-members:
    :show-inheritance:
-

@@ -16,48 +16,44 @@
     <h1 class="text-shadow alter-bg">Series List</h1>
     <article id="list">
       {% for series in all_series %}
-        {% if series.chapters.all %}
-          <section class="series">
-            <h2 class="series-title">
-              <a href="{{ series.get_absolute_url }}" title="{{ series.title }}">
-                {{ series.title }}
-              </a>
-            </h2>
-            <div class="cover-container">
-              <img src="{{ series.cover.url }}" alt="{{ series }} Cover" class="cover">
-            </div>
-            <div class="series-info">
-              <strong>Latest Chapter{{ config.MAX_CHAPTERS|pluralize }}:</strong>
-              {% with chapters=series.chapters|order_by:'-published' %}
-                {% for chapter in chapters|vslice:config.MAX_CHAPTERS %}
-                  {% with vol=chapter.volume num=chapter.number %}
-                    <div class="series-chapter">
-                      <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
-                         {% if chapter.final %}class="end"{% endif %}>{{ chapter }}</a>
-                      <div class="chapter-metadata">
-                        <span class="divider"></span>
-                        {% with groups=chapter.groups.all %}
-                          <span class="chapter-groups" title="{{ groups|join:', ' }}">
-                            {% for group in groups %}
-                              <a href="{{ group.get_absolute_url }}" title="{{ group.name }}"
-                                 {% if not forloop.last %}class="comma"{% endif %}>{{ group.name }}</a>
-                            {% endfor %}
-                        {% endwith %}
-                        </span>
-                        <span class="divider"></span>
-                        {% with published=chapter.published %}
-                          <time class="chapter-date" datetime="{{ published|date:'c' }}"
-                                title="{{ published|naturaltime }}">{{ published|naturaltime }}</time>
-                        {% endwith %}
-                      </div>
-                    </div>
-                  {% endwith %}
-                {% endfor %}
+        <section class="series">
+          <h2 class="series-title">
+            <a href="{{ series.get_absolute_url }}" title="{{ series.title }}">
+              {{ series.title }}
+            </a>
+          </h2>
+          <div class="cover-container">
+            <img src="{{ series.cover.url }}" alt="{{ series }} Cover" class="cover">
+          </div>
+          <div class="series-info">
+            <strong>Latest Chapter{{ config.MAX_CHAPTERS|pluralize }}:</strong>
+            {% for chapter in series.chapter.all|vslice:config.MAX_CHAPTERS %}
+              {% with vol=chapter.volume num=chapter.number %}
+                <div class="series-chapter">
+                  <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"
+                     {% if chapter.final %}class="end"{% endif %}>{{ chapter }}</a>
+                  <div class="chapter-metadata">
+                    <span class="divider"></span>
+                    {% with groups=chapter.groups.all %}
+                      <span class="chapter-groups" title="{{ groups|join:', ' }}">
+                        {% for group in groups %}
+                          <a href="{{ group.get_absolute_url }}" title="{{ group.name }}"
+                             {% if not forloop.last %}class="comma"{% endif %}>{{ group.name }}</a>
+                        {% endfor %}
+                    {% endwith %}
+                    </span>
+                    <span class="divider"></span>
+                    {% with published=chapter.published %}
+                      <time class="chapter-date" datetime="{{ published|date:'c' }}"
+                            title="{{ published|naturaltime }}">{{ published|naturaltime }}</time>
+                    {% endwith %}
+                  </div>
+                </div>
               {% endwith %}
-            </div>
-          </section>
-          <span class="alter-bg separator"></span>
-        {% endif %}
+            {% endfor %}
+          </div>
+        </section>
+        <span class="alter-bg separator"></span>
       {% endfor %}
     </article>
   {% endcache %}

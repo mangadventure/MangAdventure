@@ -16,4 +16,3 @@ config.management.commands.fs2import module
    :members:
    :undoc-members:
    :show-inheritance:
-

@@ -32,4 +32,3 @@ api.v1.views module
    :members:
    :undoc-members:
    :show-inheritance:
-

@@ -64,7 +64,8 @@ class TestBookmarks(UsersTestBase):
         r = feed(self.request)
         assert r.status_code == 401
         assert 'token is required' in str(r.content)
-        assert r['WWW-Authenticate'] == 'Bearer realm="bookmarks feed"'
+        assert r['WWW-Authenticate'] == \
+            'Bearer realm="bookmarks feed", charset="utf-8"'
 
         self.request.META['HTTP_AUTHORIZATION'] = 'Invalid'
         r = feed(self.request)

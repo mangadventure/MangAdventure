@@ -1,10 +1,6 @@
-from os import getenv
-
 from django.core.cache import cache
 from django.http import FileResponse
 from django.urls import reverse
-
-from pytest import mark
 
 from MangAdventure.tests.utils import get_test_image, get_valid_zip_file
 
@@ -100,19 +96,25 @@ class TestChapterDownload(ReaderViewTestBase):
         url = reverse('reader:cbz', kwargs={
             'slug': 'series', 'vol': 0, 'num': 1
         })
+        self.client.force_login(self.user)
         r = self.client.get(url)
         assert r.status_code == 200
         assert isinstance(r, FileResponse)
         assert r.filename.endswith('c1.cbz')
 
-    @mark.xfail(
-        getenv('DB') == 'postgresql',
-        reason='PostgreSQL hates us'
-    )  # TODO: figure out how to fix this
     def test_get_not_found(self):
         self.series.chapters.all().delete()
         url = reverse('reader:cbz', kwargs={
             'slug': 'series', 'vol': 0, 'num': 1
         })
+        self.client.force_login(self.user)
         r = self.client.get(url)
         assert r.status_code == 404
+
+    def test_get_unauthorized(self):
+        url = reverse('reader:cbz', kwargs={
+            'slug': 'series', 'vol': 0, 'num': 1
+        })
+        self.client.logout()
+        r = self.client.get(url)
+        assert r.status_code == 401

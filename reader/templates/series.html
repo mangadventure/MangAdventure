@@ -11,9 +11,7 @@
         rel="alternate" type="application/atom+xml">
 {% endblock %}
 {% block keywords %}
-  {% with tags=series.categories.all|join:',' %}
-    <meta name="keywords" content="{{ config.KEYWORDS }},{{ tags }}">
-  {% endwith %}
+  <meta name="keywords" content="{{ tags }}">
 {% endblock %}
 {% block image %}
   <meta name="twitter:card" content="summary">

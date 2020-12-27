@@ -10,11 +10,13 @@ from django.utils.cache import patch_vary_headers
 from django.utils.feedgenerator import Atom1Feed
 from django.utils.http import http_date
 
+from MangAdventure.utils import HttpResponseUnauthorized
+
 from reader.models import Chapter
 
 if TYPE_CHECKING:  # pragma: no cover
-    from datetime import datetime
-    from django.http import HttpRequest
+    from datetime import datetime  # isort:skip
+    from django.http import HttpRequest  # isort:skip
 
 
 class BookmarksRSS(Feed):
@@ -40,12 +42,10 @@ class BookmarksRSS(Feed):
         if not token:
             header = request.META.get('HTTP_AUTHORIZATION')
             if not header:
-                res = HttpResponse(
+                return HttpResponseUnauthorized(
                     b'A token is required to access the feed.',
-                    status=401, content_type='text/plain'
+                    content_type='text/plain', realm='bookmarks feed'
                 )
-                res['WWW-Authenticate'] = 'Bearer realm="bookmarks feed"'
-                return res
             if header[:7] != 'Bearer ':
                 return HttpResponse(
                     b'Authorization header format is invalid.',

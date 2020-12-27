@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 from django.middleware.common import CommonMiddleware
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Callable
-    from django.http import HttpRequest, HttpResponse
+    from typing import Callable  # isort:skip
+    from django.http import HttpRequest, HttpResponse  # isort:skip
 
 
 class BaseMiddleware(CommonMiddleware):

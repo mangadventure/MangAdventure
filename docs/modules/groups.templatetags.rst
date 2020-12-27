@@ -16,4 +16,3 @@ groups.templatetags.group\_tags module
    :members:
    :undoc-members:
    :show-inheritance:
-

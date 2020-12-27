@@ -4,14 +4,14 @@
   <meta name="robots" content="nosnippet">
 {% endblock %}
 {% block keywords %}
-  {% with tags=curr_chapter.series.categories.all|join:', ' %}
-    <meta name="keywords" content="{{ config.KEYWORDS }}, {{ tags }}">
-  {% endwith %}
+  <meta name="keywords" content="{{ tags }}">
 {% endblock %}
 {% block image %}
   <meta name="twitter:card" content="summary">
-  {# TODO: is it possible to show multiple creators? #}
-  <meta name="twitter:creator" content="{{ chapter.twitter_creator }}">
+  {% if chapter.twitter_creator %}
+    {# TODO: is it possible to show multiple creators? #}
+    <meta name="twitter:creator" content="{{ chapter.twitter_creator }}">
+  {% endif %}
   {% with cover=PAGE_URL|urljoin:curr_chapter.series.cover.url %}
     <meta name="twitter:image" content="{{ cover }}">
     <meta property="og:image" content="{{ cover }}">
@@ -110,10 +110,10 @@
             <i class="mi mi-left"></i>
           </a>
           {% with curr=curr_page.number|stringformat:'02d' max=all_pages.count %}
-            <span class="curr-page">
+            <label class="curr-page">
               Page <input type="text" data-max="{{ max }}" value="{{ curr }}"
                           placeholder="{{ curr }}">/{{ max|stringformat:'02d' }}
-            </span>
+            </label>
             {% if next > max %}
               {% if next_chapter %}
                 <a href="{{ next_chapter.get_absolute_url }}" title="Next chapter" rel="next" class="control">

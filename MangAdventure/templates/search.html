@@ -79,7 +79,7 @@
               <th class="s-hidden">Last Update<i class="mi"></i></th>
             </tr>
           </thead>
-          {% for series in results|order_by:'title' %}
+          {% for series in results %}
             {% if series.chapter_count > 0 %}
               <tr class="result">
                 <td class="result-title">

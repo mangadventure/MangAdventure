@@ -34,7 +34,7 @@ def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
         if vol is None:
             return Series.objects.only('modified').filter(
                 chapters__published__lte=tz.now(), slug=slug
-            ).get().modified
+            ).distinct().get().modified
         return Chapter.objects.only('modified').filter(
             series__slug=slug, volume=vol,
             number=num, published__lte=tz.now()

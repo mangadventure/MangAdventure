@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.7.1
+^^^^^^
+
+* Fixed queries returning multiple results
+
 v0.7.0
 ^^^^^^
 

@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Dict, Iterable, Optional
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.utils import timezone as tz
 from django.utils.http import http_date
@@ -30,9 +31,14 @@ def _latest(request: 'HttpRequest', slug: Optional[str] = None,
             ) -> 'Optional[datetime]':
     try:
         if slug is None:
-            return Series.objects.only('modified').latest().modified
+            q = Q(chapters__published__lte=tz.now())
+            return Series.objects.only('modified').annotate(
+                chapter_count=Count('chapters', filter=q)
+            ).filter(q & Q(chapter_count__gt=0)).latest().modified
         if vol is None:
-            return Series.objects.only('modified').get(slug=slug).modified
+            return Series.objects.only('modified').filter(
+                chapters__published__lte=tz.now(), slug=slug
+            ).distinct().get().modified
         if num is None:
             return Chapter.objects.only('modified').filter(
                 series__slug=slug, volume=vol, published__lte=tz.now()

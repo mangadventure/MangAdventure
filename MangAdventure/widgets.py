@@ -33,7 +33,7 @@ class TinyMCE(Textarea):
     class Media:
         extend = False
         js = (
-            'https://cdn.tinymce.com/4/tinymce.min.js',
+            'https://cdn.jsdelivr.net/npm/tinymce@4.9.11/tinymce.min.js',
             'scripts/tinymce-init.js'
         )
 

@@ -55,9 +55,9 @@ You shouldn't use the development server during production.
 ## Credits
 
 * Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
-* Search results are sorted using [tristen/tablesort](https://github.com/tristen/tablesort)
-* Info pages & comments use the [TinyMCE editor](https://www.tiny.cloud/)
-* Browser logos from [alrra/browser-logos](https://github.com/alrra/browser-logos)
+* Search results are sorted using [tablesort](https://tristen.ca/tablesort/demo/)
+* Info pages & comments use the [TinyMCE editor](https://www.tiny.cloud/docs-4x/)
+* Browser logos are taken from [alrra/browser-logos](https://github.com/alrra/browser-logos)
 
 ## License
 

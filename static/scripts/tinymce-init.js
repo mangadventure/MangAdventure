@@ -19,7 +19,7 @@ window.addEventListener('DOMContentLoaded', () => {
               } else {
                 ico.className = ico.className
                   .replace('mce-ico', 'mi')
-                  .replace(/mce-i-(\w+)/, 'mi-$1');
+                  .replace('mce-i-', 'mi-');
               }
             });
         });

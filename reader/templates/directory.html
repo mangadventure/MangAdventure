@@ -27,7 +27,7 @@
           </div>
           <div class="series-info">
             <strong>Latest Chapter{{ config.MAX_CHAPTERS|pluralize }}:</strong>
-            {% for chapter in series.chapter.all|vslice:config.MAX_CHAPTERS %}
+            {% for chapter in series.chapters.all|vslice:config.MAX_CHAPTERS %}
               {% with vol=chapter.volume num=chapter.number %}
                 <div class="series-chapter">
                   <a href="{{ chapter.get_absolute_url }}" title="{{ chapter.title }}"

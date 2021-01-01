@@ -1,5 +1,6 @@
 """Database models for the groups app."""
 
+from enum import Enum, EnumMeta
 from pathlib import PurePath
 
 from django.db import models
@@ -15,6 +16,17 @@ from MangAdventure.validators import FileSizeValidator
 def _logo_uploader(obj: 'Group', name: str) -> str:
     name = f'logo.{name.split(".")[-1]}'
     return str(obj.get_directory() / name)
+
+
+class _ChoiceMeta(EnumMeta):
+    def __new__(cls, name, bases, attrs):
+        klass = super().__new__(cls, name, (Enum,) + bases, attrs)
+        klass.do_not_call_in_templates = True
+        klass.__str__ = lambda self: self.name
+        return klass
+
+    def __iter__(cls):
+        return ((e.name, e.value) for e in super().__iter__())
 
 
 class Group(models.Model):
@@ -131,16 +143,16 @@ class Member(models.Model):
 class Role(models.Model):
     """A model representing a role."""
 
-    class Choices(models.TextChoices):
+    class Choices(metaclass=_ChoiceMeta):
         """The possible role choices."""
-        LD = 'LD', 'Leader'
-        TL = 'TL', 'Translator'
-        PR = 'PR', 'Proofreader'
-        CL = 'CL', 'Cleaner'
-        RD = 'RD', 'Redrawer'
-        TS = 'TS', 'Typesetter'
-        RP = 'RP', 'Raw Provider'
-        QC = 'QC', 'Quality Checker'
+        LD = 'Leader'
+        TL = 'Translator'
+        PR = 'Proofreader'
+        CL = 'Cleaner'
+        RD = 'Redrawer'
+        TS = 'Typesetter'
+        RP = 'Raw Provider'
+        QC = 'Quality Checker'
 
     #: The member this role belongs to.
     member = models.ForeignKey(
@@ -151,7 +163,7 @@ class Role(models.Model):
         Group, on_delete=models.CASCADE, related_name='roles'
     )
     #: The value of the role.
-    role = models.CharField(blank=False, max_length=2, choices=Choices.choices)
+    role = models.CharField(blank=False, max_length=2, choices=Choices)
 
     class Meta:
         verbose_name = 'Role'

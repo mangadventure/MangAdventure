@@ -4,6 +4,7 @@ Changelog
 v0.7.1
 ^^^^^^
 
+* Fixed chapters not showing in library
 * Fixed queries returning multiple results
 
 v0.7.0

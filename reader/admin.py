@@ -5,8 +5,8 @@ from typing import Optional, Tuple, Type
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
-from django.db.models.query import Q, QuerySet
-from django.forms.models import BaseInlineFormSet, ModelForm
+from django.db.models import Q, QuerySet
+from django.forms import BaseInlineFormSet, ModelForm
 # XXX: Forward reference warning when under TYPE_CHECKING
 from django.http import HttpRequest
 from django.utils import timezone as tz

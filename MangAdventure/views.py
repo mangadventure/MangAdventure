@@ -54,8 +54,7 @@ def search(request: 'HttpRequest') -> HttpResponse:
     """
     results = None
     params = parse(request)
-    keys = {'q', 'author', 'status', 'categories'}
-    if request.GET.keys() & keys:
+    if request.GET.keys() & {'q', 'author', 'status', 'categories'}:
         results = query(params).order_by('title')
     uri = request.build_absolute_uri(request.path)
     crumbs = breadcrumbs([('Search', uri)])

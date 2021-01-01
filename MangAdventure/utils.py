@@ -1,30 +1,27 @@
 """Various utility functions."""
 
 from re import split
-from typing import TYPE_CHECKING, Iterable, List, Union
+from typing import Iterable, List, Union
 
+# XXX: not parsed properly when under TYPE_CHECKING
+from django.db.models.fields.files import FieldFile
 from django.http import HttpResponse
 from django.utils.html import format_html
-
-if TYPE_CHECKING:  # pragma: no cover
-    from django.db.models.fields.files import FieldFile
 
 
 class HttpResponseUnauthorized(HttpResponse):
     """
     A response class for HTTP :status:`401`.
 
+    :param content: The body of the response.
     :param realm: The realm of the :header:`WWW-Authenticate` header.
-    :type realm: str
-    :param type: The type of the :header:`WWW-Authenticate` header.
-    :type type: str
+    :param auth_type: The type of the :header:`WWW-Authenticate` header.
     """
-    def __init__(self, *args, **kwargs):
-        type_ = kwargs.pop('type', 'Bearer')
-        realm = kwargs.pop('realm', 'private')
-        super().__init__(*args, **kwargs)
+    def __init__(self, content: bytes = b'', realm: str = 'private',
+                 auth_type: str = 'Bearer', **kwargs):
+        super().__init__(content=content, **kwargs)
         self['WWW-Authenticate'] = \
-            f'{type_} realm="{realm}", charset="{self.charset}"'
+            f'{auth_type} realm="{realm}", charset="{self.charset}"'
         self.status_code = 401
 
 

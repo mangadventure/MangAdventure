@@ -2,17 +2,16 @@
 
 from io import BytesIO
 from os import remove
-from typing import TYPE_CHECKING
+from typing import Any
 from zipfile import BadZipfile, ZipFile
 
 from django.core.exceptions import ValidationError
-from django.core.validators import BaseValidator, RegexValidator
+# XXX: not parsed properly when under TYPE_CHECKING
+from django.core.files import File
+from django.core.validators import RegexValidator
 from django.utils.deconstruct import deconstructible
 
 from PIL import Image
-
-if TYPE_CHECKING:  # pragma: no cover
-    from django.core.files import File
 
 
 def _remove_file(file: 'File'):
@@ -23,18 +22,19 @@ def _remove_file(file: 'File'):
 
 
 @deconstructible
-class FileSizeValidator(BaseValidator):
+class FileSizeValidator:
     """
     Validates that a file's size is not greater than ``max_mb``.
 
     :param max_mb: The maximum size of the file in megabytes.
     """
+    #: The error message of the validator.
     message = 'File too large. Maximum file size allowed is %(max)d MBs.'
+    #: The error code of the validator.
     code = 'file_too_large'
 
     def __init__(self, max_mb: int = 10):
         self.max_mb = max_mb
-        super(FileSizeValidator, self).__init__(max_mb)
 
     def __call__(self, file: 'File'):
         """
@@ -50,6 +50,25 @@ class FileSizeValidator(BaseValidator):
                 self.message, code=self.code,
                 params={'max': self.max_mb}
             )
+
+    def __eq__(self, other: Any) -> bool:
+        """
+        Check if this object is equal to another.
+
+        :param other: Any other object.
+
+        :return: ``True`` if the objects are equal.
+        """
+        return isinstance(other, self.__class__) and \
+            self.max_mb == other.max_mb
+
+    def __hash__(self) -> int:
+        """
+        Return the hash of the object.
+
+        :return: An integer hash value.
+        """
+        return hash(self.code) | self.max_mb
 
 
 def zipfile_validator(file: 'File'):
@@ -117,7 +136,7 @@ def twitter_name_validator(name: str):
     Call :class:`~django.core.validators.RegexValidator`
     to validate a Twitter name.
 
-    :param file: The Twitter name to be validated.
+    :param name: The Twitter name to be validated.
 
     :raises ValidationError: If the name is invalid.
     """
@@ -133,7 +152,7 @@ def discord_name_validator(name: str):
     Call :class:`~django.core.validators.RegexValidator`
     to validate a Discord name.
 
-    :param file: The Discord name to be validated.
+    :param name: The Discord name to be validated.
 
     :raises ValidationError: If the name is invalid.
     """
@@ -150,7 +169,7 @@ def reddit_name_validator(name: str):
     Call :class:`~django.core.validators.RegexValidator`
     to validate a Reddit name.
 
-    :param file: The Reddit name to be validated.
+    :param name: The Reddit name to be validated.
 
     :raises ValidationError: If the name is invalid.
     """

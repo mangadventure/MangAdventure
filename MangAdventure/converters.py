@@ -2,7 +2,7 @@
 `Path converters`_ used in URL patterns.
 
 .. _`Path converters`:
-    https://docs.djangoproject.com/en/3.0/topics/http/urls/#path-converters
+    https://docs.djangoproject.com/en/3.1/topics/http/urls/#path-converters
 """
 
 

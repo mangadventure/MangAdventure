@@ -1,17 +1,18 @@
 # -- Setup Django --
 
 from os import environ as env
-from os.path import dirname
+from os.path import dirname, join
 from sys import path
 
 path.insert(0, dirname(dirname(__file__)))
+path.insert(1, join(dirname(__file__), '_ext'))
 env['DJANGO_SETTINGS_MODULE'] = 'MangAdventure.tests.settings'
 __import__('django').setup()
 
 
 # -- Project information --
 
-import MangAdventure as MA
+import MangAdventure as MA  # noqa: E402
 
 project = 'MangAdventure'
 author = MA.__author__
@@ -19,107 +20,11 @@ release = MA.__version__
 copyright = f'2018-2021, {project}, {MA.__license__} license'
 
 
-# -- Add setup function & patch documenters --
-
-from typing import get_type_hints, Any, List, Optional, Type, Tuple
-
-from django.db.models.base import Model
-from django.db.models.fields import AutoField
-from django.db.models.fields.related_descriptors import (
-    ForeignKeyDeferredAttribute,
-    ReverseManyToOneDescriptor,
-    ReverseOneToOneDescriptor,
-)
-from django.db.models.manager import ManagerDescriptor
-from django.db.models.query_utils import DeferredAttribute
-
-from sphinx.application import Sphinx
-from sphinx.ext.autodoc import (
-    ClassDocumenter, DataDocumenter, Options, PropertyDocumenter
-)
-
-
-def skip_django_junk(app: Sphinx, what: str, name: str,
-                     obj: Any, skip: bool, options: Options) -> bool:
-    junk = (
-        ForeignKeyDeferredAttribute,
-        ReverseManyToOneDescriptor,
-        ReverseOneToOneDescriptor,
-    )
-    if isinstance(obj, junk):
-        return True
-    if isinstance(obj, DeferredAttribute):
-        return isinstance(obj.field, AutoField) or skip
-    if isinstance(obj, property) and name == 'media':
-        return True
-    return skip
-
-def annotate_attrs(app: Sphinx, what: str, name: str, obj:
-                   Any, options: Options, lines: List[str]):
-    if obj is None or not lines:
-        return
-    if what == 'attribute':
-        cls = getattr(obj, 'field', obj).__class__
-    elif what == 'property':
-        func = getattr(obj, 'fget', obj.func)
-        cls = get_type_hints(func)['return']
-    else:
-        return
-    mod = cls.__module__
-    if mod == 'builtins':
-        qname = cls.__name__
-    elif mod.startswith('django.db.models'):
-        qname = f'django.db.models.{cls.__name__}'
-    else:
-        qname = f'{mod}.{cls.__name__}'
-    if qname in ('dict', 'list', 'tuple'):
-        qname = f'typing.{qname.capitalize()}'
-    lines[0] = f':class:`~{qname}` – {lines[0]}'
-
-def annotate_params(app: Sphinx, what: str, name: str, obj: Any, options:
-                    Options, signature: Optional[str], return_annotation:
-                    Optional[str]) -> Tuple[Optional[str], Optional[str]]:
-    if what == 'class' and issubclass(obj, Model):
-        return '(*args, **kwargs)', None
-    return signature, return_annotation
-
-def setup(app: Sphinx):
-    app.connect('autodoc-skip-member', skip_django_junk)
-    app.connect('autodoc-process-docstring', annotate_attrs)
-    app.connect('autodoc-process-signature', annotate_params)
-    app.add_css_file('css/style.css')
-
-PropertyDocumenter._original_can_document_member = \
-    PropertyDocumenter.can_document_member
-
-def _patched_can_document_member(cls: Type[PropertyDocumenter],
-                                 member: Any, membername: str,
-                                 isattr: bool, parent: Any) -> bool:
-    return member.__class__.__name__ == 'cached_property' or \
-        cls._original_can_document_member(member, membername, isattr, parent)
-
-PropertyDocumenter.can_document_member = \
-    classmethod(_patched_can_document_member)
-
-DataDocumenter._original_add_directive_header = \
-    DataDocumenter.add_directive_header
-
-def _patched_add_directive_header(self: DataDocumenter, sig: str):
-    # Don't document values of settings
-    if self.modname == 'MangAdventure.settings':
-        DataDocumenter.__base__.add_directive_header(self, sig)
-    else:
-        self._original_add_directive_header(sig)
-
-DataDocumenter.add_directive_header = _patched_add_directive_header
-
-ManagerDescriptor.__get__ = lambda self, *args, **kwargs: self.manager
-
-
 # -- General configuration --
 
 extensions = [
     'sphinx.ext.autodoc',
+    'mangadventure_patches',
     'sphinx_autodoc_typehints',
     'sphinx.ext.intersphinx',
     'sphinx.ext.extlinks',
@@ -130,7 +35,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 language = 'en'
 pygments_style = 'manni'
-needs_sphinx = '3.2'
+needs_sphinx = '3.3'
 
 
 # -- InterSphinx & extlinks configuration --
@@ -161,7 +66,9 @@ autodoc_default_options = {
     'special-members': True,
     'undoc-members': True,
     'exclude-members': ','.join((
+        '__new__',
         '__dict__',
+        '__repr__',
         '__init__',
         '__slots__',
         '__module__',
@@ -176,6 +83,8 @@ always_document_param_types = True
 set_type_checking_flag = True
 typehints_fully_qualified = False
 typehints_document_rtype = True
+# disable sphinx.ext.autodoc.typehints
+autodoc_typehints = 'none'
 
 
 # -- Options for HTML output --

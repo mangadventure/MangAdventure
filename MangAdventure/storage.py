@@ -3,7 +3,7 @@ Custom storages.
 
 .. seealso::
 
-    https://docs.djangoproject.com/en/3.0/ref/files/storage/
+    https://docs.djangoproject.com/en/3.1/ref/files/storage/
 """
 
 from typing import Optional, Tuple

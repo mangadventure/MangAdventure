@@ -66,12 +66,12 @@ def qsfilter(params: _SearchParams) -> Q:
     """
     Create a `queryset filter`_ from the given search parameters.
 
-    :param params: A :obj:`~collection.namedtuple` of parameters.
+    :param params: A :obj:`~collections.namedtuple` of parameters.
 
     :return: The created queryset filter.
 
     .. _`queryset filter`:
-        https://docs.djangoproject.com/en/3.0/
+        https://docs.djangoproject.com/en/3.1/
         topics/db/queries/#complex-lookups-with-q
     """
     filters = Q()
@@ -101,9 +101,10 @@ def qsfilter(params: _SearchParams) -> Q:
 
 def query(params: _SearchParams) -> 'QuerySet':
     """
-    Get a queryset of :class:`Series` from the given search parameters.
+    Get a queryset of :class:`~reader.models.Series`
+    from the given search parameters.
 
-    :param params: A :obj:`~collection.namedtuple` of parameters.
+    :param params: A :obj:`~collections.namedtuple` of parameters.
 
     :return: A queryset of series matching the given parameters.
     """
@@ -118,7 +119,7 @@ def query(params: _SearchParams) -> 'QuerySet':
 
 def get_response(request: 'HttpRequest') -> 'QuerySet':
     """
-    Get a queryset of :class:`Series` from the given request.
+    Get a queryset of :class:`~reader.models.Series` from the given request.
 
     :param request: The original request.
 

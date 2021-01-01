@@ -10,7 +10,7 @@ from .custom_tags import jsonld
 
 if TYPE_CHECKING:  # pragma: no cover
     from django.contrib.flatpages.models import FlatPage
-    from django.http.request import HttpRequest
+    from django.http import HttpRequest
 
 
 @register.filter

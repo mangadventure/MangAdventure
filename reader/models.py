@@ -452,7 +452,7 @@ class Chapter(models.Model):
             .format(self.__class__, other.__class__)
         )
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any) -> bool:
         """
         Check whether this object is less than another.
 

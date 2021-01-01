@@ -57,6 +57,7 @@ v0.7.x
 |    |u| API keys.
 |    |u| Rate limit.
 |    |u| POST,PUT,PATCH,DELETE privileges for staff.
+| |u| Admin panel access control.
 
 v0.8.x
 ^^^^^^

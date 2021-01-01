@@ -9,7 +9,7 @@ from .models import UserProfile
 
 
 class UserProfileForm(forms.ModelForm):
-    """Form used for editing a :class:``UserProfile`` model."""
+    """Form used for editing a :class:`~users.models.UserProfile` model."""
     #: The user's e-mail address.
     email = forms.EmailField(
         max_length=150, min_length=6, label='E-mail',

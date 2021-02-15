@@ -93,7 +93,7 @@ class TestPersonAdmin(ReaderAdminTestBase):
         self.artist.aliases.create(name='artist2')
 
     @mark.xfail(
-        getenv('DB') == 'postgresql',
+        getenv('DB_TYPE') == 'postgresql',
         reason='PostgreSQL still hates us'
     )  # TODO: appease PostgreSQL
     def test_aliases(self):

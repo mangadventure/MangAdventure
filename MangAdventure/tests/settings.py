@@ -82,15 +82,21 @@ DATABASES = {'default': {
     },
     'mysql': {
         'ENGINE': 'django.db.backends.mysql',
+        'PASSWORD': env.get('DB_PASSWORD'),
         'NAME': 'mangadv',
-        'USER': 'root'
+        'USER': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': 3306
     },
     'postgresql': {
         'ENGINE': 'django.db.backends.postgresql',
+        'PASSWORD': env.get('DB_PASSWORD'),
         'NAME': 'mangadv',
-        'USER': 'postgres'
+        'USER': 'postgres',
+        'HOST': '127.0.0.1',
+        'PORT': 5432
     }
-}.get(env.get('DB', 'sqlite3'))}
+}.get(env.get('DB_TYPE', 'sqlite3'))}
 
 STATIC_URL = '/static/'
 

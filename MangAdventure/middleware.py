@@ -41,7 +41,7 @@ class PreloadMiddleware:
         :return: The response to the request.
         """
         response = self.get_response(request)
-        if 'text/html' not in response['Content-Type']:
+        if 'text/html' not in response.get('Content-Type', ''):
             return response
 
         preload = []

@@ -1,7 +1,7 @@
 # MangAdventure
 
 [![Release](https://img.shields.io/github/release/mangadventure/MangAdventure.svg?include_prereleases&label=Release&logo=github)](https://github.com/mangadventure/MangAdventure/releases)
-[![Tests](https://img.shields.io/travis/mangadventure/MangAdventure?label=Tests&logo=travis)](https://travis-ci.com/mangadventure/MangAdventure)
+[![Tests](https://github.com/mangadventure/MangAdventure/workflows/Tests/badge.svg)](https://github.com/mangadventure/MangAdventure/actions?query=workflow%3ATests)
 [![Coverage](https://img.shields.io/coveralls/github/mangadventure/MangAdventure?label=Coverage&logo=coveralls)](https://coveralls.io/github/mangadventure/MangAdventure)
 [![Discord](https://img.shields.io/discord/678589874475106312?color=7289DA&label=Discord&logo=discord)](https://discord.gg/GsJyhSz)
 

@@ -126,7 +126,7 @@ v0.5.0
 
 * Added support for users (registration, login, OAuth, profile, settings)
 * Switched to `custom icon font <https://github.com/mangadventure/font>`_
-  made with `fontello <http://fontello.com/>`_
+  made with `fontello <https://fontello.com/>`_
   & replaced ``group.png`` with an SVG image
 * Improved reader page design
 * Fixed thumbnail downsampling for grayscale images

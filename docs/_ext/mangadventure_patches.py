@@ -33,7 +33,10 @@ def _get_module(cls: Optional[Type]) -> str:
         'django.core.management',
     }
     excluded_names = {
-        'QuerySet', 'FieldFile', 'FileSystemStorage'
+        'QuerySet',
+        'FieldFile',
+        'FileSystemStorage',
+        'BaseInlineFormSet',
     }
     for ref in django_references:
         if cls.__name__ in excluded_names:

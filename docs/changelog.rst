@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+v0.7.2
+^^^^^^
+
+* Added managers to groups & series
+* Added ``logs`` command to view admin logs
+
 v0.7.1
 ^^^^^^
 

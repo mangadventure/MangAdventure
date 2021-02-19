@@ -35,7 +35,7 @@ jobs:
         if: success()
         with:
           parallel: true
-          flag-name: sqlite
+          flag-name: SQLite
       - name: "Send status to Discord"
         uses: MangAdventure/discord-webhook@v0.1
         if: always() && github.event_name == 'push'
@@ -86,7 +86,7 @@ jobs:
         if: success()
         with:
           parallel: true
-          flag-name: mysql
+          flag-name: MySQL
       - name: "Send status to Discord"
         uses: MangAdventure/discord-webhook@v0.1
         if: always() && github.event_name == 'push'
@@ -138,7 +138,7 @@ jobs:
         if: success()
         with:
           parallel: true
-          flag-name: postgresql
+          flag-name: PostgreSQL
       - name: "Send status to Discord"
         uses: MangAdventure/discord-webhook@v0.1
         if: always() && github.event_name == 'push'

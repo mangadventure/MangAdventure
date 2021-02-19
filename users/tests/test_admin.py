@@ -1,10 +1,8 @@
 from django.contrib.admin.sites import AdminSite
-from django.contrib.auth.admin import User
-from django.forms.widgets import CheckboxSelectMultiple
 from django.http import HttpRequest
 
 from users.admin import (
-    OAuthApp, OAuthAppAdmin, OAuthAppForm, UserAdmin, UserTypeFilter
+    OAuthApp, OAuthAppAdmin, User, UserAdmin, UserForm, UserTypeFilter
 )
 
 from . import UsersTestBase
@@ -27,6 +25,7 @@ class TestUserTypeFilter(UsersTestBase):
         assert lookups == [
             ('superuser', 'Superuser'),
             ('staff', 'Staff'),
+            ('scanlator', 'Scanlator'),
             ('regular', 'Regular')
         ]
 
@@ -67,11 +66,12 @@ class TestOAuthApp(UsersTestBase):
         assert str(app) == 'whatever (reddit)'
 
 
-class TestOAuthAppForm(UsersTestBase):
-    def test_init(self):
-        form = OAuthAppForm()
-        sites_widget = form.fields['sites'].widget.widget
-        assert isinstance(sites_widget, CheckboxSelectMultiple)
+class TestUserForm(UsersTestBase):
+    def test_is_scanlator(self):
+        form = UserForm()
+        assert not form.fields['is_scanlator'].initial
+        form = UserForm(instance=User.objects.get(pk=2))
+        assert form.fields['is_scanlator'].initial
 
 
 class TestOAuthAppAdmin(UsersTestBase):

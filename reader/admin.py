@@ -6,8 +6,10 @@ from typing import Optional, Tuple, Type
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db.models import Q, QuerySet
-from django.forms import BaseInlineFormSet, ModelForm
-# XXX: Forward reference warning when under TYPE_CHECKING
+# XXX: cannot be resolved under TYPE_CHECKING
+from django.forms.models import BaseInlineFormSet, ModelForm
+from django.forms.widgets import HiddenInput
+# XXX: cannot be resolved under TYPE_CHECKING
 from django.http import HttpRequest
 from django.utils import timezone as tz
 from django.utils.html import mark_safe
@@ -106,6 +108,7 @@ class ChapterAdmin(admin.ModelAdmin):
             'status', 'final', ('Final', 'Not final')
         ),
         ('published', DateFilter),
+        ('series__manager', filters.related_filter('manager')),
     )
     actions = ('toggle_final',)
     empty_value_display = 'N/A'
@@ -140,24 +143,48 @@ class ChapterAdmin(admin.ModelAdmin):
 
     toggle_final.short_description = 'Toggle status of selected chapters'
 
+    def get_form(self, request: 'HttpRequest',
+                 obj: Optional[Chapter], **kwargs
+                 ) -> ModelForm:  # pragma: no cover
+        form = super().get_form(request, obj, **kwargs)
+        if 'series' in form.base_fields:
+            form.base_fields['series'].queryset = \
+                Series.objects.filter(manager_id=request.user.id)
+        return form
 
-class SeriesForm(ModelForm):
-    """Admin form for :class:`~reader.models.Series`."""
-    def __init__(self, *args, **kwargs):  # pragma: no cover
-        super().__init__(*args, **kwargs)
-        self.fields['format'].help_text = mark_safe('<br>'.join((
-            'The format used to render the chapter names.'
-            ' The following variables are available:',
-            '<b>{title}</b>: The title of the chapter.',
-            '<b>{volume}</b>: The volume of the chapter.',
-            '<b>{number}</b>: The number of the chapter.',
-            '<b>{date}</b>: The chapter\'s upload date (YYYY-MM-DD).',
-            '<b>{series}</b>: The title of the series.'
-        )))
+    def has_change_permission(self, request: 'HttpRequest', obj:
+                              Optional[Chapter] = None) -> bool:
+        """
+        Return ``True`` if editing the object is permitted.
 
-    class Meta:
-        model = Series
-        fields = '__all__'
+        | Superusers can edit any chapter.
+        | Scanlators can only edit chapters of series they manage.
+
+        :param request: The original request.
+        :param obj: A ``Chapter`` model instance.
+
+        :return: ``True`` if the user is allowed to edit the chapter.
+        """
+        if request.user.is_superuser or obj is None:
+            return True
+        return obj.series.manager_id == request.user.id
+
+    def has_delete_permission(self, request: 'HttpRequest', obj:
+                              Optional[Chapter] = None) -> bool:
+        """
+        Return ``True`` if deleting the object is permitted.
+
+        | Superusers delete edit any chapter.
+        | Scanlators can only delete chapters of series they manage.
+
+        :param request: The original request.
+        :param obj: A ``Chapter`` model instance.
+
+        :return: ``True`` if the user is allowed to delete the chapter.
+        """
+        if request.user.is_superuser or obj is None:
+            return True
+        return obj.series.manager_id == request.user.id
 
 
 # TODO: find a cleaner way to adapt the help_text
@@ -186,9 +213,11 @@ def alias_inline(model: str) -> Type[GenericStackedInline]:
 
 class SeriesAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Series`."""
-    form = SeriesForm
     inlines = (alias_inline('series'),)
-    list_display = ('cover_image', 'title', 'created', 'modified', 'completed')
+    list_display = (
+        'cover_image', 'title', 'manager',
+        'created', 'modified', 'completed'
+    )
     list_display_links = ('title',)
     date_hierarchy = 'created'
     ordering = ('-modified',)
@@ -200,10 +229,30 @@ class SeriesAdmin(admin.ModelAdmin):
         ('categories', filters.related_filter('category')),
         filters.boolean_filter(
             'status', 'completed', ('Completed', 'Ongoing')
-        )
+        ),
+        ('manager', filters.related_filter('manager')),
     )
     actions = ('toggle_completed',)
     empty_value_display = 'N/A'
+
+    def get_form(self, request: 'HttpRequest', obj: Optional[Series]
+                 = None, change: bool = False, **kwargs) -> ModelForm:
+        form = super().get_form(request, obj, change, **kwargs)
+        if 'format' in form.base_fields:
+            form.base_fields['format'].help_text = mark_safe('<br>'.join((
+                'The format used to render the chapter names.'
+                ' The following variables are available:',
+                '<b>{title}</b>: The title of the chapter.',
+                '<b>{volume}</b>: The volume of the chapter.',
+                '<b>{number}</b>: The number of the chapter.',
+                '<b>{date}</b>: The chapter\'s upload date (YYYY-MM-DD).',
+                '<b>{series}</b>: The title of the series.'
+            )))
+        if 'manager' in form.base_fields:
+            form.base_fields['manager'].initial = request.user.id
+            if not request.user.is_superuser:  # pragma: no cover
+                form.base_fields['manager'].widget = HiddenInput()
+        return form
 
     def cover_image(self, obj: Series) -> str:
         """
@@ -227,6 +276,40 @@ class SeriesAdmin(admin.ModelAdmin):
         queryset.update(completed=Q(completed=False))
 
     toggle_completed.short_description = 'Toggle status of selected series'
+
+    def has_change_permission(self, request: 'HttpRequest', obj:
+                              Optional[Series] = None) -> bool:
+        """
+        Return ``True`` if editing the object is permitted.
+
+        | Superusers can edit any series.
+        | Scanlators can only edit series they manage.
+
+        :param request: The original request.
+        :param obj: A ``Series`` model instance.
+
+        :return: ``True`` if the user is allowed to edit the series.
+        """
+        if request.user.is_superuser or obj is None:
+            return True
+        return obj.manager_id == request.user.id
+
+    def has_delete_permission(self, request: 'HttpRequest', obj:
+                              Optional[Series] = None) -> bool:
+        """
+        Return ``True`` if deleting the object is permitted.
+
+        | Superusers can delete any series.
+        | Scanlators can only delete series they manage.
+
+        :param request: The original request.
+        :param obj: A ``Series`` model instance.
+
+        :return: ``True`` if the user is allowed to delete the series.
+        """
+        if request.user.is_superuser or obj is None:
+            return True
+        return obj.manager_id == request.user.id
 
 
 class AuthorAdmin(admin.ModelAdmin):

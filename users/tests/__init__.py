@@ -1,10 +1,9 @@
-from django.contrib.auth.models import User
-
 from pytest import mark
 
 from MangAdventure.tests.base import MangadvTestBase
 
 from reader.models import Series
+from users.admin import User
 
 
 @mark.usefixtures('django_db_setup')

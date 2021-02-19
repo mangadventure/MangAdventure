@@ -6,10 +6,12 @@ from django.contrib import admin
 from django.contrib.auth import models
 from django.db.models.functions import Concat as C
 from django.db.models.query import QuerySet, Value as V
+from django.forms.fields import BooleanField
 from django.forms.models import ModelForm
 from django.forms.widgets import CheckboxSelectMultiple
 # XXX: Forward reference warning when under TYPE_CHECKING
 from django.http import HttpRequest
+from django.utils.functional import cached_property
 from django.utils.html import format_html
 
 from allauth.account.models import EmailAddress
@@ -49,12 +51,14 @@ class UserTypeFilter(admin.SimpleListFilter):
                     [
                         ('superuser', 'Superuser'),
                         ('staff', 'Staff'),
+                        ('scanlator', 'Scanlator'),
                         ('regular', 'Regular')
                     ]
         """
         return [
             ('superuser', 'Superuser'),
             ('staff', 'Staff'),
+            ('scanlator', 'Scanlator'),
             ('regular', 'Regular')
         ]
 
@@ -72,12 +76,18 @@ class UserTypeFilter(admin.SimpleListFilter):
         return {
             'superuser': queryset.filter(is_superuser=True),
             'staff': queryset.filter(is_staff=True),
+            'scanlator': queryset.filter(groups__name='Scanlator'),
             'regular': queryset.exclude(is_staff=True)
         }.get(self.value(), queryset)
 
 
 class User(models.User):
     """:class:`django.contrib.auth.models.User` proxy model."""
+    @cached_property
+    def is_scanlator(self) -> bool:
+        """Get the scanlator status of the user."""
+        return self.groups.filter(name='Scanlator').exists()
+
     class Meta:
         proxy = True
         auto_created = True
@@ -85,8 +95,47 @@ class User(models.User):
         verbose_name = 'user'
 
 
+class UserForm(ModelForm):
+    """Admin form for :class:`User`."""
+    #: Scanlator status.
+    is_scanlator = BooleanField(
+        label='Scanlator status',
+        required=False, help_text=(
+            'Designates whether the user has '
+            '"groups" and "reader" permissions.'
+        )
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['is_scanlator'].initial = \
+            'instance' in kwargs and self.instance.is_scanlator
+
+    def save(self, commit: bool = True) -> User:   # pragma: no cover
+        is_scanlator = self.cleaned_data.pop('is_scanlator', False)
+        instance = super().save(commit=False)
+        if is_scanlator and not instance.is_scanlator:
+            instance.groups.add(
+                models.Group.objects.get(name='Scanlator')
+            )
+            if commit:
+                instance.save()
+        elif not is_scanlator and instance.is_scanlator:
+            instance.groups.remove(
+                models.Group.objects.get(name='Scanlator')
+            )
+            if commit:
+                instance.save()
+        return instance
+
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
 class UserAdmin(admin.ModelAdmin):
     """Admin model for :class:`User`."""
+    form = UserForm
     exclude = ('password', 'groups')
     list_display = (
         'username', '_email', 'full_name',
@@ -151,22 +200,15 @@ class OAuthApp(SocialApp):
         return f'{self.name} ({self.provider})'
 
 
-class OAuthAppForm(ModelForm):
-    """Admin form for :class:`OAuthApp`."""
-    def __init__(self, *args, **kwargs):
-        super(OAuthAppForm, self).__init__(*args, **kwargs)
-        self.fields['sites'].widget.widget = CheckboxSelectMultiple()
-
-    class Meta:
-        model = OAuthApp
-        fields = '__all__'
-
-
 class OAuthAppAdmin(SocialAppAdmin):
     """Admin model for :class:`OAuthApp`."""
-    form = OAuthAppForm
     list_display = ('name', '_provider', 'client_id')
     radio_fields = {'provider': admin.HORIZONTAL}
+
+    def get_form(self, *args, **kwargs) -> ModelForm:  # pragma: no cover
+        form = super().get_form(*args, **kwargs)
+        form.base_fields['sites'].widget.widget = CheckboxSelectMultiple()
+        return form
 
     def _provider(self, obj: OAuthApp) -> str:
         if not obj.provider:
@@ -202,6 +244,6 @@ admin.site.register(OAuthApp, OAuthAppAdmin)
 # admin.site.register(UserComment, UserCommentAdmin)
 
 __all__ = [
-    'UserTypeFilter', 'User', 'UserAdmin',
-    'OAuthApp', 'OAuthAppForm', 'OAuthAppAdmin'
+    'UserTypeFilter', 'User', 'UserForm',
+    'UserAdmin', 'OAuthApp', 'OAuthAppAdmin'
 ]

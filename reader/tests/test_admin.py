@@ -59,6 +59,18 @@ class TestChapterAdmin(ReaderAdminTestBase):
         assert inline[0].preview(page).startswith('<img src="')
         # TODO: validate formset
 
+    def test_permissions(self):
+        assert self.admin.has_change_permission(self.request)
+        assert self.admin.has_delete_permission(self.request)
+
+        self.request.user = User.objects.get(pk=2)
+        assert not self.admin.has_change_permission(self.request, self.chapter)
+        assert not self.admin.has_delete_permission(self.request, self.chapter)
+
+        self.chapter.series.manager = self.request.user
+        assert self.admin.has_change_permission(self.request, self.chapter)
+        assert self.admin.has_delete_permission(self.request, self.chapter)
+
 
 class TestSeriesAdmin(ReaderAdminTestBase):
     def setup_method(self):
@@ -78,6 +90,23 @@ class TestSeriesAdmin(ReaderAdminTestBase):
         Series.objects.create(title='series2')
         self.admin.toggle_completed(self.request, Series.objects.all())
         assert not Series.objects.filter(completed=False)
+
+    def test_form(self):
+        form = self.admin.get_form(self.request)
+        assert '<b>{title}</b>' in form.base_fields['format'].help_text
+        assert form.base_fields['manager'].initial == self.request.user.id
+
+    def test_permissions(self):
+        assert self.admin.has_change_permission(self.request)
+        assert self.admin.has_delete_permission(self.request)
+
+        self.request.user = User.objects.get(pk=2)
+        assert not self.admin.has_change_permission(self.request, self.series)
+        assert not self.admin.has_delete_permission(self.request, self.series)
+
+        self.series.manager = self.request.user
+        assert self.admin.has_change_permission(self.request, self.series)
+        assert self.admin.has_delete_permission(self.request, self.series)
 
 
 class TestPersonAdmin(ReaderAdminTestBase):

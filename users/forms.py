@@ -79,13 +79,13 @@ class UserProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if "instance" in kwargs:
-            self.fields["email"].initial = self.instance.user.email
-            self.fields["username"].initial = self.instance.user.username
-            self.fields["first_name"].initial = self.instance.user.first_name
-            self.fields["last_name"].initial = self.instance.user.last_name
-            self.fields["avatar"].initial = self.instance.avatar
-            self.fields["bio"].initial = self.instance.bio
+        if 'instance' in kwargs:
+            self.fields['email'].initial = self.instance.user.email
+            self.fields['username'].initial = self.instance.user.username
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+            self.fields['avatar'].initial = self.instance.avatar
+            self.fields['bio'].initial = self.instance.bio
 
     def clean_username(self) -> str:
         """

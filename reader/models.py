@@ -9,6 +9,7 @@ from typing import Any, List, Tuple
 from zipfile import ZipFile
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import (
     GenericForeignKey, GenericRelation
 )
@@ -188,6 +189,14 @@ class Series(models.Model):
     #: The aliases of the series.
     aliases = GenericRelation(
         to=Alias, blank=True, related_query_name='alias'
+    )
+    #: The person who manages this series.
+    manager = models.ForeignKey(
+        User, editable=True, blank=False, null=True,
+        help_text='The person who manages this series.',
+        on_delete=models.SET_NULL, limit_choices_to=(
+            models.Q(is_superuser=True) | models.Q(groups__name='Scanlator')
+        )
     )
 
     def get_absolute_url(self) -> str:

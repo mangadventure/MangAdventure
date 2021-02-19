@@ -1,5 +1,12 @@
 [
   {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "Scanlator"
+    }
+  },
+  {
     "model": "auth.user",
     "pk": 1,
     "fields": {
@@ -28,10 +35,10 @@
       "first_name": "",
       "last_name": "",
       "email": "",
-      "is_staff": false,
+      "is_staff": true,
       "is_active": true,
       "date_joined": "2019-12-31T21:16:47.155Z",
-      "groups": [],
+      "groups": [1],
       "user_permissions": []
     }
   },

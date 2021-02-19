@@ -1,4 +1,5 @@
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth.models import User
 from django.http import HttpRequest
 
 from MangAdventure.tests.utils import get_test_image
@@ -11,8 +12,12 @@ from . import GroupsTestBase
 
 class GroupsAdminTestBase(GroupsTestBase):
     def setup_method(self):
+        super().setup_method()
         self.site = AdminSite()
         self.request = HttpRequest()
+        self.user = User.objects.get(pk=1)
+        self.client.force_login(self.user)
+        self.request.user = self.user
 
 
 class TestMemberAdmin(GroupsAdminTestBase):
@@ -64,3 +69,19 @@ class TestGroupAdmin(GroupsAdminTestBase):
         self.group.save()
         assert self.admin._website(self.group) \
             .startswith(f'<a href="{self.group.website}"')
+
+    def test_form(self):
+        form = self.admin.get_form(self.request)
+        assert form.base_fields['manager'].initial == self.request.user.id
+
+    def test_permissions(self):
+        assert self.admin.has_change_permission(self.request)
+        assert self.admin.has_delete_permission(self.request)
+
+        self.request.user = User.objects.get(pk=2)
+        assert not self.admin.has_change_permission(self.request, self.group)
+        assert not self.admin.has_delete_permission(self.request, self.group)
+
+        self.group.manager = self.request.user
+        assert self.admin.has_change_permission(self.request, self.group)
+        assert self.admin.has_delete_permission(self.request, self.group)

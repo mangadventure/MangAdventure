@@ -3,6 +3,7 @@
 from enum import Enum, EnumMeta
 from pathlib import PurePath
 
+from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
 
@@ -66,6 +67,14 @@ class Group(models.Model):
         blank=True, storage=CDNStorage((150, 150)),
         upload_to=_logo_uploader, validators=(FileSizeValidator(2),),
         help_text="Upload the group's logo. Its size must not exceed 2 MBs.",
+    )
+    #: The person who manages this group.
+    manager = models.ForeignKey(
+        User, editable=True, blank=False, null=True,
+        help_text='The person who manages this group.',
+        on_delete=models.SET_NULL, limit_choices_to=(
+            models.Q(is_superuser=True) | models.Q(groups__name='Scanlator')
+        )
     )
 
     def get_absolute_url(self) -> str:
@@ -166,7 +175,7 @@ class Role(models.Model):
     role = models.CharField(blank=False, max_length=2, choices=Choices)
 
     class Meta:
-        verbose_name = 'Role'
+        verbose_name = 'role'
         unique_together = ('member', 'role', 'group')
 
     def __str__(self) -> str:

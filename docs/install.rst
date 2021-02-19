@@ -35,7 +35,7 @@ Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.7.1#egg=mangadventure"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.7.2#egg=mangadventure"
 
 MangAdventure also provides the following extras:
 

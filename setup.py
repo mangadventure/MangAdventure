@@ -7,22 +7,21 @@ from setuptools.command.develop import develop
 
 import MangAdventure
 
+cwd = Path(__file__).parent
 
-def read(fname):
-    with open(Path(__file__).parent / fname) as f:
+
+def read(fname: str):
+    with open(cwd / fname) as f:
         return f.read()
 
 
 class Develop(develop):
-    def _post_install(self):
+    def run(self):
+        super().run()
         with open(self.egg_link, 'r') as lnk:
             path = Path(lnk.readline()[:-1], 'static', 'extra')
         path.mkdir(exist_ok=True)
-        (path / 'style.scss').open('a').close()
-
-    def run(self):
-        super().run()
-        self._post_install()
+        path.joinpath('style.scss').touch(0o644)
 
 
 setup(

@@ -51,7 +51,7 @@ class FileSizeValidator:
                 params={'max': self.max_mb}
             )
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: Any) -> bool:  # pragma: no cover
         """
         Check if this object is equal to another.
 
@@ -59,10 +59,12 @@ class FileSizeValidator:
 
         :return: ``True`` if the objects are equal.
         """
-        return isinstance(other, self.__class__) and \
+        return (
+            isinstance(other, FileSizeValidator) and
             self.max_mb == other.max_mb
+        )
 
-    def __hash__(self) -> int:
+    def __hash__(self) -> int:  # pragma: no cover
         """
         Return the hash of the object.
 

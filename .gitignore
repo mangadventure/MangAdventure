@@ -65,3 +65,6 @@ static/extra/
 static/COMPILED/
 static/debug_toolbar/
 static/styles/_variables.scss
+
+# GitHub Stuff
+docs/changes.md

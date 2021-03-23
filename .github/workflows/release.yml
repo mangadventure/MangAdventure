@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags: ['*']
+
+jobs:
+  release:
+    name: "Create release"
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'mangadventure'
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v2
+      - name: "Verify release version"
+        run: >-
+          grep -q "__version__ = '${GITHUB_REF##*/v}'" MangAdventure/__init__.py &&
+          grep -q "@${GITHUB_REF##*/}#egg=mangadventure\"" docs/install.rst &&
+          grep -q "@${GITHUB_REF##*/}#egg=mangadventure\[" docs/install.rst &&
+          grep -q "^${GITHUB_REF##*/}$" docs/changelog.rst
+      - name: "Parse release body"
+        run: make changes > changes.md
+        working-directory: ./docs
+        if: success()
+      - name: "Upload release"
+        uses: ncipollo/release-action@v1
+        if: success()
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          bodyFile: docs/changes.md
+          allowUpdates: true

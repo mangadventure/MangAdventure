@@ -262,7 +262,7 @@ class Chapter(models.Model):
         ), validators=(
             validators.FileSizeValidator(50),
             validators.zipfile_validator
-        ), blank=True
+        ), blank=True, max_length=255
     )
     #: The status of the chapter.
     final = models.BooleanField(
@@ -292,7 +292,6 @@ class Chapter(models.Model):
         super(Chapter, self).save(*args, **kwargs)
         if self.file:
             validators.zipfile_validator(self.file)
-            Page.objects.filter(chapter_id=self.id).delete()
             self.unzip()
         self.series.completed = self.final
         self.series.save()

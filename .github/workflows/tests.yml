@@ -161,3 +161,20 @@ jobs:
         uses: AndreMiras/coveralls-python-action@v20201129
         with:
           parallel-finished: true
+
+  codeql:
+    name: "CodeQL"
+    runs-on: ubuntu-latest
+    if: >-
+      github.repository_owner == 'mangadventure' &&
+      contains(github.event.commits[0].message, '[skip ci]') == false &&
+      contains(github.event.commits[0].message, '[ci skip]') == false
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v2
+      - name: "Initialize CodeQL"
+        uses: github/codeql-action/init@v1
+        with:
+          languages: javascript, python
+      - name: "Perform CodeQL Analysis"
+        uses: github/codeql-action/analyze@v1

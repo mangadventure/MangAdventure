@@ -147,7 +147,7 @@ class ChapterAdmin(admin.ModelAdmin):
                  obj: Optional[Chapter], **kwargs
                  ) -> ModelForm:  # pragma: no cover
         form = super().get_form(request, obj, **kwargs)
-        if 'series' in form.base_fields:
+        if 'series' in form.base_fields and not request.user.is_superuser:
             form.base_fields['series'].queryset = \
                 Series.objects.filter(manager_id=request.user.id)
         return form
@@ -250,7 +250,9 @@ class SeriesAdmin(admin.ModelAdmin):
             )))
         if 'manager' in form.base_fields:
             form.base_fields['manager'].initial = request.user.id
-            if not request.user.is_superuser:  # pragma: no cover
+            if request.user.is_superuser:  # pragma: no cover
+                form.base_fields['manager'].required = False
+            else:  # pragma: no cover
                 form.base_fields['manager'].widget = HiddenInput()
         return form
 

@@ -13,6 +13,7 @@ about: Do you have a question regarding this project?
 
 ## Your Environment
 <!-- Include as many relevant details about your environment as possible. -->
+
 * MangAdventure version:
 * Operating System and version:
 * Python version:

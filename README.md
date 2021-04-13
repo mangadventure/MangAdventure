@@ -35,22 +35,15 @@ The documentation is available on [Read the Docs][rtfd].
 
 ## Sites
 
-You can find a list of sites that use MangAdventure in the [wiki][wiki].
+You can find a list of sites that use MangAdventure in the [wiki][].
 
 If you use MangAdventure for your own site, please add it there.
 
 [wiki]: https://github.com/mangadventure/MangAdventure/wiki
 
-## Development
+## Contributing
 
-<!-- We'll write proper guidelines soon. -->
-
-To debug the app set the environment variable `MANGADV_DEBUG`
-to `true`. **Don't do this in production.**
-
-You can use Django's `runserver` command to run a development
-server on `127.0.0.1:8000` (or any other address you specify).
-You shouldn't use the development server during production.
+You are welcome to contribute after reading the [guidelines](.github/CONTRIBUTING.md).
 
 ## Credits
 

@@ -9,14 +9,15 @@ about: Do you want something changed or implemented?
 <!-- change or addition you are proposing. -->
 
 ## Context
-<!-- Why is this change or addition important to you? -->
-<!-- How would you use it, and how can it benefit other users? -->
+<!-- Why is this change or addition important to you? How -->
+<!-- would you use it, and how can it benefit other users? -->
 
 ## Possible Implementation
 <!-- Not obligatory, but suggest an idea for implementing the feature. -->
 
 ## Your Environment
 <!-- Include as many relevant details about your environment as possible. -->
+
 * MangAdventure version:
 * Operating System and version:
 * Python version:

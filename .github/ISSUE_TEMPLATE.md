@@ -1,5 +1,5 @@
-<!-- Please check https://github.com/mangadventure/MangAdventure/issues/new/choose first. -->
-<!-- If your issue doesn't fall into one of those categories, proceed here. -->
+<!-- Please check https://github.com/mangadventure/MangAdventure/issues/new/choose -->
+<!-- first. If your issue doesn't fall into one of those categories, proceed here. -->
 
 ## Description
 <!-- Provide a detailed description of your issue. -->
@@ -9,6 +9,7 @@
 
 ## Your Environment
 <!-- Include as many relevant details about your environment as possible. -->
+
 * MangAdventure version:
 * Operating System and version:
 * Python version:

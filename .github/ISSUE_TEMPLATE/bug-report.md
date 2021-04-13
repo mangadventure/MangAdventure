@@ -23,6 +23,7 @@ about: Did something not work as expected?
 
 ## Your Environment
 <!-- Include as many relevant details about your environment as possible. -->
+
 * MangAdventure version:
 * Operating System and version:
 * Python version:

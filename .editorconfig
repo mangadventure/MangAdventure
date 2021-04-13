@@ -10,18 +10,28 @@ trim_trailing_whitespace = true
 
 [*.py]
 max_line_length = 80
+quote_type = single
 
 [*.{ht,x}ml]
 indent_size = 2
+quote_type = double
 
-[*.js{on,}]
+[*.js]
 indent_size = 2
+quote_type = single
+curly_bracket_next_line = false
+
+[*.json]
+indent_size = 2
+curly_bracket_next_line = false
 
 [*.y{a,}ml]
 indent_size = 2
 
 [*.{s,}css]
 indent_size = 2
+quote_type = single
+curly_bracket_next_line = false
 
 [*.md]
 indent_size = 2

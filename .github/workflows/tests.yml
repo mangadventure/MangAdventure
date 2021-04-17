@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: 3.7
       - name: "Install dependencies"
-        run: pip install wheel -e .[dev,csp]
+        run: pip install wheel && pip install -e .[dev,csp]
       - name: "Lint project"
         run: flake8 && isort -q -c --df .
       - name: "Run tests"
@@ -54,7 +54,7 @@ jobs:
       contains(github.event.head_commit.message, '[ci skip]') == false
     services:
       mysql:
-        image: mariadb:10
+        image: mariadb:10.5.9
         ports: ["3306:3306"]
         env:
           MYSQL_DATABASE: mangadv
@@ -72,7 +72,7 @@ jobs:
         with:
           python-version: 3.8
       - name: "Install dependencies"
-        run: pip install wheel -e .[dev,mysql]
+        run: pip install wheel && pip install -e .[dev,mysql]
       - name: "Lint project"
         run: flake8 && isort -q -c --df .
       - name: "Run tests"
@@ -124,7 +124,7 @@ jobs:
         with:
           python-version: 3.9
       - name: "Install dependencies"
-        run: pip install wheel -e .[dev,pgsql]
+        run: pip install wheel && pip install -e .[dev,pgsql]
       - name: "Lint project"
         run: flake8 && isort -q -c --df .
       - name: "Run tests"

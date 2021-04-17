@@ -45,7 +45,8 @@ class FileSizeValidator:
         :raises ValidationError: If the file is too large.
         """
         if file.size >= self.max_mb << 20:
-            _remove_file(file)
+            if hasattr(file, 'path'):
+                _remove_file(file)
             raise ValidationError(
                 self.message, code=self.code,
                 params={'max': self.max_mb}

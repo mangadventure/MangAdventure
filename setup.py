@@ -37,6 +37,7 @@ setup(
     keywords=['manga', 'scanlation', 'reader'],
     packages=find_packages(),
     python_requires='>=3.6',
+    setup_requires=['wheel'],
     install_requires=read('requirements.txt').splitlines(),
     extras_require={
         'dev': read('dev-requirements.txt').splitlines(),
@@ -46,7 +47,7 @@ setup(
         'pgsql': 'psycopg2',
         'csp': 'django-csp>=3.7',
         'uwsgi': 'uwsgi',
-        'sentry': 'sentry-sdk',
+        'sentry': 'sentry-sdk>=1.0.0',
     },
     entry_points={
         'console_scripts': [

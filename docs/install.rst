@@ -31,6 +31,9 @@ Then, set up a virtualenv for MangAdventure with the following commands:
    # This will activate the virtualenv
    source /var/www/my-site.com/bin/activate
 
+   # You may need to install wheel manually
+   pip install wheel
+
 Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell

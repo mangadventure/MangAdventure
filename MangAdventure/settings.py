@@ -547,10 +547,12 @@ if find_spec('sentry_sdk'):
     from sentry_sdk.hub import init as sentry_init
     from sentry_sdk.integrations.django import DjangoIntegration
     sentry_init(
+        debug=DEBUG,
         dsn=env['SENTRY_DSN'],
         send_default_pii=True,
         release=f'mangadventure@{VERSION}',
-        integrations=[DjangoIntegration()]
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=env.float('SENTRY_SAMPLE_RATE', 0) / 100
     )
 
 del BOTS, LOGS_DIR, VERSION

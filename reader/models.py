@@ -257,10 +257,10 @@ class Chapter(models.Model):
     file = models.FileField(
         help_text=(
             'Upload a zip or cbz file containing the chapter pages.'
-            ' Its size cannot exceed 50 MBs and it'
+            ' Its size cannot exceed 100 MBs and it'
             ' must not contain more than 1 subfolder.'
         ), validators=(
-            validators.FileSizeValidator(50),
+            validators.FileSizeValidator(100),
             validators.zipfile_validator
         ), blank=True, max_length=255
     )

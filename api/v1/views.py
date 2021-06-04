@@ -172,7 +172,11 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
     :return: A JSON-formatted response with the releases.
     """
     response = []
-    for s in Series.objects.prefetch_related('chapters').iterator():
+    q = Q(chapters__published__lte=tz.now())
+    _series = Series.objects.annotate(
+        chapter_count=Count('chapters', filter=q)
+    ).filter(q & Q(chapter_count__gt=0))
+    for s in _series.prefetch_related('chapters').iterator():
         series_res = {
             'slug': s.slug,
             'title': s.title,
@@ -181,9 +185,9 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
             'latest_chapter': {},
         }
         try:
-            series_res['latest_chapter'] = s.chapters.filter(
-                published__lte=tz.now()
-            ).values('title', 'volume', 'number', 'published').latest()
+            series_res['latest_chapter'] = s.chapters.values(
+                'title', 'volume', 'number', 'published'
+            ).latest()
         except ObjectDoesNotExist:
             pass
         else:

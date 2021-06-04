@@ -56,14 +56,12 @@ class TestReleases(APIViewTestBase):
         status_code, data = self.get_data(self.URL)
         assert status_code == 200
         assert isinstance(data, List)
-        assert len(data) == 2
+        assert len(data) == 1
         series1 = data[0]
         for field in ('slug', 'title', 'url', 'cover', 'latest_chapter'):
             assert field in series1
         for field in ('title', 'volume', 'number', 'date'):
             assert field in series1['latest_chapter']
-        series2 = data[1]
-        assert series2['latest_chapter'] == {}
 
 
 class TestAllSeries(APIViewTestBase):

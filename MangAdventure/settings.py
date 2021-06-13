@@ -114,6 +114,9 @@ TEMPLATES = [{
 #: See :setting:`WSGI_APPLICATION`.
 WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 
+#: Default primary key field type to use.
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 ##################
 #    Database    #
 ##################

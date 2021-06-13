@@ -47,7 +47,7 @@ setup(
         'pgsql': 'psycopg2',
         'csp': 'django-csp>=3.7',
         'uwsgi': 'uwsgi',
-        'sentry': 'sentry-sdk>=1.0.0',
+        'sentry': 'sentry-sdk>=1.1.0',
     },
     entry_points={
         'console_scripts': [
@@ -59,7 +59,7 @@ setup(
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 3.1',
+        'Framework :: Django :: 3.2',
         'Intended Audience :: Other Audience',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',

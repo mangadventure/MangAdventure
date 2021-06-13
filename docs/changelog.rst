@@ -1,6 +1,15 @@
 Changelog
 ---------
 
+v0.7.3
+^^^^^^
+
+* Fixed latest releases API endpoint
+* Added database compatibility tables
+* Raised file size limit to 100MBs
+* Reduced template caching times
+* Updated CDN URL format
+
 v0.7.2
 ^^^^^^
 

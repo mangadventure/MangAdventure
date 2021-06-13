@@ -165,7 +165,7 @@ def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
 @cache_control(public=True, max_age=600, must_revalidate=True)
 def all_releases(request: 'HttpRequest') -> JsonResponse:
     """
-     View that serves all the releases in a JSON array.
+    View that serves all the releases in a JSON array.
 
     :param request: The original request.
 
@@ -188,7 +188,7 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
             series_res['latest_chapter'] = s.chapters.values(
                 'title', 'volume', 'number', 'published'
             ).latest()
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist:  # pragma: no cover
             pass
         else:
             series_res['latest_chapter']['date'] = http_date(
@@ -204,7 +204,7 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
 @cache_control(public=True, max_age=600, must_revalidate=True)
 def all_series(request: 'HttpRequest') -> JsonResponse:
     """
-     View that serves all the series in a JSON array.
+    View that serves all the series in a JSON array.
 
     :param request: The original request.
 
@@ -222,7 +222,7 @@ def all_series(request: 'HttpRequest') -> JsonResponse:
 @cache_control(public=True, max_age=600, must_revalidate=True)
 def series(request: 'HttpRequest', slug: str) -> JsonResponse:
     """
-     View that serves a single series as a JSON object.
+    View that serves a single series as a JSON object.
 
     :param request: The original request.
     :param slug: The slug of the series.
@@ -242,7 +242,7 @@ def series(request: 'HttpRequest', slug: str) -> JsonResponse:
 @cache_control(public=True, max_age=600, must_revalidate=True)
 def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
     """
-     View that serves a single volume as a JSON object.
+    View that serves a single volume as a JSON object.
 
     :param request: The original request.
     :param slug: The slug of the series.
@@ -268,7 +268,7 @@ def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
 def chapter(request: 'HttpRequest', slug: str,
             vol: int, num: float) -> JsonResponse:
     """
-     View that serves a single chapter as a JSON object.
+    View that serves a single chapter as a JSON object.
 
     :param request: The original request.
     :param slug: The slug of the series.
@@ -296,7 +296,7 @@ def _is_author(request: 'HttpRequest') -> bool:
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def all_people(request: 'HttpRequest') -> JsonResponse:
     """
-     View that serves all the authors/artists in a JSON array.
+    View that serves all the authors/artists in a JSON array.
 
     :param request: The original request.
 
@@ -316,7 +316,7 @@ def all_people(request: 'HttpRequest') -> JsonResponse:
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
     """
-     View that serves a single author/artist as a JSON object.
+    View that serves a single author/artist as a JSON object.
 
     :param request: The original request.
     :param p_id: The ID of the author/artist.
@@ -338,7 +338,7 @@ def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def all_groups(request: 'HttpRequest') -> JsonResponse:
     """
-     View that serves all the groups in a JSON array.
+    View that serves all the groups in a JSON array.
 
     :param request: The original request.
 
@@ -357,7 +357,7 @@ def all_groups(request: 'HttpRequest') -> JsonResponse:
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
     """
-     View that serves a single group as a JSON object.
+    View that serves a single group as a JSON object.
 
     :param request: The original request.
     :param g_id: The ID of the group.
@@ -378,7 +378,7 @@ def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def categories(request: 'HttpRequest') -> JsonResponse:
     """
-     View that serves all the categories in a JSON array.
+    View that serves all the categories in a JSON array.
 
     :param request: The original request.
 
@@ -391,7 +391,7 @@ def categories(request: 'HttpRequest') -> JsonResponse:
 @require_methods_api()
 def invalid_endpoint(request: 'HttpRequest') -> JsonError:
     """
-     View that serves a :status:`501` error as a JSON object.
+    View that serves a :status:`501` error as a JSON object.
 
     :param request: The original request.
 

@@ -40,7 +40,7 @@ needs_sphinx = '3.3'
 
 # -- InterSphinx & extlinks configuration --
 
-_django = 'https://docs.djangoproject.com/en/3.1/'
+_django = 'https://docs.djangoproject.com/en/3.2/'
 _mdn = 'https://developer.mozilla.org/en-US/docs/Web/'
 
 intersphinx_mapping = {

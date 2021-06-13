@@ -47,7 +47,7 @@ def profile(request: 'HttpRequest') -> HttpResponse:
         prof = UserProfile.objects.get_or_create(user_id=uid)[0]
     except (ValueError, IntegrityError) as e:
         raise Http404 from e
-    if not prof.user.is_active:
+    if not prof.user.is_active:  # pragma: no cover
         raise Http404('Inactive user')
     if uid != request.user.id and prof.user.is_superuser:
         raise Http404('Cannot view profile of superuser')

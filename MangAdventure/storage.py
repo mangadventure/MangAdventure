@@ -3,7 +3,7 @@ Custom storages.
 
 .. seealso::
 
-    https://docs.djangoproject.com/en/3.1/ref/files/storage/
+    https://docs.djangoproject.com/en/3.2/ref/files/storage/
 """
 
 from typing import Optional, Tuple
@@ -46,8 +46,6 @@ class CDNStorage(FileSystemStorage):
             qs = f'?t={time.timestamp():.0f}'
         except NotImplementedError:  # pragma: no cover
             qs = ''
-        if name.lower().endswith(('.jpg', '.jpeg', '.jfif')):
-            self._params['q'] = 100
         return url.format(
             ','.join('%s=%d' % i for i in self._params.items()), name, qs
         )

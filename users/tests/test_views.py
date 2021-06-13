@@ -1,6 +1,5 @@
 from urllib.parse import urlencode
 
-from django.db import transaction
 from django.urls import reverse
 
 from pytest import mark
@@ -88,9 +87,8 @@ class TestProfile(UsersViewTestBase):
     # https://github.com/pytest-dev/pytest-django/issues/754
     @mark.xfail(raises=User.DoesNotExist, reason='fails only in tests')
     def test_invalid_user(self):
-        with transaction.atomic():
-            r = self.client.get(self.URL, data={'id': 5})
-            assert r.status_code == 404
+        r = self.client.get(self.URL, data={'id': 5})
+        assert r.status_code == 404
 
     def test_invalid_id(self):
         from math import nan

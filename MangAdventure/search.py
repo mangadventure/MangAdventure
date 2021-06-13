@@ -71,7 +71,7 @@ def qsfilter(params: _SearchParams) -> Q:
     :return: The created queryset filter.
 
     .. _`queryset filter`:
-        https://docs.djangoproject.com/en/3.1/
+        https://docs.djangoproject.com/en/3.2/
         topics/db/queries/#complex-lookups-with-q
     """
     filters = Q()

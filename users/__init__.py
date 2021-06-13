@@ -15,7 +15,4 @@ def get_user_display(user) -> str:
     return full_name if len(full_name.strip()) else user.username
 
 
-#: The config class of the app.
-default_app_config = 'users.apps.UsersConfig'
-
-__all__ = ['get_user_display', 'default_app_config']
+__all__ = ['get_user_display']

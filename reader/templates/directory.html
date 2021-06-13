@@ -12,7 +12,7 @@
   <title>Series List &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
-  {% cache 86400 series_list all_series %}
+  {% cache 600 series_list all_series %}
     <h1 class="text-shadow alter-bg">Series List</h1>
     <article id="list">
       {% for series in all_series %}

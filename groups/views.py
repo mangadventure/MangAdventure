@@ -31,7 +31,7 @@ def all_groups(request: 'HttpRequest') -> 'HttpResponse':
     })
 
 
-@cache_control(max_age=86400)
+@cache_control(max_age=7200)
 def group(request: 'HttpRequest', g_id: int) -> 'HttpResponse':
     """
      View that serves a single group's page.

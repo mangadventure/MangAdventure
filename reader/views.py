@@ -73,7 +73,7 @@ def directory(request: 'HttpRequest') -> 'HttpResponse':
 
 
 @condition(last_modified_func=_latest)
-@cache_control(max_age=3600, must_revalidate=True)
+@cache_control(max_age=1800, must_revalidate=True)
 def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
     """
     View that serves the page of a single series.

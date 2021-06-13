@@ -30,7 +30,7 @@
   {% endblock %}
 {% endwith %}
 {% block content %}
-  {% cache 86400 user_profile profile %}
+  {% cache 3600 user_profile profile %}
     <h1 class="text-shadow alter-bg">Profile</h1>
     <article id="user-profile">
       <section id="user-info">

@@ -40,13 +40,15 @@ def profile(request: 'HttpRequest') -> HttpResponse:
 
     :return: A response with the rendered ``profile.html`` template.
 
-    :raises Http404: If there is no user with the specified ``id``.
+    :raises Http404: If there is no active user with the specified ``id``.
     """
     try:
         uid = int(request.GET.get('id', request.user.id))
         prof = UserProfile.objects.get_or_create(user_id=uid)[0]
     except (ValueError, IntegrityError) as e:
         raise Http404 from e
+    if not prof.user.is_active:
+        raise Http404('Inactive user')
     if uid != request.user.id and prof.user.is_superuser:
         raise Http404('Cannot view profile of superuser')
     uri = request.build_absolute_uri(request.path)
@@ -133,7 +135,7 @@ class Logout(LogoutView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(cache_control(private=True, max_age=3600), name='dispatch')
+@method_decorator(cache_control(private=True, max_age=600), name='dispatch')
 class Bookmarks(TemplateView):
     """View that serves a user's bookmarks page."""
     #: The template that this view will render.

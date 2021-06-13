@@ -29,7 +29,7 @@
   <title>{{ group }} &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
-  {% cache 86400 group_info group members %}
+  {% cache 7200 group_info group members %}
     <h1>{{ group.name }}</h1>
     <article id="group">
       <section id="group-info">

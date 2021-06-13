@@ -7,7 +7,7 @@
   <title>Home &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
-  {% cache 86400 releases latest_releases %}
+  {% cache 600 releases latest_releases %}
     <h1 class="text-shadow alter-bg">Latest Releases</h1>
     <article id="latest">
       {% for release in latest_releases %}

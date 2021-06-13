@@ -7,7 +7,7 @@
   <title>Groups &middot; {{ config.NAME }}</title>
 {% endblock %}
 {% block content %}
-  {% cache 86400 groups_list groups %}
+  {% cache 7200 groups_list groups %}
     <h1>Groups</h1>
     <article id="all-groups">
       {% for group in groups %}

@@ -1,3 +1,5 @@
+"""RSS and Atom feeds for the reader app."""
+
 from mimetypes import guess_type
 from typing import TYPE_CHECKING, Iterable, Optional
 

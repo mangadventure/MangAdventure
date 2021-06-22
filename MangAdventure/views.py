@@ -52,7 +52,7 @@ def search(request: 'HttpRequest') -> HttpResponse:
 
     :return: A response with the rendered ``search.html`` template.
     """
-    results = None
+    results = []
     params = parse(request)
     if request.GET.keys() & {'q', 'author', 'status', 'categories'}:
         results = query(params).order_by('title')
@@ -65,7 +65,7 @@ def search(request: 'HttpRequest') -> HttpResponse:
         'in_categories': params.categories[0],
         'ex_categories': params.categories[1],
         'all_categories': Category.objects.all(),
-        'results': results, 'total': len(results or ''),
+        'results': results, 'total': len(results),
         'breadcrumbs': crumbs
     })
 

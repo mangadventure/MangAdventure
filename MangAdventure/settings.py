@@ -343,6 +343,8 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+
 #: The URL where requests are redirected for login.
 #: See :setting:`LOGIN_URL`.
 LOGIN_URL = '/user/login'
@@ -555,7 +557,7 @@ if find_spec('sentry_sdk'):
         send_default_pii=True,
         release=f'mangadventure@{VERSION}',
         integrations=[DjangoIntegration()],
-        traces_sample_rate=env.float('SENTRY_SAMPLE_RATE', 0) / 100
+        traces_sample_rate=env.float('SENTRY_SAMPLE_RATE', 0.0) / 100
     )
 
 del BOTS, LOGS_DIR, VERSION

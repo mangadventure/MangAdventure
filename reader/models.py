@@ -195,7 +195,7 @@ class Series(models.Model):
         User, editable=True, blank=False, null=True,
         help_text='The person who manages this series.',
         on_delete=models.SET_NULL, limit_choices_to=(
-            models.Q(is_superuser=True) | models.Q(groups__name='Scanlator')
+            Q(is_superuser=True) | Q(groups__name='Scanlator')
         )
     )
 
@@ -315,12 +315,6 @@ class Chapter(models.Model):
         )
         return self.__class__.objects.filter(q) \
             .order_by('-volume', '-number').first()
-
-    @cached_property
-    def twitter_creator(self) -> str:
-        """Get the Twitter username of the chapter's first group."""
-        return '@' + Group.objects.filter(releases__id=self.id) \
-            .exclude(twitter='').only('twitter').first().twitter
 
     def get_absolute_url(self) -> str:
         """

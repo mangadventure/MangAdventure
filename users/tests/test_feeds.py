@@ -26,7 +26,7 @@ class TestBookmarks(UsersTestBase):
         UserProfile.objects.get_or_create(user_id=2)
 
     def _test_feed(self, feed, chapter):
-        assert feed.link == '/user/'
+        assert feed.link == '/user/bookmarks/'
         assert feed.author_name == 'MangAdventure'
         assert feed.title == 'Bookmarks - MangAdventure'
         desc = 'Updates when a bookmarked series has a new release'

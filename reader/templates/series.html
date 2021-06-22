@@ -23,13 +23,11 @@
   {% endwith %}
 {% endblock %}
 {% block description %}
-  <meta name="twitter:description" content="{{ series.description }}">
   <meta property="og:description" content="{{ series.description }}">
   <meta name="description" content="{{ series.description }}">
 {% endblock %}
 {% block title %}
   <meta name="title" content="{{ series.title }}">
-  <meta name="twitter:title" content="{{ series.title }} ~ {{ config.NAME }}">
   <meta property="og:title" content="{{ series.title }} ~ {{ config.NAME }}">
   <title>{{ series.title }} &middot; {{ config.NAME }}</title>
 {% endblock %}

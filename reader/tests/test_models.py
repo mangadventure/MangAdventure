@@ -162,11 +162,6 @@ class TestChapter(ReaderTestBase):
             chapter.file = get_zip_with_invalid_images()
             chapter.save()
 
-    def test_twitter(self):
-        chapter = self.create_chapter()
-        chapter.groups.create(name='my group', twitter='TestAccount')
-        assert chapter.twitter_creator == '@TestAccount'
-
 
 class TestPage(ReaderTestBase):
     @staticmethod

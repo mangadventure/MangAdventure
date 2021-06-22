@@ -19,8 +19,7 @@
           <i class="mi mi-discord"></i><span>Discord</span>
         </a>
       {% endif %}
-      {% if rss_url %}
-        {# TODO: maybe clean this up? #}
+      {% if rss_url %}{# TODO: maybe clean this up? #}
         <a {% if arg %}href="{% url rss_url arg %}"
            {% elif token %}href="{% url rss_url %}?token={{ token }}"
            {% else %}href="{% url rss_url %}"{% endif %} class="link"

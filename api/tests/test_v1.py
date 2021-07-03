@@ -9,7 +9,7 @@ from pytest import mark
 
 from MangAdventure.storage import CDNStorage
 
-from api.response import JsonError
+from api.v1.response import JsonError
 from groups.models import Group, Member, Role
 
 from . import APITestBase
@@ -36,6 +36,7 @@ class APIViewTestBase(APITestBase):
         """
         r = self.client.get(url, params)
         assert isinstance(r, (JsonResponse, JsonError))
+        assert 'Warning' in r.headers
         return r.status_code, r.json()
 
     def teardown_method(self):
@@ -93,6 +94,10 @@ class TestAllSeries(APIViewTestBase):
         assert status_code == 200
         assert isinstance(data, List)
         assert len(data) == 1
+
+    def test_post(self):
+        r = self.client.post(self.URL)
+        assert r.status_code == 405
 
 
 class TestSeries(APIViewTestBase):
@@ -281,16 +286,3 @@ class TestCategories(APIViewTestBase):
         category1 = data[0]
         for field in ('id', 'name', 'description'):
             assert field in category1
-
-
-class TestInvalid(APIViewTestBase):
-    URL = reverse('api:v1:root')
-
-    def test_get(self):
-        status_code, _ = self.get_data(self.URL)
-        assert status_code == 501
-
-    def test_post(self):
-        url = reverse('api:v1:all_series')
-        r = self.client.post(url)
-        assert r.status_code == 405

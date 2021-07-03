@@ -19,7 +19,6 @@ app_name = 'v1'
 
 #: The URL patterns of the api.v1 app.
 urlpatterns = [
-    path('', views.invalid_endpoint, name='root'),
     path('releases/', views.all_releases, name='releases'),
     path('series/', views.all_series, name='all_series'),
     path(f'{_series}/', views.series, name='series'),

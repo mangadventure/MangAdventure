@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.utils import timezone as tz
 from django.views.decorators.cache import cache_control
 
-from api.response import JsonError
+from api.v1.response import JsonError
 from reader.models import Category, Chapter
 
 from .bad_bots import BOTS

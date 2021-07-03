@@ -264,6 +264,7 @@ CONFIG = {
     'MAX_RELEASES': 10,
     'MAX_CHAPTERS': 1,
     'SHOW_CREDITS': True,
+    'ENABLE_API_V1': True
 }
 
 del BOTS, VERSION

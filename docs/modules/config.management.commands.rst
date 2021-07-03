@@ -16,3 +16,11 @@ config.management.commands.fs2import module
    :members:
    :undoc-members:
    :show-inheritance:
+
+config.management.commands.logs module
+--------------------------------------
+
+.. automodule:: config.management.commands.logs
+   :members:
+   :undoc-members:
+   :show-inheritance:

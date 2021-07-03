@@ -509,26 +509,11 @@ CONFIG = {
     'MAX_RELEASES': env.int('MAX_RELEASES', 10),
     'MAX_CHAPTERS': env.int('MAX_CHAPTERS', 1),
     'SHOW_CREDITS': env.bool('SHOW_CREDITS', True),
+    'ENABLE_API_V1': env.bool('ENABLE_API_V1', False),
 }
 
 CONFIG['LOGO_TW'] = env.get('LOGO_TW', CONFIG['LOGO'])
 CONFIG['LOGO_OG'] = env.get('LOGO_OG', CONFIG['LOGO'])
-
-##################
-#    Comments    #
-##################
-
-# The app used for custom comments.
-COMMENTS_APP = 'users'
-
-# Removed comments won't be hidden.
-COMMENTS_HIDE_REMOVED = False
-
-# Allow HTML in comments.
-COMMENTS_ALLOW_HTML = True
-
-# Use TinyMCE widget in comments.
-COMMENTS_WIDGET = 'users.widgets.TinyMCEComment'
 
 ###############
 #    Debug    #

@@ -1,4 +1,5 @@
 django~=3.2.4
+djangorestframework>=3.12.0
 django-allauth>=0.44
 Pillow>=8.2
 libsass>=0.21

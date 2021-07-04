@@ -4,12 +4,11 @@ from importlib.util import find_spec
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone as tz
 from django.views.decorators.cache import cache_control
 
-from api.v1.response import JsonError
 from reader.models import Category, Chapter
 
 from .bad_bots import BOTS
@@ -130,11 +129,11 @@ def handler400(request: 'HttpRequest', exception: Optional[Exception]
     :param exception: The exception that occurred.
     :param template_name: The name of the error template.
 
-    :return: A :class:`~api.response.JsonError` for API URLs,
+    :return: A :class:`~django.http.JsonResponse` for API URLs,
              otherwise a response with the rendered error template.
     """
     if request.path.startswith('/api'):
-        return JsonError('Bad request', 400)
+        return JsonResponse({'error': 'Bad request'}, status=400)
     context = _error_context(
         'The server could not understand the request.', 400
     )
@@ -150,11 +149,11 @@ def handler403(request: 'HttpRequest', exception: Optional[Exception]
     :param exception: The exception that occurred.
     :param template_name: The name of the error template.
 
-    :return: A :class:`~api.response.JsonError` for API URLs,
+    :return: A :class:`~django.http.JsonResponse` for API URLs,
              otherwise a response with the rendered error template.
     """
     if request.path.startswith('/api'):  # pragma: no cover
-        return JsonError('Forbidden', 403)
+        return JsonResponse({'error': 'Forbidden'}, status=403)
     context = _error_context(
         'You do not have permission to access this page.', 403
     )
@@ -170,11 +169,11 @@ def handler404(request: 'HttpRequest', exception: Optional[Exception]
     :param exception: The exception that occurred.
     :param template_name: The name of the error template.
 
-    :return: A :class:`~api.response.JsonError` for API URLs,
+    :return: A :class:`~django.http.JsonResponse` for API URLs,
              otherwise a response with the rendered error template.
     """
     if request.path.startswith('/api'):  # pragma: no cover
-        return JsonError('Invalid API endpoint', 501)
+        return JsonResponse({'error': 'Invalid API endpoint'}, status=501)
     if find_spec('sentry_sdk'):  # pragma: no cover
         from sentry_sdk import capture_message
         capture_message('Page not found', level='warning')
@@ -192,11 +191,11 @@ def handler500(request: 'HttpRequest', exception: Optional[Exception]
     :param exception: The exception that occurred.
     :param template_name: The name of the error template.
 
-    :return: A :class:`~api.response.JsonError` for API URLs,
+    :return: A :class:`~django.http.JsonResponse` for API URLs,
              otherwise a response with the rendered error template.
     """
     if request.path.startswith('/api'):
-        return JsonError('Internal server error')
+        return JsonResponse({'error': 'Internal server error'}, status=500)
     context = _error_context(  # Shrug
         'Whoops! Something went wrong. &macr;&#8726;_(&#12484;)_/&macr;'
     )

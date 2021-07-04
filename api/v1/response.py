@@ -17,6 +17,9 @@ class JsonError(JsonResponse):
     """
     A JSON-formatted error response.
 
+    .. deprecated:: 0.7.4
+       Use ``JsonResponse({'error': ...}, status=...)`` instead
+
     :param message: The error message of the response.
     :param status: The HTTP status of the response.
     """

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.twitter',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.discord',
+    'rest_framework',
     'config',
     'reader',
     'api',
@@ -141,7 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    'users.backends.ScanlationBackend',
     'allauth.account.auth_backends.AuthenticationBackend'
 ]
 
@@ -219,6 +220,36 @@ env.setdefault('wsgi.url_scheme', 'https')
 
 # XXX: No SSL on localhost
 SECURE_SSL_REDIRECT = env.get('HTTPS', False)
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'api.v2.pagination.PageLimitPagination',
+    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+    'DEFAULT_SCHEMA_CLASS': 'api.v2.schema.OpenAPISchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'api.v2.auth.ApiKeyAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'api.v2.auth.ScanlatorPermissions',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+    ),
+    'DATETIME_INPUT_FORMATS': ('iso-8601', '%m/%d/%y'),
+    'DEFAULT_THROTTLE_RATES': {'anon': '100/m'},
+    'SCHEMA_COERCE_METHOD_NAMES': {
+        'list': '* list',
+        'create': '* create',
+        'retrieve': '* read',
+        'update': '* update',
+        'partial_update': '* patch',
+        'destroy': '* delete'
+    },
+    'URL_FORMAT_OVERRIDE': None,
+    'ORDERING_PARAM': 'sort',
+    'DEFAULT_VERSION': 'v2',
+    'VERSION_PARAM': None,
+    'SEARCH_PARAM': 'q',
+}
 
 if find_spec('csp'):
     MIDDLEWARE.append('csp.middleware.CSPMiddleware')

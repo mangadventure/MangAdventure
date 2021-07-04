@@ -1,6 +1,13 @@
 Changelog
 ---------
 
+v0.7.4
+^^^^^^
+
+* Fixed search returning unpublished series
+* Removed unnecessary Twitter metadata
+* Re-implemented the JSON API (v2)
+
 v0.7.3
 ^^^^^^
 

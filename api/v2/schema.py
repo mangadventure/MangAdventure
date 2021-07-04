@@ -12,7 +12,8 @@ from rest_framework.serializers import BaseSerializer
 
 class OpenAPISchema(AutoSchema):
     """Custom OpenAPI schema class."""
-    template_regex = regex(r'{([^}]+)}')
+    header_regex = regex(r'^\* [a-z]+:')
+    variable_regex = regex(r'{([^}]+)}')
 
     def map_field(self, field: Any) -> Dict:
         # HACK: map serializers to their $refs
@@ -22,13 +23,36 @@ class OpenAPISchema(AutoSchema):
             if hasattr(field, 'child'):
                 return {'type': 'array', 'items': ref}
             return ref
-        return super().map_field(field)
+        result = super().map_field(field)
+        # specify format for password fields
+        if field.style.get('input_type') == 'password':
+            result['format'] = 'password'
+        return result
+
+    def map_field_validators(self, field: Any, schema: Dict):
+        super().map_field_validators(field, schema)
+        # specify format for float fields
+        if schema['type'] == 'number':
+            schema['format'] = 'float'
+        # remove patterns from readOnly fields
+        if field.read_only:
+            schema.pop('pattern', None)
+
+    def get_operation(self, path: str, method: str) -> Dict:
+        op = super().get_operation(path, method)
+        op['summary'] = op.pop('description', '')
+        # disable security for unrestricted operations
+        if method == 'GET' and not hasattr(self.view, '_restrict'):
+            op['security'] = ()
+        elif not self.view.permission_classes:
+            op['security'] = ()
+        return op
 
     def get_path_parameters(self, path: str, method: str) -> List[Dict]:
         parameters = []
         model = getattr(getattr(self.view, 'queryset', None), 'model', None)
-        # HACK: parse the path without using uritemplate
-        for variable in self.template_regex.findall(path):
+        # parse the path without depending on uritemplate
+        for variable in self.variable_regex.findall(path):
             description = ''
             schema = {'type': 'string'}
             if variable == 'id':
@@ -56,6 +80,7 @@ class OpenAPISchemaGenerator(SchemaGenerator):
     """Custom OpenAPI generator class."""
     def get_info(self) -> Dict:
         info = super().get_info()
+        # add "contact" to the info schema
         info['contact'] = {
             'name': 'API Support',
             'url': 'https://github.com/mangadventure/MangAdventure/issues'
@@ -68,6 +93,7 @@ class OpenAPISchemaGenerator(SchemaGenerator):
 
         schema = super().get_schema(*args, **kwargs)
         proto = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+        # add "servers", "externalDocs", "security" to the main schema
         schema.update({
             'servers': [
                 {'url': f'{proto}://{site}/api/v2'} for site
@@ -79,6 +105,7 @@ class OpenAPISchemaGenerator(SchemaGenerator):
             },
             'security': ({'ApiKeyHeader': ()}, {'ApiKeyParam': ()})
         })
+        # add "securityShemes" to the components schema
         schema['components']['securitySchemes'] = {
             'ApiKeyHeader': {
                 'type': 'apiKey',

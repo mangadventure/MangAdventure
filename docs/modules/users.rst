@@ -33,10 +33,26 @@ users.admin module
    :undoc-members:
    :show-inheritance:
 
+users.api module
+----------------
+
+.. automodule:: users.api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 users.apps module
 -----------------
 
 .. automodule:: users.apps
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+users.backends module
+---------------------
+
+.. automodule:: users.backends
    :members:
    :undoc-members:
    :show-inheritance:
@@ -69,6 +85,14 @@ users.receivers module
 ----------------------
 
 .. automodule:: users.receivers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+users.serializers module
+------------------------
+
+.. automodule:: users.serializers
    :members:
    :undoc-members:
    :show-inheritance:

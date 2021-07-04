@@ -7,6 +7,7 @@ from secrets import token_hex
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 from MangAdventure import storage, validators
 
@@ -70,6 +71,14 @@ class UserProfile(models.Model):
                 key=settings.SECRET_KEY.encode()
             ).hexdigest()
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self) -> str:
+        """
+        Get the absolute URL of the object.
+
+        :return: The URL of :func:`users.views.profile`.
+        """
+        return f'{reverse("user_profile")}?id={self.id}'
 
     def get_directory(self) -> PurePath:
         """

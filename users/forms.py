@@ -2,6 +2,7 @@
 
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth.validators import UnicodeUsernameValidator
 
 from MangAdventure.validators import FileSizeValidator
 
@@ -12,14 +13,14 @@ class UserProfileForm(forms.ModelForm):
     """Form used for editing a :class:`~users.models.UserProfile` model."""
     #: The user's e-mail address.
     email = forms.EmailField(
-        max_length=150, min_length=6, label='E-mail',
+        max_length=254, min_length=5, label='E-mail',
         widget=forms.TextInput(attrs={
             'placeholder': 'E-mail address'
         })
     )
     #: The current password of the user.
     curr_password = forms.CharField(
-        min_length=4, label='Confirm current password',
+        min_length=8, label='Confirm current password',
         widget=forms.PasswordInput(attrs={
             'placeholder': 'Confirm current password'
         })
@@ -44,21 +45,23 @@ class UserProfileForm(forms.ModelForm):
         min_length=1, label='Username',
         widget=forms.TextInput(attrs={
             'placeholder': 'Username'
-        })
+        }), max_length=150, validators=(
+            UnicodeUsernameValidator(),
+        )
     )
     #: The user's first name.
     first_name = forms.CharField(
-        min_length=1, label='First name',
+        label='First name', required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'First name'
-        }), required=False
+        }), max_length=150
     )
     #: The user's last name.
     last_name = forms.CharField(
-        min_length=1, label='Last name',
+        label='Last name', required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Last name'
-        }), required=False
+        }), max_length=150
     )
 
     #: The user's bio.
@@ -141,6 +144,7 @@ class UserProfileForm(forms.ModelForm):
         if self.files.get('avatar'):
             self.instance.avatar = self.files['avatar']
         self.instance.bio = self.cleaned_data.get('bio')
+        self.instance.user.email = self.cleaned_data.get('email')
         self.instance.user.username = self.cleaned_data.get('username')
         self.instance.user.first_name = self.cleaned_data.get('first_name')
         self.instance.user.last_name = self.cleaned_data.get('last_name')

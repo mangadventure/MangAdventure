@@ -3,14 +3,14 @@
 from django.db.models import CharField, URLField
 
 from .validators import (
-    discord_name_validator, discord_server_validator,
-    reddit_name_validator, twitter_name_validator
+    DiscordNameValidator, DiscordServerValidator,
+    RedditNameValidator, TwitterNameValidator
 )
 
 
 class TwitterField(CharField):
     """A :class:`~django.db.models.CharField` for Twitter usernames."""
-    default_validators = (twitter_name_validator,)
+    default_validators = (TwitterNameValidator,)
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 15
@@ -19,7 +19,7 @@ class TwitterField(CharField):
 
 class DiscordNameField(CharField):
     """A :class:`~django.db.models.CharField` for Discord usernames."""
-    default_validators = (discord_name_validator,)
+    default_validators = (DiscordNameValidator,)
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 37
@@ -28,7 +28,7 @@ class DiscordNameField(CharField):
 
 class RedditField(CharField):
     """A :class:`~django.db.models.CharField` for Reddit names."""
-    default_validators = (reddit_name_validator,)
+    default_validators = (RedditNameValidator,)
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('max_length', 21)
@@ -37,7 +37,7 @@ class RedditField(CharField):
 
 class DiscordURLField(URLField):
     """A :class:`~django.db.models.CharField` for Discord server URLs."""
-    default_validators = (discord_server_validator,)
+    default_validators = (DiscordServerValidator,)
 
 
 __all__ = ['TwitterField', 'DiscordNameField', 'DiscordURLField', 'RedditField']

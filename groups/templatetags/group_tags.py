@@ -17,10 +17,7 @@ def group_roles(member: 'Member', group: 'Group') -> str:
     :param group: A ``Group``` model instance.
     :return: A comma-separated list of roles.
     """
-    return ', '.join([
-        role.get_role_display() for role in
-        member.roles.iterator() if role.group == group
-    ]) or 'N/A'
+    return member.get_roles(group) or 'N/A'
 
 
 __all__ = ['group_roles']

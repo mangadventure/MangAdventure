@@ -60,7 +60,7 @@ class BookmarkSerializer(ModelSerializer):
 class ProfileSerializer(ModelSerializer):
     """Serializer for user profiles."""
     username = CharField(
-        source='user.username', min_length=1, max_length=150,
+        source='user.username', max_length=150,
         required=True, help_text='Your (unique) username.',
         validators=(UnicodeUsernameValidator(),),
 
@@ -74,7 +74,7 @@ class ProfileSerializer(ModelSerializer):
         required=False, help_text='Your last name.'
     )
     email = EmailField(
-        source='user.email', min_length=5, max_length=254,
+        source='user.email', max_length=254,
         required=True, help_text='Your e-mail address.'
     )
     password = CharField(

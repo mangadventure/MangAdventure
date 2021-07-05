@@ -47,7 +47,9 @@ class Group(models.Model):
         blank=True, help_text="The group's E-mail address."
     )
     #: The Discord server URL of the group.
-    discord = DiscordURLField(blank=True, help_text="The group's Discord link.")
+    discord = DiscordURLField(
+        blank=True, help_text="The group's Discord link."
+    )
     #: The Twitter username of the group.
     twitter = TwitterField(
         blank=True, help_text="The group's Twitter username."
@@ -139,6 +141,18 @@ class Member(models.Model):
     )
     #: The groups of this member.
     groups = models.ManyToManyField(Group, 'members', through='Role')
+
+    def get_roles(self, group: Group) -> str:
+        """
+        Get the roles of the member in the given group.
+
+        :param group: A group instance.
+        :return: A comma-separated list of roles.
+        """
+        return ', '.join(
+            r.get_role_display() for r in
+            self.roles.filter(group_id=group.id).only('role')
+        )
 
     def __str__(self) -> str:
         """

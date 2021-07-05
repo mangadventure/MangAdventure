@@ -118,73 +118,36 @@ def zipfile_validator(file: 'File'):
             zf.close()
 
 
-def discord_server_validator(url: str):
-    """
-    Call :class:`~django.core.validators.RegexValidator`
-    to validate a Discord server URL.
-
-    :param url: The Discord server URL to be validated.
-
-    :raises ValidationError: If the URL is invalid.
-    """
-    RegexValidator(
-        regex=r'^https://discord\.(gg|me)/[A-Za-z0-9_%-]+$',
-        message='Invalid Discord server URL.',
-        code='invalid_discord_url'
-    ).__call__(url)
+class DiscordServerValidator(RegexValidator):
+    """Validates a Discord server URL."""
+    regex = r'^https://discord\.(gg|me)/[A-Za-z0-9_%-]+$'
+    message = 'Invalid Discord server URL.'
+    code = 'invalid_discord_url'
 
 
-def twitter_name_validator(name: str):
-    """
-    Call :class:`~django.core.validators.RegexValidator`
-    to validate a Twitter name.
-
-    :param name: The Twitter name to be validated.
-
-    :raises ValidationError: If the name is invalid.
-    """
-    RegexValidator(
-        regex=r'^[A-Za-z0-9_-]{1,15}$',
-        message='Invalid Twitter username.',
-        code='invalid_twitter_name'
-    ).__call__(name)
+class TwitterNameValidator(RegexValidator):
+    """Validates a Twitter name."""
+    regex = r'^[A-Za-z0-9_-]{1,15}$'
+    message = 'Invalid Twitter username.'
+    code = 'invalid_twitter_name'
 
 
-def discord_name_validator(name: str):
-    """
-    Call :class:`~django.core.validators.RegexValidator`
-    to validate a Discord name.
-
-    :param name: The Discord name to be validated.
-
-    :raises ValidationError: If the name is invalid.
-    """
-    RegexValidator(
-        regex=r'^.{1,32}#[0-9]{4}$',
-        message='Invalid Discord username'
-                ' and discriminator.',
-        code='invalid_discord_name'
-    ).__call__(name)
+class DiscordNameValidator(RegexValidator):
+    """Validates a Discord name."""
+    regex = r'^.{1,32}#[0-9]{4}$'
+    message = 'Invalid Discord username and discriminator.'
+    code = 'invalid_discord_name'
 
 
-def reddit_name_validator(name: str):
-    """
-    Call :class:`~django.core.validators.RegexValidator`
-    to validate a Reddit name.
-
-    :param name: The Reddit name to be validated.
-
-    :raises ValidationError: If the name is invalid.
-    """
-    RegexValidator(
-        regex=r'^(/[ur]/)?[A-Za-z0-9_]{3,21}$',
-        message='Invalid Reddit username or subreddit name.',
-        code='invalid_reddit_name'
-    ).__call__(name)
+class RedditNameValidator(RegexValidator):
+    """Validates a Reddit name."""
+    regex = r'^(/[ur]/)?[A-Za-z0-9_]{3,21}$'
+    message = 'Invalid Reddit username or subreddit name.'
+    code = 'invalid_reddit_name'
 
 
 __all__ = [
-    'FileSizeValidator', 'discord_server_validator',
-    'zipfile_validator', 'twitter_name_validator',
-    'discord_name_validator', 'reddit_name_validator'
+    'FileSizeValidator', 'DiscordServerValidator',
+    'zipfile_validator', 'TwitterNameValidator',
+    'DiscordNameValidator', 'RedditNameValidator'
 ]

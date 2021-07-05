@@ -25,6 +25,8 @@ class MemberRoleInline(admin.StackedInline):
                     obj: Optional[Role], **kwargs
                     ) -> 'BaseInlineFormSet':  # pragma: no cover
         formset = super().get_formset(request, obj, **kwargs)
+        if request.user.is_superuser:
+            return formset
         if 'group' in formset.form.base_fields:
             formset.form.base_fields['group'].queryset = \
                 Group.objects.filter(manager_id=request.user.id)

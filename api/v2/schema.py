@@ -42,8 +42,8 @@ class OpenAPISchema(AutoSchema):
         # specify format for float fields
         if schema['type'] == 'number':
             schema['format'] = 'float'
-        # remove patterns from readOnly fields
-        if field.read_only:
+        # remove pattern from uri fields
+        if schema.get('format') == 'uri':
             schema.pop('pattern', None)
 
     def map_serializer(self, serializer: BaseSerializer) -> Dict:
@@ -154,7 +154,7 @@ class OpenAPISchemaGenerator(SchemaGenerator):
 
         schema = super().get_schema(*args, **kwargs)
         proto = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
-        # add "servers", "externalDocs", "security" to the main schema
+        # add "servers", "externalDocs", "security", "tags" to the main schema
         schema.update({
             'servers': [
                 {'url': f'{proto}://{site}/api/v2'} for site
@@ -164,7 +164,20 @@ class OpenAPISchemaGenerator(SchemaGenerator):
                 'url': 'https://mangadventure.readthedocs.io/',
                 'description': 'Documentation'
             },
-            'security': ({'ApiKeyHeader': ()}, {'ApiKeyParam': ()})
+            'security': ({'ApiKeyHeader': ()}, {'ApiKeyParam': ()}),
+            'tags': (
+                {'name': 'series'},
+                {'name': 'chapters'},
+                {'name': 'categories'},
+                {'name': 'pages'},
+                {'name': 'artists'},
+                {'name': 'authors'},
+                {'name': 'cubari'},
+                {'name': 'groups'},
+                {'name': 'bookmarks'},
+                {'name': 'profile'},
+                {'name': 'token'},
+            )
         })
         # add "securitySchemes" to the components schema
         schema['components']['securitySchemes'] = {

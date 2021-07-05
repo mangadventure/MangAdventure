@@ -4,6 +4,7 @@ from django.urls import include, path
 
 from rest_framework.routers import SimpleRouter
 
+from groups import api as groups_api
 from reader import api as reader_api
 from users import api as users_api
 
@@ -18,6 +19,7 @@ router.register('artists', reader_api.ArtistViewSet, 'artists')
 router.register('authors', reader_api.AuthorViewSet, 'authors')
 router.register('categories', reader_api.CategoryViewSet, 'categories')
 router.register('pages', reader_api.PageViewSet, 'pages')
+router.register('groups', groups_api.GroupViewSet, 'groups')
 router.register('bookmarks', users_api.BookmarkViewSet, 'bookmarks')
 router.register('token', users_api.ApiKeyViewSet, 'token')
 

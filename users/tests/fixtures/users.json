@@ -10,7 +10,7 @@
     "model": "auth.user",
     "pk": 1,
     "fields": {
-      "password": "pbkdf2_sha256$180000$WTf5Eb9VHDfq$Us5eTox904xrY/pkmxDOsPTtQofoJEL/Ym5BNRiCSZM=",
+      "password": "pbkdf2_sha256$260000$sjNv8HQskQgU2YILDz7BLV$4whWHdMxU/s/MAfrf2tYmhO949F+R1WpaqAyqTW33Qw=",
       "last_login": null,
       "is_superuser": true,
       "username": "rain",

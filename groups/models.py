@@ -5,6 +5,7 @@ from pathlib import PurePath
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.functions import Coalesce
 from django.shortcuts import reverse
 
 from MangAdventure.fields import (
@@ -98,11 +99,9 @@ class Group(models.Model):
 
     @property
     def _increment(self) -> int:
-        try:
-            num = Group.objects.only('id').last().id + 1
-        except (Group.DoesNotExist, AttributeError):
-            num = 1
-        return num
+        return Group.objects.aggregate(
+            last=Coalesce(models.Max('id'), 0) + 1
+        )['last']
 
     def save(self, *args, **kwargs):
         """Save the current instance."""

@@ -25,6 +25,14 @@ groups.admin module
    :undoc-members:
    :show-inheritance:
 
+groups.api module
+-----------------
+
+.. automodule:: groups.api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 groups.apps module
 ------------------
 
@@ -45,6 +53,14 @@ groups.models module
 --------------------
 
 .. automodule:: groups.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+groups.serializers module
+-------------------------
+
+.. automodule:: groups.serializers
    :members:
    :undoc-members:
    :show-inheritance:

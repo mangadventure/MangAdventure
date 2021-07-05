@@ -56,6 +56,19 @@ class ChapterSerializer(ModelSerializer):
         help_text='The absolute URL of the chapter.'
     )
 
+    def to_representation(self, instance: Chapter) -> Dict:
+        rep = super().to_representation(instance)
+        # HACK: adapt the date format based on a query param
+        dt_format = self.context['request'] \
+            .query_params.get('date_format', 'iso-8601')
+        published = instance.published
+        rep['published'] = {
+            'iso-8601': published.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'rfc-5322': published.strftime('%a, %d %b %Y %H:%M:%S GMT'),
+            'timestamp': str(round(published.timestamp()))
+        }.get(dt_format)
+        return rep
+
     def __uri(self, path: str) -> str:
         return self.context['view'].request.build_absolute_uri(path)
 
@@ -126,10 +139,6 @@ class _SeriesDetailSerializer(ModelSerializer):
     categories = StringRelatedField(
         many=True, required=False, help_text='The categories of the series.'
     )
-    chapters = PrimaryKeyRelatedField(
-        many=True, read_only=True, required=False,
-        help_text='The chapter IDs of the series.'
-    )
     url = URLField(
         source='get_absolute_url', read_only=True,
         help_text='The absolute URL of the series.'
@@ -147,7 +156,7 @@ class _SeriesDetailSerializer(ModelSerializer):
         fields = (
             'title', 'slug', 'url', 'cover',
             'description', 'completed', 'format',
-            'chapters', 'authors', 'artists', 'categories'
+            'authors', 'artists', 'categories'
         )
         extra_kwargs = {
             'slug': {'write_only': True},

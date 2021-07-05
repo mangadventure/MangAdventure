@@ -136,6 +136,12 @@ class OpenAPISchema(AutoSchema):
             })
         return parameters
 
+    def allows_filters(self, path: str, method: str) -> bool:
+        if getattr(self.view, 'filter_backends', None) is None:
+            return False
+        # only allow filters in list endpoints
+        return self.view.action == 'list'
+
 
 class OpenAPISchemaGenerator(SchemaGenerator):
     """Custom OpenAPI generator class."""

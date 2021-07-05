@@ -8,12 +8,11 @@ from rest_framework.response import Response
 
 class PageLimitPagination(PageNumberPagination):
     """Pagination class that allows the user to limit the page size."""
-    page_size = 100
     page_size_query_param = 'limit'
 
     def get_paginated_response(self, data: Any) -> Response:
         return Response({
-            'count': self.page.paginator.count,
+            'total': self.page.paginator.count,
             'last': not self.page.has_next(),
             'results': data
         })
@@ -22,13 +21,15 @@ class PageLimitPagination(PageNumberPagination):
         return {
             'type': 'object',
             'properties': {
-                'count': {
+                'total': {
                     'type': 'integer',
-                    'example': 100,
+                    'example': self.page_size,
+                    'description': 'The total number of results across pages.'
                 },
                 'last': {
                     'type': 'boolean',
                     'example': False,
+                    'description': 'Denotes whether this is the last page.'
                 },
                 'results': schema,
             },

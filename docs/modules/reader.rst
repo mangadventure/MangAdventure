@@ -41,6 +41,14 @@ reader.feeds module
    :undoc-members:
    :show-inheritance:
 
+reader.filters module
+---------------------
+
+.. automodule:: reader.filters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 reader.models module
 --------------------
 

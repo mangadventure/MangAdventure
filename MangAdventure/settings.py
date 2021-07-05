@@ -502,7 +502,6 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
     ),
     'DATETIME_INPUT_FORMATS': ('iso-8601', '%m/%d/%y'),
-    # 'DATETIME_FORMAT': '%a, %d %b %Y %H:%M:%S %z',
     'DEFAULT_THROTTLE_RATES': {'anon': '100/m'},
     'SCHEMA_COERCE_METHOD_NAMES': {
         'list': '* list',
@@ -516,7 +515,7 @@ REST_FRAMEWORK = {
     'ORDERING_PARAM': 'sort',
     'DEFAULT_VERSION': 'v2',
     'VERSION_PARAM': None,
-    'SEARCH_PARAM': 'q',
+    'PAGE_SIZE': env.int('API_PAGE_SIZE', 20),
 }
 if not DEBUG:  # pragma: no cover
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (

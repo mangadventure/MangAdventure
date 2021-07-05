@@ -1,34 +1,51 @@
 """API viewsets for the reader app."""
 
-from typing import List
+from typing import TYPE_CHECKING, List
 from warnings import filterwarnings
+
+from django.db.models import Count, Max, Q
+from django.utils import timezone as tz
 
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from api.v2.mixins import CORSMixin
 from api.v2.schema import OpenAPISchema
 
-from . import models, serializers
+from . import filters, models, serializers
+
+if TYPE_CHECKING:  # pragma: no cover
+    from django.db.models.query import QuerySet
 
 # XXX: We are overriding the "Series" schema on purpose.
 filterwarnings('ignore', '^Schema', module=OpenAPISchema.__base__.__module__)
 
 
-class ArtistViewSet(ModelViewSet):
-    """API endpoints for artists."""
+class ArtistViewSet(CORSMixin, ModelViewSet):
+    """
+    API endpoints for artists.
+
+    * list: List artists.
+    * read: View a certain artist.
+    * create: Create a new artist.
+    * update: Edit the given artist.
+    * patch: Patch the given artist.
+    * delete: Delete the given artist.
+    """
     schema = OpenAPISchema(tags=('artists',))
     queryset = models.Artist.objects.all()
     serializer_class = serializers.ArtistSerializer
 
 
-class AuthorViewSet(ModelViewSet):
+class AuthorViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for authors.
 
     * list: List authors.
     * read: View a certain author.
     * create: Create a new author.
+    * update: Edit the given author.
     * patch: Patch the given author.
     * delete: Delete the given author.
     """
@@ -37,7 +54,7 @@ class AuthorViewSet(ModelViewSet):
     serializer_class = serializers.AuthorSerializer
 
 
-class CategoryViewSet(ModelViewSet):
+class CategoryViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for categories.
 
@@ -54,7 +71,7 @@ class CategoryViewSet(ModelViewSet):
     lookup_field = 'name'
 
 
-class PageViewSet(ModelViewSet):
+class PageViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for pages.
 
@@ -68,7 +85,7 @@ class PageViewSet(ModelViewSet):
     serializer_class = serializers.PageSerializer
 
 
-class ChapterViewSet(ModelViewSet):
+class ChapterViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for chapters.
 
@@ -80,11 +97,15 @@ class ChapterViewSet(ModelViewSet):
     * delete: Delete the given chapter.
     """
     schema = OpenAPISchema(tags=('chapters',))
-    queryset = models.Chapter.objects.all()
     serializer_class = serializers.ChapterSerializer
+    filter_backends = filters.CHAPTER_FILTERS
+
+    def get_queryset(self) -> 'QuerySet':
+        return models.Chapter.objects.select_related('series') \
+            .filter(published__lte=tz.now()).order_by('-published')
 
 
-class SeriesViewSet(ModelViewSet):
+class SeriesViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for series.
 
@@ -95,16 +116,27 @@ class SeriesViewSet(ModelViewSet):
     * patch: Patch the given series.
     * delete: Delete the given series.
     """
-    schema = OpenAPISchema(tags=('series',), component_name='Series')
-    queryset = models.Series.objects.order_by('id')
+    schema = OpenAPISchema(
+        operation_id_base='Series',
+        tags=('series',), component_name='Series'
+    )
+    filter_backends = filters.SERIES_FILTERS
+    ordering = ('title',)
     lookup_field = 'slug'
+
+    def get_queryset(self) -> 'QuerySet':
+        q = Q(chapters__published__lte=tz.now())
+        return models.Series.objects.prefetch_related('chapters').annotate(
+            chapter_count=Count('chapters', filter=q),
+            latest_upload=Max('chapters__published')
+        ).filter(chapter_count__gt=0).distinct()
 
     def get_serializer_class(self) -> serializers.TSerializer:
         # explicit call until we drop Python 3.6 in v0.8
         return serializers.SeriesSerializer.__class_getitem__(self.action)
 
 
-class CubariViewSet(RetrieveModelMixin, GenericViewSet):
+class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
     """
     API endpoints for Cubari.
 

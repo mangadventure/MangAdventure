@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, mixins
 
+from api.v2.mixins import CORSMixin
 from api.v2.schema import OpenAPISchema
 
 from .models import ApiKey, UserProfile
@@ -17,12 +18,12 @@ from .serializers import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover
-    from django.db.models import QuerySet  # isort:skip
+    from django.db.models.query import QuerySet  # isort:skip
     from rest_framework.request import Request  # isort:skip
 
 
 class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
-                      mixins.DestroyModelMixin, GenericViewSet):
+                      mixins.DestroyModelMixin, CORSMixin, GenericViewSet):
     """
     API endpoints for bookmarks.
 
@@ -59,7 +60,7 @@ class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
 
 
 class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
-                     mixins.DestroyModelMixin, GenericViewSet):
+                     mixins.DestroyModelMixin, CORSMixin, GenericViewSet):
     """
     API endpoints for user profiles.
 
@@ -119,7 +120,7 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
         }, **initkwargs)
 
 
-class ApiKeyViewSet(mixins.CreateModelMixin, GenericViewSet):
+class ApiKeyViewSet(mixins.CreateModelMixin, CORSMixin, GenericViewSet):
     """
     API endpoints for API keys.
 

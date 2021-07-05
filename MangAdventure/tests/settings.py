@@ -248,7 +248,7 @@ REST_FRAMEWORK = {
     'ORDERING_PARAM': 'sort',
     'DEFAULT_VERSION': 'v2',
     'VERSION_PARAM': None,
-    'SEARCH_PARAM': 'q',
+    'PAGE_SIZE': 20
 }
 
 if find_spec('csp'):

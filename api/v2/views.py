@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_control
 from rest_framework.renderers import JSONOpenAPIRenderer
 from rest_framework.schemas import get_schema_view
 
+from .mixins import CORSMixin
 from .schema import OpenAPISchemaGenerator
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -16,10 +17,10 @@ if TYPE_CHECKING:  # pragma: no cover
 
 #: The generated OpenAPI schema as a view.
 openapi = cache_control(public=True, max_age=2628000, immutable=True)(
-    get_schema_view(
+    CORSMixin.decorator(get_schema_view(
         title='MangAdventure API', renderer_classes=[JSONOpenAPIRenderer],
         generator_class=OpenAPISchemaGenerator, public=True, version='2.0'
-    )
+    ))
 )
 
 

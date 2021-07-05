@@ -15,7 +15,7 @@ class TestUserProfileForm(UsersTestBase):
         super().setup_method()
         self.data = {
             'email': 'test@email.com',
-            'curr_password': 'test',
+            'curr_password': 'testerino',
             'new_password1': 'testpass2',
             'new_password2': 'testpass2',
             'username': 'rain2',

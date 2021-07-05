@@ -7,7 +7,9 @@ from django.utils.encoding import force_str
 
 from rest_framework.schemas.openapi import AutoSchema, SchemaGenerator
 from rest_framework.schemas.utils import get_pk_description
-from rest_framework.serializers import BaseSerializer
+from rest_framework.serializers import (
+    BaseSerializer, PrimaryKeyRelatedField, SlugRelatedField
+)
 
 
 class OpenAPISchema(AutoSchema):
@@ -16,14 +18,20 @@ class OpenAPISchema(AutoSchema):
     variable_regex = regex(r'{([^}]+)}')
 
     def map_field(self, field: Any) -> Dict:
-        # HACK: map serializers to their $refs
+        # map serializers to their $refs
         if isinstance(field, BaseSerializer):
             name = field.field_name.rstrip('s').capitalize()
             ref = {'$ref': '#/components/schemas/' + name}
             if hasattr(field, 'child'):
                 return {'type': 'array', 'items': ref}
             return ref
+        # fix primary key field type
+        if isinstance(field, PrimaryKeyRelatedField):
+            return {'type': 'integer'}
         result = super().map_field(field)
+        # specify pattern for slug related fields
+        if isinstance(field, SlugRelatedField):
+            result['pattern'] = '^[-a-zA-Z0-9_]+$'
         # specify format for password fields
         if field.style.get('input_type') == 'password':
             result['format'] = 'password'
@@ -38,9 +46,61 @@ class OpenAPISchema(AutoSchema):
         if field.read_only:
             schema.pop('pattern', None)
 
+    def map_serializer(self, serializer: BaseSerializer) -> Dict:
+        if serializer.__class__.__name__[:6] != 'Cubari':
+            return super().map_serializer(serializer)
+        # HACK: hard-code Cubari schema as it's too complex
+        return {
+            'type': 'object',
+            'properties': {
+                'title': {'type': 'string'},
+                'description': {'type': 'string', 'default': ''},
+                'author': {'type': 'string', 'default': ''},
+                'artist': {'type': 'string', 'default': ''},
+                'cover': {
+                    'type': 'string',
+                    'format': 'uri',
+                    'default': ''
+                },
+                'chapters': {
+                    'type': 'object',
+                    'additionalProperties': {
+                        'type': 'object',
+                        'properties': {
+                            'title': {'type': 'string'},
+                            'volume': {
+                                'type': 'string',
+                                'format': 'uint64',
+                                'default': None,
+                                'nullable': True
+                            },
+                            'groups': {
+                                'type': 'object',
+                                'additionalProperties': {
+                                    'type': 'array',
+                                    'items': {
+                                        'type': 'string',
+                                        'format': 'uri'
+                                    }
+                                }
+                            },
+                            'latest_update': {
+                                'type': 'string',
+                                'format': 'uint64',
+                                'default': ''
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     def get_operation(self, path: str, method: str) -> Dict:
         op = super().get_operation(path, method)
         op['summary'] = op.pop('description', '')
+        # fix incorrect plural forms
+        if op['operationId'][-2:] == 'ys':
+            op['operationId'] = op['operationId'][:-2] + 'ies'
         # disable security for unrestricted operations
         if method == 'GET' and not hasattr(self.view, '_restrict'):
             op['security'] = ()
@@ -59,12 +119,13 @@ class OpenAPISchema(AutoSchema):
                 schema['type'] = 'integer'
             elif variable == 'slug':
                 schema['pattern'] = '^[-a-zA-Z0-9_]+$'
+                description = 'The slug of the series.'
             if model is not None:
                 field = model._meta.get_field(variable)
                 if field is not None:
                     if field.primary_key:
                         description = get_pk_description(model, field)
-                    else:
+                    elif field.help_text:
                         description = force_str(field.help_text)
             parameters.append({
                 'name': variable,
@@ -105,7 +166,7 @@ class OpenAPISchemaGenerator(SchemaGenerator):
             },
             'security': ({'ApiKeyHeader': ()}, {'ApiKeyParam': ()})
         })
-        # add "securityShemes" to the components schema
+        # add "securitySchemes" to the components schema
         schema['components']['securitySchemes'] = {
             'ApiKeyHeader': {
                 'type': 'apiKey',

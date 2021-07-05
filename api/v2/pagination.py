@@ -24,7 +24,7 @@ class PageLimitPagination(PageNumberPagination):
             'properties': {
                 'count': {
                     'type': 'integer',
-                    'default': 100,
+                    'example': 100,
                 },
                 'last': {
                     'type': 'boolean',
@@ -33,6 +33,11 @@ class PageLimitPagination(PageNumberPagination):
                 'results': schema,
             },
         }
+
+    def get_schema_operation_parameters(self, view: Any) -> Dict:
+        params = super().get_schema_operation_parameters(view)
+        params[1]['schema']['default'] = self.page_size
+        return params
 
 
 __all__ = ['PageLimitPagination']

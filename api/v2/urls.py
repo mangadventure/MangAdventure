@@ -4,12 +4,20 @@ from django.urls import include, path
 
 from rest_framework.routers import SimpleRouter
 
+from reader import api as reader_api
 from users import api as users_api
 
 from .views import openapi, redoc_redirect, swagger_redirect
 
 #: The API router
 router = SimpleRouter()
+router.register('series', reader_api.SeriesViewSet, 'series')
+router.register('cubari', reader_api.CubariViewSet, 'cubari')
+router.register('chapters', reader_api.ChapterViewSet, 'chapters')
+router.register('artists', reader_api.ArtistViewSet, 'artists')
+router.register('authors', reader_api.AuthorViewSet, 'authors')
+router.register('categories', reader_api.CategoryViewSet, 'categories')
+router.register('pages', reader_api.PageViewSet, 'pages')
 router.register('bookmarks', users_api.BookmarkViewSet, 'bookmarks')
 router.register('token', users_api.ApiKeyViewSet, 'token')
 

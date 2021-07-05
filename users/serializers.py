@@ -42,7 +42,7 @@ class BookmarkPagination(BasePagination):
 class BookmarkSerializer(ModelSerializer):
     """Serializer for bookmarks."""
     series = SlugRelatedField(
-        queryset=Series.objects.only('id', 'slug'),
+        queryset=Series.objects.only('id', 'slug', 'title'),
         slug_field='slug', help_text='The slug of the series.'
     )
     user = HiddenField(default=CurrentUserDefault())

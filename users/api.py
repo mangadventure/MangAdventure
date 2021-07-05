@@ -6,7 +6,6 @@ from django.urls import reverse
 
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, mixins
 
@@ -130,7 +129,6 @@ class ApiKeyViewSet(mixins.CreateModelMixin, GenericViewSet):
         operation_id_base='ApiKey',
         tags=('token',), component_name='ApiKey'
     )
-    renderer_classes = (JSONRenderer,)
     serializer_class = AuthTokenSerializer
     permission_classes = ()
 

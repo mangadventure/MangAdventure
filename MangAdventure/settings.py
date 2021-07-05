@@ -518,6 +518,10 @@ REST_FRAMEWORK = {
     'VERSION_PARAM': None,
     'SEARCH_PARAM': 'q',
 }
+if not DEBUG:  # pragma: no cover
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (
+        'rest_framework.renderers.JSONRenderer',
+    )
 
 #######################
 #    Configuration    #

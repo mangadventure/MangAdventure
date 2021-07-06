@@ -1,5 +1,6 @@
 """Model serializers for the reader app."""
 
+from __future__ import annotations
 from typing import Dict, Generic, List, Type, TypeVar
 
 from rest_framework.fields import CharField, SerializerMethodField, URLField
@@ -45,9 +46,6 @@ class ChapterSerializer(ModelSerializer):
         queryset=Series.objects.only('slug', 'title'),
         slug_field='slug', help_text='The series of the chapter.'
     )
-    pages = SerializerMethodField(
-        help_text='The pages of the chapter.', method_name='_get_pages'
-    )
     groups = StringRelatedField(
         many=True, help_text='The scanlation groups of the chapter.'
     )
@@ -65,7 +63,7 @@ class ChapterSerializer(ModelSerializer):
         rep['published'] = {
             'iso-8601': published.strftime('%Y-%m-%dT%H:%M:%SZ'),
             'rfc-5322': published.strftime('%a, %d %b %Y %H:%M:%S GMT'),
-            'timestamp': str(round(published.timestamp()))
+            'timestamp': str(round(published.timestamp() * 1e3))
         }.get(dt_format)
         return rep
 
@@ -78,8 +76,8 @@ class ChapterSerializer(ModelSerializer):
     class Meta:
         model = Chapter
         fields = (
-            'id', 'title', 'number', 'volume', 'published', 'final',
-            'series', 'pages', 'groups', 'full_title', 'url', 'file'
+            'id', 'title', 'number', 'volume', 'published',
+            'final', 'series', 'groups', 'full_title', 'url', 'file'
         )
         extra_kwargs = {
             'file': {'write_only': True}
@@ -89,13 +87,17 @@ class ChapterSerializer(ModelSerializer):
 class PageSerializer(ModelSerializer):
     """Serializer for chapter pages."""
     chapter = PrimaryKeyRelatedField(
-        queryset=Chapter.objects.all(),
-        help_text="The ID of the page's chapter."
+        help_text="The ID of the page's chapter.",
+        queryset=Chapter.objects.all(), write_only=True
+    )
+    url = URLField(
+        source='get_absolute_url', read_only=True,
+        help_text='The absolute URL of the page.'
     )
 
     class Meta:
         model = Page
-        fields = ('id', 'chapter', 'image', 'number')
+        fields = ('id', 'chapter', 'image', 'number', 'url')
         extra_kwargs = {
             'image': {'help_text': 'The image of the page.'},
             'number': {'help_text': 'The number of the page.'}
@@ -118,7 +120,7 @@ class _SeriesListSerializer(ModelSerializer):
 
     class Meta:
         model = Series
-        fields = ('title', 'slug', 'url', 'cover')
+        fields = ('slug', 'title', 'url', 'cover')
 
 
 class _SeriesDetailSerializer(ModelSerializer):
@@ -145,6 +147,7 @@ class _SeriesDetailSerializer(ModelSerializer):
     )
 
     def create(self, validated_data: Dict) -> Series:
+        """Create a new ``Series`` instance."""
         # manually set the manager to the current user
         return super().create({
             **validated_data,
@@ -154,12 +157,11 @@ class _SeriesDetailSerializer(ModelSerializer):
     class Meta:
         model = Series
         fields = (
-            'title', 'slug', 'url', 'cover',
+            'slug', 'title', 'url', 'cover',
             'description', 'completed', 'format',
             'authors', 'artists', 'categories'
         )
         extra_kwargs = {
-            'slug': {'write_only': True},
             'format': {
                 'write_only': True,
                 'default': 'Vol. {volume}, Ch. {number}: {title}'
@@ -226,7 +228,7 @@ class CubariSerializer(ModelSerializer):
                         self.__uri(p.image.url) for p in pages.iterator()
                     ]
                 },
-                'latest_update': str(round(ch.modified.timestamp()))
+                'last_updated': str(round(ch.modified.timestamp()))
             }
         return result
 
@@ -241,6 +243,5 @@ class CubariSerializer(ModelSerializer):
 __all__ = [
     'ArtistSerializer', 'AuthorSerializer',
     'CategorySerializer', 'ChapterSerializer',
-    'PageSerializer', 'SeriesSerializer',
-    'CubariSerializer', 'TSerializer'
+    'PageSerializer', 'SeriesSerializer', 'CubariSerializer'
 ]

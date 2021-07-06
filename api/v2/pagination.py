@@ -1,9 +1,24 @@
 """Pagination utilities."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import BasePagination, PageNumberPagination
 from rest_framework.response import Response
+
+
+class DummyPagination(BasePagination):
+    """Dummy pagination class that simply wraps results."""
+    def to_html(self) -> str:
+        return ''
+
+    def paginate_queryset(self, *args, **kwargs) -> List:
+        return list(args[0])
+
+    def get_paginated_response(self, data: Any) -> Response:
+        return Response({'results': data})
+
+    def get_paginated_response_schema(self, schema: Dict) -> Dict:
+        return {'type': 'object', 'properties': {'results': schema}}
 
 
 class PageLimitPagination(PageNumberPagination):
@@ -32,13 +47,16 @@ class PageLimitPagination(PageNumberPagination):
                     'description': 'Denotes whether this is the last page.'
                 },
                 'results': schema,
-            },
+            }
         }
 
     def get_schema_operation_parameters(self, view: Any) -> Dict:
         params = super().get_schema_operation_parameters(view)
-        params[1]['schema']['default'] = self.page_size
+        params[0]['schema']['minimum'] = 1
+        params[1]['schema'].update({
+            'minimum': 1, 'default': self.page_size
+        })
         return params
 
 
-__all__ = ['PageLimitPagination']
+__all__ = ['DummyPagination', 'PageLimitPagination']

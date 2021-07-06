@@ -6,11 +6,15 @@ from warnings import filterwarnings
 from django.db.models import Count, Max, Q
 from django.utils import timezone as tz
 
-from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.mixins import (
+    CreateModelMixin, DestroyModelMixin, ListModelMixin,
+    RetrieveModelMixin, UpdateModelMixin
+)
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from api.v2.mixins import CORSMixin
+from api.v2.pagination import PageLimitPagination
 from api.v2.schema import OpenAPISchema
 
 from . import filters, models, serializers
@@ -71,18 +75,21 @@ class CategoryViewSet(CORSMixin, ModelViewSet):
     lookup_field = 'name'
 
 
-class PageViewSet(CORSMixin, ModelViewSet):
+class PageViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin,
+                  UpdateModelMixin, CORSMixin, GenericViewSet):
     """
     API endpoints for pages.
 
+    * list: List a chapter's pages.
     * create: Create a new page.
     * update: Edit the given page.
     * delete: Delete the given page.
     """
     schema = OpenAPISchema(tags=('pages',),)
-    http_method_names = ('post', 'put', 'delete', 'head', 'options')
+    http_method_names = ('get', 'post', 'put', 'delete', 'head', 'options')
     queryset = models.Page.objects.all()
     serializer_class = serializers.PageSerializer
+    filter_backends = filters.PAGE_FILTERS
 
 
 class ChapterViewSet(CORSMixin, ModelViewSet):
@@ -121,6 +128,7 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
         tags=('series',), component_name='Series'
     )
     filter_backends = filters.SERIES_FILTERS
+    pagination_class = PageLimitPagination
     ordering = ('title',)
     lookup_field = 'slug'
 

@@ -16,7 +16,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
 
 #: The generated OpenAPI schema as a view.
-openapi = cache_control(public=True, max_age=2628000, immutable=True)(
+openapi = cache_control(public=True, max_age=1296000, immutable=True)(
     CORSMixin.decorator(get_schema_view(
         title='MangAdventure API', renderer_classes=[JSONOpenAPIRenderer],
         generator_class=OpenAPISchemaGenerator, public=True, version='2.0'

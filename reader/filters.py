@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING, Dict, List
 
+from rest_framework.exceptions import ValidationError
 from rest_framework.filters import (
     BaseFilterBackend, OrderingFilter, SearchFilter
 )
@@ -135,7 +136,7 @@ class CategoriesFilter(BaseFilterBackend):
                 'items': {'type': 'string'}
             },
             'style': 'form',
-            'explode': 'false'
+            'explode': False
         }]
 
 
@@ -211,7 +212,7 @@ class ChapterFilter(SearchFilter):
     """Chapter series filter."""
     search_param = 'series'
     search_title = 'Series'
-    search_description = "Filter by the series' slug."
+    search_description = "Filter by the series slug."
 
     def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
                         view: 'ViewSet') -> 'QuerySet':
@@ -228,6 +229,54 @@ class ChapterFilter(SearchFilter):
         return [] if param is None else [param.replace('\x00', '')]
 
 
+class PageFilter(BaseFilterBackend):
+    """Chapter pages filter."""
+    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
+                        view: 'ViewSet') -> 'QuerySet':
+        if view.action != 'list':
+            return queryset
+        params = {'series', 'volume', 'number'}
+        if not params.issubset(request.query_params.keys()):
+            raise ValidationError(detail={
+                'error': f'{params} are required parameters.'
+            })
+        return queryset.filter(
+            chapter__series__slug=request.query_params['series'],
+            chapter__volume=request.query_params['volume'],
+            chapter__number=request.query_params['number']
+        ).order_by('number')
+
+    def get_schema_operation_parameters(self, view: 'ViewSet') -> List[Dict]:
+        return [{
+            'name': 'series',
+            'required': True,
+            'in': 'query',
+            'description': "The chapter's series slug.",
+            'schema': {
+                'type': 'string',
+                'pattern': '^[-a-zA-Z0-9_]+$'
+            },
+        }, {
+            'name': 'volume',
+            'required': True,
+            'in': 'query',
+            'description': 'The volume of the chapter.',
+            'schema': {
+                'type': 'integer',
+                'minimum': 0
+            }
+        }, {
+            'name': 'number',
+            'required': True,
+            'in': 'query',
+            'description': 'The number of the chapter.',
+            'schema': {
+                'type': 'integer',
+                'minimum': 0
+            }
+        }]
+
+
 #: The filters used in the series endpoint.
 SERIES_FILTERS = (
     TitleFilter, AuthorFilter, ArtistFilter,
@@ -237,5 +286,8 @@ SERIES_FILTERS = (
 #: The filters used in the chapters endpoint.
 CHAPTER_FILTERS = (ChapterFilter, DateFormat)
 
+#: The filters used in the pages endpoint.
+PAGE_FILTERS = (PageFilter,)
 
-__all__ = ['SERIES_FILTERS', 'CHAPTER_FILTERS']
+
+__all__ = ['SERIES_FILTERS', 'CHAPTER_FILTERS', 'PAGE_FILTERS']

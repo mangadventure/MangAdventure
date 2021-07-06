@@ -489,7 +489,7 @@ if find_spec('csp'):
 
 #: Configuration for the API.
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'api.v2.pagination.PageLimitPagination',
+    'DEFAULT_PAGINATION_CLASS': 'api.v2.pagination.DummyPagination',
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
     'DEFAULT_SCHEMA_CLASS': 'api.v2.schema.OpenAPISchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -502,7 +502,7 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
     ),
     'DATETIME_INPUT_FORMATS': ('iso-8601', '%m/%d/%y'),
-    'DEFAULT_THROTTLE_RATES': {'anon': '100/m'},
+    'DEFAULT_THROTTLE_RATES': {'anon': '200/m'},
     'SCHEMA_COERCE_METHOD_NAMES': {
         'list': '* list',
         'create': '* create',
@@ -515,7 +515,7 @@ REST_FRAMEWORK = {
     'ORDERING_PARAM': 'sort',
     'DEFAULT_VERSION': 'v2',
     'VERSION_PARAM': None,
-    'PAGE_SIZE': env.int('API_PAGE_SIZE', 20),
+    'PAGE_SIZE': env.int('API_PAGE_SIZE', 25),
 }
 if not DEBUG:  # pragma: no cover
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (

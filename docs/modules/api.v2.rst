@@ -25,6 +25,14 @@ api.v2.auth module
    :undoc-members:
    :show-inheritance:
 
+api.v2.mixins module
+--------------------
+
+.. automodule:: api.v2.mixins
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 api.v2.pagination module
 ------------------------
 

@@ -1,7 +1,6 @@
 from typing import get_type_hints, Any, List, Optional, Type, Tuple
 
 from django.db.models.base import Model
-from django.db.models.enums import Choices
 from django.db.models.fields import AutoField
 from django.db.models.fields.related_descriptors import (
     ForeignKeyDeferredAttribute,
@@ -13,9 +12,7 @@ from django.db.models.query import QuerySet
 from django.db.models.query_utils import DeferredAttribute
 
 from sphinx.application import Sphinx
-from sphinx.ext.autodoc import (
-    ClassDocumenter, DataDocumenter, Options, PropertyDocumenter
-)
+from sphinx.ext.autodoc import DataDocumenter, Options, PropertyDocumenter
 
 
 def _get_module(cls: Optional[Type]) -> str:
@@ -131,7 +128,7 @@ def process_docstring(app: Sphinx, what: str, name: str, obj:
     if cls.__module__ == 'builtins':
         qname = cls.__name__
     elif cls.__name__ in {'dict', 'list', 'tuple'}:
-        qname = f'typing.{qname.capitalize()}'
+        qname = f'typing.{cls.__name__.capitalize()}'
     else:
         qname = f'{_get_module(cls)}.{cls.__name__}'
     lines[0] = f':class:`~{qname}` – {lines[0]}'

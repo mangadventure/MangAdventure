@@ -495,7 +495,7 @@ class _PageNumberField(models.PositiveSmallIntegerField):
     default_validators = (MinValueValidator(1),)
 
     def formfield(self, **kwargs):  # pragma: no cover
-        # bypass parent to set min_value to 1
+        # HACK: bypass parent to set min_value to 1
         return super(
             models.PositiveSmallIntegerField, self
         ).formfield(min_value=1, **kwargs)
@@ -648,6 +648,6 @@ class Page(models.Model):
 
 
 __all__ = [
-    'Author', 'Artist', 'Series', 'Chapter',
-    'Page', 'Category', 'Alias'
+    'Author', 'Artist', 'Series',
+    'Chapter', 'Page', 'Category', 'Alias'
 ]

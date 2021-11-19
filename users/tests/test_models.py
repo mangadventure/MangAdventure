@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from pytest import raises
 
 from reader.models import Series
-from users.models import Bookmark, UserProfile, _avatar_uploader
+from users.models import ApiKey, Bookmark, UserProfile, _avatar_uploader
 
 from . import UsersTestBase
 
@@ -44,6 +44,20 @@ class TestUserProfile(UsersTestBase):
         assert self.user.profile == self.profile
         assert str(self.profile) == str(self.user)
         assert hash(self.profile) > 0
+        assert self.profile.get_absolute_url() \
+            .endswith(f'?id={self.profile.id}')
+
+
+class TestApiKey(UsersTestBase):
+    def setup_method(self):
+        super().setup_method()
+        self.key = ApiKey.objects.create(user=self.user, key='A' * 64)
+
+    def test_create(self):
+        """Test object creation."""
+        assert self.key.key == 'A' * 64
+        assert str(self.key) == 'A' * 64
+        assert hash(self.key) > 0
 
 
 class TestUtils(UsersTestBase):

@@ -9,7 +9,6 @@ from pytest import mark
 
 from MangAdventure.storage import CDNStorage
 
-from api.v1.response import JsonError
 from groups.models import Group, Member, Role
 
 from . import APITestBase
@@ -35,7 +34,7 @@ class APIViewTestBase(APITestBase):
         :return: tuple of the response code and the JSON object
         """
         r = self.client.get(url, params)
-        assert isinstance(r, (JsonResponse, JsonError))
+        assert isinstance(r, JsonResponse)
         assert 'Warning' in r.headers
         return r.status_code, r.json()
 
@@ -44,7 +43,7 @@ class APIViewTestBase(APITestBase):
         cache.clear()
 
     @classmethod
-    def teardown_class(self):
+    def teardown_class(cls):
         super().teardown_class()
         CDNStorage.get_modified_time = CDNStorage._original_get_modified_time
         del CDNStorage._original_get_modified_time

@@ -52,12 +52,12 @@ v0.6.x
 v0.7.x
 ^^^^^^
 
-| |u| Revamp API:
-|    |u| Use a framework.
-|    |u| API keys.
-|    |u| Rate limit.
-|    |u| POST,PUT,PATCH,DELETE privileges for staff.
-| |u| Admin panel access control.
+| |c| Revamp API:
+|    |c| Use a framework.
+|    |c| API keys.
+|    |c| Rate limit.
+|    |c| POST,PUT,PATCH,DELETE privileges for staff.
+| |c| Admin panel access control.
 
 v0.8.x
 ^^^^^^

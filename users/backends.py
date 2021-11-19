@@ -27,6 +27,7 @@ class ScanlationBackend(ModelBackend):
             return False
         if self.is_scanlator(user_obj):
             return getattr(obj, 'manager_id', -1) == user_obj.pk
+        # ModelBackend.has_perm checks `is_active` which we already did
         return super(ModelBackend, self).has_perm(user_obj, perm, obj=obj)
 
 

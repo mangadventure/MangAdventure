@@ -1,7 +1,7 @@
 """
 Model serializers for the groups app.
 
-.. admonition TODO:
+.. admonition:: TODO
    :class: warning
 
    Add a serializer for members.
@@ -41,6 +41,7 @@ class GroupSerializer(ModelSerializer):
         return [f'{m} ({m.get_roles(obj)})' for m in obj.members.distinct()]
 
     def create(self, validated_data: Dict) -> Group:
+        """Create a new ``Group`` instance."""
         # manually set the manager to the current user
         return super().create({
             **validated_data,

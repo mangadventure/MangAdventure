@@ -1,10 +1,9 @@
-from importlib.util import find_spec
 from typing import Dict, List
 
 from django.core.cache import cache
 from django.urls import reverse
 
-from pytest import mark
+from pytest import importorskip
 
 from MangAdventure.utils import natsort
 
@@ -50,8 +49,8 @@ class TestIndex(MangadvViewTestBase):
         r = self.client.get(self.URL)
         assert r.status_code == 200
 
-    @mark.skipif(not find_spec('csp'), reason='requires django-csp')
     def test_csp(self):
+        importorskip('csp', reason='requires django-csp')
         r = self.client.get(self.URL)
         assert r.status_code == 200
         assert 'Content-Security-Policy' in r

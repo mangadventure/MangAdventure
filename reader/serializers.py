@@ -1,6 +1,5 @@
 """Model serializers for the reader app."""
 
-from __future__ import annotations
 from typing import Dict, Generic, List, Type, TypeVar
 
 from rest_framework.fields import CharField, SerializerMethodField, URLField

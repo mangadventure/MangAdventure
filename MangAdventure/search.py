@@ -114,7 +114,7 @@ def query(params: _SearchParams) -> 'QuerySet':
     return Series.objects.annotate(
         chapter_count=Count('chapters', filter=q),
         latest_upload=Max('chapters__published')
-    ).filter(qsfilter(params) & q & Q(chapter_count__gt=0)).distinct()
+    ).filter(qsfilter(params) & Q(chapter_count__gt=0)).distinct()
 
 
 def get_response(request: 'HttpRequest') -> 'QuerySet':

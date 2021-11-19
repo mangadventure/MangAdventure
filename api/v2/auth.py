@@ -20,8 +20,7 @@ class ApiKeyAuthentication(TokenAuthentication):
         token = request.headers.get(
             self.keyword, request.GET.get('api_key')
         )
-        if token:
-            return self.authenticate_credentials(token)
+        return self.authenticate_credentials(token) if token else None
 
 
 class ScanlatorPermissions(DjangoObjectPermissions):

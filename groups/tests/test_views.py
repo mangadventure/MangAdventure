@@ -24,10 +24,11 @@ class TestGroup(GroupsTestBase):
         r = self.client.get(reverse(
             'groups:group', kwargs={'g_id': self.group.id}
         ))
+        assert self.group.id == 1
         assert r.status_code == 200
 
     def test_get_not_found(self):
-        r = self.client.get(reverse('groups:group', kwargs={'g_id': 2}))
+        r = self.client.get(reverse('groups:group', kwargs={'g_id': 3}))
         assert r.status_code == 404
 
     def test_get_zero(self):

@@ -7,7 +7,6 @@ from pathlib import PurePath
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.functions import Coalesce
 from django.shortcuts import reverse
 
 from MangAdventure.fields import (
@@ -36,7 +35,10 @@ class _ChoiceMeta(EnumMeta):
 class Group(models.Model):
     """A model representing a group."""
     #: The group's ID.
-    id = models.SmallIntegerField(primary_key=True, auto_created=True)
+    id = models.SmallAutoField(
+        primary_key=True, auto_created=True,
+        serialize=False, verbose_name='ID'
+    )
     #: The group's name.
     name = models.CharField(max_length=100, help_text="The group's name.")
     #: The group's website.
@@ -98,18 +100,6 @@ class Group(models.Model):
                  :const:`~MangAdventure.settings.MEDIA_ROOT`.
         """
         return PurePath('groups', str(self.id))
-
-    @property
-    def _increment(self) -> int:
-        return Group.objects.aggregate(
-            last=Coalesce(models.Max('id'), 0) + 1
-        )['last']
-
-    def save(self, *args, **kwargs):
-        """Save the current instance."""
-        if not self.id:
-            self.id = self._increment
-        super(Group, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
         """

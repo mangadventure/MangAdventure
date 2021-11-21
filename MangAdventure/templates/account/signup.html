@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load socialaccount user_tags %}
+{% load account user_tags %}
 {% block title %}
   <meta name="title" content="Sign up">
   <meta name="og:title" content="Sign up - {{ config.NAME }}">
@@ -32,8 +32,8 @@
       <input class="button" type="submit" value="Register">
     </form>
     <section id="oauth">
-      {% get_providers as socialaccount_providers %}
-      {% for provider in socialaccount_providers|available %}
+      {% get_oauth_providers as oauth_providers %}
+      {% for provider in oauth_providers %}
         {% if forloop.first %}<div id="oauth-or">Or, sign up with:</div>{% endif %}
         <a title="{{ provider.name }}" class="provider main-fg"
            rel="noopener nofollow" href="{% provider_login_url provider.id %}">

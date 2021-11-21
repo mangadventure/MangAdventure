@@ -14,7 +14,7 @@
   function matchQuery(q) {
     if(q.matches) {
       document.querySelectorAll('td.s-hidden').forEach((elem, i) => {
-        const n = Math.floor(i / 5) + 1;
+        const n = (i / 5 >> 0) + 1;
         switch(elem.className) {
           case 'result-people s-hidden':
             appendInfo(n, 'people', 'Author/Artist', elem.innerHTML);

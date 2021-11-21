@@ -1,151 +1,12 @@
-@mixin selection($bg, $fg) {
-  $prefixes: '', '-moz-';
-  @each $pref in $prefixes {
-    ::#{$pref}selection {
-      background: $bg;
-      color: $fg;
-    }
-  }
-}
-
-@mixin border($color: #FFF, $width: 1px, $style: solid, $suffix: null, $important: false) {
-  $border: $width $style $color;
-  @if($important) { $border: append($border, !important); }
-  border#{$suffix}: $border;
-}
-
 @mixin size($width, $height: $width) {
   width: $width;
   height: $height;
 }
 
-@mixin fullwidth() {
-  max-width: 100% !important;
-  height: auto !important;
-}
-
-@mixin title() {
-  margin: 0 0 10px;
-  padding: 6px 8px;
-  position: relative;
-  font-size: 17px;
-  font-weight: 900;
-  text-transform: uppercase;
-  text-align: center;
-  border-radius: 3px;
-}
-
-@mixin thumbnail() {
-  float: left;
-  position: relative;
-  max-height: 125px;
-  margin-right: 5px;
-  z-index: 100;
-}
-
-@mixin box-sizing($sizing: border-box) {
-  $prefixes: '-ms-', '-webkit-', '-moz-', '';
-  @each $p in $prefixes {
-    #{$p}box-sizing: $sizing;
-  }
-}
-
-@mixin border-radius($radius: 5px) {
-  $prefixes: '-moz-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}border-radius: $radius;
-  }
-}
-
-@mixin flex-direction($direction: row) {
-  $prefixes: '-ms-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}flex-direction: $direction;
-  }
-}
-
-@mixin justify-content($justify: space-between) {
-  $prefixes: '-ms-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}justify-content: $justify;
-  }
-}
-
-@mixin align-items($align: center) {
-  $prefixes: '-ms-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}align-items: $align;
-  }
-}
-
-@mixin align-self($align: center) {
-  $prefixes: '-ms-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}align-self: $align;
-  }
-}
-
-@mixin flex-wrap($wrap: wrap) {
-  $prefixes: '-ms-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}flex-wrap: $wrap;
-  }
-}
-
-@mixin flex($flex: none) {
-  $prefixes: '-ms-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}flex: $flex;
-  }
-}
-
-@mixin flex-shrink($shrink: 0) {
-  $prefixes: '-ms-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}flex-shrink: $shrink;
-  }
-}
-
-@mixin flex-grow($grow: 0) {
-  $prefixes: '-webkit-', '';
-  -ms-flex-positive: $grow;
-  @each $p in $prefixes {
-    #{$p}flex-grow: $grow;
-  }
-}
-
-@mixin flex-basis($basis: 100%) {
-  $prefixes: '-ms-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}flex-basis: $basis;
-  }
-}
-
-@mixin text-overflow($overflow: ellipsis) {
-  $prefixes: '-ms-', '';
-  @each $p in $prefixes {
-    #{$p}text-overflow: $overflow;
-  }
-}
-
 @mixin truncate() {
   overflow: hidden;
   white-space: nowrap;
-  @include text-overflow();
-}
-
-@mixin text-size-adjust($size: 100%) {
-  $prefixes: '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}text-size-adjust: $size;
-  }
-}
-
-@mixin transform($transform) {
-  $prefixes: '-ms-', '-moz-', '-webkit-', '';
-  @each $p in $prefixes {
-    #{$p}transform: unquote($transform);
-  }
+  text-overflow: ellipsis;
 }
 
 @mixin touch($selector: null) {
@@ -154,4 +15,9 @@
   &:focus#{$selector} {
     @content;
   }
+}
+
+@mixin shadow($size, $color, $type: 'text') {
+  #{$type}-shadow: -#{$size} 0 $size $color,
+    0 $size $size $color, $size 0 $size $color, 0 -#{$size} $size $color;
 }

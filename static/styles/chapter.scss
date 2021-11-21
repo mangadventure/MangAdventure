@@ -69,7 +69,7 @@
   width: 100%;
   display: flex;
   margin: 2.5vh auto 1vh;
-  @include flex-direction(column);
+  flex-direction: column;
   .curr-page {
     font-size: 1.25em;
     margin: auto 0;
@@ -82,7 +82,7 @@
   &-top, &-bottom {
     width: 100%;
     display: inline-flex;
-    @include justify-content(space-around);
+    justify-content: space-around;
   }
 }
 

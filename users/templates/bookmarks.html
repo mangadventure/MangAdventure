@@ -13,7 +13,7 @@
   <article id="bookmarks">
     {% for release in releases %}
         <section class="bookmark">
-          <img class="cover" src="{{ release.series.cover.url }}">
+          <img class="cover" alt="Cover" src="{{ release.series.cover.url }}">
           <div class="bookmark-release">
             <h2 class="bookmark-series">
               <a href="{{ release.series.get_absolute_url }}" title="{{ release.series }}">

@@ -2,7 +2,6 @@
 {% load static humanize custom_tags %}
 {% block head_extras %}
   {% if request.user.is_authenticated %}
-    <meta name="csrf-token" content="{{ csrf_token }}">
     <script src="{% static 'scripts/bookmark.js' %}"
             type="application/javascript" async></script>
   {% endif %}
@@ -111,18 +110,6 @@
         </div>
       {% endfor %}
     </div>
-    {% comment %}
-      <div id="comments">
-        <section id="comments-list">
-          {% render_comment_list for series %}
-        </section>
-        <section id="comments-form">
-          {% with next=request.path %}
-            {% render_comment_form for series %}
-          {% endwith %}
-        </section>
-      </div>
-    {% endcomment %}
   </article>
 {% endblock %}
 {% block footer %}

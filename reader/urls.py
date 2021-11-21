@@ -24,7 +24,6 @@ urlpatterns = [
     path(_page, views.chapter_page, name='page'),
     path(f'{_slug[:-1]}.atom', feeds.ReleasesAtom(), name='series.atom'),
     path(f'{_slug[:-1]}.rss', feeds.ReleasesRSS(), name='series.rss'),
-    # path(f'{_chapter}comments/', views.chapter_comments, name='comments'),
 ]
 
 if settings.CONFIG['ALLOW_DLS']:

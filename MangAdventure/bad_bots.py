@@ -6,6 +6,7 @@ BOTS = [
     'autoemailspider',
     'BlackWidow',
     'Boston Project',
+    'Bytespider',
     'bwh3_user_agent',
     'China Local Browse',
     'ContactBot',

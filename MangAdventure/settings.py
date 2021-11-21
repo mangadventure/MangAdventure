@@ -85,7 +85,6 @@ MIDDLEWARE = [
     'django.middleware.http.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
@@ -377,14 +376,6 @@ DEFAULT_FROM_EMAIL = env['EMAIL_ADDRESS']
 DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]
 DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
 
-#: Set the ``HttpOnly`` flag on the CSRF cookie.
-#: See :setting:`CSRF_COOKIE_HTTP_ONLY`.
-CSRF_COOKIE_HTTP_ONLY = True
-
-#: Prevent the CSRF cookie from being sent in cross-site requests.
-#: See :setting:`CSRF_COOKIE_SAMESITE`.
-CSRF_COOKIE_SAMESITE = 'Strict'
-
 #: Prevent the session cookie from being sent in cross-site requests.
 #: See :setting:`SESSION_COOKIE_SAMESITE`.
 SESSION_COOKIE_SAMESITE = 'Strict'
@@ -400,10 +391,6 @@ if env.bool('HTTPS', True):
     #: Redirect all non-HTTPS requests to HTTPS.
     #: See :setting:`SECURE_SSL_REDIRECT`.
     SECURE_SSL_REDIRECT = True
-
-    #: Set the ``X-XSS-Protection: 1; mode=block`` header.
-    #: See :setting:`SECURE_BROWSER_XSS_FILTER`.
-    SECURE_BROWSER_XSS_FILTER = True
 
     #: Set the ``X-Content-Type-Options: nosniff`` header.
     #: See :setting:`SECURE_CONTENT_TYPE_NOSNIFF`.
@@ -422,18 +409,12 @@ if env.bool('HTTPS', True):
     #: See :setting:`SESSION_COOKIE_SECURE`.
     SESSION_COOKIE_SECURE = True
 
-    #: Use a secure cookie for the CSRF cookie.
-    #: See :setting:`CSRF_COOKIE_SECURE`.
-    CSRF_COOKIE_SECURE = True
-
     #: The default protocol used when generating account URLs.
     #: See :auth:`ACCOUNT_DEFAULT_HTTP_PROTOCOL <configuration.html>`.
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 # Optional django-csp module
 if find_spec('csp'):
-    MIDDLEWARE.append('csp.middleware.CSPMiddleware')
-
     #: Set the :csp:`default-src` CSP directive.
     CSP_DEFAULT_SRC = ("'none'",)
 
@@ -472,10 +453,12 @@ if find_spec('csp'):
     CSP_REPORT_URI = env.list('CSP_REPORT_URI')
 
     if CSP_REPORT_URI:
-        MIDDLEWARE[-1] = 'csp.contrib.rate_limiting.RateLimitedCSPMiddleware'
+        MIDDLEWARE.append('csp.contrib.rate_limiting.RateLimitedCSPMiddleware')
 
         #: Percentage of requests that should see the ``report-uri`` directive.
         CSP_REPORT_PERCENTAGE = env.float('CSP_REPORT_PERCENTAGE', 1.0) / 100
+    else:
+        MIDDLEWARE.append('csp.middleware.CSPMiddleware')
 
     #: URLs beginning with any of these will not get the CSP headers.
     CSP_EXCLUDE_URL_PREFIXES = (

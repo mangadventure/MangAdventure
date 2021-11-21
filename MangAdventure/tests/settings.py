@@ -53,7 +53,6 @@ MIDDLEWARE = [
     'django.middleware.http.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
@@ -193,10 +192,6 @@ DEFAULT_FROM_EMAIL = 'evangelos-ch@users.noreply.github.com'
 
 DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]
 DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
-
-CSRF_COOKIE_HTTP_ONLY = True
-
-CSRF_COOKIE_SAMESITE = 'Strict'
 
 SESSION_COOKIE_SAMESITE = 'Strict'
 

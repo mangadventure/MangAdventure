@@ -81,7 +81,7 @@
     <header id="header">
       {% cache 604800 logo %}
         <a id="home" href="{% url 'index' %}">
-          <img id="logo" src="{{ config.LOGO }}"></img>
+          <img id="logo" alt="Logo" src="{{ config.LOGO }}">
         </a>
       {% endcache %}
       <nav id="navig">
@@ -131,7 +131,6 @@
               </li>
               <li class="dropdown-element">
                 <form action="{% url 'account_logout' %}" method="POST">
-                  {% csrf_token %}
                   <input type="hidden" name="next" value="{{ request.path }}">
                   <button type="submit" class="logout-btn">
                     <span>Logout</span><i class="mi mi-logout" aria-hidden="true"></i>

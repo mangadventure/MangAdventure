@@ -22,9 +22,6 @@ from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 
 from MangAdventure.filters import boolean_filter
 
-# from commentary.admin import CommentsAdmin
-# from commentary.models import Comment
-
 
 class UserTypeFilter(admin.SimpleListFilter):
     """Admin interface filter for user types."""
@@ -217,25 +214,12 @@ class OAuthAppAdmin(SocialAppAdmin):
         )
 
 
-# class UserComment(Comment):
-#     class Meta:
-#         proxy = True
-#         auto_created = True
-#         app_label = 'users'
-
-
-# class UserCommentAdmin(CommentsAdmin):
-#     def has_add_permission(self, request):
-#         return False
-
-
 admin.site.unregister((
     EmailAddress, SocialAccount, SocialToken,
     SocialApp, models.User, models.Group
 ))
 admin.site.register(User, UserAdmin)
 admin.site.register(OAuthApp, OAuthAppAdmin)
-# admin.site.register(UserComment, UserCommentAdmin)
 
 __all__ = [
     'UserTypeFilter', 'User', 'UserForm',

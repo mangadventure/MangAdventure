@@ -247,16 +247,6 @@ def chapter_download(request: HttpRequest, slug: str, vol: int, num: float
     )
 
 
-# def chapter_comments(request, slug, vol, num):
-#     try:
-#         chapter = Chapter.objects.get(
-#             series__slug=slug, volume=vol, number=num
-#         )
-#     except Chapter.DoesNotExist as e:
-#         raise Http404 from e
-#     return render(request, 'comments.html', {'chapter': chapter})
-
-
 __all__ = [
     'directory', 'series', 'chapter_page',
     'chapter_redirect', 'chapter_download'

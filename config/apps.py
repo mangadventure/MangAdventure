@@ -22,7 +22,7 @@ class SiteConfig(AppConfig):
 
     def ready(self):
         """Configure the site when the app is ready."""
-        super(SiteConfig, self).ready()
+        super().ready()
 
         if 'django_site' in connection.introspection.table_names():
             self._configure()

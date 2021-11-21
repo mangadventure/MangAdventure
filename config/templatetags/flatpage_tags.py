@@ -1,5 +1,7 @@
 """Template tags used by the flatpage template."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from django.template.defaultfilters import register
@@ -14,7 +16,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 @register.filter
-def breadcrumbs_ld(request: 'HttpRequest', page: 'FlatPage') -> str:
+def breadcrumbs_ld(request: HttpRequest, page: FlatPage) -> str:
     """
     Create a JSON-LD ``<script>`` with the page's breadcrumbs.
 

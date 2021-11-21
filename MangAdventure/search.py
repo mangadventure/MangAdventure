@@ -1,5 +1,7 @@
 """Functions used for searching."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, List, NamedTuple, Tuple
 
 from django.db.models import Count, Max, Q
@@ -41,7 +43,7 @@ class _SearchParams(NamedTuple):
         )
 
 
-def parse(request: 'HttpRequest') -> _SearchParams:
+def parse(request: HttpRequest) -> _SearchParams:
     """
     Parse a request and return a :obj:`~collections.namedtuple`
     of search parameters.
@@ -99,7 +101,7 @@ def qsfilter(params: _SearchParams) -> Q:
     return filters
 
 
-def query(params: _SearchParams) -> 'QuerySet':
+def query(params: _SearchParams) -> QuerySet:
     """
     Get a queryset of :class:`~reader.models.Series`
     from the given search parameters.
@@ -117,7 +119,7 @@ def query(params: _SearchParams) -> 'QuerySet':
     ).filter(qsfilter(params) & Q(chapter_count__gt=0)).distinct()
 
 
-def get_response(request: 'HttpRequest') -> 'QuerySet':
+def get_response(request: HttpRequest) -> QuerySet:
     """
     Get a queryset of :class:`~reader.models.Series` from the given request.
 

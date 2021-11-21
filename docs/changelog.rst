@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+v0.8.0
+^^^^^^
+
+* Dropped support for Python 3.6
+
+
 v0.7.4
 ^^^^^^
 

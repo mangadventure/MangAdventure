@@ -1,11 +1,12 @@
 """RSS and Atom feeds for the users app."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Iterable
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.syndication.views import Feed
-from django.db.models.expressions import Subquery
 from django.http import HttpResponse
 from django.utils import timezone as tz
 from django.utils.cache import patch_vary_headers
@@ -30,7 +31,7 @@ class BookmarksRSS(Feed):
     description = 'Updates when a bookmarked series has a new release'
     item_guid_is_permalink = True
 
-    def __call__(self, request: 'HttpRequest', *args, **kwargs) -> HttpResponse:
+    def __call__(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """
         Get the HTTP response of the feed.
 
@@ -89,9 +90,8 @@ class BookmarksRSS(Feed):
         :return: An iterable of ``Chapter`` objects.
         """
         return Chapter.objects.filter(
-            published__lte=tz.now(), id__in=Subquery(
-                obj.bookmarks.values('series__chapters')
-            )
+            published__lte=tz.now(),
+            series_id__in=obj.bookmarks.values('series_id')
         ).select_related('series').order_by('-published')
 
     def item_description(self, item: Chapter) -> str:
@@ -104,13 +104,13 @@ class BookmarksRSS(Feed):
         """
         desc = str(item)
         if settings.CONFIG['ALLOW_DLS']:
-            domain = settings.CONFIG["DOMAIN"]
+            domain = settings.CONFIG['DOMAIN']
             scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
             url = item.get_absolute_url()[:-1] + '.cbz'
             desc = f'<a href="{scheme}://{domain}{url}">{desc}</a>'
         return desc
 
-    def item_pubdate(self, item: Chapter) -> 'datetime':
+    def item_pubdate(self, item: Chapter) -> datetime:
         """
         Get the publication date of the item.
 
@@ -120,7 +120,7 @@ class BookmarksRSS(Feed):
         """
         return item.published
 
-    def item_updateddate(self, item: Chapter) -> 'datetime':
+    def item_updateddate(self, item: Chapter) -> datetime:
         """
         Get the update date of the item.
 

@@ -1,5 +1,7 @@
 """The custom views of the api.v2 app."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from django.http import HttpResponsePermanentRedirect
@@ -24,7 +26,7 @@ openapi = cache_control(public=True, max_age=1296000, immutable=True)(
 )
 
 
-def redoc_redirect(request: 'HttpRequest') -> HttpResponsePermanentRedirect:
+def redoc_redirect(request: HttpRequest) -> HttpResponsePermanentRedirect:
     """Redirect to the ReDoc demo with our schema."""
     url = request.build_absolute_uri(reverse('api:v2:schema'))
     return HttpResponsePermanentRedirect(
@@ -32,7 +34,7 @@ def redoc_redirect(request: 'HttpRequest') -> HttpResponsePermanentRedirect:
     )
 
 
-def swagger_redirect(request: 'HttpRequest') -> HttpResponsePermanentRedirect:
+def swagger_redirect(request: HttpRequest) -> HttpResponsePermanentRedirect:
     """Redirect to the Swagger generator with our schema."""
     url = request.build_absolute_uri(reverse('api:v2:schema'))
     return HttpResponsePermanentRedirect(

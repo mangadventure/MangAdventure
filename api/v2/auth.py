@@ -1,5 +1,7 @@
 """Authentication & authorization utilities."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional, Tuple
 
 from rest_framework.authentication import TokenAuthentication
@@ -16,7 +18,7 @@ class ApiKeyAuthentication(TokenAuthentication):
     keyword = 'X-API-Key'
     model = ApiKey
 
-    def authenticate(self, request: 'Request') -> Optional[Tuple]:
+    def authenticate(self, request: Request) -> Optional[Tuple]:
         token = request.headers.get(
             self.keyword, request.GET.get('api_key')
         )

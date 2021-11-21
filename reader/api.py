@@ -1,6 +1,8 @@
 """API viewsets for the reader app."""
 
-from typing import TYPE_CHECKING, List
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, List, Type
 from warnings import filterwarnings
 
 from django.db.models import Count, Max, Q
@@ -107,7 +109,7 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
     serializer_class = serializers.ChapterSerializer
     filter_backends = filters.CHAPTER_FILTERS
 
-    def get_queryset(self) -> 'QuerySet':
+    def get_queryset(self) -> QuerySet:
         return models.Chapter.objects.select_related('series') \
             .filter(published__lte=tz.now()).order_by('-published')
 
@@ -132,16 +134,15 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
     ordering = ('title',)
     lookup_field = 'slug'
 
-    def get_queryset(self) -> 'QuerySet':
+    def get_queryset(self) -> QuerySet:
         q = Q(chapters__published__lte=tz.now())
         return models.Series.objects.prefetch_related('chapters').annotate(
             chapter_count=Count('chapters', filter=q),
             latest_upload=Max('chapters__published')
         ).filter(chapter_count__gt=0).distinct()
 
-    def get_serializer_class(self) -> serializers.TSerializer:
-        # explicit call until we drop Python 3.6 in v0.8
-        return serializers.SeriesSerializer.__class_getitem__(self.action)
+    def get_serializer_class(self) -> Type[serializers.SeriesSerializer]:
+        return serializers.SeriesSerializer[self.action]
 
 
 class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):

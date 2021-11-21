@@ -1,5 +1,7 @@
 """Database models for the reader app."""
 
+from __future__ import annotations
+
 from hashlib import blake2b
 from io import BytesIO
 from os import path, remove
@@ -27,7 +29,7 @@ from MangAdventure import storage, utils, validators
 from groups.models import Group
 
 
-def _cover_uploader(obj: 'Series', name: str) -> str:
+def _cover_uploader(obj: Series, name: str) -> str:
     name = f'cover.{name.split(".")[-1]}'
     name = str(obj.get_directory() / name)
     if path.exists(name):  # pragma: no cover
@@ -132,7 +134,7 @@ class Category(models.Model):
         """Save the current instance."""
         if not self.id:
             self.id = self.name.lower()
-        super(Category, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         """
@@ -289,7 +291,7 @@ class Chapter(models.Model):
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
-        super(Chapter, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if self.file:
             validators.zipfile_validator(self.file)
             self.unzip()
@@ -297,7 +299,7 @@ class Chapter(models.Model):
         self.series.save()
 
     @cached_property
-    def next(self) -> 'Chapter':
+    def next(self) -> Chapter:
         """Get the next chapter in the series."""
         q = Q(series_id=self.series_id) & (
             Q(volume__gt=self.volume) |
@@ -307,7 +309,7 @@ class Chapter(models.Model):
             .order_by('volume', 'number').first()
 
     @cached_property
-    def prev(self) -> 'Chapter':
+    def prev(self) -> Chapter:
         """Get the previous chapter in the series."""
         q = Q(series_id=self.series_id) & (
             Q(volume__lt=self.volume) |
@@ -450,8 +452,8 @@ class Chapter(models.Model):
             return self._tuple > other._tuple
 
         raise TypeError(
-            "'>' not supported between instances of '{}' and '{}'"
-            .format(self.__class__, other.__class__)
+            "'<' not supported between instances of " +
+            f"'{self.__class__}' and '{other.__class__}'"
         )
 
     def __lt__(self, other: Any) -> bool:
@@ -478,8 +480,8 @@ class Chapter(models.Model):
             return self._tuple < other._tuple
 
         raise TypeError(
-            "'<' not supported between instances of '{}' and '{}'"
-            .format(self.__class__, other.__class__)
+            "'<' not supported between instances of " +
+            f"'{self.__class__}' and '{other.__class__}'"
         )
 
     def __hash__(self) -> int:
@@ -603,8 +605,8 @@ class Page(models.Model):
             return self.number > other.number
 
         raise TypeError(
-            "'>' not supported between instances of '{}' and '{}'"
-            .format(self.__class__, other.__class__)
+            "'<' not supported between instances of " +
+            f"'{self.__class__}' and '{other.__class__}'"
         )
 
     def __lt__(self, other: Any) -> bool:
@@ -631,8 +633,8 @@ class Page(models.Model):
             return self.number < other.number
 
         raise TypeError(
-            "'<' not supported between instances of '{}' and '{}'"
-            .format(self.__class__, other.__class__)
+            "'<' not supported between instances of " +
+            f"'{self.__class__}' and '{other.__class__}'"
         )
 
     def __hash__(self) -> int:

@@ -1,5 +1,7 @@
 """Custom adapters for :auth:`django-allauth <advanced.html>`."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from allauth.account.adapter import DefaultAccountAdapter
@@ -12,7 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class AccountAdapter(DefaultAccountAdapter):
     """Adapter for user accounts."""
-    def get_login_redirect_url(self, request: 'HttpRequest') -> str:
+    def get_login_redirect_url(self, request: HttpRequest) -> str:
         """
         Return the URL to redirect to after a successful login.
 
@@ -22,7 +24,7 @@ class AccountAdapter(DefaultAccountAdapter):
         """
         return request.GET.get('next', '/user')
 
-    def get_logout_redirect_url(self, request: 'HttpRequest') -> str:
+    def get_logout_redirect_url(self, request: HttpRequest) -> str:
         """
         Return the URL to redirect to after a successful logout.
 
@@ -35,8 +37,8 @@ class AccountAdapter(DefaultAccountAdapter):
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
     """Adapter for OAuth accounts."""
-    def get_connect_redirect_url(self, request: 'HttpRequest',
-                                 social_account: 'SocialAccount') -> str:
+    def get_connect_redirect_url(self, request: HttpRequest,
+                                 social_account: SocialAccount) -> str:
         """
         Return the URL to redirect to after a successful connection.
 

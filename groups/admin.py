@@ -1,5 +1,7 @@
 """Admin models for the groups app."""
 
+from __future__ import annotations
+
 from typing import Optional
 
 from django.contrib import admin
@@ -21,9 +23,9 @@ class MemberRoleInline(admin.StackedInline):
     model = Role
     extra = 1
 
-    def get_formset(self, request: 'HttpRequest',
+    def get_formset(self, request: HttpRequest,
                     obj: Optional[Role], **kwargs
-                    ) -> 'BaseInlineFormSet':  # pragma: no cover
+                    ) -> BaseInlineFormSet:  # pragma: no cover
         formset = super().get_formset(request, obj, **kwargs)
         if request.user.is_superuser:
             return formset
@@ -44,6 +46,7 @@ class MemberAdmin(admin.ModelAdmin):
         ('roles__role', filters.related_filter('role')),
     )
 
+    @admin.display(ordering='twitter', description='twitter')
     def _twitter(self, obj: Member) -> str:
         if not obj.twitter:
             return ''
@@ -52,9 +55,7 @@ class MemberAdmin(admin.ModelAdmin):
             ' target="_blank">@{0}</a>', obj.twitter
         )
 
-    _twitter.short_description = 'twitter'
-    _twitter.admin_order_field = 'twitter'
-
+    @admin.display(ordering='reddit', description='reddit')
     def _reddit(self, obj: Member) -> str:
         if not obj.reddit:
             return ''
@@ -62,9 +63,6 @@ class MemberAdmin(admin.ModelAdmin):
             '<a href="https://reddit.com/u/{0}" rel="noopener noreferrer"'
             ' target="_blank">/u/{0}</a>', obj.reddit
         )
-
-    _reddit.short_description = 'reddit'
-    _reddit.admin_order_field = 'reddit'
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -79,8 +77,8 @@ class GroupAdmin(admin.ModelAdmin):
     )
     empty_value_display = 'N/A'
 
-    def get_form(self, request: 'HttpRequest', obj: Optional[Group]
-                 = None, change: bool = False, **kwargs) -> 'ModelForm':
+    def get_form(self, request: HttpRequest, obj: Optional[Group]
+                 = None, change: bool = False, **kwargs) -> ModelForm:
         form = super().get_form(request, obj, change, **kwargs)
         if 'manager' in form.base_fields:
             form.base_fields['manager'].initial = request.user.id
@@ -88,6 +86,7 @@ class GroupAdmin(admin.ModelAdmin):
                 form.base_fields['manager'].widget = HiddenInput()
         return form
 
+    @admin.display(description='logo')
     def image(self, obj: Group) -> str:
         """
         Get the logo of the group as an HTML ``<img>``.
@@ -98,8 +97,7 @@ class GroupAdmin(admin.ModelAdmin):
         """
         return utils.img_tag(obj.logo, 'logo', height=25)
 
-    image.short_description = 'logo'
-
+    @admin.display(ordering='website', description='website')
     def _website(self, obj: Group) -> str:
         if not obj.website:
             return ''
@@ -108,10 +106,7 @@ class GroupAdmin(admin.ModelAdmin):
             ' target="_blank">{0}</a>', obj.website
         )
 
-    _website.short_description = 'website'
-    _website.admin_order_field = 'website'
-
-    def has_change_permission(self, request: 'HttpRequest', obj:
+    def has_change_permission(self, request: HttpRequest, obj:
                               Optional[Group] = None) -> bool:
         """
         Return ``True`` if editing the object is permitted.
@@ -128,7 +123,7 @@ class GroupAdmin(admin.ModelAdmin):
             return True
         return obj.manager_id == request.user.id
 
-    def has_delete_permission(self, request: 'HttpRequest', obj:
+    def has_delete_permission(self, request: HttpRequest, obj:
                               Optional[Group] = None) -> bool:
         """
         Return ``True`` if deleting the object is permitted.

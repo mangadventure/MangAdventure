@@ -1,9 +1,11 @@
 """Signal receivers for the users app."""
 
+from __future__ import annotations
+
 from typing import Type
 
 from django.dispatch import receiver
-# XXX: Forward reference warning when under TYPE_CHECKING
+# XXX: cannot be resolved under TYPE_CHECKING
 from django.http import HttpRequest
 
 from allauth.account.models import EmailAddress
@@ -11,7 +13,7 @@ from allauth.account.signals import email_confirmed
 
 
 @receiver(email_confirmed)
-def update_user_email(sender: Type[EmailAddress], request: 'HttpRequest',
+def update_user_email(sender: Type[EmailAddress], request: HttpRequest,
                       email_address: EmailAddress, **kwargs):
     """
     Receive a signal when an email address is updated and confirmed.
@@ -28,8 +30,8 @@ def update_user_email(sender: Type[EmailAddress], request: 'HttpRequest',
     email_address.set_as_primary()
     # Get rid of old email addresses
     EmailAddress.objects.filter(
-        user=email_address.user
-    ).exclude(primary=True).delete()
+        user=email_address.user, primary=False
+    ).delete()
 
 
 __all__ = ['update_user_email']

@@ -1,5 +1,7 @@
 """The views of the reader app."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from django.db.models import Count, Prefetch, Q
@@ -22,9 +24,9 @@ if TYPE_CHECKING:  # pragma: no cover
     )
 
 
-def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
-            vol: 'Optional[int]' = None, num: 'Optional[float]' = None,
-            page: 'Optional[int]' = None) -> 'Optional[datetime]':
+def _latest(request: HttpRequest, slug: Optional[str] = None,
+            vol: Optional[int] = None, num: Optional[float] = None,
+            page: Optional[int] = None) -> Optional[datetime]:
     try:
         if slug is None:
             q = Q(chapters__published__lte=tz.now())
@@ -43,13 +45,13 @@ def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
         return None
 
 
-def _cbz_etag(request: 'HttpRequest', slug: str, vol: int, num: float) -> str:
+def _cbz_etag(request: HttpRequest, slug: str, vol: int, num: float) -> str:
     return 'W/"%x"' % (hash(f'{slug}-{vol}-{num}.cbz') & (1 << 64) - 1)
 
 
 @condition(last_modified_func=_latest)
 @cache_control(max_age=600, must_revalidate=True)
-def directory(request: 'HttpRequest') -> 'HttpResponse':
+def directory(request: HttpRequest) -> HttpResponse:
     """
     View that serves a page which lists all the series.
 
@@ -76,7 +78,7 @@ def directory(request: 'HttpRequest') -> 'HttpResponse':
 
 @condition(last_modified_func=_latest)
 @cache_control(max_age=1800, must_revalidate=True)
-def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
+def series(request: HttpRequest, slug: str) -> HttpResponse:
     """
     View that serves the page of a single series.
 
@@ -147,8 +149,8 @@ def series(request: 'HttpRequest', slug: str) -> 'HttpResponse':
 
 @condition(last_modified_func=_latest)
 @cache_control(max_age=3600, must_revalidate=True)
-def chapter_page(request: 'HttpRequest', slug: str, vol: int,
-                 num: float, page: int) -> 'HttpResponse':
+def chapter_page(request: HttpRequest, slug: str, vol: int,
+                 num: float, page: int) -> HttpResponse:
     """
     View that serves a chapter page.
 
@@ -195,8 +197,8 @@ def chapter_page(request: 'HttpRequest', slug: str, vol: int,
     })
 
 
-def chapter_redirect(request: 'HttpRequest', slug: str, vol: int,
-                     num: float) -> 'HttpResponsePermanentRedirect':
+def chapter_redirect(request: HttpRequest, slug: str, vol: int,
+                     num: float) -> HttpResponsePermanentRedirect:
     """
     View that redirects a chapter to its first page.
 
@@ -212,8 +214,8 @@ def chapter_redirect(request: 'HttpRequest', slug: str, vol: int,
 
 @condition(etag_func=_cbz_etag, last_modified_func=_latest)
 @cache_control(public=True, max_age=3600)
-def chapter_download(request: 'HttpRequest', slug: str, vol: int, num: float
-                     ) -> 'Union[FileResponse, HttpResponseUnauthorized]':
+def chapter_download(request: HttpRequest, slug: str, vol: int, num: float
+                     ) -> Union[FileResponse, HttpResponseUnauthorized]:
     """
     View that generates a ``.cbz`` file from a chapter.
 
@@ -238,11 +240,10 @@ def chapter_download(request: 'HttpRequest', slug: str, vol: int, num: float
         )
     except Chapter.DoesNotExist as e:
         raise Http404 from e
-    mime = 'application/vnd.comicbook+zip'
     name = '{0.series} - v{0.volume} c{0.number:g}.cbz'.format(_chapter)
     return FileResponse(
-        _chapter.zip(), as_attachment=True,
-        filename=name, content_type=mime
+        _chapter.zip(), as_attachment=True, filename=name,
+        content_type='application/vnd.comicbook+zip'
     )
 
 

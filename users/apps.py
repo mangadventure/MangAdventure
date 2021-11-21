@@ -11,7 +11,7 @@ class UsersConfig(AppConfig):
     def ready(self):
         """Register the :mod:`~users.receivers` when the app is ready."""
         __import__('users.receivers')
-        super(UsersConfig, self).ready()
+        super().ready()
 
 
 __all__ = ['UsersConfig']

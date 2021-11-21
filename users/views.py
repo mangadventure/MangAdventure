@@ -1,5 +1,7 @@
 """The views of the users app."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from django.contrib.auth.decorators import login_required
@@ -28,7 +30,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @login_required
 @cache_control(private=True, max_age=3600)
-def profile(request: 'HttpRequest') -> HttpResponse:
+def profile(request: HttpRequest) -> HttpResponse:
     """
     View that serves the profile page of a user.
     A :class:`UserProfile` will be created if it doesn't exist.
@@ -65,7 +67,7 @@ class EditUser(TemplateView):
     #: The template that this view will render.
     template_name = 'edit_user.html'
 
-    def setup(self, request: 'HttpRequest', *args, **kwargs):
+    def setup(self, request: HttpRequest, *args, **kwargs):
         """
         Initialize attributes shared by all view methods.
 
@@ -86,7 +88,7 @@ class EditUser(TemplateView):
             ])
             self.extra_context = {'breadcrumbs': crumbs}
 
-    def get(self, request: 'HttpRequest', *args, **kwargs) -> HttpResponse:
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """
         Handle ``GET`` requests.
 
@@ -98,7 +100,7 @@ class EditUser(TemplateView):
         form = UserProfileForm(instance=self.profile)
         return self.render_to_response(self.get_context_data(form=form))
 
-    def post(self, request: 'HttpRequest', *args, **kwargs) -> HttpResponse:
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """
         Handle ``POST`` requests.
 
@@ -141,7 +143,7 @@ class Bookmarks(TemplateView):
     #: The template that this view will render.
     template_name = 'bookmarks.html'
 
-    def get(self, request: 'HttpRequest', *args, **kwargs) -> HttpResponse:
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """
         Handle ``GET`` requests.
 
@@ -165,7 +167,7 @@ class Bookmarks(TemplateView):
             releases=chapters, breadcrumbs=crumbs, token=token
         ))
 
-    def post(self, request: 'HttpRequest', *args, **kwargs) -> HttpResponse:
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """
         Handle ``POST`` requests.
 

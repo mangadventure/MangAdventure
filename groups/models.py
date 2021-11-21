@@ -1,5 +1,7 @@
 """Database models for the groups app."""
 
+from __future__ import annotations
+
 from enum import Enum, EnumMeta
 from pathlib import PurePath
 
@@ -15,7 +17,7 @@ from MangAdventure.storage import CDNStorage
 from MangAdventure.validators import FileSizeValidator
 
 
-def _logo_uploader(obj: 'Group', name: str) -> str:
+def _logo_uploader(obj: Group, name: str) -> str:
     name = f'logo.{name.split(".")[-1]}'
     return str(obj.get_directory() / name)
 

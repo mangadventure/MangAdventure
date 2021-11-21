@@ -1,5 +1,7 @@
 """API viewsets for the users app."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, List
 
 from django.urls import reverse
@@ -44,10 +46,10 @@ class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
             return []
         return super().get_permissions()
 
-    def get_queryset(self) -> 'QuerySet':
+    def get_queryset(self) -> QuerySet:
         return self.request.user.bookmarks.all()
 
-    def list(self, request: 'Request', *args, **kwargs) -> Response:
+    def list(self, request: Request, *args, **kwargs) -> Response:
         token = request.user.profile.token
         rss = request.build_absolute_uri(
             reverse('user_bookmarks.rss') + '?token=' + token
@@ -133,7 +135,7 @@ class ApiKeyViewSet(mixins.CreateModelMixin, CORSMixin, GenericViewSet):
     serializer_class = AuthTokenSerializer
     permission_classes = ()
 
-    def create(self, request: 'Request', *args, **kwargs) -> Response:
+    def create(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']

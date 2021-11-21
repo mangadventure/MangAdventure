@@ -88,6 +88,7 @@ def get_type(link: str) -> str:
             '.jpg': 'image/jpeg',
             '.jpm': 'image/jpm',
             '.jpx': 'image/jpx',
+            '.jxl': 'image/jxl',
             '.jxr': 'image/jxr',
             '.jxs': 'image/jxs',
             '.png': 'image/png',

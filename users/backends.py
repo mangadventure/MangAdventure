@@ -1,5 +1,7 @@
 """Custom authentication backends."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Optional
 
 from django.contrib.auth.backends import ModelBackend
@@ -11,7 +13,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class ScanlationBackend(ModelBackend):
     """Authentication backend with scanlator permissions."""
     @staticmethod
-    def is_scanlator(user_obj: 'User') -> bool:
+    def is_scanlator(user_obj: User) -> bool:
         """
         Check whether the given user is a scanlator.
 
@@ -21,7 +23,7 @@ class ScanlationBackend(ModelBackend):
         """
         return user_obj.groups.filter(name='Scanlator').exists()
 
-    def has_perm(self, user_obj: 'User', perm: str,
+    def has_perm(self, user_obj: User, perm: str,
                  obj: Optional[Any] = None) -> bool:
         if not user_obj.is_active:
             return False

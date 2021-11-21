@@ -1,5 +1,7 @@
 """Database models for the users app."""
 
+from __future__ import annotations
+
 from hashlib import blake2b
 from pathlib import PurePath
 from secrets import token_hex
@@ -14,7 +16,7 @@ from MangAdventure import storage, validators
 from reader.models import Series
 
 
-def _avatar_uploader(obj: 'UserProfile', name: str) -> str:
+def _avatar_uploader(obj: UserProfile, name: str) -> str:
     name = f'avatar.{name.split(".")[-1]}'
     return str(obj.get_directory() / name)
 

@@ -1,5 +1,7 @@
 """Admin models for the users app."""
 
+from __future__ import annotations
+
 from typing import List, Tuple, Type
 
 from django.contrib import admin
@@ -9,7 +11,7 @@ from django.db.models.query import QuerySet, Value as V
 from django.forms.fields import BooleanField
 from django.forms.models import ModelForm
 from django.forms.widgets import CheckboxSelectMultiple
-# XXX: Forward reference warning when under TYPE_CHECKING
+# XXX: cannot be resolved under TYPE_CHECKING
 from django.http import HttpRequest
 from django.utils.functional import cached_property
 from django.utils.html import format_html
@@ -31,7 +33,7 @@ class UserTypeFilter(admin.SimpleListFilter):
     #: The filter's query parameter.
     parameter_name = 'type'
 
-    def lookups(self, request: 'HttpRequest', model_admin:
+    def lookups(self, request: HttpRequest, model_admin:
                 Type[admin.ModelAdmin]) -> List[Tuple[str, str]]:
         """
         Return a list of lookups for this filter.
@@ -39,7 +41,6 @@ class UserTypeFilter(admin.SimpleListFilter):
         The first element in each tuple is the value of the
         query parameter. The second element is the human-readable
         name for the option that will appear in the admin sidebar.
-
 
         :param request: The original request.
         :param model_admin: An admin model object.
@@ -62,8 +63,7 @@ class UserTypeFilter(admin.SimpleListFilter):
             ('regular', 'Regular')
         ]
 
-    def queryset(self, request: 'HttpRequest', queryset:
-                 'QuerySet') -> 'QuerySet':
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         """
         Return the filtered queryset based on
         the value provided in the query string.
@@ -138,8 +138,7 @@ class UserAdmin(admin.ModelAdmin):
     form = UserForm
     exclude = ('password', 'groups')
     list_display = (
-        'username', '_email', 'full_name',
-        'date_joined', 'is_active'
+        'username', '_email', 'full_name', 'date_joined', 'is_active'
     )
     list_editable = ('is_active',)
     search_fields = ('username', 'email', 'first_name', 'last_name')
@@ -149,6 +148,7 @@ class UserAdmin(admin.ModelAdmin):
     )
     ordering = ('username',)
 
+    @admin.display(ordering='email', description='e-mail address')
     def _email(self, obj: User) -> str:
         if not obj.email:
             return ''
@@ -157,9 +157,7 @@ class UserAdmin(admin.ModelAdmin):
             ' target="_blank">{0}</a>', obj.email
         )
 
-    _email.short_description = 'e-mail address'
-    _email.admin_order_field = 'email'
-
+    @admin.display(ordering=C('first_name', V(' '), 'last_name'))
     def full_name(self, obj: User) -> str:
         """
         Get the full name of the user.
@@ -170,9 +168,7 @@ class UserAdmin(admin.ModelAdmin):
         """
         return obj.get_full_name()
 
-    full_name.admin_order_field = C('first_name', V(' '), 'last_name')
-
-    def has_add_permission(self, request: 'HttpRequest') -> bool:
+    def has_add_permission(self, request: HttpRequest) -> bool:
         """
         Return whether adding an ``User`` object is permitted.
 
@@ -210,6 +206,7 @@ class OAuthAppAdmin(SocialAppAdmin):
         form.base_fields['sites'].widget.widget = CheckboxSelectMultiple()
         return form
 
+    @admin.display(ordering='provider', description='provider')
     def _provider(self, obj: OAuthApp) -> str:
         if not obj.provider:
             return ''
@@ -218,9 +215,6 @@ class OAuthAppAdmin(SocialAppAdmin):
             'https://django-allauth.readthedocs.io/en/stable/providers.html#',
             obj.provider, obj.provider.capitalize()
         )
-
-    _provider.short_description = 'provider'
-    _provider.admin_order_field = 'provider'
 
 
 # class UserComment(Comment):

@@ -1,5 +1,7 @@
 """Custom context processors."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Dict
 
 from django.conf import settings
@@ -11,14 +13,16 @@ if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
 
 
-def extra_settings(request: 'HttpRequest') -> Dict:
+def extra_settings(request: HttpRequest) -> Dict:
     """
-    Context processor which defines some settings variables.
+    Context processor which defines some settings variables & schemas.
 
     * ``MANGADV_VERSION``: The current version of MangAdventure.
     * ``PAGE_URL``: The complete absolute URI of the request.
     * ``CANON_URL``: The absolute URI of the request minus the query string.
     * ``config``: A reference to :const:`MangAdventure.settings.CONFIG`.
+    * ``searchbox``: Searchbox JSON-LD schema.
+    * ``organization``: Organization JSON-LD schema.
 
     :param request: The current HTTP request.
 

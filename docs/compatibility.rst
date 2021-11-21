@@ -11,9 +11,9 @@ Python
      - Compatibility
    * - <=2.7
      - Incompatible
-   * - 3.0 - 3.5
+   * - 3.0 - 3.6
      - Incompatible
-   * - 3.6 - 3.9
+   * - 3.7 - 3.10
      - Compatible
 
 Databases
@@ -117,25 +117,25 @@ Browsers
      - Versions
    * - | |Chrome|
        | Chrome
-     - 49+
+     - 51+
    * - | |FF|
        | Firefox
-     - 44+
+     - 60+
    * - | |IE|
        | Internet Explorer
      - |X|
    * - | |Edge|
        | Edge
-     - 15+
+     - 16+
    * - | |Safari|
        | Safari
-     - 11+
+     - 14.1+
    * - | |Opera|
        | Opera
-     - 37+
+     - 39+
    * - | |iOS|
        | iOS Safari
-     - 11+
+     - 13+
    * - | |Android|
        | Android Browser
      - |X|
@@ -143,31 +143,31 @@ Browsers
        | Samsung Internet
      - 5+
 
-.. |Chrome| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/69.0.4/chrome/chrome_32x32.png
+.. |Chrome| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/chrome/chrome_32x32.png
    :alt: Chrome
 
-.. |FF| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/69.0.4/firefox/firefox_32x32.png
+.. |FF| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/firefox/firefox_32x32.png
    :alt: Firefox
 
-.. |IE| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/69.0.4/archive/internet-explorer_9-11/internet-explorer_9-11_32x32.png
+.. |IE| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/archive/internet-explorer_9-11/internet-explorer_9-11_32x32.png
    :alt: Internet Explorer
 
-.. |Edge| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/69.0.4/edge/edge_32x32.png
+.. |Edge| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/edge/edge_32x32.png
    :alt: Edge
 
-.. |Safari| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/69.0.4/safari/safari_32x32.png
+.. |Safari| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/safari/safari_32x32.png
    :alt: Safari
 
-.. |Opera| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/69.0.4/opera/opera_32x32.png
+.. |Opera| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/opera/opera_32x32.png
    :alt: Opera
 
-.. |Samsung| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/69.0.4/samsung-internet/samsung-internet_32x32.png
+.. |Samsung| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/samsung-internet/samsung-internet_32x32.png
    :alt: Samsung Internet
 
-.. |Android| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/69.0.4/archive/android/android_32x32.png
+.. |Android| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/archive/android/android_32x32.png
    :alt: Android Browser
 
-.. |iOS| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/69.0.4/safari-ios/safari-ios_32x32.png
+.. |iOS| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/safari-ios/safari-ios_32x32.png
    :alt: iOS Safari
 
 .. |X| unicode:: U+2716

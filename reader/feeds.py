@@ -1,5 +1,7 @@
 """RSS and Atom feeds for the reader app."""
 
+from __future__ import annotations
+
 from mimetypes import guess_type
 from typing import TYPE_CHECKING, Iterable, Optional
 
@@ -13,8 +15,6 @@ from .models import Chapter, Series
 if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime  # isort:skip
     from django.http import HttpRequest  # isort:skip
-
-_max = settings.CONFIG['MAX_RELEASES']
 
 
 class LibraryRSS(Feed):
@@ -32,6 +32,7 @@ class LibraryRSS(Feed):
 
         :return: An iterable of ``Series`` objects.
         """
+        _max = settings.CONFIG['MAX_RELEASES']
         return Series.objects.order_by('-created')[:_max]
 
     def item_description(self, item: Series) -> str:
@@ -54,7 +55,7 @@ class LibraryRSS(Feed):
         """
         return item.categories.values_list('name', flat=True)
 
-    def item_pubdate(self, item: Series) -> 'datetime':
+    def item_pubdate(self, item: Series) -> datetime:
         """
         Get the publication date of the item.
 
@@ -64,7 +65,7 @@ class LibraryRSS(Feed):
         """
         return item.created
 
-    def item_updateddate(self, item: Series) -> 'datetime':
+    def item_updateddate(self, item: Series) -> datetime:
         """
         Get the update date of the item.
 
@@ -85,8 +86,11 @@ class LibraryRSS(Feed):
         if not item.cover:
             return None
         url = item.cover.url
-        return url if url[:4] == 'http' else \
-            f'http://{settings.CONFIG["DOMAIN"]}{url}'
+        if url[:4] == 'http':
+            return url
+        scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+        domain = settings.CONFIG['DOMAIN']
+        return f'{scheme}://{domain}{url}'
 
     def item_enclosure_length(self, item: Series) -> Optional[int]:
         """
@@ -121,7 +125,7 @@ class ReleasesRSS(Feed):
     author_name = settings.CONFIG['NAME']
     item_guid_is_permalink = True
 
-    def get_object(self, request: 'HttpRequest', slug:
+    def get_object(self, request: HttpRequest, slug:
                    Optional[str] = None) -> Optional[Series]:
         """
         Get a ``Series`` object from the request.
@@ -177,6 +181,7 @@ class ReleasesRSS(Feed):
 
         :return: An iterable of ``Chapter`` objects.
         """
+        _max = settings.CONFIG['MAX_RELEASES']
         return getattr(obj, 'chapters', Chapter.objects) \
             .filter(published__lte=tz.now()).order_by('-published')[:_max]
 
@@ -190,12 +195,13 @@ class ReleasesRSS(Feed):
         """
         desc = str(item)
         if settings.CONFIG['ALLOW_DLS']:
-            domain = settings.CONFIG["DOMAIN"]
+            domain = settings.CONFIG['DOMAIN']
             url = item.get_absolute_url()[:-1] + '.cbz'
-            desc = f'<a href="http://{domain}{url}">{desc}</a>'
+            scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+            desc = f'<a href="{scheme}://{domain}{url}">{desc}</a>'
         return desc
 
-    def item_pubdate(self, item: Chapter) -> 'datetime':
+    def item_pubdate(self, item: Chapter) -> datetime:
         """
         Get the publication date of the item.
 
@@ -205,7 +211,7 @@ class ReleasesRSS(Feed):
         """
         return item.published
 
-    def item_updateddate(self, item: Chapter) -> 'datetime':
+    def item_updateddate(self, item: Chapter) -> datetime:
         """
         Get the update date of the item.
 

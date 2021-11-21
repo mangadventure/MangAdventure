@@ -35,7 +35,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 language = 'en'
 pygments_style = 'manni'
-needs_sphinx = '3.3'
+needs_sphinx = '3.5'
 
 
 # -- InterSphinx & extlinks configuration --
@@ -45,7 +45,7 @@ _mdn = 'https://developer.mozilla.org/en-US/docs/Web/'
 
 intersphinx_mapping = {
     'django': (_django, f'{_django}_objects/'),
-    'python': ('https://docs.python.org/3.6/', None),
+    'python': ('https://docs.python.org/3.7/', None),
 }
 
 extlinks = {

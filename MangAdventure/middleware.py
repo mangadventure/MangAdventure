@@ -1,5 +1,7 @@
 """Custom middleware."""
 
+from __future__ import annotations
+
 from re import MULTILINE, findall, search
 from typing import TYPE_CHECKING
 
@@ -12,7 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class BaseMiddleware(CommonMiddleware):
     """``CommonMiddleware`` with custom patches."""
-    def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         """
         Patched to allow :const:`blocked user agents
         <MangAdventure.settings.DISALLOWED_USER_AGENTS>`
@@ -29,10 +31,10 @@ class BaseMiddleware(CommonMiddleware):
 
 class PreloadMiddleware:
     """Middleware that allows for preloading resources."""
-    def __init__(self, get_response: 'Callable[[HttpRequest], HttpResponse]'):
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
         self.get_response = get_response
 
-    def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         """
         Add a ``Link`` header with preloadable resources to the response.
 

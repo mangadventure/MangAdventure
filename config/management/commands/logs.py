@@ -1,3 +1,7 @@
+"""Admin logs command"""
+
+from __future__ import annotations
+
 from sys import stdout
 from typing import TYPE_CHECKING
 
@@ -13,7 +17,7 @@ class Command(BaseCommand):
     """Command used to view admin logs."""
     help = 'Outputs admin logs to a file or stdout.'
 
-    def add_arguments(self, parser: 'ArgumentParser'):
+    def add_arguments(self, parser: ArgumentParser):
         """
         Add arguments to the command.
 

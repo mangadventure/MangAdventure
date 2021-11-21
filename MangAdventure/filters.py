@@ -25,7 +25,7 @@ def title_filter(title: str, klass: Type[FieldListFilter] =
     """
     class _GenericFilter(klass):  # pragma: no cover
         def __new__(cls, *args, **kwargs):
-            instance = super(_GenericFilter, cls).create(*args, **kwargs)
+            instance = super().create(*args, **kwargs)
             instance.title = title
             return instance
 
@@ -48,7 +48,7 @@ def boolean_filter(title: str, param: str, names:
             self.names = names
             self.title = title
             self.parameter_name = param
-            super(_BooleanFilter, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
 
         def lookups(self, request, model_admin):
             return [

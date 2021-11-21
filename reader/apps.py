@@ -11,7 +11,7 @@ class ReaderConfig(AppConfig):
     def ready(self):
         """Register the :mod:`~reader.receivers` when the app is ready."""
         __import__('reader.receivers')
-        super(ReaderConfig, self).ready()
+        super().ready()
 
 
 __all__ = ['ReaderConfig']

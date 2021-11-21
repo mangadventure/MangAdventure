@@ -1,5 +1,7 @@
 """FoolSlide2 importer."""
 
+from __future__ import annotations
+
 from io import StringIO
 from os.path import abspath, join
 from typing import TYPE_CHECKING
@@ -23,7 +25,7 @@ class Command(BaseCommand):
     """Command used to import data from a FoolSlide2 installation."""
     help = 'Imports data from FoolSlide2.'
 
-    def add_arguments(self, parser: 'ArgumentParser'):
+    def add_arguments(self, parser: ArgumentParser):
         """
         Add arguments to the command.
 
@@ -181,18 +183,18 @@ class Command(BaseCommand):
         self._print_success('Successfully imported FoolSlide2 data.')
 
     @staticmethod
-    def _get_element(tables: 'Elems', name: str) -> 'Elems':
+    def _get_element(tables: Elems, name: str) -> Elems:
         return list(filter(
             lambda t: t.attrib['name'].endswith(name), tables
         ))
 
     @staticmethod
-    def _get_column(table: 'Elem', name: str) -> str:
+    def _get_column(table: Elem, name: str) -> str:
         elem = table.find(f'column[@name="{name}"]')
         return getattr(elem, 'text', None) or ''
 
     @staticmethod
-    def _sort_children(tables: 'Elems', name: str) -> 'Elems':
+    def _sort_children(tables: Elems, name: str) -> Elems:
         return sorted(tables, key=lambda p: Command._get_column(p, name))
 
     def _print(self, text: str, **kwargs):

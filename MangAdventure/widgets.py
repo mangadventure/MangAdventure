@@ -28,7 +28,7 @@ class TinyMCE(Textarea):
             if key.startswith('mce_'):
                 mce_attrs[key[4:]] = attrs.pop(key)
         attrs['data-tinymce-config'] = dumps(mce_attrs)
-        super(TinyMCE, self).__init__(attrs)
+        super().__init__(attrs)
 
     class Media:
         extend = False

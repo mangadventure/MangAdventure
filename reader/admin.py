@@ -1,12 +1,13 @@
 """Admin models for the reader app."""
 
+from __future__ import annotations
+
 from hashlib import blake2b
 from typing import Optional, Tuple, Type
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db.models import Q, QuerySet
-# XXX: cannot be resolved under TYPE_CHECKING
 from django.forms.models import BaseInlineFormSet, ModelForm
 from django.forms.widgets import HiddenInput
 # XXX: cannot be resolved under TYPE_CHECKING
@@ -77,6 +78,7 @@ class PageInline(admin.TabularInline):
     fields = ('image', 'preview', 'number')
     readonly_fields = ('preview',)
 
+    @admin.display(description='')
     def preview(self, obj: Page) -> str:
         """
         Get the image of the page as an HTML ``<img>``.
@@ -86,8 +88,6 @@ class PageInline(admin.TabularInline):
         :return: An ``<img>`` tag with the page image.
         """
         return utils.img_tag(obj.image, 'preview', height=150)
-
-    preview.short_description = ''
 
 
 class ChapterAdmin(admin.ModelAdmin):
@@ -113,11 +113,9 @@ class ChapterAdmin(admin.ModelAdmin):
     actions = ('toggle_final',)
     empty_value_display = 'N/A'
 
+    @admin.display(ordering='number', description='number')
     def _number(self, obj: Chapter) -> str:
         return f'{obj.number:g}'
-
-    _number.short_description = 'number'
-    _number.admin_order_field = 'number'
 
     def preview(self, obj: Chapter) -> str:
         """
@@ -132,7 +130,8 @@ class ChapterAdmin(admin.ModelAdmin):
             return ''
         return utils.img_tag(page.image, 'preview', height=50)
 
-    def toggle_final(self, request: 'HttpRequest', queryset: 'QuerySet'):
+    @admin.display(description='Toggle status of selected chapters')
+    def toggle_final(self, request: HttpRequest, queryset: QuerySet):
         """
         Toggle the status of the selected chapters.
 
@@ -141,9 +140,7 @@ class ChapterAdmin(admin.ModelAdmin):
         """
         queryset.update(final=Q(final=False))
 
-    toggle_final.short_description = 'Toggle status of selected chapters'
-
-    def get_form(self, request: 'HttpRequest',
+    def get_form(self, request: HttpRequest,
                  obj: Optional[Chapter], **kwargs
                  ) -> ModelForm:  # pragma: no cover
         form = super().get_form(request, obj, **kwargs)
@@ -152,7 +149,7 @@ class ChapterAdmin(admin.ModelAdmin):
                 Series.objects.filter(manager_id=request.user.id)
         return form
 
-    def has_change_permission(self, request: 'HttpRequest', obj:
+    def has_change_permission(self, request: HttpRequest, obj:
                               Optional[Chapter] = None) -> bool:
         """
         Return ``True`` if editing the object is permitted.
@@ -169,7 +166,7 @@ class ChapterAdmin(admin.ModelAdmin):
             return True
         return obj.series.manager_id == request.user.id
 
-    def has_delete_permission(self, request: 'HttpRequest', obj:
+    def has_delete_permission(self, request: HttpRequest, obj:
                               Optional[Chapter] = None) -> bool:
         """
         Return ``True`` if deleting the object is permitted.
@@ -235,7 +232,7 @@ class SeriesAdmin(admin.ModelAdmin):
     actions = ('toggle_completed',)
     empty_value_display = 'N/A'
 
-    def get_form(self, request: 'HttpRequest', obj: Optional[Series]
+    def get_form(self, request: HttpRequest, obj: Optional[Series]
                  = None, change: bool = False, **kwargs) -> ModelForm:
         form = super().get_form(request, obj, change, **kwargs)
         if 'format' in form.base_fields:
@@ -256,6 +253,7 @@ class SeriesAdmin(admin.ModelAdmin):
                 form.base_fields['manager'].widget = HiddenInput()
         return form
 
+    @admin.display(description='cover')
     def cover_image(self, obj: Series) -> str:
         """
         Get the cover of the series as an HTML ``<img>``.
@@ -266,9 +264,8 @@ class SeriesAdmin(admin.ModelAdmin):
         """
         return utils.img_tag(obj.cover, 'cover', height=75)
 
-    cover_image.short_description = 'cover'
-
-    def toggle_completed(self, request: 'HttpRequest', queryset: 'QuerySet'):
+    @admin.display(description='Toggle status of selected series')
+    def toggle_completed(self, request: HttpRequest, queryset: QuerySet):
         """
         Toggle the status of the selected series.
 
@@ -277,9 +274,7 @@ class SeriesAdmin(admin.ModelAdmin):
         """
         queryset.update(completed=Q(completed=False))
 
-    toggle_completed.short_description = 'Toggle status of selected series'
-
-    def has_change_permission(self, request: 'HttpRequest', obj:
+    def has_change_permission(self, request: HttpRequest, obj:
                               Optional[Series] = None) -> bool:
         """
         Return ``True`` if editing the object is permitted.
@@ -296,7 +291,7 @@ class SeriesAdmin(admin.ModelAdmin):
             return True
         return obj.manager_id == request.user.id
 
-    def has_delete_permission(self, request: 'HttpRequest', obj:
+    def has_delete_permission(self, request: HttpRequest, obj:
                               Optional[Series] = None) -> bool:
         """
         Return ``True`` if deleting the object is permitted.
@@ -358,7 +353,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
     search_fields = ('name', 'description')
 
-    def get_readonly_fields(self, request: 'HttpRequest', obj:
+    def get_readonly_fields(self, request: HttpRequest, obj:
                             Optional[Category] = None) -> Tuple:
         """
         Return the fields that cannot be changed.

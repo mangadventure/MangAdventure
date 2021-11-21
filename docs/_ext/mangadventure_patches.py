@@ -46,7 +46,7 @@ def _get_module(cls: Optional[Type]) -> str:
 def _patched_add_directive_header(self: DataDocumenter, sig: str):
     # Don't document values of settings
     if self.modname == 'MangAdventure.settings':
-        DataDocumenter.__base__.add_directive_header(self, sig)
+        super(DataDocumenter, self).add_directive_header(sig)
     else:
         self._original_add_directive_header(sig)
 

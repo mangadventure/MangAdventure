@@ -1,5 +1,7 @@
 """The views of the api.v1 app."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Dict, Iterable, Optional
 
 from django.conf import settings
@@ -26,9 +28,9 @@ if TYPE_CHECKING:  # pragma: no cover
     Person = Union[Author, Artist]
 
 
-def _latest(request: 'HttpRequest', slug: Optional[str] = None,
+def _latest(request: HttpRequest, slug: Optional[str] = None,
             vol: Optional[int] = None, num: Optional[float] = None
-            ) -> 'Optional[datetime]':
+            ) -> Optional[datetime]:
     try:
         if slug is None:
             q = Q(chapters__published__lte=tz.now())
@@ -51,7 +53,7 @@ def _latest(request: 'HttpRequest', slug: Optional[str] = None,
         return None
 
 
-def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
+def _chapter_response(request: HttpRequest, _chapter: Chapter) -> Dict:
     url = request.build_absolute_uri(_chapter.get_absolute_url())
     return {
         'url': url,
@@ -65,7 +67,7 @@ def _chapter_response(request: 'HttpRequest', _chapter: Chapter) -> Dict:
     }
 
 
-def _volume_response(request: 'HttpRequest',
+def _volume_response(request: HttpRequest,
                      chapters: Iterable[Chapter]) -> Dict:
     return {
         f'{c.number:g}': _chapter_response(request, c)
@@ -73,7 +75,7 @@ def _volume_response(request: 'HttpRequest',
     }
 
 
-def _series_response(request: 'HttpRequest', _series: Series) -> Dict:
+def _series_response(request: HttpRequest, _series: Series) -> Dict:
     response = {
         'slug': _series.slug,
         'title': _series.title,
@@ -102,7 +104,7 @@ def _series_response(request: 'HttpRequest', _series: Series) -> Dict:
     return response
 
 
-def _person_response(request: 'HttpRequest', _person: 'Person') -> Dict:
+def _person_response(request: HttpRequest, _person: Person) -> Dict:
     response = {
         'id': _person.id,
         'name': _person.name,
@@ -118,7 +120,7 @@ def _person_response(request: 'HttpRequest', _person: 'Person') -> Dict:
     return response
 
 
-def _member_response(request: 'HttpRequest', _member: Member) -> Dict:
+def _member_response(request: HttpRequest, _member: Member) -> Dict:
     return {
         'id': _member.id,
         'name': _member.name,
@@ -128,7 +130,7 @@ def _member_response(request: 'HttpRequest', _member: Member) -> Dict:
     }
 
 
-def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
+def _group_response(request: HttpRequest, _group: Group) -> Dict:
     logo = ''
     if _group.logo:
         logo = request.build_absolute_uri(_group.logo.url)
@@ -164,7 +166,7 @@ def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
-def all_releases(request: 'HttpRequest') -> JsonResponse:
+def all_releases(request: HttpRequest) -> JsonResponse:
     """
     View that serves all the releases in a JSON array.
 
@@ -204,7 +206,7 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
-def all_series(request: 'HttpRequest') -> JsonResponse:
+def all_series(request: HttpRequest) -> JsonResponse:
     """
     View that serves all the series in a JSON array.
 
@@ -223,7 +225,7 @@ def all_series(request: 'HttpRequest') -> JsonResponse:
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
-def series(request: 'HttpRequest', slug: str) -> JsonResponse:
+def series(request: HttpRequest, slug: str) -> JsonResponse:
     """
     View that serves a single series as a JSON object.
 
@@ -244,7 +246,7 @@ def series(request: 'HttpRequest', slug: str) -> JsonResponse:
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
-def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
+def volume(request: HttpRequest, slug: str, vol: int) -> JsonResponse:
     """
     View that serves a single volume as a JSON object.
 
@@ -270,7 +272,7 @@ def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
-def chapter(request: 'HttpRequest', slug: str,
+def chapter(request: HttpRequest, slug: str,
             vol: int, num: float) -> JsonResponse:
     """
     View that serves a single chapter as a JSON object.
@@ -292,7 +294,7 @@ def chapter(request: 'HttpRequest', slug: str,
     return JsonResponse(_chapter_response(request, _chapter))
 
 
-def _is_author(request: 'HttpRequest') -> bool:
+def _is_author(request: HttpRequest) -> bool:
     return request.path[:16] == '/api/v1/authors'
 
 
@@ -300,7 +302,7 @@ def _is_author(request: 'HttpRequest') -> bool:
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
-def all_people(request: 'HttpRequest') -> JsonResponse:
+def all_people(request: HttpRequest) -> JsonResponse:
     """
     View that serves all the authors/artists in a JSON array.
 
@@ -321,7 +323,7 @@ def all_people(request: 'HttpRequest') -> JsonResponse:
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
-def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
+def person(request: HttpRequest, p_id: int) -> JsonResponse:
     """
     View that serves a single author/artist as a JSON object.
 
@@ -344,7 +346,7 @@ def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
-def all_groups(request: 'HttpRequest') -> JsonResponse:
+def all_groups(request: HttpRequest) -> JsonResponse:
     """
     View that serves all the groups in a JSON array.
 
@@ -364,7 +366,7 @@ def all_groups(request: 'HttpRequest') -> JsonResponse:
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
-def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
+def group(request: HttpRequest, g_id: int) -> JsonResponse:
     """
     View that serves a single group as a JSON object.
 
@@ -386,7 +388,7 @@ def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
-def categories(request: 'HttpRequest') -> JsonResponse:
+def categories(request: HttpRequest) -> JsonResponse:
     """
     View that serves all the categories in a JSON array.
 

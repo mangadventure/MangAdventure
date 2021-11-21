@@ -13,16 +13,10 @@ if find_spec('csp'):  # pragma: no cover
         img_src="https:"
     )(flatpage)
 
-info_page.__doc__ = """
-| Alias for :func:`django.contrib.flatpages.views.flatpage`.
-| If ``django-csp`` is installed, this is configured
-  to allow custom styles & images in the page.
-"""
-
 #: The URL patterns of the config app.
 urlpatterns = [
     path('info/', info_page, {'url': '/info/'}, name='info'),
     path('privacy/', info_page, {'url': '/privacy/'}, name='privacy'),
 ]
 
-__all__ = ['info_page', 'urlpatterns']
+__all__ = ['urlpatterns']

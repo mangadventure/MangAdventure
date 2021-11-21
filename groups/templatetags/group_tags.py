@@ -1,5 +1,7 @@
 """Template tags of the groups app."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from django.template.defaultfilters import register
@@ -9,7 +11,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 @register.filter
-def group_roles(member: 'Member', group: 'Group') -> str:
+def group_roles(member: Member, group: Group) -> str:
     """
     Get the roles of the member within the group.
 

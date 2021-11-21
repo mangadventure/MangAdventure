@@ -1,5 +1,7 @@
 """Custom validators."""
 
+from __future__ import annotations
+
 from io import BytesIO
 from os import remove
 from typing import Any
@@ -14,7 +16,7 @@ from django.utils.deconstruct import deconstructible
 from PIL import Image
 
 
-def _remove_file(file: 'File'):
+def _remove_file(file: File):
     try:
         remove(file.path)
     except FileNotFoundError:
@@ -36,7 +38,7 @@ class FileSizeValidator:
     def __init__(self, max_mb: int = 10):
         self.max_mb = max_mb
 
-    def __call__(self, file: 'File'):
+    def __call__(self, file: File):
         """
         Call the validator on the given file.
 
@@ -74,7 +76,7 @@ class FileSizeValidator:
         return hash(self.code) | self.max_mb
 
 
-def zipfile_validator(file: 'File'):
+def zipfile_validator(file: File):
     """
     Validate a zip file:
 

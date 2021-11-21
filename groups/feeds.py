@@ -1,5 +1,7 @@
 """RSS and Atom feeds for the groups app."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Iterable
 
 from django.conf import settings
@@ -22,7 +24,7 @@ class GroupRSS(Feed):
     author_name = settings.CONFIG['NAME']
     item_guid_is_permalink = True
 
-    def get_object(self, request: 'HttpRequest', g_id: int) -> Group:
+    def get_object(self, request: HttpRequest, g_id: int) -> Group:
         """
         Get a ``Group`` object from the request.
 
@@ -92,7 +94,7 @@ class GroupRSS(Feed):
             desc = f'<a href="{scheme}://{domain}{url}">{desc}</a>'
         return desc
 
-    def item_pubdate(self, item: Chapter) -> 'datetime':
+    def item_pubdate(self, item: Chapter) -> datetime:
         """
         Get the publication date of the item.
 
@@ -102,7 +104,7 @@ class GroupRSS(Feed):
         """
         return item.published
 
-    def item_updateddate(self, item: Chapter) -> 'datetime':
+    def item_updateddate(self, item: Chapter) -> datetime:
         """
         Get the update date of the item.
 

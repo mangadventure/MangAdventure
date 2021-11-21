@@ -1,5 +1,7 @@
 """Convenience classes and functions for API responses."""
 
+from __future__ import annotations
+
 from functools import wraps
 from typing import TYPE_CHECKING, Tuple
 
@@ -30,16 +32,16 @@ class JsonError(JsonResponse):
 
 
 def require_methods_api(allowed_methods: Tuple[str, ...] =
-                        ('GET', 'HEAD')) -> 'Callable':
+                        ('GET', 'HEAD')) -> Callable:
     """
     | Decorator to make an API view only accept particular request methods.
     | Based on :func:`django.views.decorators.http.require_http_request`.
 
     :param allowed_methods: The allowed request methods.
     """
-    def decorator(func: 'Callable') -> 'Callable':
+    def decorator(func: Callable) -> Callable:
         @wraps(func)
-        def inner(request: 'HttpRequest', *args, **kwargs) -> JsonError:
+        def inner(request: HttpRequest, *args, **kwargs) -> JsonError:
             if request.method not in allowed_methods:
                 response = JsonError('Method not allowed', 405)
                 response['Allow'] = ', '.join(allowed_methods)
@@ -54,14 +56,14 @@ def require_methods_api(allowed_methods: Tuple[str, ...] =
     return decorator
 
 
-def deprecate_api(func: 'Callable') -> 'Callable':
+def deprecate_api(func: Callable) -> Callable:
     """Decorator used to denote that the API is deprecated."""
     @wraps(func)
     def inner(*args, **kwargs):
         if not settings.CONFIG['ENABLE_API_V1']:  # pragma: no cover
             return HttpResponseGone('Use API v2 instead.')
         response = func(*args, **kwargs)
-        response['Warning'] = '299 MangAdventure/0.7.4 "Deprecated API"'
+        response['Warning'] = '299 MangAdventure/0.8.0 "Deprecated API"'
         return response
     return inner
 

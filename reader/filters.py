@@ -1,5 +1,7 @@
 """Custom filter backends for the API."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Dict, List
 
 from rest_framework.exceptions import ValidationError
@@ -19,17 +21,17 @@ class TitleFilter(SearchFilter):
     search_title = 'Title'
     search_description = 'Search by title.'
 
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         return super().filter_queryset(request, queryset, view)
 
-    def get_search_fields(self, view: 'ViewSet',
-                          request: 'Request') -> List[str]:
+    def get_search_fields(self, view: ViewSet,
+                          request: Request) -> List[str]:
         return ['title', 'aliases__name']
 
-    def get_search_terms(self, request: 'Request') -> List[str]:
+    def get_search_terms(self, request: Request) -> List[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
@@ -40,17 +42,17 @@ class AuthorFilter(SearchFilter):
     search_title = 'Author'
     search_description = 'Search by author name.'
 
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         return super().filter_queryset(request, queryset, view)
 
-    def get_search_fields(self, view: 'ViewSet',
-                          request: 'Request') -> List[str]:
+    def get_search_fields(self, view: ViewSet,
+                          request: Request) -> List[str]:
         return ['authors__name', 'authors__aliases__name']
 
-    def get_search_terms(self, request: 'Request') -> List[str]:
+    def get_search_terms(self, request: Request) -> List[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
@@ -61,17 +63,17 @@ class ArtistFilter(SearchFilter):
     search_title = 'Artist'
     search_description = 'Search by artist name.'
 
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         return super().filter_queryset(request, queryset, view)
 
-    def get_search_fields(self, view: 'ViewSet',
-                          request: 'Request') -> List[str]:
+    def get_search_fields(self, view: ViewSet,
+                          request: Request) -> List[str]:
         return ['artists__name', 'artists__aliases__name']
 
-    def get_search_terms(self, request: 'Request') -> List[str]:
+    def get_search_terms(self, request: Request) -> List[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
@@ -80,8 +82,8 @@ class StatusFilter(BaseFilterBackend):
     """Series status filter."""
     description = 'Filter by the status.'
 
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         return {
@@ -90,7 +92,7 @@ class StatusFilter(BaseFilterBackend):
             'ongoing': queryset.filter(completed=False)
         }.get(request.query_params.get('status', 'any').lower())
 
-    def get_schema_operation_parameters(self, view: 'ViewSet') -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
         return [{
             'name': 'status',
             'required': False,
@@ -108,8 +110,8 @@ class CategoriesFilter(BaseFilterBackend):
     """Series categories filter."""
     description = "Filter by categories. (prefix with '-' to exclude)"
 
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         categories = request.query_params.get('categories', '').split(',')
@@ -125,7 +127,7 @@ class CategoriesFilter(BaseFilterBackend):
             )
         return queryset
 
-    def get_schema_operation_parameters(self, view: 'ViewSet') -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
         return [{
             'name': 'categories',
             'required': False,
@@ -146,17 +148,17 @@ class SlugFilter(SearchFilter):
     search_title = 'Slug'
     search_description = 'Filter by the slug.'
 
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         return super().filter_queryset(request, queryset, view)
 
-    def get_search_fields(self, view: 'ViewSet',
-                          request: 'Request') -> List[str]:
+    def get_search_fields(self, view: ViewSet,
+                          request: Request) -> List[str]:
         return ['=slug']
 
-    def get_search_terms(self, request: 'Request') -> List[str]:
+    def get_search_terms(self, request: Request) -> List[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
@@ -166,13 +168,13 @@ class SeriesSort(OrderingFilter):
     ordering_fields = ['title', 'latest_upload', 'chapter_count']
     ordering_description = "Change the sort order. ('-' means descending)"
 
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         return super().filter_queryset(request, queryset, view)
 
-    def get_schema_operation_parameters(self, view: 'ViewSet') -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
         params = super().get_schema_operation_parameters(view)
         params[0]['schema'].update({
             'default': 'title',
@@ -190,11 +192,11 @@ class DateFormat(BaseFilterBackend):
     """Date format filter."""
     description = 'Change the displayed date format.'
 
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         return queryset  # no actual filtering is performed
 
-    def get_schema_operation_parameters(self, view: 'ViewSet') -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
         return [{
             'name': 'date_format',
             'required': False,
@@ -214,25 +216,25 @@ class ChapterFilter(SearchFilter):
     search_title = 'Series'
     search_description = "Filter by the series slug."
 
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         return super().filter_queryset(request, queryset, view)
 
-    def get_search_fields(self, view: 'ViewSet',
-                          request: 'Request') -> List[str]:
+    def get_search_fields(self, view: ViewSet,
+                          request: Request) -> List[str]:
         return ['=series__slug']
 
-    def get_search_terms(self, request: 'Request') -> List[str]:
+    def get_search_terms(self, request: Request) -> List[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
 
 class PageFilter(BaseFilterBackend):
     """Chapter pages filter."""
-    def filter_queryset(self, request: 'Request', queryset: 'QuerySet',
-                        view: 'ViewSet') -> 'QuerySet':
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         params = {'series', 'volume', 'number'}
@@ -246,7 +248,7 @@ class PageFilter(BaseFilterBackend):
             chapter__number=request.query_params['number']
         ).order_by('number')
 
-    def get_schema_operation_parameters(self, view: 'ViewSet') -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
         return [{
             'name': 'series',
             'required': True,

@@ -1,5 +1,7 @@
 """The views of the users app."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from django.http import Http404
@@ -15,7 +17,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 @cache_control(max_age=7200)
-def all_groups(request: 'HttpRequest') -> 'HttpResponse':
+def all_groups(request: HttpRequest) -> HttpResponse:
     """
      View that serves a page with all the groups.
 
@@ -32,7 +34,7 @@ def all_groups(request: 'HttpRequest') -> 'HttpResponse':
 
 
 @cache_control(max_age=7200)
-def group(request: 'HttpRequest', g_id: int) -> 'HttpResponse':
+def group(request: HttpRequest, g_id: int) -> HttpResponse:
     """
      View that serves a single group's page.
 

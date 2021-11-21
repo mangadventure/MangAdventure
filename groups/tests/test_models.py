@@ -13,7 +13,7 @@ class TestGroup(GroupsTestBase):
         return Group.objects.create(
             name='my group', website='https://test.com/',
             description='My test group', email='scan@test.com',
-            discord='https://discord.gg/abcdefg',
+            id=1, discord='https://discord.gg/abcdefg',
             twitter='MyTwitter', irc='#epicspeedscans',
             reddit='/r/epicspeedscans', logo=get_test_image()
         )
@@ -24,7 +24,6 @@ class TestGroup(GroupsTestBase):
 
     def test_create(self):
         assert str(self.group) == 'my group'
-        assert self.group.id == 1
         assert str(self.group.logo) == 'groups/1/logo.png'
 
     def test_get_directory(self):

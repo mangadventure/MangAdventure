@@ -1,3 +1,5 @@
+"""RSS and Atom feeds for the users app."""
+
 from typing import TYPE_CHECKING, Iterable
 
 from django.conf import settings
@@ -22,7 +24,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class BookmarksRSS(Feed):
     """RSS feed for a user's bookmarks."""
     ttl = 600
-    link = '/user/'
+    link = '/user/bookmarks/'
     author_name = settings.CONFIG['NAME']
     title = f'Bookmarks - {author_name}'
     description = 'Updates when a bookmarked series has a new release'
@@ -68,6 +70,16 @@ class BookmarksRSS(Feed):
         feedgen.write(res, 'utf-8')
         return res
 
+    def feed_url(self, obj: User) -> str:
+        """
+        Get the feed's own URL.
+
+        :param obj: The object of the feed.
+
+        :return: The feed's URL.
+        """
+        return '/user/bookmarks.rss?token=' + obj.profile.token
+
     def items(self, obj: User) -> Iterable[Chapter]:
         """
         Get an iterable of the feed's items.
@@ -93,8 +105,9 @@ class BookmarksRSS(Feed):
         desc = str(item)
         if settings.CONFIG['ALLOW_DLS']:
             domain = settings.CONFIG["DOMAIN"]
+            scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
             url = item.get_absolute_url()[:-1] + '.cbz'
-            desc = f'<a href="http://{domain}{url}">{desc}</a>'
+            desc = f'<a href="{scheme}://{domain}{url}">{desc}</a>'
         return desc
 
     def item_pubdate(self, item: Chapter) -> 'datetime':
@@ -122,6 +135,16 @@ class BookmarksAtom(BookmarksRSS):
     """Atom feed for a user's bookmarks."""
     feed_type = Atom1Feed
     subtitle = BookmarksRSS.description
+
+    def feed_url(self, obj: User) -> str:
+        """
+        Get the feed's own URL.
+
+        :param obj: The object of the feed.
+
+        :return: The feed's URL.
+        """
+        return '/user/bookmarks.atom?token=' + obj.profile.token
 
 
 __all__ = ['BookmarksRSS', 'BookmarksAtom']

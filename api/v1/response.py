@@ -3,7 +3,8 @@
 from functools import wraps
 from typing import TYPE_CHECKING, Tuple
 
-from django.http import JsonResponse
+from django.conf import settings
+from django.http import HttpResponseGone, JsonResponse
 from django.utils.log import log_response
 from django.views.decorators.vary import vary_on_headers
 
@@ -16,13 +17,16 @@ class JsonError(JsonResponse):
     """
     A JSON-formatted error response.
 
+    .. deprecated:: 0.7.4
+       Use ``JsonResponse({'error': ...}, status=...)`` instead
+
     :param message: The error message of the response.
     :param status: The HTTP status of the response.
     """
     def __init__(self, message: str, status: int = 500, **kwargs):
         data = {'error': message, 'status': status}
         kwargs.setdefault('status', status)
-        super(JsonError, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
 
 
 def require_methods_api(allowed_methods: Tuple[str, ...] =
@@ -50,4 +54,16 @@ def require_methods_api(allowed_methods: Tuple[str, ...] =
     return decorator
 
 
-__all__ = ['require_methods_api', 'JsonError']
+def deprecate_api(func: 'Callable') -> 'Callable':
+    """Decorator used to denote that the API is deprecated."""
+    @wraps(func)
+    def inner(*args, **kwargs):
+        if not settings.CONFIG['ENABLE_API_V1']:  # pragma: no cover
+            return HttpResponseGone('Use API v2 instead.')
+        response = func(*args, **kwargs)
+        response['Warning'] = '299 MangAdventure/0.7.4 "Deprecated API"'
+        return response
+    return inner
+
+
+__all__ = ['deprecate_api', 'require_methods_api', 'JsonError']

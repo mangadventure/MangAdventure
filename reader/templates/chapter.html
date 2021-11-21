@@ -8,10 +8,6 @@
 {% endblock %}
 {% block image %}
   <meta name="twitter:card" content="summary">
-  {% if chapter.twitter_creator %}
-    {# TODO: is it possible to show multiple creators? #}
-    <meta name="twitter:creator" content="{{ chapter.twitter_creator }}">
-  {% endif %}
   {% with cover=PAGE_URL|urljoin:curr_chapter.series.cover.url %}
     <meta name="twitter:image" content="{{ cover }}">
     <meta property="og:image" content="{{ cover }}">
@@ -20,7 +16,6 @@
   {% endwith %}
 {% endblock %}
 {% block description %}
-  <meta name="twitter:description" content="{{ curr_chapter }}">
   <meta property="og:description" content="{{ curr_chapter }}">
   <meta name="description" content="{{ curr_chapter }}">
 {% endblock %}
@@ -32,7 +27,6 @@
 {% block title %}
   <meta name="title" content="{{ curr_chapter.title }}">
   {% with title=curr_chapter.series.title|add:' ~ '|add:config.NAME %}
-    <meta name="twitter:title" content="{{ title }}">
     <meta property="og:title" content="{{ title }}">
   {% endwith %}
   <title>{{ curr_chapter.title }} &middot; {{ config.NAME }}</title>
@@ -95,7 +89,7 @@
     <script src="{% static 'scripts/chapter.js' %}" rel="preload" as="script" type="application/javascript"></script>
     {% with series_url=curr_chapter.series.get_absolute_url prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
       <section id="controls" class="no-display">
-        <div id="controls-top">
+        <div id="controls-top">{# TODO: previous/next chapter instead of first/last page #}
           <a href="{{ all_pages.first.get_absolute_url }}" rel="first"
              title="First page" class="control"><i class="mi mi-rewind"></i></a>
           {% if prev == 0 %}

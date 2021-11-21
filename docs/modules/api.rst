@@ -13,17 +13,10 @@ Subpackages
    :maxdepth: 4
 
    api.v1
+   api.v2
 
 Submodules
 ----------
-
-api.response module
--------------------
-
-.. automodule:: api.response
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 api.urls module
 ---------------

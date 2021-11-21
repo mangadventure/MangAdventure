@@ -95,8 +95,8 @@ class ChapterAdmin(admin.ModelAdmin):
     inlines = (PageInline,)
     date_hierarchy = 'published'
     list_display = (
-        'preview', 'title', 'volume', '_number',
-        'published', 'modified', 'final'
+        'preview', 'title', 'series', 'volume',
+        '_number', 'published', 'modified', 'final'
     )
     list_display_links = ('title',)
     ordering = ('-modified',)

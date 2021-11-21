@@ -110,11 +110,11 @@ def query(params: _SearchParams) -> 'QuerySet':
     """
     if not params:
         return Series.objects.none()
-    filters = qsfilter(params) & Q(chapters__published__lte=tz.now())
-    return Series.objects.filter(filters).annotate(
-        chapter_count=Count('chapters'),
+    q = Q(chapters__published__lte=tz.now())
+    return Series.objects.annotate(
+        chapter_count=Count('chapters', filter=q),
         latest_upload=Max('chapters__published')
-    ).distinct()
+    ).filter(qsfilter(params) & Q(chapter_count__gt=0)).distinct()
 
 
 def get_response(request: 'HttpRequest') -> 'QuerySet':

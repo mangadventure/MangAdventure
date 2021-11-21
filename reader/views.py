@@ -30,7 +30,7 @@ def _latest(request: 'HttpRequest', slug: 'Optional[str]' = None,
             q = Q(chapters__published__lte=tz.now())
             return Series.objects.only('modified').annotate(
                 chapter_count=Count('chapters', filter=q)
-            ).filter(q & Q(chapter_count__gt=0)).latest().modified
+            ).filter(chapter_count__gt=0).latest().modified
         if vol is None:
             return Series.objects.only('modified').filter(
                 chapters__published__lte=tz.now(), slug=slug
@@ -58,10 +58,12 @@ def directory(request: 'HttpRequest') -> 'HttpResponse':
     :return: A response with the rendered ``all_series.html`` template.
     """
     qs = Chapter.objects.filter(published__lte=tz.now())
-    pre = Prefetch('chapters', queryset=qs.order_by('-published'))
-    _series = Series.objects.annotate(chapter_count=Count(
-        'chapters', filter=Q(chapters__published__lte=tz.now())
-    )).filter(chapter_count__gt=0).prefetch_related(pre).order_by('title')
+    q = Q(chapters__published__lte=tz.now())
+    _series = Series.objects.annotate(
+        chapter_count=Count('chapters', filter=q)
+    ).filter(chapter_count__gt=0).prefetch_related(
+        Prefetch('chapters', queryset=qs.order_by('-published'))
+    ).distinct().order_by('title')
     uri = request.build_absolute_uri(request.path)
     crumbs = jsonld.breadcrumbs([('Reader', uri)])
     library = jsonld.carousel([s.get_absolute_url() for s in _series])

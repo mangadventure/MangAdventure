@@ -1,8 +1,6 @@
-from importlib.util import find_spec
-
 from django.shortcuts import reverse
 
-from pytest import mark
+from pytest import importorskip
 
 from . import ConfigTestBase
 
@@ -15,8 +13,8 @@ class TestInfoPage(ConfigTestBase):
         assert r.status_code == 200
         assert '<title>About us' in str(r.content)
 
-    @mark.skipif(not find_spec('csp'), reason='requires django-csp')
     def test_csp(self):
+        importorskip('csp', reason='requires django-csp')
         r = self.client.get(self.URL)
         assert r.status_code == 200
         assert 'Content-Security-Policy' in r

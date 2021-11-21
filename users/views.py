@@ -131,7 +131,7 @@ class EditUser(TemplateView):
 class Logout(LogoutView):
     """A :class:`LogoutView` that disallows ``GET`` requests."""
     #: The allowed HTTP methods.
-    http_method_names = ['post', 'head', 'options']
+    http_method_names = ('post', 'head', 'options')
 
 
 @method_decorator(login_required, name='dispatch')

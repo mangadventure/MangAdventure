@@ -2,10 +2,12 @@
 
 from hashlib import blake2b
 from pathlib import PurePath
+from secrets import token_hex
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 from MangAdventure import storage, validators
 
@@ -62,12 +64,21 @@ class UserProfile(models.Model):
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
-        data = f'{self.user.username}:{self.user.password}'
-        self.token = blake2b(
-            data.encode(), digest_size=16,
-            key=settings.SECRET_KEY.encode()
-        ).hexdigest()
-        super(UserProfile, self).save(*args, **kwargs)
+        if not self.token:
+            data = f'{self.user.username}:{self.user.password}'
+            self.token = blake2b(
+                data.encode(), digest_size=16,
+                key=settings.SECRET_KEY.encode()
+            ).hexdigest()
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self) -> str:
+        """
+        Get the absolute URL of the object.
+
+        :return: The URL of :func:`users.views.profile`.
+        """
+        return f'{reverse("user_profile")}?id={self.id}'
 
     def get_directory(self) -> PurePath:
         """
@@ -95,4 +106,34 @@ class UserProfile(models.Model):
         return int(self.token, 16) & 0x7FFFFFFF
 
 
-__all__ = ['Bookmark', 'UserProfile']
+class ApiKey(models.Model):
+    """A model that contains a user's API key."""
+    #: The API key of the user.
+    key = models.CharField(
+        max_length=64, primary_key=True, default=token_hex
+    )
+    #: The user this key belongs to.
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, unique=True, related_name='api_key'
+    )
+    #: The creation date of the key.
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+
+    def __str__(self) -> str:
+        """
+        Return a string representing the object.
+
+        :return: The key as a string.
+        """
+        return str(self.key)
+
+    def __hash__(self) -> int:
+        """
+        Return the hash of the object.
+
+        :return: An integer hash value.
+        """
+        return int(self.key, 16) & 0x7FFFFFFF
+
+
+__all__ = ['Bookmark', 'UserProfile', 'ApiKey']

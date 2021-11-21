@@ -10,7 +10,6 @@
 {% endblock %}
 {% block title %}
   <meta name="title" content="Search {{ config.NAME }}">
-  <meta name="twitter:title" content="Search - {{ config.NAME }}">
   <meta property="og:title" content="Search - {{ config.NAME }}">
   <title>Search &middot; {{ config.NAME }}</title>
 {% endblock %}
@@ -80,45 +79,43 @@
             </tr>
           </thead>
           {% for series in results %}
-            {% if series.chapter_count > 0 %}
-              <tr class="result">
-                <td class="result-title">
-                  {% if series.completed %}
-                    <i class="mi mi-book" title="Completed"></i>
-                  {% else %}
-                    <i class="mi mi-book-o" title="Ongoing"></i>
-                  {% endif %}
-                  <a href="{{ series.get_absolute_url }}"
-                     title="{{ series.title }}">
-                    {{ series.title }}
-                  </a>
-                </td>
-                <td class="result-people s-hidden">
-                  <span class="result-authors">
-                    {{ series.authors.all|join:' & '|default:'N/A' }}
-                  </span>
-                  <span class="result-artists">
-                    {{ series.artists.all|join:' & '|default:'N/A' }}
-                  </span>
-                </td>
-                <td class="result-desc s-hidden">
-                  {{ series.description|default:'N/A' }}
-                </td>
-                <td class="result-categories s-hidden">
-                  {{ series.categories.all|join:', '|default:'N/A' }}
-                </td>
-                <td class="result-chapters s-hidden" data-sort-method="number">
-                  {{ series.chapter_count }}
-                </td>
-                <td class="result-date s-hidden" data-sort-method="number"
-                  {% if series.latest_upload %}
-                    {% with latest=series.latest_upload %}data-sort="{{ latest.timestamp }}">
-                      <time datetime="{{ latest|date:'Y-m-d' }}">{{ latest|naturaltime }}</time>
-                    {% endwith %}
-                  {% else %}data-sort="0">N/A{% endif %}
-                </td>
-              </tr>
-            {% endif %}
+            <tr class="result">
+              <td class="result-title">
+                {% if series.completed %}
+                  <i class="mi mi-book" title="Completed"></i>
+                {% else %}
+                  <i class="mi mi-book-o" title="Ongoing"></i>
+                {% endif %}
+                <a href="{{ series.get_absolute_url }}"
+                   title="{{ series.title }}">
+                  {{ series.title }}
+                </a>
+              </td>
+              <td class="result-people s-hidden">
+                <span class="result-authors">
+                  {{ series.authors.all|join:' & '|default:'N/A' }}
+                </span>
+                <span class="result-artists">
+                  {{ series.artists.all|join:' & '|default:'N/A' }}
+                </span>
+              </td>
+              <td class="result-desc s-hidden">
+                {{ series.description|default:'N/A' }}
+              </td>
+              <td class="result-categories s-hidden">
+                {{ series.categories.all|join:', '|default:'N/A' }}
+              </td>
+              <td class="result-chapters s-hidden" data-sort-method="number">
+                {{ series.chapter_count }}
+              </td>
+              <td class="result-date s-hidden" data-sort-method="number"
+                {% if series.latest_upload %}
+                  {% with latest=series.latest_upload %}data-sort="{{ latest.timestamp }}">
+                    <time datetime="{{ latest|date:'Y-m-d' }}">{{ latest|naturaltime }}</time>
+                  {% endwith %}
+                {% else %}data-sort="0">N/A{% endif %}
+              </td>
+            </tr>
           {% endfor %}
         </table>
       {% endif %}

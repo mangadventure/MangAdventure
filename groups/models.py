@@ -5,6 +5,7 @@ from pathlib import PurePath
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.functions import Coalesce
 from django.shortcuts import reverse
 
 from MangAdventure.fields import (
@@ -47,7 +48,9 @@ class Group(models.Model):
         blank=True, help_text="The group's E-mail address."
     )
     #: The Discord server URL of the group.
-    discord = DiscordURLField(blank=True, help_text="The group's Discord link.")
+    discord = DiscordURLField(
+        blank=True, help_text="The group's Discord link."
+    )
     #: The Twitter username of the group.
     twitter = TwitterField(
         blank=True, help_text="The group's Twitter username."
@@ -96,11 +99,9 @@ class Group(models.Model):
 
     @property
     def _increment(self) -> int:
-        try:
-            num = Group.objects.only('id').last().id + 1
-        except (Group.DoesNotExist, AttributeError):
-            num = 1
-        return num
+        return Group.objects.aggregate(
+            last=Coalesce(models.Max('id'), 0) + 1
+        )['last']
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
@@ -139,6 +140,18 @@ class Member(models.Model):
     )
     #: The groups of this member.
     groups = models.ManyToManyField(Group, 'members', through='Role')
+
+    def get_roles(self, group: Group) -> str:
+        """
+        Get the roles of the member in the given group.
+
+        :param group: A group instance.
+        :return: A comma-separated list of roles.
+        """
+        return ', '.join(
+            r.get_role_display() for r in
+            self.roles.filter(group_id=group.id).only('role')
+        )
 
     def __str__(self) -> str:
         """

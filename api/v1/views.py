@@ -17,7 +17,7 @@ from MangAdventure.search import get_response
 from groups.models import Group, Member
 from reader.models import Artist, Author, Category, Chapter, Series
 
-from ..response import JsonError, require_methods_api
+from .response import JsonError, deprecate_api, require_methods_api
 
 if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime  # isort:skip
@@ -34,7 +34,7 @@ def _latest(request: 'HttpRequest', slug: Optional[str] = None,
             q = Q(chapters__published__lte=tz.now())
             return Series.objects.only('modified').annotate(
                 chapter_count=Count('chapters', filter=q)
-            ).filter(q & Q(chapter_count__gt=0)).latest().modified
+            ).filter(chapter_count__gt=0).latest().modified
         if vol is None:
             return Series.objects.only('modified').filter(
                 chapters__published__lte=tz.now(), slug=slug
@@ -160,6 +160,7 @@ def _group_response(request: 'HttpRequest', _group: Group) -> Dict:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
@@ -175,7 +176,7 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
     q = Q(chapters__published__lte=tz.now())
     _series = Series.objects.annotate(
         chapter_count=Count('chapters', filter=q)
-    ).filter(q & Q(chapter_count__gt=0))
+    ).filter(chapter_count__gt=0).distinct()
     for s in _series.prefetch_related('chapters').iterator():
         series_res = {
             'slug': s.slug,
@@ -199,6 +200,7 @@ def all_releases(request: 'HttpRequest') -> JsonResponse:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
@@ -217,6 +219,7 @@ def all_series(request: 'HttpRequest') -> JsonResponse:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
@@ -237,6 +240,7 @@ def series(request: 'HttpRequest', slug: str) -> JsonResponse:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
@@ -262,6 +266,7 @@ def volume(request: 'HttpRequest', slug: str, vol: int) -> JsonResponse:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @last_modified(_latest)
 @cache_control(public=True, max_age=600, must_revalidate=True)
@@ -292,6 +297,7 @@ def _is_author(request: 'HttpRequest') -> bool:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def all_people(request: 'HttpRequest') -> JsonResponse:
@@ -312,6 +318,7 @@ def all_people(request: 'HttpRequest') -> JsonResponse:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
@@ -334,6 +341,7 @@ def person(request: 'HttpRequest', p_id: int) -> JsonResponse:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def all_groups(request: 'HttpRequest') -> JsonResponse:
@@ -353,6 +361,7 @@ def all_groups(request: 'HttpRequest') -> JsonResponse:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
@@ -374,6 +383,7 @@ def group(request: 'HttpRequest', g_id: int) -> JsonResponse:
 
 
 @csrf_exempt
+@deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
 def categories(request: 'HttpRequest') -> JsonResponse:
@@ -387,21 +397,7 @@ def categories(request: 'HttpRequest') -> JsonResponse:
     return JsonResponse(list(Category.objects.values()), safe=False)
 
 
-@csrf_exempt
-@require_methods_api()
-def invalid_endpoint(request: 'HttpRequest') -> JsonError:
-    """
-    View that serves a :status:`501` error as a JSON object.
-
-    :param request: The original request.
-
-    :return: A JSON-formatted response with the error.
-    """
-    return JsonError('Invalid API endpoint', 501)
-
-
 __all__ = [
-    'all_releases', 'all_series', 'series', 'volume',
-    'chapter', 'all_people', 'person', 'all_groups',
-    'group', 'categories', 'invalid_endpoint'
+    'all_releases', 'all_series', 'series', 'volume', 'chapter',
+    'all_people', 'person', 'all_groups', 'group', 'categories'
 ]

@@ -3,7 +3,7 @@
 from typing import Type
 
 from django.conf import settings
-from django.contrib.redirects.models import Redirect
+from django.contrib.redirects.models import Redirect, Site
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 
@@ -47,10 +47,11 @@ def redirect_series(sender: Type[Series], instance: Series, **kwargs):
                 redirect.delete()
             else:
                 redirect.save()
-        # Now add the new redirect
-        Redirect.objects.create(
-            site_id=settings.SITE_ID, old_path=old_path, new_path=new_path
-        )
+        # Now add the new redirects
+        Redirect.objects.bulk_create([
+            Redirect(site_id=site_id, old_path=old_path, new_path=new_path)
+            for site_id in Site.objects.values_list('id', flat=True)
+        ])
         _move(old_dir, str(new_dir))
         instance.cover = instance.cover.name.replace(
             str(old_dir), str(new_dir)

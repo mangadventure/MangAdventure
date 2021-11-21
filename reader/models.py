@@ -195,7 +195,7 @@ class Series(models.Model):
         User, editable=True, blank=False, null=True,
         help_text='The person who manages this series.',
         on_delete=models.SET_NULL, limit_choices_to=(
-            models.Q(is_superuser=True) | models.Q(groups__name='Scanlator')
+            Q(is_superuser=True) | Q(groups__name='Scanlator')
         )
     )
 
@@ -315,12 +315,6 @@ class Chapter(models.Model):
         )
         return self.__class__.objects.filter(q) \
             .order_by('-volume', '-number').first()
-
-    @cached_property
-    def twitter_creator(self) -> str:
-        """Get the Twitter username of the chapter's first group."""
-        return '@' + Group.objects.filter(releases__id=self.id) \
-            .exclude(twitter='').only('twitter').first().twitter
 
     def get_absolute_url(self) -> str:
         """
@@ -501,7 +495,7 @@ class _PageNumberField(models.PositiveSmallIntegerField):
     default_validators = (MinValueValidator(1),)
 
     def formfield(self, **kwargs):  # pragma: no cover
-        # bypass parent to set min_value to 1
+        # HACK: bypass parent to set min_value to 1
         return super(
             models.PositiveSmallIntegerField, self
         ).formfield(min_value=1, **kwargs)
@@ -654,6 +648,6 @@ class Page(models.Model):
 
 
 __all__ = [
-    'Author', 'Artist', 'Series', 'Chapter',
-    'Page', 'Category', 'Alias'
+    'Author', 'Artist', 'Series',
+    'Chapter', 'Page', 'Category', 'Alias'
 ]

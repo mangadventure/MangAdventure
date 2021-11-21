@@ -17,6 +17,14 @@ reader.admin module
    :undoc-members:
    :show-inheritance:
 
+reader.api module
+-----------------
+
+.. automodule:: reader.api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 reader.apps module
 ------------------
 
@@ -33,6 +41,14 @@ reader.feeds module
    :undoc-members:
    :show-inheritance:
 
+reader.filters module
+---------------------
+
+.. automodule:: reader.filters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 reader.models module
 --------------------
 
@@ -45,6 +61,14 @@ reader.receivers module
 -----------------------
 
 .. automodule:: reader.receivers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+reader.serializers module
+-------------------------
+
+.. automodule:: reader.serializers
    :members:
    :undoc-members:
    :show-inheritance:

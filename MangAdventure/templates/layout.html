@@ -18,7 +18,6 @@
       <meta name="robots" content="index,follow">
     {% endblock %}
     {% block description %}
-      <meta name="twitter:description" content="{{ config.DESCRIPTION }}">
       <meta property="og:description" content="{{ config.DESCRIPTION }}">
       <meta name="description" content="{{ config.DESCRIPTION }}">
     {% endblock %}
@@ -73,7 +72,6 @@
       {{ breadcrumbs|jsonld:'breadcrumbs' }}
     {% endblock %}
     {% block title %}
-      <meta name="twitter:title" content="{{ config.NAME }}">
       <meta property="og:title" content="{{ config.NAME }}">
       <meta name="title" content="{{ config.NAME }}">
       <title>{{ config.NAME }}</title>

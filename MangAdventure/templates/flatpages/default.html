@@ -6,14 +6,12 @@
   {% endblock %}
   {% block description %}
     {% with desc=flatpage.content|striptags %}
-      <meta name="twitter:description" content="{{ desc }}">
       <meta property="og:description" content="{{ desc }}">
       <meta name="description" content="{{ desc }}">
     {% endwith %}
   {% endblock %}
   {% block title %}
     {% with title=flatpage.title|striptags %}
-      <meta name="twitter:title" content="{{ title }} - {{ config.NAME }}">
       <meta property="og:title" content="{{ title }} - {{ config.NAME }}">
       <meta name="title" content="{{ title }}">
       <title>{{ title }} &middot; {{ config.NAME }}</title>

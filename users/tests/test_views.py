@@ -24,7 +24,7 @@ class TestEditUser(UsersViewTestBase):
         self.data = {
             'user_id': 1,
             'email': 'test2@email.com',
-            'curr_password': 'test',
+            'curr_password': 'testerino',
             'new_password1': 'testpass2',
             'new_password2': 'testpass2',
             'username': 'rain2',

@@ -4,7 +4,6 @@
   {% if group.twitter %}
     <meta name="twitter:creator" content="@{{ group.twitter }}">
   {% endif %}
-  <meta name="twitter:description" content="{{ group.description }}">
   <meta property="og:description" content="{{ group.description }}">
   <meta name="description" content="{{ group.description }}">
 {% endblock %}
@@ -24,7 +23,6 @@
 {% endblock %}
 {% block title %}
   <meta name="title" content="{{ group }}">
-  <meta name="twitter:title" content="{{ group }} - {{ config.NAME }}">
   <meta property="og:title" content="{{ group }} - {{ config.NAME }}">
   <title>{{ group }} &middot; {{ config.NAME }}</title>
 {% endblock %}
@@ -75,7 +73,7 @@
           <div class="group-reddit">
             <strong>Reddit: </strong>
             {% if group.reddit %}
-              <a href="https://reddit.com/{{ group.reddit }}" rel="noopener noreferrer" target="_blank">
+              <a href="https://reddit.com{{ group.reddit }}" rel="noopener noreferrer" target="_blank">
                 {{ group.reddit }}
               </a>
             {% else %}

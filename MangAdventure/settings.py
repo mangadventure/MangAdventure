@@ -68,7 +68,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.twitter',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.discord',
-    # 'commentary',
+    'rest_framework',
     'config',
     'reader',
     'api',
@@ -286,7 +286,7 @@ AUTH_PASSWORD_VALIDATORS = [
 #: A list of authentication backends to use when authenticating a user.
 #: See :setting:`AUTHENTICATION_BACKENDS`.
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    'users.backends.ScanlationBackend',
     'allauth.account.auth_backends.AuthenticationBackend'
 ]
 
@@ -342,6 +342,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['identify', 'email'],
     }
 }
+
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
 
 #: The URL where requests are redirected for login.
 #: See :setting:`LOGIN_URL`.
@@ -481,6 +483,45 @@ if find_spec('csp'):
         '/opensearch.xml', '/contribute.json',
     )
 
+#############
+#    API    #
+#############
+
+#: Configuration for the API.
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'api.v2.pagination.DummyPagination',
+    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+    'DEFAULT_SCHEMA_CLASS': 'api.v2.schema.OpenAPISchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'api.v2.auth.ApiKeyAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'api.v2.auth.ScanlatorPermissions',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+    ),
+    'DATETIME_INPUT_FORMATS': ('iso-8601', '%m/%d/%y'),
+    'DEFAULT_THROTTLE_RATES': {'anon': '200/m'},
+    'SCHEMA_COERCE_METHOD_NAMES': {
+        'list': '* list',
+        'create': '* create',
+        'retrieve': '* read',
+        'update': '* update',
+        'partial_update': '* patch',
+        'destroy': '* delete'
+    },
+    'URL_FORMAT_OVERRIDE': None,
+    'ORDERING_PARAM': 'sort',
+    'DEFAULT_VERSION': 'v2',
+    'VERSION_PARAM': None,
+    'PAGE_SIZE': env.int('API_PAGE_SIZE', 25),
+}
+if not DEBUG:  # pragma: no cover
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (
+        'rest_framework.renderers.JSONRenderer',
+    )
+
 #######################
 #    Configuration    #
 #######################
@@ -507,26 +548,11 @@ CONFIG = {
     'MAX_RELEASES': env.int('MAX_RELEASES', 10),
     'MAX_CHAPTERS': env.int('MAX_CHAPTERS', 1),
     'SHOW_CREDITS': env.bool('SHOW_CREDITS', True),
+    'ENABLE_API_V1': env.bool('ENABLE_API_V1', False),
 }
 
 CONFIG['LOGO_TW'] = env.get('LOGO_TW', CONFIG['LOGO'])
 CONFIG['LOGO_OG'] = env.get('LOGO_OG', CONFIG['LOGO'])
-
-##################
-#    Comments    #
-##################
-
-# The app used for custom comments.
-COMMENTS_APP = 'users'
-
-# Removed comments won't be hidden.
-COMMENTS_HIDE_REMOVED = False
-
-# Allow HTML in comments.
-COMMENTS_ALLOW_HTML = True
-
-# Use TinyMCE widget in comments.
-COMMENTS_WIDGET = 'users.widgets.TinyMCEComment'
 
 ###############
 #    Debug    #
@@ -555,7 +581,7 @@ if find_spec('sentry_sdk'):
         send_default_pii=True,
         release=f'mangadventure@{VERSION}',
         integrations=[DjangoIntegration()],
-        traces_sample_rate=env.float('SENTRY_SAMPLE_RATE', 0) / 100
+        traces_sample_rate=env.float('SENTRY_SAMPLE_RATE', 0.0) / 100
     )
 
 del BOTS, LOGS_DIR, VERSION

@@ -1,3 +1,5 @@
+"""RSS and Atom feeds for the groups app."""
+
 from typing import TYPE_CHECKING, Iterable
 
 from django.conf import settings
@@ -84,9 +86,10 @@ class GroupRSS(Feed):
         """
         desc = str(item)
         if settings.CONFIG['ALLOW_DLS']:
-            domain = settings.CONFIG["DOMAIN"]
+            domain = settings.CONFIG['DOMAIN']
             url = item.get_absolute_url()[:-1] + '.cbz'
-            desc = f'<a href="http://{domain}{url}">{desc}</a>'
+            scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+            desc = f'<a href="{scheme}://{domain}{url}">{desc}</a>'
         return desc
 
     def item_pubdate(self, item: Chapter) -> 'datetime':

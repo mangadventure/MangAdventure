@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load account socialaccount user_tags %}
+{% load account user_tags %}
 {% block head_extras %}
   {% if request.user.is_authenticated %}
     <meta http-equiv="Refresh" content="1; url={% url 'user_profile' %}?id={{ request.user.id }}">
@@ -59,8 +59,8 @@
         Don't have an account? Click <a href="{{ signup_url }}" rel="nofollow">here</a> to sign up.
       </section>
       <section id="oauth">
-        {% get_providers as socialaccount_providers %}
-        {% for provider in socialaccount_providers|available %}
+        {% get_oauth_providers as oauth_providers %}
+        {% for provider in oauth_providers %}
           {% if forloop.first %}<div id="oauth-or">Or, sign in with:</div>{% endif %}
           <a title="{{ provider.name }}" class="provider main-fg"
              rel="noopener nofollow" href="{% provider_login_url provider.id %}">

@@ -37,8 +37,9 @@ jobs:
           parallel: true
           flag-name: SQLite
       - name: "Send status to Discord"
-        uses: MangAdventure/discord-webhook@v0.1
+        uses: MangAdventure/discord-webhook@v0.2
         if: always() && github.event_name == 'push'
+        continue-on-error: true
         with:
           run-suffix: ".1"
           lang-name: Python
@@ -88,8 +89,9 @@ jobs:
           parallel: true
           flag-name: MySQL
       - name: "Send status to Discord"
-        uses: MangAdventure/discord-webhook@v0.1
+        uses: MangAdventure/discord-webhook@v0.2
         if: always() && github.event_name == 'push'
+        continue-on-error: true
         with:
           run-suffix: ".2"
           lang-name: Python
@@ -140,8 +142,9 @@ jobs:
           parallel: true
           flag-name: PostgreSQL
       - name: "Send status to Discord"
-        uses: MangAdventure/discord-webhook@v0.1
+        uses: MangAdventure/discord-webhook@v0.2
         if: always() && github.event_name == 'push'
+        continue-on-error: true
         with:
           run-suffix: ".3"
           lang-name: Python

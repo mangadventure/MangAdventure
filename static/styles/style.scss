@@ -1,5 +1,4 @@
 @import 'variables';
-@import 'functions';
 @import 'mixins';
 
 body {
@@ -9,8 +8,8 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  -webkit-text-size-adjust: 100%;
   font-family: quote(#{$font-family}), 'Helvetica', 'Arial', sans-serif;
-  @include text-size-adjust();
 }
 
 a {
@@ -49,17 +48,6 @@ button {
   cursor: pointer;
 }
 
-thead {
-  cursor: pointer;
-  th {
-    .mi { margin: 0 }
-    .mi::before { content: quote('\f107') } // mi-down
-    &[data-sort-default] .mi, &[aria-sort='ascending'] .mi {
-      @include transform('rotate(-180deg)');
-    }
-  }
-}
-
 :focus { outline: none }
 
 ::-moz-focus-inner { border: 0 }
@@ -67,13 +55,8 @@ thead {
 #header {
   background-color: $alter-bg;
   display: flex;
+  flex: none;
   height: 45px;
-  @include flex();
-  li { border: none }
-  .navig-link {
-    color: $main-fg;
-    &:hover, &:active { color: $alter-fg }
-  }
 }
 
 #home {
@@ -97,16 +80,21 @@ thead {
     padding: 0;
     margin: 0;
     display: block;
-    li {
+    > li {
       float: left;
+      border: none;
       margin: 0.25em 0;
-      @include border-radius(3px);
+      border-radius: 3px;
     }
   }
   .navig-link {
     display: inline-block;
     padding: 8px;
-    &:hover { text-decoration: none }
+    color: $main-fg;
+    @include touch() {
+      color: $alter-fg;
+      text-decoration: none;
+    }
   }
   .dropdown {
     a {
@@ -134,9 +122,7 @@ thead {
       width: 100%;
       float: right;
       margin: 0.1em 0;
-      @include touch() {
-        color: $alter-fg;
-      }
+      @include touch() { color: $alter-fg }
     }
     &-title { padding: 4px }
   }
@@ -146,7 +132,7 @@ thead {
   display: block;
   text-align: center;
   margin: 5px;
-  @include flex();
+  flex: none;
   .text {
     font-size: 13px;
     padding-right: 6px;
@@ -162,7 +148,7 @@ thead {
   margin-left: 3px;
   padding: 4px;
   border-color: transparent;
-  @include border-radius(5px);
+  border-radius: 5px;
 }
 
 #messages {
@@ -180,15 +166,15 @@ thead {
   margin: 10px auto;
   width: 95vw;
   display: table;
-  @include flex(1 0 auto);
-  @include box-sizing();
-  article {
+  flex: 1 0 auto;
+  box-sizing: border-box;
+  > article {
     background-color: $main-bg;
     border-radius: 5px;
     padding: 0 5px;
     margin-top: 5px;
   }
-  h1 { padding: 2px 0 }
+  > h1 { padding: 2px 0 }
   h2 a {
     display: inline-block;
     color: inherit;
@@ -201,9 +187,9 @@ thead {
     display: block;
     vertical-align: top;
     &-info {
+      flex: 1;
       display: flex;
-      @include flex(1);
-      @include justify-content(space-between);
+      justify-content: space-between;
       .chapter-metadata { max-width: 40vw }
     }
     &-link {
@@ -217,18 +203,17 @@ thead {
 
 #list {
   display: flex;
-  @include justify-content(flex-start);
-  @include flex-direction(column);
+  flex-direction: column;
+  justify-content: flex-start;
   .series {
     margin-bottom: 3px;
     padding: 10px 0 0;
     width: 100%;
     .cover {
+      float: left;
       max-width: 300px;
       max-height: 300px;
-      width: auto;
-      height: 100%;
-      float: left;
+      @include size(auto, 100%);
     }
     &-info {
       display: block;
@@ -237,10 +222,10 @@ thead {
       left: 0.3em;
     }
     &-chapter {
+      flex: 1;
       display: flex;
       max-width: 90vw;
       padding: 0 0.5em;
-      @include flex(1);
       .chapter-metadata { width: 50% }
       > a {
         width: 50%;
@@ -259,23 +244,16 @@ thead {
 
 #series {
   display: flex;
-  @include flex-wrap();
-  div {
-    &.alias, &.author, &.artist, &.category {
-      text-indent: 0.5em;
-      @include truncate();
-    }
-  }
+  flex-wrap: wrap;
   h3 { margin: 0.5em 0 }
   .cover {
-    max-width: 300px;
-    max-height: 300px;
-    width: auto;
-    height: 100%;
     position: relative;
     left: -0.3em;
     float: left;
-    @include border-radius();
+    border-radius: 5px;
+    max-width: 300px;
+    max-height: 300px;
+    @include size(auto, 100%);
   }
   .bookmark-btn {
     color: $alter-fg;
@@ -294,11 +272,14 @@ thead {
   }
   &-aliases, &-authors, &-artists, &-categories {
     max-width: 55vw;
-    @include truncate();
+    > div {
+      text-indent: 0.5em;
+      @include truncate();
+    }
   }
   &-desc {
     width: 100%;
-    p {
+    > div > p {
       max-width: 90vw;
       margin: 0;
       padding: 0 0.5em;
@@ -324,11 +305,11 @@ thead {
 
 #all-groups {
   display: flex;
-  @include flex(0 1 auto);
-  @include flex-wrap();
-  @include flex-direction();
-  @include align-items();
-  @include justify-content(space-around);
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
   .group {
     padding: 0.25em;
     &-name {
@@ -339,12 +320,14 @@ thead {
     &-logo {
       display: inline-flex;
       @include size(150px);
-      img {
+      > img {
+        align-self: center;
         border-radius: 5px;
-        @include size(100%, auto);
-        @include align-self();
+        max-width: 300px;
+        max-height: 300px;
+        @include size(auto, 100%);
       }
-      svg { fill: $main-fg }
+      > svg { fill: $main-fg }
     }
   }
 }
@@ -352,13 +335,16 @@ thead {
 #group {
   &-info {
     display: flex;
-    img {
+    > img {
+      max-width: 300px;
+      max-height: 300px;
+      align-self: start;
       margin-left: -5px;
       margin-right: 5px;
       border-top-left-radius: 5px;
-      @include align-self(start);
+      @include size(auto, 100%);
     }
-    svg {
+    > svg {
       fill: $main-fg;
       margin-right: 5px;
       border-top-left-radius: 5px;
@@ -371,7 +357,7 @@ thead {
     padding-left: 0.5em;
     padding-bottom: 1em;
     &-name { color: $alter-bg }
-    div { padding-left: 0.5em }
+    > div { padding-left: 0.5em }
   }
 }
 
@@ -388,23 +374,31 @@ thead {
   text-align: center;
   border-collapse: separate;
   border-spacing: 0;
-  @include box-sizing();
-  @include border($alter-fg, 2px);
-  @include border-radius(3px);
-  th, td {
-    padding: 0.1em 0.2em;
-    &:not(:last-child) {
-      @include border($alter-fg, 2px, $suffix: '-right');
+  border-radius: 3px;
+  box-sizing: border-box;
+  border: 2px $alter-fg solid;
+  thead {
+    cursor: pointer;
+    > tr > th {
+      .mi { margin: 0 }
+      .mi::before { content: quote('\f107') } // mi-down
+      &[data-sort-default] .mi, &[aria-sort='ascending'] .mi {
+        transform: rotate(-180deg);
+      }
     }
   }
-  td { @include border($alter-fg, 2px, $suffix: '-top'); }
+  th, td {
+    padding: 0.1em 0.2em;
+    &:not(:last-child) { border-right: 2px $alter-fg solid }
+  }
+  td { border-top: 2px $alter-fg solid }
 }
 
 #bookmarks {
   .bookmark {
     display: flex;
+    flex-wrap: wrap;
     padding: 0.5em;
-    @include flex-wrap();
     .cover {
       display: block;
       max-width: 30vw;
@@ -437,24 +431,6 @@ thead {
   &-bio div { text-indent: 1em }
 }
 
-/* #comments {
-  width: 100%;
-  &-links {
-    padding-top: 0.3em;
-    text-align: center;
-  }
-  &-form {
-    form {
-      margin: 0 auto;
-      max-width: 95%;
-      padding-bottom: 0.3em;
-    }
-    .tinymce, .button {
-      border: 1px solid $alter-fg;
-    }
-  }
-} */
-
 #oauth {
   .provider {
     text-decoration: unset;
@@ -472,7 +448,8 @@ thead {
 }
 
 #user-edit .field {
-  input, textarea {
+  > input,
+  > textarea {
     width: 270px;
   }
 }
@@ -495,7 +472,7 @@ thead {
     > div:first-of-type { padding-top: 5px }
     > div:last-of-type { padding-bottom: 5px }
   }
-  form {
+  > form {
     padding: 3px 0 5px;
     label {
       display: block;
@@ -528,7 +505,7 @@ thead {
   padding: 4px;
   line-height: 1.1em;
   position: relative;
-  @include box-sizing();
+  box-sizing: border-box;
   @include touch() {
     border-bottom: none;
     border-bottom-left-radius: 0;
@@ -538,7 +515,7 @@ thead {
       display: block;
     }
   }
-  a[href='#'] { text-decoration: unset }
+  > a[href='#'] { text-decoration: unset }
   > span { cursor: pointer }
   &-list {
     display: none;
@@ -568,7 +545,7 @@ thead {
     border-radius: 5px;
     width: 200%;
     text-align: center;
-    @include transform('translateX(-50%)');
+    transform: translateX(-50%);
   }
 }
 
@@ -576,7 +553,7 @@ thead {
   max-width: 100%;
   height: auto;
   margin: auto;
-  @include box-sizing();
+  box-sizing: border-box;
 }
 
 .end::before {
@@ -598,8 +575,8 @@ thead {
 .separator {
   display: block;
   margin: auto;
-  @include border-radius(100px);
-  @include box-sizing();
+  box-sizing: border-box;
+  border-radius: 100px;
   @include size(99%, 0.5vh);
   &:last-of-type { display: none }
 }
@@ -630,14 +607,12 @@ thead {
   &-widget, &-widget *, &-reset {
     background-color: $main-bg !important;
     color: $main-fg !important;
-    font-family: quote(#{$font-family}), 'Helvetica', 'Arial', sans-serif !important;
     vertical-align: middle !important;
+    font-family: quote(#{$font-family}), 'Helvetica', 'Arial', sans-serif !important;
   }
   &-menu-item {
     color: $main-fg !important;
-    @include touch() {
-      background-color: $alter-bg !important;
-    }
+    @include touch() { background-color: $alter-bg !important }
   }
   &-btn {
     button { color: $main-fg !important }
@@ -645,14 +620,10 @@ thead {
       border-left: none !important;
       border-radius: 0 !important;
     }
-    @include touch() {
-      border-color: $alter-bg !important;
-    }
+    @include touch() { border-color: $alter-bg !important }
   }
   &-open {
-    @include touch() {
-      border-color: $alter-bg !important;
-    }
+    @include touch() { border-color: $alter-bg !important }
   }
   &-tooltip {
     color: $main-fg !important;
@@ -696,7 +667,7 @@ thead {
 
 .alter-fg { color: $alter-fg }
 
-.text-shadow { text-shadow: shadow(1px, $shadow-color); }
+.text-shadow { @include shadow(1px, $shadow-color); }
 
 .flatpage { margin-bottom: -1em }
 
@@ -729,7 +700,7 @@ thead {
           cursor: pointer;
           padding: 2px 4px;
           border: 2px solid $alter-bg;
-          @include border-radius(3px);
+          border-radius: 3px;
         }
         &:checked + label {
           border-color: $alter-fg;
@@ -744,7 +715,7 @@ thead {
   &-submit {
     padding: 3px 5px;
     border: 2px solid $alter-bg;
-    @include border-radius(3px);
+    border-radius: 3px;
     &:focus { border-color: $alter-fg }
   }
   &-results {
@@ -772,9 +743,6 @@ thead {
     .mi { margin: 0 }
   }
 }
-
-
-i[data-pcount='100+'] { padding: 0 0.5em }
 
 @media screen and (max-width: 1024px) {
   #header, #logo { height: 38px }
@@ -822,14 +790,14 @@ i[data-pcount='100+'] { padding: 0 0.5em }
     background-color: inherit !important;
     border: none !important;
     margin: 5px auto;
-    h1 {
+    > h1 {
       display: table;
       margin: auto;
       padding: 1px 4px;
       vertical-align: middle;
       max-width: 80vw;
       hyphens: auto;
-      @include border-radius();
+      border-radius: 5px;
     }
   }
   #latest {
@@ -886,13 +854,13 @@ i[data-pcount='100+'] { padding: 0 0.5em }
         display: flex;
         flex-direction: column-reverse;
         max-width: unset;
-        span {
+        > span {
           display: block;
           padding: 0.1em 1em 0;
           white-space: normal;
           height: auto;
           overflow: unset;
-          @include text-overflow(unset);
+          text-overflow: unset;
         }
         .divider { display: none }
       }
@@ -903,12 +871,11 @@ i[data-pcount='100+'] { padding: 0 0.5em }
         white-space: normal;
         hyphens: auto;
         overflow: unset;
-        @include text-overflow(unset);
+        text-overflow: unset;
       }
       &:first-of-type { padding-top: 0.2em }
     }
     .bookmark-btn { margin: 0.2em 0 -0.2em 50% }
-    div.alias, div.author, div.artist, div.category { text-indent: 0 }
     &-title { padding-bottom: 3px !important }
     &-info {
       width: 100%;
@@ -925,33 +892,32 @@ i[data-pcount='100+'] { padding: 0 0.5em }
       max-width: unset;
       overflow: unset;
       white-space: normal;
-      span, div {
+      > div {
         display: block;
         padding: 0 1em;
         hyphens: manual;
+        text-indent: 0;
       }
     }
   }
-  #search {
-    label { display: block }
-  }
+  #search label { display: block }
   #group {
     text-align: center;
     &-info {
       display: block;
-      img {
+      > img {
         border-radius: 5px;
         margin: auto;
       }
       a { display: block }
     }
-    &-desc div { text-indent: 0 }
-    .member, .member div { padding-left: 0 }
+    &-desc > div { text-indent: 0 }
+    .member, .member > div { padding-left: 0 }
   }
-  #user-profile section {
+  #user-profile > section {
     display: block;
     text-align: center;
     strong { display: block }
   }
-  #links .link span { display: none }
+  #links .link > span { display: none }
 }

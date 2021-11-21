@@ -2,7 +2,7 @@
 
 window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.tinymce').forEach(el => {
-    const mce_conf = JSON.parse(el.getAttribute('data-tinymce-config'));
+    const mce_conf = JSON.parse(el.dataset.tinymceConfig);
     if('replace_icons' in mce_conf) {
       const old_setup = mce_conf.setup;
       mce_conf.setup = editor => {

@@ -10,10 +10,7 @@ jobs:
   sqlite:
     name: "SQLite & Python 3.7"
     runs-on: ubuntu-latest
-    if: >-
-      github.repository_owner == 'mangadventure' &&
-      contains(github.event.head_commit.message, '[skip ci]') == false &&
-      contains(github.event.head_commit.message, '[ci skip]') == false
+    if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v2
@@ -49,10 +46,7 @@ jobs:
   mysql:
     name: "MySQL & Python 3.8"
     runs-on: ubuntu-latest
-    if: >-
-      github.repository_owner == 'mangadventure' &&
-      contains(github.event.head_commit.message, '[skip ci]') == false &&
-      contains(github.event.head_commit.message, '[ci skip]') == false
+    if: github.repository_owner == 'mangadventure'
     services:
       mysql:
         image: mariadb:10.5.9
@@ -101,10 +95,7 @@ jobs:
   postgresql:
     name: "PostgreSQL & Python 3.9"
     runs-on: ubuntu-latest
-    if: >-
-      github.repository_owner == 'mangadventure' &&
-      contains(github.event.head_commit.message, '[skip ci]') == false &&
-      contains(github.event.head_commit.message, '[ci skip]') == false
+    if: github.repository_owner == 'mangadventure'
     services:
       postgres:
         image: postgres:13
@@ -155,29 +146,9 @@ jobs:
     name: "Coveralls"
     needs: [sqlite, mysql, postgresql]
     runs-on: ubuntu-latest
-    if: >-
-      github.repository_owner == 'mangadventure' &&
-      contains(github.event.head_commit.message, '[skip ci]') == false &&
-      contains(github.event.head_commit.message, '[ci skip]') == false
+    if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Upload coverage to coveralls"
         uses: AndreMiras/coveralls-python-action@v20201129
         with:
           parallel-finished: true
-
-  codeql:
-    name: "CodeQL"
-    runs-on: ubuntu-latest
-    if: >-
-      github.repository_owner == 'mangadventure' &&
-      contains(github.event.head_commit.message, '[skip ci]') == false &&
-      contains(github.event.head_commit.message, '[ci skip]') == false
-    steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v2
-      - name: "Initialize CodeQL"
-        uses: github/codeql-action/init@v1
-        with:
-          languages: javascript, python
-      - name: "Perform CodeQL Analysis"
-        uses: github/codeql-action/analyze@v1

@@ -5,8 +5,23 @@ on:
     tags: ['*']
 
 jobs:
+  codeql:
+    name: "CodeQL"
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'mangadventure'
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v2
+      - name: "Initialize CodeQL"
+        uses: github/codeql-action/init@v1
+        with:
+          languages: javascript, python
+      - name: "Perform CodeQL Analysis"
+        uses: github/codeql-action/analyze@v1
+
   release:
     name: "Create release"
+    needs: [codeql]
     runs-on: ubuntu-latest
     if: github.repository_owner == 'mangadventure'
     steps:

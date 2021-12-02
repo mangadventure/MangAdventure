@@ -63,7 +63,7 @@ Follow the style defined by [EditorConfig](../.editorconfig).
   * "Fix" rather than "Fixed" or "Fixes".
 * Start the title with a capital letter.
 * Do not include tags like `(feat):` or `[BUG]`.
-  * `[CI SKIP]` is used to skip workflows.
+  * `[no ci]` is used to skip workflows.
 * Use the body to elaborate if needed.
 * Wrap lines in the body to 72 characters.
 

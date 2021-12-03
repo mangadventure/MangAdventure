@@ -108,6 +108,10 @@
             {% endwith %}
           </div>
         </div>
+      {% empty %}
+        <div class="series-licensed">
+          This series is licensed. Please read the official release.
+        </div>
       {% endfor %}
     </div>
   </article>

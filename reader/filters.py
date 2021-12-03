@@ -220,6 +220,11 @@ class ChapterFilter(SearchFilter):
                         view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
+        if 'series' not in request.query_params.keys():
+            raise ValidationError(detail={
+                'error': "'series' is a required parameter."
+            })
+        queryset = queryset.filter(series__licensed=False)
         return super().filter_queryset(request, queryset, view)
 
     def get_search_fields(self, view: ViewSet,
@@ -229,6 +234,18 @@ class ChapterFilter(SearchFilter):
     def get_search_terms(self, request: Request) -> List[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
+
+    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
+        return [{
+            'name': self.search_param,
+            'required': True,
+            'in': 'query',
+            'description': self.search_description,
+            'schema': {
+                'type': 'string',
+                'pattern': '^[-a-zA-Z0-9_]+$'
+            }
+        }]
 
 
 class PageFilter(BaseFilterBackend):

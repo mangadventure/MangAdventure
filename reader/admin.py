@@ -213,7 +213,7 @@ class SeriesAdmin(admin.ModelAdmin):
     inlines = (alias_inline('series'),)
     list_display = (
         'cover_image', 'title', 'manager',
-        'created', 'modified', 'completed'
+        'created', 'modified', 'completed', 'licensed'
     )
     list_display_links = ('title',)
     date_hierarchy = 'created'
@@ -229,7 +229,7 @@ class SeriesAdmin(admin.ModelAdmin):
         ),
         ('manager', filters.related_filter('manager')),
     )
-    actions = ('toggle_completed',)
+    actions = ('toggle_completed', 'toggle_licensed')
     empty_value_display = 'N/A'
 
     def get_form(self, request: HttpRequest, obj: Optional[Series]
@@ -267,12 +267,22 @@ class SeriesAdmin(admin.ModelAdmin):
     @admin.display(description='Toggle status of selected series')
     def toggle_completed(self, request: HttpRequest, queryset: QuerySet):
         """
-        Toggle the status of the selected series.
+        Toggle the publication status of the selected series.
 
         :param request: The original request.
         :param queryset: The original queryset.
         """
         queryset.update(completed=Q(completed=False))
+
+    @admin.display(description='Toggle licensing of selected series')
+    def toggle_licensed(self, request: HttpRequest, queryset: QuerySet):
+        """
+        Toggle the licensing status of the selected series.
+
+        :param request: The original request.
+        :param queryset: The original queryset.
+        """
+        queryset.update(licensed=Q(licensed=False))
 
     def has_change_permission(self, request: HttpRequest, obj:
                               Optional[Series] = None) -> bool:

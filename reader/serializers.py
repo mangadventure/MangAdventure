@@ -157,8 +157,8 @@ class _SeriesDetailSerializer(ModelSerializer):
         model = Series
         fields = (
             'slug', 'title', 'url', 'cover',
-            'description', 'completed', 'format',
-            'authors', 'artists', 'categories'
+            'description', 'completed', 'licensed',
+            'format', 'authors', 'artists', 'categories'
         )
         extra_kwargs = {
             'format': {

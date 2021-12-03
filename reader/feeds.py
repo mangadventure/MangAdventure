@@ -85,12 +85,7 @@ class LibraryRSS(Feed):
         """
         if not item.cover:
             return None
-        url = item.cover.url
-        if url[:4] == 'http':
-            return url
-        scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
-        domain = settings.CONFIG['DOMAIN']
-        return f'{scheme}://{domain}{url}'
+        return item.cover.url
 
     def item_enclosure_length(self, item: Series) -> Optional[int]:
         """
@@ -171,6 +166,8 @@ class ReleasesRSS(Feed):
         """
         if obj is None:
             return 'Updates when a new chapter is added'
+        if obj.licensed:  # pragma: no cover
+            return 'This series is licensed.'
         return f'Updates when a new chapter of {obj.title} is added'
 
     def items(self, obj: Optional[Series]) -> Iterable[Chapter]:
@@ -181,6 +178,8 @@ class ReleasesRSS(Feed):
 
         :return: An iterable of ``Chapter`` objects.
         """
+        if getattr(obj, 'licensed', False):  # pragma: no cover
+            return []
         _max = settings.CONFIG['MAX_RELEASES']
         return getattr(obj, 'chapters', Chapter.objects) \
             .filter(published__lte=tz.now()).order_by('-published')[:_max]

@@ -98,8 +98,9 @@ def series(request: HttpRequest, slug: str) -> HttpResponse:
         ).get(slug=slug)
     except Series.DoesNotExist as e:
         raise Http404 from e
-    chapters = _series.chapters.filter(published__lte=tz.now()).reverse()
-    if not chapters:
+    chapters = None if _series.licensed else \
+        _series.chapters.filter(published__lte=tz.now()).reverse()
+    if not _series.licensed and not chapters:
         return render(request, 'error.html', {
             'error_message': 'Sorry. This series is not yet available.',
             'error_status': 403
@@ -132,6 +133,7 @@ def series(request: HttpRequest, slug: str) -> HttpResponse:
         'creativeWorkStatus': (
             'Published' if _series.completed else 'Incomplete'
         ),
+        'isAccessibleForFree': not _series.licensed,
         'dateCreated': _series.created.strftime('%F'),
         'dateModified': _series.modified.strftime('%F'),
         'bookFormat': 'GraphicNovel',
@@ -167,7 +169,7 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
     if page == 0:
         raise Http404('Page cannot be 0')
     chapters = Chapter.objects.filter(
-        series__slug=slug, published__lte=tz.now()
+        series__slug=slug, series__licensed=False, published__lte=tz.now()
     )
     try:
         current = chapters.select_related('series') \
@@ -235,8 +237,8 @@ def chapter_download(request: HttpRequest, slug: str, vol: int, num: float
         )
     try:
         _chapter = Chapter.objects.prefetch_related('pages').get(
-            series__slug=slug, volume=vol,
-            number=num, published__lte=tz.now()
+            series__slug=slug, series__licensed=False,
+            volume=vol, number=num, published__lte=tz.now()
         )
     except Chapter.DoesNotExist as e:
         raise Http404 from e

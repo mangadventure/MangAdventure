@@ -21,7 +21,7 @@ if TYPE_CHECKING:  # pragma: no cover
 openapi = cache_control(public=True, max_age=1296000, immutable=True)(
     CORSMixin.decorator(get_schema_view(
         title='MangAdventure API', renderer_classes=[JSONOpenAPIRenderer],
-        generator_class=OpenAPISchemaGenerator, public=True, version='2.0'
+        generator_class=OpenAPISchemaGenerator, public=True, version='2.1'
     ))
 )
 

@@ -24,6 +24,7 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
   * [ ] Comments.
 * [x] Supports scheduled releases.
 * [x] Supports custom chapter names.
+* [x] Supports hiding licensed series.
 * [x] Allows for migration from FoolSlide2.
 * [x] Has Tachiyomi & Paperback extensions.
 * [ ] More features coming soon...
@@ -50,7 +51,7 @@ You are welcome to contribute after reading the [guidelines](.github/CONTRIBUTIN
 
 * Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
 * Search results are sorted using [tablesort](https://tristen.ca/tablesort/demo/)
-* Info pages & comments use the [TinyMCE editor](https://www.tiny.cloud/docs-4x/)
+* Info pages use the [TinyMCE editor](https://www.tiny.cloud/docs-4x/)
 * Browser logos are taken from [alrra/browser-logos](https://github.com/alrra/browser-logos)
 
 ## License

@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.8.1
+^^^^^^
+
+* Implemented licensing series
+
 v0.8.0
 ^^^^^^
 

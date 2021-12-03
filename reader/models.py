@@ -174,9 +174,13 @@ class Series(models.Model):
     artists = models.ManyToManyField(Artist, blank=True)
     #: The categories of the series.
     categories = models.ManyToManyField(Category, blank=True)
-    #: The status of the series.
+    #: The publication status of the series.
     completed = models.BooleanField(
         default=False, help_text='Is the series completed?'
+    )
+    #: The licensing status of the series.
+    licensed = models.BooleanField(
+        default=False, help_text='Is the series licensed?'
     )
     #: The date the series was created.
     created = models.DateTimeField(auto_now_add=True, db_index=True)

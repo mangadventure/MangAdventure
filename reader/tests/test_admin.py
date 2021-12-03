@@ -91,6 +91,11 @@ class TestSeriesAdmin(ReaderAdminTestBase):
         self.admin.toggle_completed(self.request, Series.objects.all())
         assert not Series.objects.filter(completed=False)
 
+    def test_toggle_licensed(self):
+        Series.objects.create(title='series2')
+        self.admin.toggle_licensed(self.request, Series.objects.all())
+        assert not Series.objects.filter(licensed=False)
+
     def test_form(self):
         form = self.admin.get_form(self.request)
         assert '<b>{title}</b>' in form.base_fields['format'].help_text

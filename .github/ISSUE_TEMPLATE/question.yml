@@ -1,0 +1,21 @@
+name: ❓ Question
+labels: ["Type: Question"]
+description: Do you have a question regarding this project?
+body:
+  - type: markdown
+    value: |-
+      Please read the [documentation][] before submitting your question.
+
+      [documentation]: https://mangadventure.readthedocs.io/en/latest/
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Ask your question here.
+    validations: {required: true}
+  - type: input
+    id: version
+    attributes:
+      label: MangAdventure Version
+      description: Which version does your question concern?
+    validations: {required: false}

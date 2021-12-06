@@ -1,0 +1,42 @@
+name: ✨ Feature Request
+labels: ["Type: Enhancement"]
+description: Do you want something changed or implemented?
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Provide a detailed description of the
+        change or addition you are proposing.
+    validations: {required: true}
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: >-
+        Why is this change or addition important to you?
+        How would you use it, and how can it benefit other users?
+    validations: {required: true}
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Possible Implementation
+      description: >-
+        Can you suggest an idea for implementing the feature?
+    validations: {required: false}
+  - type: textarea
+    id: environment
+    attributes:
+      label: Your Environment
+      description: >-
+        Include as many relevant details about your environment as possible.
+        You can remove the ones that don't apply to your case.
+      value: |-
+        * MangAdventure version:
+        * Operating System and version:
+        * Python version:
+        * Web server and version:
+        * Browser type and version:
+    validations: {required: false}

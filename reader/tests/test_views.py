@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from MangAdventure.tests.utils import get_test_image, get_valid_zip_file
 
-from reader.models import Series
+from reader.models import Chapter, Series
 
 from . import ReaderTestBase
 
@@ -57,6 +57,9 @@ class TestChapterPage(ReaderViewTestBase):
             'slug': 'series', 'vol': 0, 'num': 1, 'page': 1
         })
         r = self.client.get(url)
+        assert Chapter.objects.filter(
+            series__slug='series', volume=0, number=1
+        ).values_list('views', flat=True)[0] == 1
         assert r.status_code == 200
 
     def test_get_page_zero(self):

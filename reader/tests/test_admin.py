@@ -78,6 +78,10 @@ class TestSeriesAdmin(ReaderAdminTestBase):
         self.admin = SeriesAdmin(admin_site=self.site, model=Series)
         self.series = Series.objects.create(title='series')
 
+    def test_views(self):
+        qs = self.admin.get_queryset(self.request)
+        assert self.admin.views(qs.first()) == 0
+
     def test_cover(self):
         self.series.cover = get_test_image()
         self.series.save()

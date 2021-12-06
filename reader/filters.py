@@ -4,10 +4,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict, List
 
+from django.db.models import F
+
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import (
     BaseFilterBackend, OrderingFilter, SearchFilter
 )
+
+from reader.models import Chapter
 
 if TYPE_CHECKING:  # pragma no cover
     from django.db.models.query import QuerySet  # isort:skip
@@ -165,7 +169,7 @@ class SlugFilter(SearchFilter):
 
 class SeriesSort(OrderingFilter):
     """Series sort order filter."""
-    ordering_fields = ['title', 'latest_upload', 'chapter_count']
+    ordering_fields = ['title', 'latest_upload', 'chapter_count', 'views']
     ordering_description = "Change the sort order. ('-' means descending)"
 
     def filter_queryset(self, request: Request, queryset: QuerySet,
@@ -259,10 +263,16 @@ class PageFilter(BaseFilterBackend):
             raise ValidationError(detail={
                 'error': f'{params} are required parameters.'
             })
+        series = request.query_params['series']
+        volume = request.query_params['volume']
+        number = request.query_params['number']
+        if request.query_params.get('track') == 'true':
+            Chapter.objects.filter(
+                series__slug=series, volume=volume, number=number
+            ).update(views=F('views') + 1)
         return queryset.filter(
-            chapter__series__slug=request.query_params['series'],
-            chapter__volume=request.query_params['volume'],
-            chapter__number=request.query_params['number']
+            chapter__series__slug=series,
+            chapter__volume=volume, chapter__number=number
         ).order_by('number')
 
     def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
@@ -293,6 +303,12 @@ class PageFilter(BaseFilterBackend):
                 'type': 'integer',
                 'minimum': 0
             }
+        }, {
+            'name': 'track',
+            'required': False,
+            'in': 'query',
+            'description': 'Track chapter views.',
+            'schema': {'type': 'boolean'}
         }]
 
 

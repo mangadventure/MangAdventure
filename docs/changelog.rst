@@ -5,6 +5,7 @@ v0.8.1
 ^^^^^^
 
 * Implemented licensing series
+* Implemented chapter views
 
 v0.8.0
 ^^^^^^

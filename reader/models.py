@@ -287,6 +287,11 @@ class Chapter(models.Model):
     groups = models.ManyToManyField(
         Group, blank=True, related_name='releases'
     )
+    #: The total views of the chapter.
+    views = models.PositiveIntegerField(
+        default=0, db_index=True, editable=False,
+        help_text='The total views of the chapter.'
+    )
 
     class Meta:
         unique_together = ('series', 'volume', 'number')

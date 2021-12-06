@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from django.db.models import Count, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
 from django.utils import timezone as tz
@@ -174,6 +174,9 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
     try:
         current = chapters.select_related('series') \
             .prefetch_related('pages').get(volume=vol, number=num)
+        if page == 1:
+            current.views = F('views') + 1
+            current.save(update_fields=('views',))
         all_pages = current.pages.all()
         curr_page = next(p for p in all_pages if p.number == page)
         tags = list(current.series.categories.values_list('name', flat=True))

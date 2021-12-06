@@ -144,15 +144,14 @@ class UserAdmin(admin.ModelAdmin):
         UserTypeFilter,
     )
     ordering = ('username',)
+    sortable_by = ('username', 'full_name', 'date_joined')
 
-    @admin.display(ordering='email', description='e-mail address')
+    @admin.display(description='e-mail address')
     def _email(self, obj: User) -> str:
-        if not obj.email:
-            return ''
         return format_html(
             '<a href="mailto:{0}" rel="noopener noreferrer"'
             ' target="_blank">{0}</a>', obj.email
-        )
+        ) if obj.email else ''
 
     @admin.display(ordering=C('first_name', V(' '), 'last_name'))
     def full_name(self, obj: User) -> str:
@@ -196,6 +195,7 @@ class OAuthApp(SocialApp):
 class OAuthAppAdmin(SocialAppAdmin):
     """Admin model for :class:`OAuthApp`."""
     list_display = ('name', '_provider', 'client_id')
+    sortable_by = ('name', '_provider')
     radio_fields = {'provider': admin.HORIZONTAL}
 
     def get_form(self, *args, **kwargs) -> ModelForm:  # pragma: no cover
@@ -205,13 +205,11 @@ class OAuthAppAdmin(SocialAppAdmin):
 
     @admin.display(ordering='provider', description='provider')
     def _provider(self, obj: OAuthApp) -> str:
-        if not obj.provider:
-            return ''
         return format_html(
             '<a href="{}{}" rel="noopener noreferrer" target="_blank">{}</a>',
             'https://django-allauth.readthedocs.io/en/stable/providers.html#',
             obj.provider, obj.provider.capitalize()
-        )
+        ) if obj.provider else ''
 
 
 admin.site.unregister((

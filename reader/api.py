@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List, Type
 from warnings import filterwarnings
 
-from django.db.models import Count, Max, Q
+from django.db.models import Count, Max, Q, Sum
 from django.utils import timezone as tz
 
 from rest_framework.mixins import (
@@ -136,9 +136,10 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
 
     def get_queryset(self) -> QuerySet:
         q = Q(chapters__published__lte=tz.now())
-        return models.Series.objects.prefetch_related('chapters').annotate(
+        return models.Series.objects.annotate(
             chapter_count=Count('chapters', filter=q),
-            latest_upload=Max('chapters__published')
+            latest_upload=Max('chapters__published'),
+            views=Sum('chapters__views', distinct=True)
         ).filter(chapter_count__gt=0).distinct()
 
     def get_serializer_class(self) -> Type[serializers.SeriesSerializer]:

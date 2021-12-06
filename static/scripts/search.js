@@ -14,7 +14,7 @@
   function matchQuery(q) {
     if(q.matches) {
       document.querySelectorAll('td.s-hidden').forEach((elem, i) => {
-        const n = (i / 5 >> 0) + 1;
+        const n = (i / 6 >> 0) + 1;
         switch(elem.className) {
           case 'result-people s-hidden':
             appendInfo(n, 'people', 'Author/Artist', elem.innerHTML);
@@ -27,6 +27,9 @@
             break;
           case 'result-chapters s-hidden':
             appendInfo(n, 'pages', 'Chapters', elem.innerHTML);
+            break;
+          case 'result-views s-hidden':
+            appendInfo(n, 'eye', 'Total Views', elem.innerHTML);
             break;
           case 'result-date s-hidden':
             appendInfo(n, 'clock', 'Last Update', elem.innerHTML);
@@ -126,6 +129,6 @@
     });
   }
 
-  initialize();
-  query.addListener(matchQuery);
+  window.addEventListener('load', initialize);
+  query.addEventListener('change', matchQuery);
 })(window.matchMedia('(max-width: 690px)'));

@@ -23,9 +23,8 @@ class MemberRoleInline(admin.StackedInline):
     model = Role
     extra = 1
 
-    def get_formset(self, request: HttpRequest,
-                    obj: Optional[Role], **kwargs
-                    ) -> BaseInlineFormSet:  # pragma: no cover
+    def get_formset(self, request: HttpRequest, obj: Optional[Role],
+                    **kwargs) -> BaseInlineFormSet:  # pragma: no cover
         formset = super().get_formset(request, obj, **kwargs)
         if request.user.is_superuser:
             return formset
@@ -39,6 +38,7 @@ class MemberAdmin(admin.ModelAdmin):
     """Admin model for :class:`~groups.models.Member`."""
     inlines = (MemberRoleInline,)
     ordering = (Lower('name'),)
+    sortable_by = ('name',)
     list_display = ('name', '_twitter', 'discord', 'irc', '_reddit')
     search_fields = ('name', 'twitter', 'discord', 'irc', 'reddit')
     list_filter = (
@@ -48,27 +48,24 @@ class MemberAdmin(admin.ModelAdmin):
 
     @admin.display(ordering='twitter', description='twitter')
     def _twitter(self, obj: Member) -> str:
-        if not obj.twitter:
-            return ''
         return format_html(
             '<a href="https://twitter.com/{0}" rel="noopener noreferrer"'
             ' target="_blank">@{0}</a>', obj.twitter
-        )
+        ) if obj.twitter else ''
 
     @admin.display(ordering='reddit', description='reddit')
     def _reddit(self, obj: Member) -> str:
-        if not obj.reddit:
-            return ''
         return format_html(
             '<a href="https://reddit.com/u/{0}" rel="noopener noreferrer"'
             ' target="_blank">/u/{0}</a>', obj.reddit
-        )
+        ) if obj.reddit else ''
 
 
 class GroupAdmin(admin.ModelAdmin):
     """Admin model for :class:`~groups.models.Group`."""
     exclude = ('id',)
     ordering = (Lower('name'),)
+    sortable_by = ('name',)
     list_display = ('image', 'name', '_website', 'manager', 'description')
     search_fields = ('name', 'website', 'description')
     list_display_links = ('name',)
@@ -97,14 +94,12 @@ class GroupAdmin(admin.ModelAdmin):
         """
         return utils.img_tag(obj.logo, 'logo', height=25)
 
-    @admin.display(ordering='website', description='website')
+    @admin.display(description='website')
     def _website(self, obj: Group) -> str:
-        if not obj.website:
-            return ''
         return format_html(
             '<a href="{0}" rel="noopener noreferrer"'
             ' target="_blank">{0}</a>', obj.website
-        )
+        ) if obj.website else ''
 
     def has_change_permission(self, request: HttpRequest, obj:
                               Optional[Group] = None) -> bool:

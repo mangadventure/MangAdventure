@@ -7,7 +7,7 @@ from typing import Optional, Tuple, Type
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
-from django.db.models import Q, QuerySet
+from django.db.models import Q, QuerySet, Sum
 from django.forms.models import BaseInlineFormSet, ModelForm
 from django.forms.widgets import HiddenInput
 # XXX: cannot be resolved under TYPE_CHECKING
@@ -95,11 +95,15 @@ class ChapterAdmin(admin.ModelAdmin):
     inlines = (PageInline,)
     date_hierarchy = 'published'
     list_display = (
-        'preview', 'title', 'series', 'volume',
-        '_number', 'published', 'modified', 'final'
+        'preview', 'title', 'series', 'volume', '_number',
+        'published', 'modified', 'views', 'final'
     )
     list_display_links = ('title',)
     ordering = ('-modified',)
+    sortable_by = (
+        'title', 'series', 'volume', 'number',
+        'published', 'modified', 'views'
+    )
     search_fields = ('title', 'series__title')
     list_filter = (
         ('series', admin.RelatedFieldListFilter),
@@ -140,9 +144,8 @@ class ChapterAdmin(admin.ModelAdmin):
         """
         queryset.update(final=Q(final=False))
 
-    def get_form(self, request: HttpRequest,
-                 obj: Optional[Chapter], **kwargs
-                 ) -> ModelForm:  # pragma: no cover
+    def get_form(self, request: HttpRequest, obj: Optional[Chapter],
+                 **kwargs) -> ModelForm:  # pragma: no cover
         form = super().get_form(request, obj, **kwargs)
         if 'series' in form.base_fields and not request.user.is_superuser:
             form.base_fields['series'].queryset = \
@@ -212,12 +215,13 @@ class SeriesAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Series`."""
     inlines = (alias_inline('series'),)
     list_display = (
-        'cover_image', 'title', 'manager',
-        'created', 'modified', 'completed', 'licensed'
+        'cover_image', 'title', 'manager', 'created',
+        'modified', 'views', 'completed', 'licensed'
     )
     list_display_links = ('title',)
     date_hierarchy = 'created'
     ordering = ('-modified',)
+    sortable_by = ('title', 'created', 'modified', 'views')
     search_fields = ('title', 'aliases__name')
     autocomplete_fields = ('categories',)
     list_filter = (
@@ -252,6 +256,22 @@ class SeriesAdmin(admin.ModelAdmin):
             else:  # pragma: no cover
                 form.base_fields['manager'].widget = HiddenInput()
         return form
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        return super().get_queryset(request).annotate(
+            views=Sum('chapters__views', distinct=True)
+        )
+
+    @admin.display(ordering='views')
+    def views(self, obj: Series) -> int:
+        """
+        Get the total views of all chapters of the series.
+
+        :param obj: A ``Series`` model instance.
+
+        :return: The sum of chapter views.
+        """
+        return getattr(obj, 'views') or 0
 
     @admin.display(description='cover')
     def cover_image(self, obj: Series) -> str:
@@ -360,6 +380,8 @@ class ArtistAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     """Admin model for :class:`~reader.models.Category`."""
     exclude = ('id',)
+    ordering = ('id',)
+    sortable_by = ()
     list_display = ('name', 'description')
     search_fields = ('name', 'description')
 

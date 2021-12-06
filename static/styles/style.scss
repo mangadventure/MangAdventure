@@ -763,11 +763,11 @@ button {
   #header, #logo { height: 27px }
   #search .result-info {
     .mi { margin: 0 }
-    .mi-people { margin-right: 0.3em }
-    &:nth-last-child(-n+2) {
-      display: inline-block;
-      .mi-clock { margin-left: 0.75em }
-    }
+    .mi-people { margin-right: 0.2em }
+    .mi-clock { margin-right: 0.2em }
+    .mi-info { margin-right: -0.2em }
+    .mi-eye { margin-left: 0.3em }
+    &:nth-child(6), &:nth-child(7) { display: inline-block }
   }
   #result-table {
     margin: auto;

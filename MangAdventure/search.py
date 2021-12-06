@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, NamedTuple, Tuple
 
-from django.db.models import Count, Max, Q
+from django.db.models import Count, Max, Q, Sum
 from django.utils import timezone as tz
 
 from reader.models import Series
@@ -115,7 +115,8 @@ def query(params: _SearchParams) -> QuerySet:
     q = Q(chapters__published__lte=tz.now())
     return Series.objects.annotate(
         chapter_count=Count('chapters', filter=q),
-        latest_upload=Max('chapters__published')
+        latest_upload=Max('chapters__published'),
+        views=Sum('chapters__views', distinct=True)
     ).filter(qsfilter(params) & Q(chapter_count__gt=0)).distinct()
 
 

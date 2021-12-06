@@ -15,7 +15,7 @@ Installation
 Install the project
 ^^^^^^^^^^^^^^^^^^^
 
-First, you will need Python_ (3.6+) and pip_.
+First, you will need Python_ (3.7+) and pip_.
 
 .. _Python: https://www.python.org/downloads/
 
@@ -38,7 +38,7 @@ Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.8.0#egg=mangadventure"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.8.1#egg=mangadventure"
 
 MangAdventure also provides the following extras:
 
@@ -52,7 +52,7 @@ For example, you can install ``csp`` & ``uwsgi`` like so:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.8.0#egg=mangadventure[csp,uwsgi]"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.8.1#egg=mangadventure[csp,uwsgi]"
 
 .. _MySQL database support:
    https://mysql.com/

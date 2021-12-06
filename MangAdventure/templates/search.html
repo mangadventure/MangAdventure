@@ -75,6 +75,7 @@
               <th class="s-hidden">Description<i class="mi"></i></th>
               <th class="s-hidden">Categories<i class="mi"></i></th>
               <th class="s-hidden">Chapters<i class="mi"></i></th>
+              <th class="s-hidden">Total Views<i class="mi"></i></th>
               <th class="s-hidden">Last Update<i class="mi"></i></th>
             </tr>
           </thead>
@@ -107,6 +108,9 @@
               </td>
               <td class="result-chapters s-hidden" data-sort-method="number">
                 {{ series.chapter_count }}
+              </td>
+              <td class="result-views s-hidden" data-sort-method="number">
+                {{ series.views }}
               </td>
               <td class="result-date s-hidden" data-sort-method="number"
                 {% if series.latest_upload %}

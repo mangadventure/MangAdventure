@@ -1,8 +1,10 @@
 """Model serializers for the reader app."""
 
-from typing import Dict, Generic, List, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Type, TypeVar
 
-from rest_framework.fields import CharField, SerializerMethodField, URLField
+from rest_framework.fields import (
+    CharField, DateTimeField, IntegerField, SerializerMethodField, URLField
+)
 from rest_framework.relations import (
     PrimaryKeyRelatedField, SlugRelatedField, StringRelatedField
 )
@@ -41,6 +43,10 @@ class ChapterSerializer(ModelSerializer):
         source='__str__', read_only=True,
         help_text='The formatted title of the chapter.'
     )
+    views = IntegerField(
+        min_value=0, read_only=True,
+        help_text='The total views of the chapter.'
+    )
     series = SlugRelatedField(
         queryset=Series.objects.only('slug', 'title'),
         slug_field='slug', help_text='The series of the chapter.'
@@ -75,7 +81,7 @@ class ChapterSerializer(ModelSerializer):
     class Meta:
         model = Chapter
         fields = (
-            'id', 'title', 'number', 'volume', 'published',
+            'id', 'title', 'number', 'volume', 'published', 'views',
             'final', 'series', 'groups', 'full_title', 'url', 'file'
         )
         extra_kwargs = {
@@ -103,7 +109,7 @@ class PageSerializer(ModelSerializer):
         }
         validators = (
             UniqueTogetherValidator(
-                queryset=model.objects.all(),
+                queryset=Page.objects.all(),
                 fields=('chapter', 'number'),
                 message='The chapter already has a page with this number.'
             ),
@@ -116,10 +122,24 @@ class _SeriesListSerializer(ModelSerializer):
         source='get_absolute_url', read_only=True,
         help_text='The absolute URL of the series.'
     )
+    updated = DateTimeField(
+        source='latest_upload', read_only=True,
+        help_text='The latest chapter upload date.'
+    )
+    chapters = SerializerMethodField(
+        method_name='_get_chapters', allow_null=True,
+        help_text='The number of chapters or null if licensed.'
+    )
+
+    def _get_chapters(self, obj: Series) -> Optional[int]:
+        return None if obj.licensed else getattr(obj, 'chapter_count')
 
     class Meta:
         model = Series
-        fields = ('slug', 'title', 'url', 'cover')
+        fields = (
+            'slug', 'title', 'url',
+            'cover', 'updated', 'chapters'
+        )
 
 
 class _SeriesDetailSerializer(ModelSerializer):
@@ -131,14 +151,29 @@ class _SeriesDetailSerializer(ModelSerializer):
 
        Make M2M fields editable.
     """
+    updated = DateTimeField(
+        source='latest_upload', read_only=True,
+        help_text='The latest chapter upload date.'
+    )
+    views = IntegerField(
+        min_value=0, read_only=True,
+        help_text='The total chapter views of the series.'
+    )
+    aliases = StringRelatedField(
+        many=True, required=False,
+        help_text='The alternative titles of the series.'
+    )
     authors = StringRelatedField(
-        many=True, required=False, help_text='The authors of the series.'
+        many=True, required=False,
+        help_text='The authors of the series.'
     )
     artists = StringRelatedField(
-        many=True, required=False, help_text='The artists of the series.'
+        many=True, required=False,
+        help_text='The artists of the series.'
     )
     categories = StringRelatedField(
-        many=True, required=False, help_text='The categories of the series.'
+        many=True, required=False,
+        help_text='The categories of the series.'
     )
     url = URLField(
         source='get_absolute_url', read_only=True,
@@ -156,9 +191,9 @@ class _SeriesDetailSerializer(ModelSerializer):
     class Meta:
         model = Series
         fields = (
-            'slug', 'title', 'url', 'cover',
-            'description', 'completed', 'licensed',
-            'format', 'authors', 'artists', 'categories'
+            'slug', 'title', 'url', 'cover', 'updated',
+            'description', 'views', 'completed', 'licensed',
+            'format', 'aliases', 'authors', 'artists', 'categories'
         )
         extra_kwargs = {
             'format': {

@@ -4,6 +4,7 @@ Changelog
 v0.8.1
 ^^^^^^
 
+* Added support for more CDNs
 * Implemented licensing series
 * Implemented chapter views
 

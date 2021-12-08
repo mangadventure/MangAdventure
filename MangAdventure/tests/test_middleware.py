@@ -29,9 +29,6 @@ class TestBaseMiddleware(MangadvTestBase):
     reason='PreloadMiddleware requires HTTPS'
 )
 class TestPreloadMiddleware(MangadvTestBase):
-    def setup_method(self):
-        super().setup_method()
-
     def test_preload(self):
         r = self.client.get(reverse('index'))
         assert 'style.css>; as=style' in r['Link']

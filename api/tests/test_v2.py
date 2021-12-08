@@ -1,10 +1,9 @@
 import warnings
-from datetime import datetime
 
 from django.core.cache import cache
 from django.urls import reverse
 
-from MangAdventure.storage import CDNStorage
+from pytest import mark
 
 from . import APITestBase
 
@@ -14,36 +13,24 @@ warnings.warn('API v2 tests are incomplete')
 
 
 class APIViewTestBase(APITestBase):
-    @classmethod
-    def setup_class(cls):
-        super().setup_class()
-        # TODO: figure out how to do this properly with mock
-        CDNStorage._original_get_modified_time = CDNStorage.get_modified_time
-        CDNStorage.get_modified_time = lambda *_: datetime.now()
-
     def teardown_method(self):
         super().teardown_method()
         cache.clear()
 
-    @classmethod
-    def teardown_class(cls):
-        super().teardown_class()
-        CDNStorage.get_modified_time = CDNStorage._original_get_modified_time
-        del CDNStorage._original_get_modified_time
-
 
 class TestOpenAPI(APIViewTestBase):
+    _redirects = {
+        'swagger': 'https://generator.swagger.io',
+        'redoc': 'https://redocly.github.io'
+    }
+
     def test_schema(self):
         r = self.client.get(reverse('api:v2:schema'))
         assert r.status_code == 200
         assert r.json()['info']['title'] == 'MangAdventure API'
 
-    def test_swagger(self):
-        r = self.client.get(reverse('api:v2:swagger'))
+    @mark.parametrize('name', _redirects.keys())
+    def test_redirect(self, name):
+        r = self.client.get(reverse(f'api:v2:{name}'))
         assert r.status_code == 301
-        assert 'generator.swagger.io' in r['Location']
-
-    def test_redoc(self):
-        r = self.client.get(reverse('api:v2:redoc'))
-        assert r.status_code == 301
-        assert 'redocly.github.io' in r['Location']
+        assert r['Location'].startswith(self._redirects[name])

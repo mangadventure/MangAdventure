@@ -3,10 +3,11 @@ labels: ["Type: Question"]
 description: Do you have a question regarding this project?
 body:
   - type: markdown
-    value: |-
-      Please read the [documentation][] before submitting your question.
+    attributes:
+      value: |-
+        Please read the [documentation][] before submitting your question.
 
-      [documentation]: https://mangadventure.readthedocs.io/en/latest/
+        [documentation]: https://mangadventure.readthedocs.io/en/latest/
   - type: textarea
     id: question
     attributes:

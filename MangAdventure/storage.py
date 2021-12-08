@@ -7,6 +7,7 @@ Custom storages.
 """
 
 from typing import Optional, Tuple
+from urllib.parse import quote
 
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
@@ -14,20 +15,43 @@ from django.core.files.storage import FileSystemStorage
 
 class CDNStorage(FileSystemStorage):
     """
-    Storage class that uses the `statically image CDN`_ unless
-    :const:`~MangAdventure.settings.DEBUG` mode is on.
+    Storage class that may use an image CDN.
+
+    The options are statically_, weserv_ & photon_.
 
     :param fit: A tuple of width & height to fit the image in.
 
-    .. _`statically image CDN`:
-        https://statically.io/docs/using-images/
+    .. _statically: https://statically.io/docs/using-images/
+    .. _weserv: https://images.weserv.nl/docs/
+    .. _photon: https://developer.wordpress.com/docs/photon/
     """
     def __init__(self, fit: Optional[Tuple[int, int]] = None):
         super().__init__()
-        if settings.CONFIG['USE_CDN'] and not settings.DEBUG:
-            self._cdn = 'https://cdn.statically.io/img/'
-            self._params = {'w': fit[0], 'h': fit[1]} if fit else {}
-            self._base_url = self._cdn + settings.CONFIG['DOMAIN'] + '/'
+        self._cdn = settings.CONFIG['USE_CDN'].lower()
+        self._fit = {'w': fit[0], 'h': fit[1]} if fit else {}
+
+    def _statically_url(self, name: str) -> str:
+        domain = settings.CONFIG['DOMAIN']
+        base = f'https://cdn.statically.io/img/{domain}/'
+        fit = ','.join('%s=%d' % i for i in self._fit.items())
+        return base + fit + self.base_url + name
+
+    def _weserv_url(self, name: str) -> str:
+        domain = settings.CONFIG['DOMAIN']
+        base = 'https://images.weserv.nl/?url='
+        scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+        url = f'{scheme}://{domain}{self.base_url}{name}'
+        params = {**self._fit, 'l': 0, 'q': 100}
+        qs = '&'.join('%s=%d' % i for i in params.items())
+        return base + quote(url, '') + '&' + qs + '&we'
+
+    def _photon_url(self, name: str) -> str:
+        domain = settings.CONFIG['DOMAIN']
+        scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+        base, qs = f'{scheme}://i3.wp.com/', '?quality=100'
+        if self._fit:
+            qs += f'&fit={self._fit["w"]},{self._fit["h"]}'
+        return base + domain + self.base_url + name + qs
 
     def url(self, name: str) -> str:
         """
@@ -38,32 +62,10 @@ class CDNStorage(FileSystemStorage):
 
         :return: The URL of the file.
         """
-        if not hasattr(self, '_cdn'):  # pragma: no cover
+        method = f'_{self._cdn}_url'
+        if not hasattr(self, method):
             return super().url(name)
-        try:
-            time = self.get_modified_time(name)
-            qs = f'?t={time.timestamp():.0f}'
-        except NotImplementedError:  # pragma: no cover
-            qs = ''
-        return self._base_url + ','.join(
-            '%s=%d' % i for i in self._params.items()
-        ) + settings.MEDIA_URL + name + qs
-
-    def get_available_name(self, name: str, max_length:
-                           Optional[int] = None) -> str:
-        """
-        Return a filename that's free on the target storage system.
-
-        If a file with the given name exists, it will be deleted.
-
-        :param name: The desired filename.
-        :param max_length: The maximum length of the name. *(unused)*
-
-        :return: The available filename.
-        """
-        if self.exists(name):
-            self.delete(name)
-        return name
+        return getattr(self, method)(name)
 
 
 __all__ = ['CDNStorage']

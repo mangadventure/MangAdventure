@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Dict, List, Tuple, Union
 
 from django.core.cache import cache
@@ -7,21 +6,12 @@ from django.urls import reverse
 
 from pytest import mark
 
-from MangAdventure.storage import CDNStorage
-
 from groups.models import Group, Member, Role
 
 from . import APITestBase
 
 
 class APIViewTestBase(APITestBase):
-    @classmethod
-    def setup_class(cls):
-        super().setup_class()
-        # TODO: figure out how to do this properly with mock
-        CDNStorage._original_get_modified_time = CDNStorage.get_modified_time
-        CDNStorage.get_modified_time = lambda *_: datetime.now()
-
     def get_data(self, url: str, params: Dict[str, str] = {}
                  ) -> Tuple[int, Union[Dict, List]]:
         """
@@ -41,12 +31,6 @@ class APIViewTestBase(APITestBase):
     def teardown_method(self):
         super().teardown_method()
         cache.clear()
-
-    @classmethod
-    def teardown_class(cls):
-        super().teardown_class()
-        CDNStorage.get_modified_time = CDNStorage._original_get_modified_time
-        del CDNStorage._original_get_modified_time
 
 
 class TestReleases(APIViewTestBase):

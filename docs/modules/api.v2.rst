@@ -33,6 +33,14 @@ api.v2.mixins module
    :undoc-members:
    :show-inheritance:
 
+api.v2.negotiation module
+-------------------------
+
+.. automodule:: api.v2.negotiation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 api.v2.pagination module
 ------------------------
 

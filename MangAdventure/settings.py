@@ -435,7 +435,11 @@ if find_spec('csp'):
     )
 
     #: Set the :csp:`img-src` CSP directive.
-    CSP_IMG_SRC = ("'self'", "https://cdn.statically.io")
+    CSP_IMG_SRC = {
+        'statically': ("'self'", "https://cdn.statically.io"),
+        'weserv': ("'self'", "https://images.weserv.nl"),
+        'photon': ("'self'", "https://i3.wp.com")
+    }.get(env.get('USE_CDN', '').lower(), ("'self'",))
 
     #: Set the :csp:`form-action` CSP directive.
     CSP_FORM_ACTION = ("'self'",)
@@ -475,6 +479,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.v2.pagination.DummyPagination',
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
     'DEFAULT_SCHEMA_CLASS': 'api.v2.schema.OpenAPISchema',
+    'DEFAULT_CONTENT_NEGOTIATION_CLASS': (
+        'api.v2.negotiation.OpenAPIContentNegotiation'
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'api.v2.auth.ApiKeyAuthentication',
     ),
@@ -526,7 +533,7 @@ CONFIG = {
     'SHADOW_COLOR': env['SHADOW_COLOR'],
     'FONT_NAME': env['FONT_NAME'],
     'FONT_URL': env['FONT_URL'],
-    'USE_CDN': env.bool('USE_CDN', True),
+    'USE_CDN': env.get('USE_CDN', 'off'),
     'ALLOW_DLS': env.bool('ALLOW_DLS', True),
     'MAX_RELEASES': env.int('MAX_RELEASES', 10),
     'MAX_CHAPTERS': env.int('MAX_CHAPTERS', 1),

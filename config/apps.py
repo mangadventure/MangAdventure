@@ -44,8 +44,7 @@ class SiteConfig(AppConfig):
         src = settings.STATIC_ROOT / 'styles'
         dst = settings.STATIC_ROOT / 'COMPILED' / 'styles'
 
-        with open(src / '_variables.scss', 'w') as f:
-            f.write(SCSS_VARS % settings.CONFIG)
+        (src / '_variables.scss').write_text(SCSS_VARS % settings.CONFIG)
 
         sassc(dirname=(src, dst), output_style='compressed')
 

@@ -30,7 +30,7 @@ def _latest(request: HttpRequest, slug: Optional[str] = None,
     try:
         if slug is None:
             q = Q(chapters__published__lte=tz.now())
-            return Series.objects.only('modified').annotate(
+            return Series.objects.only('modified').alias(
                 chapter_count=Count('chapters', filter=q)
             ).filter(chapter_count__gt=0).latest().modified
         if vol is None:
@@ -61,7 +61,7 @@ def directory(request: HttpRequest) -> HttpResponse:
     """
     qs = Chapter.objects.filter(published__lte=tz.now())
     q = Q(chapters__published__lte=tz.now())
-    _series = Series.objects.annotate(
+    _series = Series.objects.alias(
         chapter_count=Count('chapters', filter=q)
     ).filter(chapter_count__gt=0).prefetch_related(
         Prefetch('chapters', queryset=qs.order_by('-published'))

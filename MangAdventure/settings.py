@@ -371,6 +371,9 @@ DEFAULT_FROM_EMAIL = env['EMAIL_ADDRESS']
 #    Security    #
 ##################
 
+#: Silence CSRF & HSTS warnings.
+SILENCED_SYSTEM_CHECKS = ('security.W003', 'security.W004')
+
 #: List of User-Agents that are not allowed to visit any page.
 #: See :setting:`DISALLOWED_USER_AGENTS`.
 DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]

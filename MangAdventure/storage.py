@@ -48,9 +48,11 @@ class CDNStorage(FileSystemStorage):
     def _photon_url(self, name: str) -> str:
         domain = settings.CONFIG['DOMAIN']
         scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
-        base, qs = f'{scheme}://i3.wp.com/', '?quality=100'
+        base, qs = f'{scheme}://i3.wp.com/', '?'
+        if name.lower().endswith(('.jpg', '.jpeg')):
+            qs = '?quality=100&'
         if self._fit:
-            qs += f'&fit={self._fit["w"]},{self._fit["h"]}'
+            qs += f'fit={self._fit["w"]},{self._fit["h"]}'
         return base + domain + self.base_url + name + qs
 
     def url(self, name: str) -> str:

@@ -31,7 +31,12 @@ class Bookmark(models.Model):
     )
 
     class Meta:
-        unique_together = ('series', 'user')
+        constraints = (
+            models.UniqueConstraint(
+                fields=('series', 'user'),
+                name='unique_bookmark'
+            ),
+        )
 
 
 class UserProfile(models.Model):

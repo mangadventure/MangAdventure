@@ -33,7 +33,7 @@ def _latest(request: HttpRequest, slug: Optional[str] = None,
     try:
         if slug is None:
             q = Q(chapters__published__lte=tz.now())
-            return Series.objects.only('modified').annotate(
+            return Series.objects.only('modified').alias(
                 chapter_count=Count('chapters', filter=q)
             ).filter(chapter_count__gt=0).latest().modified
         if vol is None:
@@ -174,7 +174,7 @@ def all_releases(request: HttpRequest) -> JsonResponse:
     """
     response = []
     q = Q(chapters__published__lte=tz.now())
-    _series = Series.objects.annotate(
+    _series = Series.objects.alias(
         chapter_count=Count('chapters', filter=q)
     ).filter(chapter_count__gt=0).distinct()
     for s in _series.prefetch_related('chapters').iterator():

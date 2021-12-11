@@ -20,7 +20,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.query import Q
 from django.shortcuts import reverse
-from django.utils import timezone
+from django.utils import timezone as tz
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 
@@ -61,7 +61,12 @@ class Alias(models.Model):
 
     class Meta:
         verbose_name_plural = 'aliases'
-        unique_together = ('name', 'content_type', 'object_id')
+        constraints = (
+            models.UniqueConstraint(
+                fields=('name', 'content_type', 'object_id'),
+                name='unique_alias_content_object'
+            ),
+        )
 
     def __str__(self) -> str:
         """Return the alias of the instance."""
@@ -183,14 +188,14 @@ class Series(models.Model):
         default=False, help_text='Is the series licensed?'
     )
     #: The date the series was created.
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
     #: The modification date of the series.
-    modified = models.DateTimeField(auto_now=True)
+    modified = models.DateTimeField(auto_now=True, db_index=True)
     #: The chapter name format of the series.
     format = models.CharField(
-        max_length=100, default='Vol. {volume}, Ch. {number}: {title}',
-        help_text='The format used to render the chapter names.',
-        verbose_name='chapter name format'
+        default='Vol. {volume}, Ch. {number}: {title}',
+        max_length=100, verbose_name='chapter name format',
+        help_text='The format used to render the chapter names.'
     )
     #: The aliases of the series.
     aliases = GenericRelation(
@@ -279,10 +284,10 @@ class Chapter(models.Model):
         db_index=True, help_text=(
             'You can select a future date to schedule'
             ' the publication of the chapter.'
-        ), default=timezone.now
+        ), default=tz.now
     )
     #: The modification date of the chapter.
-    modified = models.DateTimeField(auto_now=True)
+    modified = models.DateTimeField(auto_now=True, db_index=True)
     #: The groups that worked on this chapter.
     groups = models.ManyToManyField(
         Group, blank=True, related_name='releases'
@@ -294,9 +299,18 @@ class Chapter(models.Model):
     )
 
     class Meta:
-        unique_together = ('series', 'volume', 'number')
         ordering = ('series', 'volume', 'number')
         get_latest_by = ('published', 'modified')
+        constraints = (
+            models.UniqueConstraint(
+                fields=('series', 'volume', 'number'),
+                name='unique_chapter_number'
+            ),
+            models.CheckConstraint(
+                check=Q(number__gte=0),
+                name='chapter_number_positive'
+            )
+        )
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
@@ -305,7 +319,7 @@ class Chapter(models.Model):
             validators.zipfile_validator(self.file)
             self.unzip()
         self.series.completed = self.final
-        self.series.save()
+        self.series.save(update_fields=('completed',))
 
     @cached_property
     def next(self) -> Chapter:
@@ -368,8 +382,7 @@ class Chapter(models.Model):
                 dgst = blake2b(data, digest_size=16).hexdigest()
                 filename = dgst + path.splitext(name)[-1]
                 file_path = path.join(dir_path, filename)
-                with open(full_path / filename, 'wb') as img:
-                    img.write(data)
+                (full_path / filename).write_bytes(data)
                 pages.append(Page(
                     chapter_id=self.id, number=counter, image=file_path
                 ))
@@ -461,7 +474,7 @@ class Chapter(models.Model):
             return self._tuple > other._tuple
 
         raise TypeError(
-            "'<' not supported between instances of " +
+            "'>' not supported between instances of " +
             f"'{self.__class__}' and '{other.__class__}'"
         )
 
@@ -525,6 +538,12 @@ class Page(models.Model):
 
     class Meta:
         ordering = ('chapter', 'number')
+        constraints = (
+            models.CheckConstraint(
+                check=Q(number__gte=1),
+                name='page_number_nonzero'
+            ),
+        )
 
     @cached_property
     def _file_name(self) -> str:

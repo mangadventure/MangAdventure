@@ -181,7 +181,12 @@ class Role(models.Model):
 
     class Meta:
         verbose_name = 'role'
-        unique_together = ('member', 'role', 'group')
+        constraints = (
+            models.UniqueConstraint(
+                fields=('member', 'role', 'group'),
+                name='unique_member_role'
+            ),
+        )
 
     def __str__(self) -> str:
         """

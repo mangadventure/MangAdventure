@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+v0.8.2
+^^^^^^
+
+* Added DB constraints
+* Fixed Photon CDN params
+
 v0.8.1
 ^^^^^^
 

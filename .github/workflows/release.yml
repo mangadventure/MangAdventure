@@ -33,6 +33,22 @@ jobs:
           grep -q "@${GITHUB_REF##*/}#egg=mangadventure\"" docs/install.rst &&
           grep -q "@${GITHUB_REF##*/}#egg=mangadventure\[" docs/install.rst &&
           grep -q "^${GITHUB_REF##*/}$" docs/changelog.rst
+      - name: "Mark previous prerelease"
+        if: success()
+        run: |-
+          API="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases"
+          export $(curl -Ssf "$API/latest" | \
+            jq -r '"id=\(.id) tag=\(.tag_name)"')
+          # skip if the new tag has a different minor version
+          : ${GITHUB_REF##*/}; [[ ${_%.*} == ${tag%.*} ]] || exit 0
+          curl -Ssf "$API/$id" -d '{"prerelease":true}' \
+            -XPATCH -H "Authorization: Token $GITHUB_TOKEN"
+          curl -Ssf "$RTD_API/mangadventure/versions/$tag" -XPATCH \
+            -d 'prerelease=true' -H "Authorization: Token $RTFD_TOKEN"
+        env:
+          RTFD_TOKEN: ${{secrets.RTFD_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          RTFD_API: https://readthedocs.org/api/v3/projects
       - name: "Parse release body"
         run: make changes > changes.md
         working-directory: ./docs

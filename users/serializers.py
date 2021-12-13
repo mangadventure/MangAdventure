@@ -108,6 +108,9 @@ class ProfileSerializer(ModelSerializer):
             },
             'avatar': {
                 'help_text': 'Your avatar image. (<2MBs)', 'allow_null': True
+            },
+            'username': {
+                'pattern': '^[-a-zA-Z0-9@+_.]+$'
             }
         }
 

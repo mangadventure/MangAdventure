@@ -1,7 +1,7 @@
 Installation
 ------------
 
-.. warning::
+.. caution::
 
    This project is still in an experimental state and may be unstable.
    Proceed at your own risk.

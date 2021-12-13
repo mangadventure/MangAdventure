@@ -52,6 +52,12 @@ flake8 && isort -q -c --df . # lint
 py.test # run tests
 ```
 
+After creating a new python file, run this to update the docs:
+
+```sh
+make -Cdocs modules
+```
+
 ### Code Style
 
 Follow the style defined by [EditorConfig](../.editorconfig).

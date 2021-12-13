@@ -12,6 +12,7 @@ from rest_framework.mixins import (
     CreateModelMixin, DestroyModelMixin, ListModelMixin,
     RetrieveModelMixin, UpdateModelMixin
 )
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
@@ -35,8 +36,8 @@ class ArtistViewSet(CORSMixin, ModelViewSet):
     * list: List artists.
     * read: View a certain artist.
     * create: Create a new artist.
-    * update: Edit the given artist.
-    * patch: Patch the given artist.
+    * update: Update the given artist.
+    * patch: Edit the given artist.
     * delete: Delete the given artist.
     """
     schema = OpenAPISchema(tags=('artists',))
@@ -51,8 +52,8 @@ class AuthorViewSet(CORSMixin, ModelViewSet):
     * list: List authors.
     * read: View a certain author.
     * create: Create a new author.
-    * update: Edit the given author.
-    * patch: Patch the given author.
+    * update: Update the given author.
+    * patch: Edit the given author.
     * delete: Delete the given author.
     """
     schema = OpenAPISchema(tags=('authors',))
@@ -67,7 +68,7 @@ class CategoryViewSet(CORSMixin, ModelViewSet):
     * list: List categories.
     * read: View a certain category.
     * create: Create a new category.
-    * patch: Patch the given category.
+    * patch: Edit the given category.
     * delete: Delete the given category.
     """
     schema = OpenAPISchema(tags=('categories',), component_name='Category')
@@ -84,14 +85,15 @@ class PageViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin,
 
     * list: List a chapter's pages.
     * create: Create a new page.
-    * update: Edit the given page.
+    * update: Update the given page.
+    * patch: Edit the given page.
     * delete: Delete the given page.
     """
     schema = OpenAPISchema(tags=('pages',),)
-    http_method_names = ('get', 'post', 'put', 'delete', 'head', 'options')
     queryset = models.Page.objects.all()
     serializer_class = serializers.PageSerializer
     filter_backends = filters.PAGE_FILTERS
+    parser_classes = (MultiPartParser,)
 
 
 class ChapterViewSet(CORSMixin, ModelViewSet):
@@ -101,13 +103,14 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
     * list: List chapters.
     * read: View a certain chapter.
     * create: Create a new chapter.
-    * update: Edit the given chapter.
-    * patch: Patch the given chapter.
+    * update: Update the given chapter.
+    * patch: Edit the given chapter.
     * delete: Delete the given chapter.
     """
     schema = OpenAPISchema(tags=('chapters',))
     serializer_class = serializers.ChapterSerializer
     filter_backends = filters.CHAPTER_FILTERS
+    parser_classes = (MultiPartParser,)
 
     def get_queryset(self) -> QuerySet:
         return models.Chapter.objects.select_related('series') \
@@ -121,8 +124,8 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
     * list: List or search for series.
     * read: View the details of a series.
     * create: Create a new series.
-    * update: Edit the given series.
-    * patch: Patch the given series.
+    * update: Update the given series.
+    * patch: Edit the given series.
     * delete: Delete the given series.
     """
     schema = OpenAPISchema(
@@ -130,6 +133,7 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
         tags=('series',), component_name='Series'
     )
     filter_backends = filters.SERIES_FILTERS
+    parser_classes = (MultiPartParser,)
     pagination_class = PageLimitPagination
     ordering = ('title',)
     lookup_field = 'slug'

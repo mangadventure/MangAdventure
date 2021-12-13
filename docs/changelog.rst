@@ -6,6 +6,8 @@ v0.8.2
 
 * Added DB constraints
 * Fixed Photon CDN params
+* Added an API docs view
+* Deprecated ``PUT`` operations
 
 v0.8.1
 ^^^^^^

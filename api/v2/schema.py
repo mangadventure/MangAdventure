@@ -20,8 +20,8 @@ class OpenAPISchema(AutoSchema):
     def map_field(self, field: Any) -> Dict:
         # map serializers to their $refs
         if isinstance(field, BaseSerializer):
-            name = field.field_name.rstrip('s').capitalize()
-            ref = {'$ref': '#/components/schemas/' + name}
+            name = self.get_component_name(field)
+            ref = self._get_reference(name)
             if hasattr(field, 'child'):
                 return {'type': 'array', 'items': ref}
             return ref
@@ -106,6 +106,19 @@ class OpenAPISchema(AutoSchema):
             op['security'] = ()
         elif not self.view.permission_classes:
             op['security'] = ()
+        # deprecate PUT operations
+        if method == 'PUT':
+            op['deprecated'] = True
+            op['description'] = 'Use `PATCH` instead.'
+        # describe when to track chapter views
+        if path == '/pages' and method == 'GET':
+            op['description'] = (
+                'Third-party apps must set `track=true`'
+                ' to properly increment chapter views.'
+            )
+        # note that Cubari support is experimental
+        if path == '/cubari/{slug}':
+            op['x-badges'] = [{'color': 'red', 'label': 'Experimental'}]
         return op
 
     def get_path_parameters(self, path: str, method: str) -> List[Dict]:

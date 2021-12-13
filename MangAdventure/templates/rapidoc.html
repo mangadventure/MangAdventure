@@ -1,0 +1,50 @@
+<!DOCTYPE html>{% load cache static custom_tags %}
+<html lang="en-us">{% spaceless %}
+  <head>{% cache 604800 head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="RapiDoc 9.1.3">
+    <meta name="robots" content="nosnippet">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="{{ config.FAVICON }}" rel="shortcut icon" type="{{ config.FAVICON|get_type }}">
+    <link href="{{ config.FONT_URL }}" rel="stylesheet" type="text/css" crossorigin="anonymous">
+    <script src="{% static 'vendor/rapidoc-min.js' %}" type="application/javascript"></script>
+    <title>{{ config.NAME }} API docs</title>{% endcache %}
+  </head>
+  <body>{% cache 604800 body %}
+    <rapi-doc render-style="read"
+              spec-url="{{ schema }}"
+              sort-endpoints-by="none"
+              bg-color="{{ config.MAIN_BG_COLOR }}"
+              text-color="{{ config.MAIN_TEXT_COLOR }}"
+              nav-bg-color="{{ config.ALTER_BG_COLOR }}"
+              primary-color="{{ config.ALTER_TEXT_COLOR }}"
+              regular-font="{{ config.FONT_NAME }}, sans-serif"
+              fill-request-fields-with-example="false"
+              schema-description-expanded="true"
+              fetch-credentials="same-origin"
+              nav-item-spacing="compact"
+              schema-style="table"
+              show-header="false"
+              load-fonts="false"
+              theme="dark">
+      <div slot="overview" id="api-docs" style="margin-top:4px;font-size:13px">
+        Documentation:
+        <a href="https://mangadventure.readthedocs.io/"
+           part="anchor anchor-overview" rel="noopener noreferrer"
+           target="_blank">https://mangadventure.readthedocs.io/</a>
+      </div>
+      <img alt="Logo" slot="nav-logo" src="{{ config.LOGO_TW }}">
+      <a href="https://mrin9.github.io/RapiDoc/" rel="noopener noreferrer"
+         slot="footer" target="_blank" title="Made with RapiDoc"
+         id="footer" style="bottom:4px;right:-16px;position:fixed">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="1 0 511 512" height="36" width="36">
+          <path d="M351 411a202 202 0 01-350 0 203 203 0 01333-24 203 203 0 0117 24zm0 0" fill="#adc165"></path>
+          <path d="M334 387a202 202 0 01-216-69 202 202 0 01216 69zm78 32H85a8 8 0 01-8-8 8 8 0 018-8h327a8 8 0 017 8 8 8 0 01-7 8zm0 0" fill="#99aa52"></path>
+          <path d="M374 338l-5 30a202 202 0 01-248-248 203 203 0 01253 218zm0 0" fill="#ffc73b"></path>
+          <path d="M374 338a202 202 0 01-100-197 203 203 0 01100 197zm38 81l-6-2-231-231a8 8 0 0111-11l231 230a8 8 0 01-5 14zm0 0" fill="#efb025"></path><path d="M311 175c0 75 40 140 101 175a202 202 0 000-350 202 202 0 00-101 175zm0 0" fill="#ff903e"></path><path d="M412 419a8 8 0 01-8-8V85a8 8 0 0115 0v326a8 8 0 01-7 8zm0 0" fill="#e87425"></path>
+        </svg>
+      </a>
+    </rapi-doc>{% endcache %}
+  </body>
+</html>{% endspaceless %}

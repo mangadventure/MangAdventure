@@ -19,18 +19,17 @@ class APIViewTestBase(APITestBase):
 
 
 class TestOpenAPI(APIViewTestBase):
-    _redirects = {
-        'swagger': 'https://generator.swagger.io',
-        'redoc': 'https://redocly.github.io'
-    }
-
     def test_schema(self):
         r = self.client.get(reverse('api:v2:schema'))
         assert r.status_code == 200
         assert r.json()['info']['title'] == 'MangAdventure API'
 
-    @mark.parametrize('name', _redirects.keys())
-    def test_redirect(self, name):
+    @mark.parametrize('name', ('swagger', 'redoc'))
+    def test_old_docs(self, name):
         r = self.client.get(reverse(f'api:v2:{name}'))
-        assert r.status_code == 301
-        assert r['Location'].startswith(self._redirects[name])
+        assert r.status_code == 410
+
+    def test_docs(self):
+        r = self.client.get(reverse('api:v2:rapidoc'))
+        assert r.status_code == 200
+        assert b'<rapi-doc' in r.content

@@ -64,6 +64,7 @@ static/admin/
 static/extra/
 static/COMPILED/
 static/debug_toolbar/
+static/rest_framework/
 static/styles/_variables.scss
 
 # GitHub Stuff

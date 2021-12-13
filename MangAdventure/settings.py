@@ -494,6 +494,11 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
     ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.JSONParser',
+    ),
     'DATETIME_INPUT_FORMATS': ('iso-8601', '%m/%d/%y'),
     'DEFAULT_THROTTLE_RATES': {'anon': '200/m'},
     'SCHEMA_COERCE_METHOD_NAMES': {

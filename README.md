@@ -52,12 +52,13 @@ You are welcome to contribute after reading the [guidelines](.github/CONTRIBUTIN
 
 * Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
 * Search results are sorted using [tablesort](https://tristen.ca/tablesort/demo/)
-* Info pages use the [TinyMCE editor](https://www.tiny.cloud/docs-4x/)
+* Info pages use the [TinyMCE](https://www.tiny.cloud/docs-4x/) editor
+* API docs use the [RapiDoc](https://mrin9.github.io/RapiDoc/) viewer
 * Browser logos are taken from [alrra/browser-logos](https://github.com/alrra/browser-logos)
 
 ## License
 
-    Copyright (c) 2018-2021 MangAdventure
+    Copyright (c) 2018-2022 MangAdventure
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

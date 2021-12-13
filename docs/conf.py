@@ -17,7 +17,7 @@ import MangAdventure as MA  # noqa: E402
 project = 'MangAdventure'
 author = MA.__author__
 release = MA.__version__
-copyright = f'2018-2021, {project}, {MA.__license__} license'
+copyright = f'2018-2022, {project}, {MA.__license__} license'
 
 
 # -- General configuration --

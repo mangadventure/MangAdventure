@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, List
 from django.urls import reverse
 
 from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, mixins
@@ -67,12 +68,13 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     API endpoints for user profiles.
 
     * read: View your profile.
-    * update: Edit your profile.
-    * patch: Patch your profile.
+    * update: Update your profile.
+    * patch: Edit your profile.
     * delete: Delete your profile.
     """
     schema = OpenAPISchema(tags=('profile',))
     permission_classes = (IsAuthenticated,)
+    parser_classes = (MultiPartParser,)
     serializer_class = ProfileSerializer
     lookup_field = None
     _restrict = True

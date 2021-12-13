@@ -171,3 +171,10 @@ Browsers
    :alt: iOS Safari
 
 .. |X| unicode:: U+2716
+
+.. note::
+
+   | The ``/api/v2/docs/`` endpoint is special.
+   | See this_ link for its compatibility table.
+
+   .. _this: https://caniuse.com/mdn-html_elements_slot

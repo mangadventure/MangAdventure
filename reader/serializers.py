@@ -204,16 +204,16 @@ class _SeriesDetailSerializer(ModelSerializer):
 
 
 #: A series serializer type.
-TSerializer = TypeVar(
-    'TSerializer',
+TSeriesSerializer = TypeVar(
+    'TSeriesSerializer',
     Type[_SeriesListSerializer],
     Type[_SeriesDetailSerializer]
 )
 
 
-class SeriesSerializer(Generic[TSerializer]):
+class SeriesSerializer(Generic[TSeriesSerializer]):
     """Generic series serializer."""
-    def __class_getitem__(cls, action: str) -> TSerializer:
+    def __class_getitem__(cls, action: str) -> TSeriesSerializer:
         """
         Adapt the series schema based on the action.
 
@@ -227,12 +227,15 @@ class SeriesSerializer(Generic[TSerializer]):
 
 
 class CubariSerializer(ModelSerializer):
-    """Serializer for cubari.moe gists."""
+    """Serializer for cubari.moe."""
     title = CharField(read_only=True)
     description = CharField(read_only=True)
+    original_url = URLField(source='get_absolute_url', read_only=True)
     artist = SerializerMethodField(method_name='_get_artist')
     author = SerializerMethodField(method_name='_get_author')
     cover = SerializerMethodField(method_name='_get_cover')
+    alt_titles = SerializerMethodField(method_name='_get_aliases')
+    metadata = SerializerMethodField(method_name='_get_metadata')
     chapters = SerializerMethodField(method_name='_get_chapters')
 
     def __uri(self, path: str) -> str:
@@ -247,16 +250,25 @@ class CubariSerializer(ModelSerializer):
     def _get_cover(self, obj: Series) -> str:
         return self.__uri(obj.cover.url)
 
+    def _get_aliases(self, obj: Series) -> List[str]:
+        return obj.aliases.names()
+
+    def _get_metadata(self, obj: Series) -> List[List[str]]:
+        return [
+            ['Author', self._get_author(obj)],
+            ['Artist', self._get_artist(obj)],
+            # TODO: Views & Last Updated
+        ]
+
     def _get_chapters(self, obj: Series) -> Dict[str, Dict]:
         result = dict()
         chapters = obj.chapters.prefetch_related('groups__name', 'pages')
         for ch in chapters.order_by('volume', 'number').iterator():
-            volume = 'Uncategorized' if ch.volume == 0 else str(ch.volume)
             groups = ch.groups.values_list('name', flat=True)
             pages = ch.pages.order_by('number')
             result[f'{ch.number:g}'] = {
                 'title': ch.title,
-                'volume': volume,
+                'volume': str(ch.volume),
                 'groups': {
                     ', '.join(groups): [
                         self.__uri(p.image.url) for p in pages.iterator()
@@ -269,8 +281,8 @@ class CubariSerializer(ModelSerializer):
     class Meta:
         model = Series
         fields = (
-            'title', 'description', 'author',
-            'artist', 'cover', 'chapters'
+            'title', 'cover', 'original_url', 'description',
+            'author', 'artist', 'alt_titles', 'metadata', 'chapters'
         )
 
 

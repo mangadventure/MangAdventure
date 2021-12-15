@@ -1,6 +1,9 @@
 {% extends 'layout.html' %}
 {% load static humanize custom_tags %}
 {% block canonical %}{% endblock %}
+{% block robots %}
+  <meta name="robots" content="noindex">
+{% endblock %}
 {% block head_extras %}
   <meta name="totalResults" content="{{ total }}">
   <script src="{% static 'vendor/tablesort.min.js' %}"

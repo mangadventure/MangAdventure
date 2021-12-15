@@ -54,13 +54,24 @@ class OpenAPISchema(AutoSchema):
             'type': 'object',
             'properties': {
                 'title': {'type': 'string'},
+                'cover': {'type': 'string', 'format': 'uri', 'default': ''},
+                'original_url': {'type': 'string', 'format': 'uri'},
                 'description': {'type': 'string', 'default': ''},
                 'author': {'type': 'string', 'default': ''},
                 'artist': {'type': 'string', 'default': ''},
-                'cover': {
-                    'type': 'string',
-                    'format': 'uri',
-                    'default': ''
+                'alt_titles': {
+                    'type': 'array',
+                    'items': {'type': 'string'}
+                },
+                'metadata': {
+                    'type': 'array',
+                    'uniqueItems': True,
+                    'items': {
+                        'type': 'array',
+                        'minItems': 2,
+                        'maxItems': 2,
+                        'items': {'type': 'string'}
+                    }
                 },
                 'chapters': {
                     'type': 'object',
@@ -70,12 +81,13 @@ class OpenAPISchema(AutoSchema):
                             'title': {'type': 'string'},
                             'volume': {
                                 'type': 'string',
-                                'format': 'uint64',
-                                'default': None,
-                                'nullable': True
+                                'format': 'uint32',
+                                'default': '0'
                             },
                             'groups': {
                                 'type': 'object',
+                                'minProperties': 1,
+                                'maxProperties': 1,
                                 'additionalProperties': {
                                     'type': 'array',
                                     'items': {
@@ -84,7 +96,7 @@ class OpenAPISchema(AutoSchema):
                                     }
                                 }
                             },
-                            'latest_update': {
+                            'last_updated': {
                                 'type': 'string',
                                 'format': 'uint64',
                                 'default': ''

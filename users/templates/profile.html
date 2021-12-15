@@ -2,7 +2,7 @@
 {% load cache account custom_tags %}
 {% user_display request.user as user_display %}
 {% block robots %}
-  <meta name="robots" content="noindex">
+  <meta name="robots" content="noindex,nofollow">
 {% endblock %}
 {% block image %}
   <meta name="twitter:card" content="summary">

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Type
+from typing import TYPE_CHECKING, Type
 from warnings import filterwarnings
 
 from django.db.models import Count, Max, Q, Sum
@@ -13,7 +13,6 @@ from rest_framework.mixins import (
     RetrieveModelMixin, UpdateModelMixin
 )
 from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from api.v2.mixins import CORSMixin
@@ -154,19 +153,12 @@ class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
     """
     API endpoints for Cubari.
 
-    * read: Generate JSON for a cubari.moe gist.
+    * read: Generate JSON for cubari.moe.
     """
     schema = OpenAPISchema(tags=('cubari',), operation_id_base='Cubari')
     queryset = models.Series.objects.all()
     serializer_class = serializers.CubariSerializer
-    permission_classes = (IsAdminUser,)
     lookup_field = 'slug'
-    _restrict = True
-
-    def get_permissions(self) -> List:
-        if self.request.method == 'OPTIONS':
-            return []
-        return super().get_permissions()
 
 
 __all__ = [

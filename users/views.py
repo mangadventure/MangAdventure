@@ -12,10 +12,14 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
+from django.views.generic import FormView
 from django.views.generic.base import TemplateView
 
+from allauth.account.forms import UserTokenForm
 from allauth.account.models import EmailAddress
-from allauth.account.views import LogoutView
+from allauth.account.views import (
+    LogoutView, PasswordResetFromKeyView, _ajax_response
+)
 
 from MangAdventure.jsonld import breadcrumbs
 
@@ -136,6 +140,36 @@ class Logout(LogoutView):
     http_method_names = ('post', 'head', 'options')
 
 
+@method_decorator(cache_control(no_store=True), name='dispatch')
+class PasswordReset(PasswordResetFromKeyView):
+    """
+    A :class:`PasswordResetFromKeyView` without the extra redirect.
+
+    .. seealso: `pennersr/django-allauth#2201`__
+
+        __ https://github.com/pennersr/django-allauth/issues/2201
+    """
+
+    # HACK: patch PasswordResetFromKeyView.dispatch to fix #27
+    def dispatch(self, request: HttpRequest, uidb36: str,
+                 key: str, **kwargs) -> HttpResponse:  # pragma: no cover
+        self.request = request
+        self.key = key
+        token_form = UserTokenForm(data={'uidb36': uidb36, 'key': self.key})
+        if token_form.is_valid():
+            self.reset_user = token_form.reset_user
+            return super(FormView, self).dispatch(
+                request, uidb36, self.key, **kwargs
+            )
+        self.reset_user = None
+        response = self.render_to_response(
+            self.get_context_data(token_fail=True)
+        )
+        return _ajax_response(
+            self.request, response, form=token_form
+        )
+
+
 @method_decorator(login_required, name='dispatch')
 @method_decorator(cache_control(private=True, max_age=600), name='dispatch')
 class Bookmarks(TemplateView):
@@ -186,4 +220,4 @@ class Bookmarks(TemplateView):
         return HttpResponse(status=(201 if created else 204))
 
 
-__all__ = ['profile', 'EditUser', 'Bookmarks', 'Logout']
+__all__ = ['profile', 'EditUser', 'Bookmarks', 'Logout', 'PasswordReset']

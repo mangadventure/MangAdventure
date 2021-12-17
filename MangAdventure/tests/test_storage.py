@@ -18,5 +18,5 @@ class TestStorage(MangadvTestBase):
     @mark.parametrize('name', _cdns.keys())
     def test_cdn_url(self, name):
         self.storage._cdn = name
-        url = self.storage.url('test.webp')
+        url = self.storage.url('test.jpeg')
         assert url.startswith(self._cdns[name])

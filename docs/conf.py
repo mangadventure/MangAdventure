@@ -35,7 +35,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 language = 'en'
 pygments_style = 'manni'
-needs_sphinx = '3.5'
+needs_sphinx = '4.3'
 
 
 # -- InterSphinx & extlinks configuration --

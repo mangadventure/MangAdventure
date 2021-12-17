@@ -1,11 +1,11 @@
 """The URLconf of the users app."""
 
-from django.urls import path
+from django.urls import path, re_path
 
 from allauth.urls import urlpatterns as allauth_urls
 
 from .feeds import BookmarksAtom, BookmarksRSS
-from .views import Bookmarks, EditUser, Logout, profile
+from .views import Bookmarks, EditUser, Logout, PasswordReset, profile
 
 #: The URL patterns of the users app.
 urlpatterns = [
@@ -15,7 +15,11 @@ urlpatterns = [
     path('bookmarks/', Bookmarks.as_view(), name='user_bookmarks'),
     path('bookmarks.atom', BookmarksAtom(), name='user_bookmarks.atom'),
     path('bookmarks.rss', BookmarksRSS(), name='user_bookmarks.rss'),
-    # path('comments/', include('commentary.urls')),
+    re_path(
+        r'^password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$',
+        PasswordReset.as_view(),
+        name='account_reset_password_from_key'
+    )
 ] + allauth_urls
 
 __all__ = ['urlpatterns']

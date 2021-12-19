@@ -17,6 +17,7 @@ def group_roles(member: Member, group: Group) -> str:
 
     :param member: A ``Member`` model instance.
     :param group: A ``Group``` model instance.
+
     :return: A comma-separated list of roles.
     """
     return member.get_roles(group) or 'N/A'

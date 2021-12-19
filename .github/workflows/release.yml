@@ -34,7 +34,7 @@ jobs:
           grep -q "@${GITHUB_REF##*/}#egg=mangadventure\[" docs/install.rst &&
           grep -q "^${GITHUB_REF##*/}$" docs/changelog.rst
       - name: "Mark previous prerelease"
-        if: success()
+        continue-on-error: true
         run: |-
           GH_API="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases"
           export $(curl -Ssf "$GH_API/latest" | \
@@ -43,7 +43,7 @@ jobs:
           : ${GITHUB_REF##*/}; [[ ${_%.*} == ${tag%.*} ]] || exit 0
           curl -Ssf "$GH_API/$id" -d '{"prerelease":true}' \
             -XPATCH -H "Authorization: Token $GITHUB_TOKEN"
-          curl -Ssf "$RTFD_API/mangadventure/versions/$tag" -XPATCH \
+          curl -Ssf "$RTFD_API/mangadventure/versions/$tag/" -XPATCH \
             -d 'prerelease=true' -H "Authorization: Token $RTFD_TOKEN"
         env:
           RTFD_TOKEN: ${{secrets.RTFD_TOKEN}}
@@ -52,10 +52,8 @@ jobs:
       - name: "Parse release body"
         run: make changes > changes.md
         working-directory: ./docs
-        if: success()
       - name: "Upload release"
         uses: ncipollo/release-action@v1
-        if: success()
         with:
           token: ${{secrets.GITHUB_TOKEN}}
           bodyFile: docs/changes.md

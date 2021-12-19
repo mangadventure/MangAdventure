@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict, List
 
-from django.db.models import F
-
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import (
     BaseFilterBackend, OrderingFilter, SearchFilter
@@ -267,9 +265,9 @@ class PageFilter(BaseFilterBackend):
         volume = request.query_params['volume']
         number = request.query_params['number']
         if request.query_params.get('track') == 'true':
-            Chapter.objects.filter(
+            Chapter.track_view(
                 series__slug=series, volume=volume, number=number
-            ).update(views=F('views') + 1)
+            )
         return queryset.filter(
             chapter__series__slug=series,
             chapter__volume=volume, chapter__number=number

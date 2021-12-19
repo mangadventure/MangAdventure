@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Iterable
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
+from django.db.models import Prefetch
 from django.utils import timezone as tz
 from django.utils.feedgenerator import Atom1Feed
 
@@ -33,7 +34,17 @@ class GroupRSS(Feed):
 
         :return: The group that has the given id.
         """
-        return Group.objects.prefetch_related('releases').get(id=g_id)
+        chapters = Chapter.objects.only(
+            'title', 'number', 'volume',
+            'published', 'modified', 'series__slug',
+            'series__title', 'series__format'
+        ).select_related('series').filter(
+            published__lte=tz.now(),
+            series__licensed=False
+        ).order_by('-published')
+        return Group.objects.prefetch_related(
+            Prefetch('releases', queryset=chapters)
+        ).only('name').get(id=g_id)
 
     def link(self, obj: Group) -> str:
         """
@@ -74,9 +85,7 @@ class GroupRSS(Feed):
         :return: An iterable of ``Chapter`` objects.
         """
         _max = settings.CONFIG['MAX_RELEASES']
-        return obj.releases.filter(
-            published__lte=tz.now()
-        ).order_by('-published')[:_max]
+        return obj.releases.all()[:_max]
 
     def item_description(self, item: Chapter) -> str:
         """

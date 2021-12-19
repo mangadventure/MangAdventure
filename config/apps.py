@@ -27,6 +27,10 @@ class SiteConfig(AppConfig):
         if 'django_site' in connection.introspection.table_names():
             self._configure()
 
+        # we don't need to attempt to fetch up to 21 results
+        # to figure out if there's an error in the get query
+        __import__('django').db.models.query.MAX_GET_RESULTS = 3
+
     def _configure(self):
         from django.conf import settings
         from django.contrib.sites.models import Site

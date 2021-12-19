@@ -142,7 +142,7 @@ class Member(models.Model):
         """
         return ', '.join(
             r.get_role_display() for r in
-            self.roles.filter(group_id=group.id).only('role')
+            self.roles.all() if r.group_id == group.id
         )
 
     def __str__(self) -> str:

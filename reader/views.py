@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import Count, Prefetch, Q
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
 from django.utils import timezone as tz
@@ -13,6 +13,8 @@ from django.views.decorators.http import condition
 
 from MangAdventure import jsonld
 from MangAdventure.utils import HttpResponseUnauthorized
+
+from groups.models import Group
 
 from .models import Chapter, Page, Series
 
@@ -59,18 +61,26 @@ def directory(request: HttpRequest) -> HttpResponse:
 
     :return: A response with the rendered ``all_series.html`` template.
     """
-    qs = Chapter.objects.filter(published__lte=tz.now())
+    chapters = Chapter.objects.filter(
+        published__lte=tz.now()
+    ).order_by('-published').defer(
+        'file', 'views', 'modified'
+    )
+    groups = Group.objects.only('name')
     q = Q(chapters__published__lte=tz.now())
-    _series = Series.objects.alias(
+    series = list(Series.objects.alias(
         chapter_count=Count('chapters', filter=q)
     ).filter(chapter_count__gt=0).prefetch_related(
-        Prefetch('chapters', queryset=qs.order_by('-published'))
-    ).distinct().order_by('title')
+        Prefetch('chapters', queryset=chapters),
+        Prefetch('chapters__groups', queryset=groups)
+    ).distinct().order_by('title').only(
+        'title', 'slug', 'format', 'cover'
+    ).exclude(licensed=True))
     uri = request.build_absolute_uri(request.path)
     crumbs = jsonld.breadcrumbs([('Reader', uri)])
-    library = jsonld.carousel([s.get_absolute_url() for s in _series])
+    library = jsonld.carousel([s.get_absolute_url() for s in series])
     return render(request, 'directory.html', {
-        'all_series': _series,
+        'all_series': series,
         'library': library,
         'breadcrumbs': crumbs
     })
@@ -93,59 +103,70 @@ def series(request: HttpRequest, slug: str) -> HttpResponse:
     :raises Http404: If there is no series with the specified ``slug``.
     """
     try:
-        _series = Series.objects.prefetch_related(
-            'chapters__groups', 'artists', 'categories', 'authors', 'aliases'
-        ).get(slug=slug)
+        chapters = Chapter.objects.filter(
+            published__lte=tz.now()
+        ).reverse().defer('file', 'views', 'modified')
+        groups = Group.objects.only('name')
+        series = Series.objects.prefetch_related(
+            Prefetch('chapters', queryset=chapters),
+            Prefetch('chapters__groups', queryset=groups),
+            Prefetch('authors'), Prefetch('artists')
+        ).defer('manager').get(slug=slug)
     except Series.DoesNotExist as e:
         raise Http404 from e
-    chapters = None if _series.licensed else \
-        _series.chapters.filter(published__lte=tz.now()).reverse()
-    if not _series.licensed and not chapters:
+    chapters = None if series.licensed else list(series.chapters.all())
+    if not series.licensed and not chapters:
         return render(request, 'error.html', {
             'error_message': 'Sorry. This series is not yet available.',
             'error_status': 403
         }, status=403)
     marked = request.user.is_authenticated and \
-        request.user.bookmarks.filter(series=_series).exists()
+        request.user.bookmarks.filter(series=series).exists()
     url = request.path
     p_url = url.rsplit('/', 2)[0] + '/'
     uri = request.build_absolute_uri(url)
     crumbs = jsonld.breadcrumbs([
         ('Reader', request.build_absolute_uri(p_url)),
-        (_series.title, uri)
+        (series.title, uri)
     ])
-    tags = list(_series.categories.values_list('name', flat=True))
+    tags = list(series.categories.values_list('name', flat=True))
+    authors = list(series.authors.all())
+    artists = list(series.authors.all())
+    aliases = series.aliases.names()
     book = jsonld.schema('Book', {
         'url': uri,
-        'name': _series.title,
-        'abstract': _series.description,
+        'name': series.title,
+        'abstract': series.description,
         'author': [{
             '@type': 'Person',
             'name': au.name,
-            'alternateName': au.aliases.names()
-        } for au in _series.authors.iterator()],
+            # 'alternateName': au.aliases.names()
+        } for au in authors],
         'illustrator': [{
             '@type': 'Person',
             'name': ar.name,
-            'alternateName': ar.aliases.names()
-        } for ar in _series.artists.iterator()],
-        'alternateName': _series.aliases.names(),
+            # 'alternateName': ar.aliases.names()
+        } for ar in artists],
+        'alternateName': aliases,
         'creativeWorkStatus': (
-            'Published' if _series.completed else 'Incomplete'
+            'Published' if series.completed else 'Incomplete'
         ),
-        'isAccessibleForFree': not _series.licensed,
-        'dateCreated': _series.created.strftime('%F'),
-        'dateModified': _series.modified.strftime('%F'),
+        'isAccessibleForFree': not series.licensed,
+        'dateCreated': series.created.strftime('%F'),
+        'dateModified': series.modified.strftime('%F'),
         'bookFormat': 'GraphicNovel',
         'genre': tags,
     })
     return render(request, 'series.html', {
-        'series': _series,
+        'series': series,
         'chapters': chapters,
         'marked': marked,
         'breadcrumbs': crumbs,
         'book_ld': book,
-        'tags': ','.join(tags)
+        'authors': authors,
+        'artists': artists,
+        'aliases': aliases,
+        'tags': tags
     })
 
 
@@ -168,18 +189,27 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
     """
     if page == 0:
         raise Http404('Page cannot be 0')
-    chapters = Chapter.objects.filter(
-        series__slug=slug, series__licensed=False, published__lte=tz.now()
-    )
+    chapters = list(Chapter.objects.filter(
+        series__slug=slug,
+        series__licensed=False,
+        published__lte=tz.now()
+    ).select_related('series').only(
+        'title', 'number', 'volume', 'published',
+        'final', 'series__slug', 'series__cover',
+        'series__title', 'series__format'
+    ).reverse())
     try:
-        current = chapters.select_related('series') \
-            .prefetch_related('pages').get(volume=vol, number=num)
+        current = next(c for c in chapters if c == (vol, num))
+        prev_ = next((c for c in chapters if c < (vol, num)), None)
+        next_ = next((c for c in chapters if c > (vol, num)), None)
         if page == 1:
-            current.views = F('views') + 1
-            current.save(update_fields=('views',))
-        all_pages = current.pages.all()
+            Chapter.track_view(id=current.id)
+        all_pages = list(current.pages.all())
         curr_page = next(p for p in all_pages if p.number == page)
-        tags = list(current.series.categories.values_list('name', flat=True))
+        preload = list(filter(
+            lambda p: curr_page < p < curr_page.number + 4, all_pages
+        ))
+        tags = current.series.categories.values_list('name', flat=True)
     except (Chapter.DoesNotExist, Page.DoesNotExist, StopIteration) as e:
         raise Http404 from e
     url = request.path
@@ -191,12 +221,13 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
         (current.title, request.build_absolute_uri(url))
     ])
     return render(request, 'chapter.html', {
-        'all_chapters': chapters.reverse(),
+        'all_chapters': chapters,
         'curr_chapter': current,
-        'next_chapter': current.next,
-        'prev_chapter': current.prev,
+        'next_chapter': next_,
+        'prev_chapter': prev_,
         'all_pages': all_pages,
         'curr_page': curr_page,
+        'preload': preload,
         'breadcrumbs': crumbs,
         'tags': ','.join(tags)
     })
@@ -239,15 +270,17 @@ def chapter_download(request: HttpRequest, slug: str, vol: int, num: float
             content_type='text/plain', realm='chapter archive'
         )
     try:
-        _chapter = Chapter.objects.prefetch_related('pages').get(
+        chapter = Chapter.objects.only(
+            'series__title', 'volume', 'number'
+        ).select_related('series').get(
             series__slug=slug, series__licensed=False,
             volume=vol, number=num, published__lte=tz.now()
         )
     except Chapter.DoesNotExist as e:
         raise Http404 from e
-    name = '{0.series} - v{0.volume} c{0.number:g}.cbz'.format(_chapter)
+    name = '{0.series} - v{0.volume} c{0.number:g}.cbz'.format(chapter)
     return FileResponse(
-        _chapter.zip(), as_attachment=True, filename=name,
+        chapter.zip(), as_attachment=True, filename=name,
         content_type='application/vnd.comicbook+zip'
     )
 

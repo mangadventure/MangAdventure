@@ -2,11 +2,20 @@ from django.core.cache import cache
 from django.http import FileResponse
 from django.urls import reverse
 
+from pytest import fixture
+
 from MangAdventure.tests.utils import get_test_image, get_valid_zip_file
 
-from reader.models import Chapter, Series
+from reader.models import Series
 
 from . import ReaderTestBase
+
+
+@fixture
+def mock_track_view(monkeypatch):
+    monkeypatch.setattr(
+        'reader.models.Chapter.track_view', lambda **_: None
+    )
 
 
 class ReaderViewTestBase(ReaderTestBase):
@@ -52,14 +61,11 @@ class TestSeries(ReaderViewTestBase):
 
 
 class TestChapterPage(ReaderViewTestBase):
-    def test_get(self):
+    def test_get(self, mock_track_view):
         url = reverse('reader:page', kwargs={
             'slug': 'series', 'vol': 0, 'num': 1, 'page': 1
         })
         r = self.client.get(url)
-        assert Chapter.objects.filter(
-            series__slug='series', volume=0, number=1
-        ).values_list('views', flat=True)[0] == 1
         assert r.status_code == 200
 
     def test_get_page_zero(self):
@@ -78,7 +84,7 @@ class TestChapterPage(ReaderViewTestBase):
 
 
 class TestChapterRedirect(ReaderViewTestBase):
-    def test_get(self):
+    def test_get(self, mock_track_view):
         url = reverse('reader:chapter', kwargs={
             'slug': 'series', 'vol': 0, 'num': 1
         })

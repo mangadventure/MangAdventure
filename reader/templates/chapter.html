@@ -90,7 +90,7 @@
     {% with series_url=curr_chapter.series.get_absolute_url prev=curr_page.number|add:-1 next=curr_page.number|add:1 %}
       <section id="controls" class="no-display">
         <div id="controls-top">{# TODO: previous/next chapter instead of first/last page #}
-          <a href="{{ all_pages.first.get_absolute_url }}" rel="first"
+          <a href="{{ all_pages.0.get_absolute_url }}" rel="first"
              title="First page" class="control"><i class="mi mi-rewind"></i></a>
           {% if prev == 0 %}
             {% if prev_chapter %}
@@ -103,7 +103,7 @@
           {% endif %}
             <i class="mi mi-left"></i>
           </a>
-          {% with curr=curr_page.number|stringformat:'02d' max=all_pages.count %}
+          {% with curr=curr_page.number|stringformat:'02d' max=all_pages|length %}
             <label class="curr-page">
               Page <input type="text" data-max="{{ max }}" value="{{ curr }}"
                           placeholder="{{ curr }}">/{{ max|stringformat:'02d' }}
@@ -119,15 +119,17 @@
             {% endif %}
               <i class="mi mi-right"></i>
             </a>
-            <a href="{{ all_pages.last.get_absolute_url }}" rel="last"
-               title="Last page" class="control"><i class="mi mi-forward"></i></a>
+            {% with all_pages|last as last_page %}
+              <a href="{{ last_page.get_absolute_url }}" rel="last"
+                 title="Last page" class="control"><i class="mi mi-forward"></i></a>
+            {% endwith %}
           {% endwith %}
         </div>
       </section>
     {% endwith %}
   </div>
   <div id="preload" class="no-display">
-    {% for page in curr_page.preload %}
+    {% for page in preload %}
       <img alt="preload" src="{{ page.image.url }}">
     {% endfor %}
   </div>

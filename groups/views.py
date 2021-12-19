@@ -27,8 +27,9 @@ def all_groups(request: HttpRequest) -> HttpResponse:
     """
     uri = request.build_absolute_uri(request.path)
     crumbs = breadcrumbs([('Groups', uri)])
+    groups = Group.objects.defer('manager')
     return render(request, 'all_groups.html', {
-        'groups': Group.objects.all(),
+        'groups': list(groups),
         'breadcrumbs': crumbs
     })
 
@@ -51,7 +52,9 @@ def group(request: HttpRequest, g_id: int) -> HttpResponse:
         _group = Group.objects.get(id=g_id)
     except Group.DoesNotExist as e:
         raise Http404 from e
-    members = _group.members.distinct()
+    members = _group.members \
+        .prefetch_related('roles') \
+        .order_by('name').distinct()
     url = request.path
     p_url = url.rsplit('/', 2)[0] + '/'
     crumbs = breadcrumbs([
@@ -60,7 +63,7 @@ def group(request: HttpRequest, g_id: int) -> HttpResponse:
     ])
     return render(request, 'group.html', {
         'group': _group,
-        'members': members.order_by('name'),
+        'members': list(members),
         'breadcrumbs': crumbs
     })
 

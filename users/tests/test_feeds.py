@@ -42,8 +42,9 @@ class TestBookmarks(UsersTestBase):
     def test_atom(self):
         feed = BookmarksAtom()
         self._test_feed(feed, self.chapter1)
-        assert list(feed.items(self.user)) == [self.chapter1]
-        self.request.GET['token'] = self.user.profile.token
+        profile = self.user.profile
+        assert list(feed.items(profile)) == [self.chapter1]
+        self.request.GET['token'] = profile.token
         r = feed(self.request)
         date = self.chapter1.modified.isoformat()
         assert f'<updated>{date}' in str(r.content)
@@ -52,9 +53,11 @@ class TestBookmarks(UsersTestBase):
     def test_rss(self):
         feed = BookmarksRSS()
         self._test_feed(feed, self.chapter2)
-        assert list(feed.items(self.user2)) == [self.chapter2]
-        self.request.META['HTTP_AUTHORIZATION'] = \
-            f'Bearer {self.user2.profile.token}'
+        profile = self.user2.profile
+        assert list(feed.items(profile)) == [self.chapter2]
+        self.request.META.setdefault(
+            'HTTP_AUTHORIZATION', f'Bearer {profile.token}'
+        )
         r = feed(self.request)
         assert '<guid isPermaLink="true"' in str(r.content)
         assert 'Authorization' in r['Vary']

@@ -117,7 +117,11 @@ def query(params: _SearchParams) -> QuerySet:
         chapter_count=Count('chapters', filter=q),
         latest_upload=Max('chapters__published'),
         views=Sum('chapters__views', distinct=True)
-    ).complex_filter(qsfilter(params) & Q(chapter_count__gt=0)).distinct()
+    ).complex_filter(
+        qsfilter(params) & Q(chapter_count__gt=0)
+    ).defer(
+        'licensed', 'manager', 'created', 'modified'
+    ).distinct()
 
 
 def get_response(request: HttpRequest) -> QuerySet:

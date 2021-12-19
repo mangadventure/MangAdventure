@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex">
 {% endblock %}
 {% block head_extras %}
-  <meta name="totalResults" content="{{ total }}">
+  <meta name="totalResults" content="{{ results|length }}">
   <script src="{% static 'vendor/tablesort.min.js' %}"
           type="application/javascript" async></script>
   <script src="{% static 'scripts/search.js' %}"

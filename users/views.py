@@ -50,7 +50,11 @@ def profile(request: HttpRequest) -> HttpResponse:
     """
     try:
         uid = int(request.GET.get('id', request.user.id))
-        prof = UserProfile.objects.get_or_create(user_id=uid)[0]
+        prof = UserProfile.objects.select_related('user').only(
+            'avatar', 'bio', 'user__email', 'user__username',
+            'user__first_name', 'user__last_name',
+            'user__is_active', 'user__is_superuser'
+        ).get_or_create(user_id=uid)[0]
     except (ValueError, IntegrityError) as e:
         raise Http404 from e
     if not prof.user.is_active:  # pragma: no cover
@@ -82,8 +86,13 @@ class EditUser(TemplateView):
         """
         super().setup(request)
         if request.user.is_authenticated:
-            self.profile = UserProfile.objects \
-                .get_or_create(user_id=request.user.id)[0]
+            self.profile = UserProfile.objects.defer(
+                'token', 'user__last_login',
+                'user__is_staff', 'user__date_joined',
+                'user__is_active', 'user__is_superuser'
+            ).select_related('user').get_or_create(
+                user_id=request.user.id
+            )[0]
             url = request.path
             p_url = url.rsplit('/', 2)[0] + '/'
             crumbs = breadcrumbs([
@@ -194,11 +203,15 @@ class Bookmarks(TemplateView):
         ])
         chapters = Chapter.objects.filter(series_id__in=Subquery(
             Bookmark.objects.filter(user_id=request.user.id).values('series')
-        )).order_by('-published')
+        )).select_related('series').order_by('-published').only(
+            'title', 'volume', 'number', 'published',
+            'final', 'series__cover', 'series__slug',
+            'series__title', 'series__format'
+        )
         token = UserProfile.objects.only('token') \
             .get_or_create(user_id=request.user.id)[0].token
         return self.render_to_response(self.get_context_data(
-            releases=chapters, breadcrumbs=crumbs, token=token
+            releases=list(chapters), breadcrumbs=crumbs, token=token
         ))
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
@@ -212,12 +225,12 @@ class Bookmarks(TemplateView):
         :return: | An empty :status:`201` response when creating a bookmark.
                  | An empty :status:`204` response when deleting a bookmark.
         """
-        bookmark, created = Bookmark.objects.get_or_create(
+        bookmark, created = Bookmark.objects.only('id').get_or_create(
             user_id=request.user.id, series_id=request.POST.get('series', 0)
         )
         if not created:
             bookmark.delete()
-        return HttpResponse(status=(201 if created else 204))
+        return HttpResponse(status=201 if created else 204)
 
 
 __all__ = ['profile', 'EditUser', 'Bookmarks', 'Logout', 'PasswordReset']

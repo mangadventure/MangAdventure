@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Iterable
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.contrib.syndication.views import Feed
+from django.db.models import Subquery
 from django.http import HttpResponse
 from django.utils import timezone as tz
 from django.utils.cache import patch_vary_headers
@@ -16,6 +16,7 @@ from django.utils.http import http_date
 from MangAdventure.utils import HttpResponseUnauthorized
 
 from reader.models import Chapter
+from users.models import Bookmark, UserProfile
 
 if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime  # isort:skip
@@ -56,8 +57,10 @@ class BookmarksRSS(Feed):
                 )
             token = header[7:]
         try:
-            obj = User.objects.get(profile__token=token)
-        except User.DoesNotExist:
+            obj = UserProfile.objects.only(
+                'token', 'user_id'
+            ).get(token=token)
+        except UserProfile.DoesNotExist:
             return HttpResponse(
                 b'The provided token is invalid.',
                 status=403, content_type='text/plain'
@@ -71,7 +74,7 @@ class BookmarksRSS(Feed):
         feedgen.write(res, 'utf-8')
         return res
 
-    def feed_url(self, obj: User) -> str:
+    def feed_url(self, obj: UserProfile) -> str:
         """
         Get the feed's own URL.
 
@@ -79,9 +82,9 @@ class BookmarksRSS(Feed):
 
         :return: The feed's URL.
         """
-        return '/user/bookmarks.rss?token=' + obj.profile.token
+        return '/user/bookmarks.rss?token=' + obj.token
 
-    def items(self, obj: User) -> Iterable[Chapter]:
+    def items(self, obj: UserProfile) -> Iterable[Chapter]:
         """
         Get an iterable of the feed's items.
 
@@ -89,10 +92,19 @@ class BookmarksRSS(Feed):
 
         :return: An iterable of ``Chapter`` objects.
         """
-        return Chapter.objects.filter(
+        return Chapter.objects.only(
+            'title', 'volume', 'number',
+            'published', 'modified', 'series__slug',
+            'series__title', 'series__format'
+        ).select_related('series').filter(
             published__lte=tz.now(),
-            series_id__in=obj.bookmarks.values('series_id')
-        ).select_related('series').order_by('-published')
+            series__licensed=False,
+            series_id__in=Subquery(
+                Bookmark.objects.filter(
+                    user_id=obj.user_id
+                ).values('series_id')
+            )
+        ).order_by('-published')
 
     def item_description(self, item: Chapter) -> str:
         """
@@ -136,7 +148,7 @@ class BookmarksAtom(BookmarksRSS):
     feed_type = Atom1Feed
     subtitle = BookmarksRSS.description
 
-    def feed_url(self, obj: User) -> str:
+    def feed_url(self, obj: UserProfile) -> str:
         """
         Get the feed's own URL.
 
@@ -144,7 +156,7 @@ class BookmarksAtom(BookmarksRSS):
 
         :return: The feed's URL.
         """
-        return '/user/bookmarks.atom?token=' + obj.profile.token
+        return '/user/bookmarks.atom?token=' + obj.token
 
 
 __all__ = ['BookmarksRSS', 'BookmarksAtom']

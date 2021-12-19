@@ -1,3 +1,4 @@
+from operator import attrgetter
 from typing import Dict, List
 
 from django.core.cache import cache
@@ -66,7 +67,7 @@ class TestSearch(MangadvViewTestBase):
         r = self.client.get(self.URL, params)
         assert r.status_code == 200
         if bool(params and results):
-            values = r.context['results'].values_list('title', flat=True)
+            values = map(attrgetter('title'), r.context['results'])
             assert natsort(values) == results
 
     def test_get_simple(self):

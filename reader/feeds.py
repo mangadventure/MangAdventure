@@ -7,14 +7,17 @@ from typing import TYPE_CHECKING, Iterable, Optional
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
+from django.db.models import Prefetch
 from django.utils import timezone as tz
 from django.utils.feedgenerator import Atom1Feed
 
-from .models import Chapter, Series
+from .models import Category, Chapter, Series
 
 if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime  # isort:skip
     from django.http import HttpRequest  # isort:skip
+
+_max = settings.CONFIG['MAX_RELEASES']
 
 
 class LibraryRSS(Feed):
@@ -32,8 +35,13 @@ class LibraryRSS(Feed):
 
         :return: An iterable of ``Series`` objects.
         """
-        _max = settings.CONFIG['MAX_RELEASES']
-        return Series.objects.order_by('-created')[:_max]
+        categories = Category.objects.only('name')
+        return Series.objects.only(
+            'slug', 'title', 'description',
+            'cover', 'created', 'modified'
+        ).prefetch_related(
+            Prefetch('categories', queryset=categories)
+        ).order_by('-created')[:_max]
 
     def item_description(self, item: Series) -> str:
         """
@@ -53,7 +61,7 @@ class LibraryRSS(Feed):
 
         :return: The names of the series' categories.
         """
-        return item.categories.values_list('name', flat=True)
+        return [c.name for c in item.categories.all()]
 
     def item_pubdate(self, item: Series) -> datetime:
         """
@@ -133,7 +141,18 @@ class ReleasesRSS(Feed):
         """
         if slug is None:
             return None
-        return Series.objects.prefetch_related('chapters').get(slug=slug)
+        chapters = Chapter.objects.only(
+            'title', 'volume', 'number',
+            'published', 'modified', 'series'
+        ).filter(
+            published__lte=tz.now(),
+            series__licensed=False
+        )
+        return Series.objects.only(
+            'slug', 'title', 'licensed', 'format'
+        ).prefetch_related(
+            Prefetch('chapters', queryset=chapters)
+        ).get(slug=slug)
 
     def link(self, obj: Optional[Series]) -> str:
         """
@@ -180,9 +199,14 @@ class ReleasesRSS(Feed):
         """
         if getattr(obj, 'licensed', False):  # pragma: no cover
             return []
-        _max = settings.CONFIG['MAX_RELEASES']
-        return getattr(obj, 'chapters', Chapter.objects) \
-            .filter(published__lte=tz.now()).order_by('-published')[:_max]
+        if hasattr(obj, 'chapters'):
+            return list(obj.chapters.all())
+        return Chapter.objects.only(
+            'title', 'volume', 'number', 'published', 'modified',
+            'series__slug', 'series__title', 'series__format'
+        ).select_related('series').filter(
+            published__lte=tz.now(), series__licensed=False
+        ).order_by('-published')[:_max]
 
     def item_description(self, item: Chapter) -> str:
         """

@@ -120,9 +120,6 @@ class TestChapter(ReaderTestBase):
         chapter1 = self.create_chapter(volume=2, number=1)
         chapter2 = self.create_chapter(volume=1, number=3)
         chapter3 = self.create_chapter(volume=2, number=2)
-        # Next / prev
-        assert chapter1.prev == chapter2
-        assert chapter1.next == chapter3
         # lt / gt
         assert chapter2 < chapter1 < chapter3
         assert chapter3 > chapter1 > chapter2
@@ -180,12 +177,6 @@ class TestPage(ReaderTestBase):
         assert page.get_absolute_url() == reverse('reader:page', kwargs={
             'slug': 'my-series', 'vol': 1, 'num': 0.5, 'page': 1
         })
-
-    def test_preload(self):
-        page = self.create_page()
-        for i in range(2, 6):
-            self.create_page(i)
-        assert page.preload.count() == 3
 
     def test_relations(self):
         page1 = self.create_page(1)

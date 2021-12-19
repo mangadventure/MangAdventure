@@ -8,6 +8,7 @@ v0.8.2
 * Fixed Photon CDN params
 * Added an API docs view
 * Deprecated ``PUT`` operations
+* Cleaned up redundant queries
 * Fixed password reset view
 
 v0.8.1

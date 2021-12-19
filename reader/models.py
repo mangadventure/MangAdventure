@@ -7,6 +7,7 @@ from io import BytesIO
 from os import path, remove
 from pathlib import PurePath
 from shutil import rmtree
+from threading import Thread
 from typing import Any, List, Tuple
 from zipfile import ZipFile
 
@@ -312,6 +313,20 @@ class Chapter(models.Model):
             )
         )
 
+    @classmethod
+    def track_view(cls, **kwargs):  # pragma: no cover
+        """
+        Increment the chapter views in a new thread.
+
+        :param kwargs: The arguments given to the queryset filter.
+        """
+        def run():
+            cls.objects.filter(**kwargs).update(
+                views=models.F('views') + 1
+            )
+
+        Thread(target=run, daemon=True, name='track_view').start()
+
     def save(self, *args, **kwargs):
         """Save the current instance."""
         super().save(*args, **kwargs)
@@ -320,26 +335,6 @@ class Chapter(models.Model):
             self.unzip()
         self.series.completed = self.final
         self.series.save(update_fields=('completed',))
-
-    @cached_property
-    def next(self) -> Chapter:
-        """Get the next chapter in the series."""
-        q = Q(series_id=self.series_id) & (
-            Q(volume__gt=self.volume) |
-            Q(volume=self.volume, number__gt=self.number)
-        )
-        return self.__class__.objects.filter(q) \
-            .order_by('volume', 'number').first()
-
-    @cached_property
-    def prev(self) -> Chapter:
-        """Get the previous chapter in the series."""
-        q = Q(series_id=self.series_id) & (
-            Q(volume__lt=self.volume) |
-            Q(volume=self.volume, number__lt=self.number)
-        )
-        return self.__class__.objects.filter(q) \
-            .order_by('-volume', '-number').first()
 
     def get_absolute_url(self) -> str:
         """
@@ -398,7 +393,7 @@ class Chapter(models.Model):
         """
         buf = BytesIO()
         with ZipFile(buf, 'a', compression=8) as zf:
-            for page in self.pages.iterator():
+            for page in self.pages.all():
                 img = page.image.path
                 name = f'{page.number:03d}'
                 ext = path.splitext(img)[-1]
@@ -559,23 +554,6 @@ class Page(models.Model):
             self.chapter.series.slug, self.chapter.volume,
             self.chapter.number, self.number
         ))
-
-    @cached_property
-    def preload(self) -> models.QuerySet:
-        """
-        Get the pages that will be preloaded.
-
-        .. admonition:: TODO
-           :class: warning
-
-           Make the number of preloaded pages configurable.
-
-        :return: The three next pages of the chapter.
-        """
-        return self.__class__.objects.filter(
-            chapter_id=self.chapter_id,
-            number__range=(self.number + 1, self.number + 3)
-        ).only('image')
 
     def __str__(self) -> str:
         """

@@ -10,7 +10,7 @@
         rel="alternate" type="application/atom+xml">
 {% endblock %}
 {% block keywords %}
-  <meta name="keywords" content="{{ tags }}">
+  <meta name="keywords" content="{{ tags|join:',' }}">
 {% endblock %}
 {% block image %}
   <meta name="twitter:card" content="summary">
@@ -40,38 +40,30 @@
          data-target="{% url 'user_bookmarks' %}"></i>
     {% endif %}
     <div id="series-info">
-      {% with aliases=series.aliases.all %}
-        {% if aliases %}
-          <div id="series-aliases">
-            <strong class="alter-fg">Alt. title{{ aliases|pluralize }}:</strong>
-            {% for alias in aliases %}<div class="alias">{{ alias }}</div>{% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-      {% with authors=series.authors.all %}
-        {% if authors %}
-          <div id="series-authors">
-            <strong class="alter-fg">Author{{ authors|pluralize }}:</strong>
-            {% for author in authors %}<div class="author">{{ author }}</div>{% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-      {% with artists=series.artists.all %}
-        {% if artists %}
-          <div id="series-artists">
-            <strong class="alter-fg">Artist{{ artists|pluralize }}:</strong>
-            {% for artist in artists %}<div class="artist">{{ artist }}</div>{% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-      {% with categories=series.categories.all %}
-        {% if categories %}
-          <div id="series-categories">
-            <strong class="alter-fg">Categor{{ categories|pluralize:'y,ies' }}:</strong>
-            {% for category in categories %}<div class="category">{{ category }}</div>{% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
+      {% if aliases %}
+        <div id="series-aliases">
+          <strong class="alter-fg">Alt. title{{ aliases|pluralize }}:</strong>
+          {% for alias in aliases %}<div class="alias">{{ alias }}</div>{% endfor %}
+        </div>
+      {% endif %}
+      {% if authors %}
+        <div id="series-authors">
+          <strong class="alter-fg">Author{{ authors|pluralize }}:</strong>
+          {% for author in authors %}<div class="author">{{ author }}</div>{% endfor %}
+        </div>
+      {% endif %}
+      {% if artists %}
+        <div id="series-artists">
+          <strong class="alter-fg">Artist{{ artists|pluralize }}:</strong>
+          {% for artist in artists %}<div class="artist">{{ artist }}</div>{% endfor %}
+        </div>
+      {% endif %}
+      {% if tags %}
+        <div id="series-categories">
+          <strong class="alter-fg">Categor{{ tags|pluralize:'y,ies' }}:</strong>
+          {% for tag in tags %}<div class="category">{{ tag }}</div>{% endfor %}
+        </div>
+      {% endif %}
       <div id="series-status">
         <strong class="alter-fg">Status: </strong>
         <span>{{ series.completed|yesno:'Completed,Ongoing' }}</span>

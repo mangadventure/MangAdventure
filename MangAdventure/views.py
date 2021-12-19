@@ -4,11 +4,13 @@ from importlib.util import find_spec
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from django.conf import settings
+from django.db.models import Prefetch
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone as tz
 from django.views.decorators.cache import cache_control
 
+from groups.models import Group
 from reader.models import Category, Chapter
 
 from .bad_bots import BOTS
@@ -33,12 +35,21 @@ def index(request: 'HttpRequest') -> HttpResponse:
     :return: A response with the rendered ``index.html`` template.
     """
     _max = settings.CONFIG['MAX_RELEASES']
-    latest = Chapter.objects.prefetch_related('groups', 'series') \
-        .filter(published__lte=tz.now()).order_by('-published')[:_max]
+    groups = Group.objects.only('name')
+    latest = Chapter.objects.filter(
+        published__lte=tz.now(),
+        series__licensed=False
+    ).order_by('-published').only(
+        'title', 'number', 'volume', 'final', 'published',
+        'series__title', 'series__slug', 'series__format'
+    ).prefetch_related(
+        Prefetch('groups', queryset=groups)
+    ).select_related('series')[:_max]
     uri = request.build_absolute_uri('/')
     crumbs = breadcrumbs([('Home', uri)])
     return render(request, 'index.html', {
-        'latest_releases': latest, 'breadcrumbs': crumbs
+        'breadcrumbs': crumbs,
+        'latest_releases': list(latest)
     })
 
 
@@ -54,17 +65,20 @@ def search(request: 'HttpRequest') -> HttpResponse:
     results = []
     params = parse(request)
     if request.GET.keys() & {'q', 'author', 'status', 'categories'}:
-        results = query(params).order_by('title')
+        results = query(params).prefetch_related(
+            'categories', 'authors', 'artists'
+        ).exclude(licensed=True).order_by('title')
     uri = request.build_absolute_uri(request.path)
     crumbs = breadcrumbs([('Search', uri)])
+    categories = list(Category.objects.all())
     return render(request, 'search.html', {
         'query': params.query,
         'author': params.author,
         'status': params.status,
         'in_categories': params.categories[0],
         'ex_categories': params.categories[1],
-        'all_categories': Category.objects.all(),
-        'results': results, 'total': len(results),
+        'all_categories': categories,
+        'results': list(results),
         'breadcrumbs': crumbs
     })
 

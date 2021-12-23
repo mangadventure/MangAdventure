@@ -1,5 +1,7 @@
 """The main views and error handlers."""
 
+from __future__ import annotations
+
 from importlib.util import find_spec
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
@@ -8,6 +10,7 @@ from django.db.models import Prefetch
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone as tz
+from django.utils.html import escapejs
 from django.views.decorators.cache import cache_control
 
 from groups.models import Group
@@ -26,7 +29,7 @@ def _error_context(msg: str, status: int = 500) -> Dict[str, Any]:
 
 
 @cache_control(max_age=600, must_revalidate=True)
-def index(request: 'HttpRequest') -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponse:
     """
     View that serves the index page which shows the latest releases.
 
@@ -34,7 +37,7 @@ def index(request: 'HttpRequest') -> HttpResponse:
 
     :return: A response with the rendered ``index.html`` template.
     """
-    _max = settings.CONFIG['MAX_RELEASES']
+    max_ = settings.CONFIG['MAX_RELEASES']
     groups = Group.objects.only('name')
     latest = Chapter.objects.filter(
         published__lte=tz.now(),
@@ -44,7 +47,7 @@ def index(request: 'HttpRequest') -> HttpResponse:
         'series__title', 'series__slug', 'series__format'
     ).prefetch_related(
         Prefetch('groups', queryset=groups)
-    ).select_related('series')[:_max]
+    ).select_related('series')[:max_]
     uri = request.build_absolute_uri('/')
     crumbs = breadcrumbs([('Home', uri)])
     return render(request, 'index.html', {
@@ -54,7 +57,7 @@ def index(request: 'HttpRequest') -> HttpResponse:
 
 
 @cache_control(max_age=600, must_revalidate=True)
-def search(request: 'HttpRequest') -> HttpResponse:
+def search(request: HttpRequest) -> HttpResponse:
     """
     View that serves a page used for searching for series.
 
@@ -84,7 +87,7 @@ def search(request: 'HttpRequest') -> HttpResponse:
 
 
 @cache_control(public=True, max_age=2628000, immutable=True)
-def opensearch(request: 'HttpRequest') -> HttpResponse:
+def opensearch(request: HttpRequest) -> HttpResponse:
     """
     View that serves the ``opensearch.xml`` file.
 
@@ -92,21 +95,19 @@ def opensearch(request: 'HttpRequest') -> HttpResponse:
 
     :return: A response with the rendered ``opensearch.xml`` template.
     """
-    _icon = request.build_absolute_uri(
-        settings.CONFIG['FAVICON']
-    )
-    _search = request.build_absolute_uri('/search/')
-    _self = request.build_absolute_uri('/opensearch.xml')
+    icon = request.build_absolute_uri(settings.CONFIG['FAVICON'])
+    search_ = request.build_absolute_uri('/search/')
+    self_ = request.build_absolute_uri('/opensearch.xml')
     return render(
         request, 'opensearch.xml', {
             'name': settings.CONFIG['NAME'],
-            'search': _search, 'self': _self, 'icon': _icon,
+            'search': search_, 'self': self_, 'icon': icon,
         }, 'application/opesearchdescription+xml'
     )
 
 
 @cache_control(public=True, max_age=31536000, immutable=True)
-def contribute(request: 'HttpRequest') -> HttpResponse:
+def contribute(request: HttpRequest) -> HttpResponse:
     """
     View that serves the ``contribute.json`` file.
 
@@ -118,7 +119,25 @@ def contribute(request: 'HttpRequest') -> HttpResponse:
 
 
 @cache_control(public=True, max_age=2628000, immutable=True)
-def robots(request: 'HttpRequest') -> HttpResponse:
+def manifest(request: HttpRequest) -> HttpResponse:
+    """
+    View that serves the ``manifest.webmanifest`` file.
+
+    :param request: The original request.
+
+    :return: A response with the ``manifest.webmanifest`` file.
+    """
+    return render(request, 'manifest.webmanifest', {
+        'lang': settings.LANGUAGE_CODE,
+        'name': escapejs(settings.CONFIG['NAME']),
+        'description': escapejs(settings.CONFIG['DESCRIPTION']),
+        'background': settings.CONFIG['MAIN_BG_COLOR'],
+        'color': settings.CONFIG['MAIN_TEXT_COLOR'],
+    }, 'application/manifest+json')
+
+
+@cache_control(public=True, max_age=2628000, immutable=True)
+def robots(request: HttpRequest) -> HttpResponse:
     """
     View that serves the ``robots.txt`` file.
 
@@ -127,13 +146,13 @@ def robots(request: 'HttpRequest') -> HttpResponse:
     :return: A response with the generated ``robots.txt`` file.
     """
     ctype = 'text/plain; charset=us-ascii'
-    _robots = 'User-agent: *\nDisallow:\n\n' + '\n'.join(
+    robots_ = 'User-agent: *\nDisallow:\n\n' + '\n'.join(
         f'User-agent: {ua}\nDisallow: /\n' for ua in BOTS
     )
-    return HttpResponse(content=_robots, content_type=ctype)
+    return HttpResponse(content=robots_, content_type=ctype)
 
 
-def handler400(request: 'HttpRequest', exception: Optional[Exception]
+def handler400(request: HttpRequest, exception: Optional[Exception]
                = None, template_name: str = 'error.html'
                ) -> HttpResponse:  # pragma: no cover
     """
@@ -154,7 +173,7 @@ def handler400(request: 'HttpRequest', exception: Optional[Exception]
     return render(request, template_name, context, status=400)
 
 
-def handler403(request: 'HttpRequest', exception: Optional[Exception]
+def handler403(request: HttpRequest, exception: Optional[Exception]
                = None, template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`403` responses.
@@ -174,7 +193,7 @@ def handler403(request: 'HttpRequest', exception: Optional[Exception]
     return render(request, template_name, context, status=403)
 
 
-def handler404(request: 'HttpRequest', exception: Optional[Exception]
+def handler404(request: HttpRequest, exception: Optional[Exception]
                = None, template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`404` responses.
@@ -195,7 +214,7 @@ def handler404(request: 'HttpRequest', exception: Optional[Exception]
     return render(request, template_name, context, status=404)
 
 
-def handler500(request: 'HttpRequest', exception: Optional[Exception]
+def handler500(request: HttpRequest, exception: Optional[Exception]
                = None, template_name: str = 'error.html'
                ) -> HttpResponse:  # pragma: no cover
     """
@@ -217,6 +236,7 @@ def handler500(request: 'HttpRequest', exception: Optional[Exception]
 
 
 __all__ = [
-    'index', 'search', 'opensearch', 'contribute', 'robots',
-    'handler400', 'handler403', 'handler404', 'handler500'
+    'index', 'search', 'opensearch', 'robots',
+    'contribute', 'manifest', 'handler400',
+    'handler403', 'handler404', 'handler500'
 ]

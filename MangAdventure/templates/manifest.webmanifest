@@ -1,0 +1,28 @@
+{
+    "start_url": "/",
+    "lang": "{{lang}}",
+    "name": "{{name}}",
+    "description": "{{description}}",
+    "background_color": "{{background}}",
+    "theme_color": "{{color}}",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [{
+        "src": "/media/icon-192x192.webp",
+        "sizes": "192x192",
+        "type": "image/webp",
+        "purpose": "any maskable"
+    }, {
+        "src": "/media/icon-512x512.webp",
+        "sizes": "512x512",
+        "type": "image/webp",
+        "purpose": "any maskable"
+    }],
+    "shortcuts": [
+        {"name": "Latest", "url": "/"},
+        {"name": "Library", "url": "/reader/"},
+        {"name": "Search", "url": "/search/"},
+        {"name": "Bookmarks", "url": "/user/bookmarks/"}
+    ]
+}

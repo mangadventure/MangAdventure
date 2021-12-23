@@ -424,6 +424,9 @@ if find_spec('csp'):
     #: Set the :csp:`connect-src` CSP directive.
     CSP_CONNECT_SRC = ("'self'",)
 
+    #: Set the :csp:`manifest-src` CSP directive.
+    CSP_MANIFEST_SRC = ("'self'",)
+
     #: Set the :csp:`script-src` CSP directive.
     CSP_SCRIPT_SRC = ("'self'",)
 
@@ -524,6 +527,7 @@ if not DEBUG:  # pragma: no cover
 #    Configuration    #
 #######################
 
+LOGO = env['LOGO']
 #: Configuration variables defined by the user in the ``.env`` file.
 CONFIG = {
     'NAME': env['NAME'],
@@ -533,7 +537,9 @@ CONFIG = {
     'DISCORD': env.get('DISCORD'),
     'TWITTER': env.get('TWITTER'),
     'FAVICON': env['FAVICON'],
-    'LOGO': env['LOGO'],
+    'LOGO': MEDIA_URL + LOGO,
+    'LOGO_TW': MEDIA_URL + env.get('LOGO_TW', LOGO),
+    'LOGO_OG': MEDIA_URL + env.get('LOGO_OG', LOGO),
     'MAIN_BG_COLOR': env['MAIN_BG_COLOR'],
     'MAIN_TEXT_COLOR': env['MAIN_TEXT_COLOR'],
     'ALTER_BG_COLOR': env['ALTER_BG_COLOR'],
@@ -548,9 +554,6 @@ CONFIG = {
     'SHOW_CREDITS': env.bool('SHOW_CREDITS', True),
     'ENABLE_API_V1': env.bool('ENABLE_API_V1', False),
 }
-
-CONFIG['LOGO_TW'] = env.get('LOGO_TW', CONFIG['LOGO'])
-CONFIG['LOGO_OG'] = env.get('LOGO_OG', CONFIG['LOGO'])
 
 ###############
 #    Debug    #
@@ -582,4 +585,4 @@ if find_spec('sentry_sdk'):
         traces_sample_rate=env.float('SENTRY_SAMPLE_RATE', 0.0) / 100
     )
 
-del BOTS, LOGS_DIR, VERSION
+del BOTS, LOGO, LOGS_DIR, VERSION

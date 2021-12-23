@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.8.3
+^^^^^^^
+
+* Added a webapp manifest
+
 v0.8.2
 ^^^^^^
 

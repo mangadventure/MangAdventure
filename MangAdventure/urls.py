@@ -8,7 +8,7 @@ from django.urls import include, path
 
 from reader import feeds
 
-from .views import contribute, index, opensearch, robots, search
+from .views import contribute, index, manifest, opensearch, robots, search
 
 #: The main URL patterns.
 urlpatterns = [
@@ -22,6 +22,7 @@ urlpatterns = [
     path('user/', include('users.urls')),
     path('opensearch.xml', opensearch, name='opensearch'),
     path('contribute.json', contribute, name='contribute'),
+    path('manifest.webmanifest', manifest, name='manifest'),
     path('robots.txt', robots, name='robots'),
     path('releases.atom', feeds.ReleasesAtom(), name='releases.atom'),
     path('releases.rss', feeds.ReleasesRSS(), name='releases.rss'),

@@ -43,8 +43,8 @@ jobs:
           : ${GITHUB_REF##*/}; [[ ${_%.*} == ${tag%.*} ]] || exit 0
           curl -Ssf "$GH_API/$id" -d '{"prerelease":true}' \
             -XPATCH -H "Authorization: Token $GITHUB_TOKEN"
-          curl -Ssf "$RTFD_API/mangadventure/versions/$tag/" -XPATCH \
-            -d 'prerelease=true' -H "Authorization: Token $RTFD_TOKEN"
+          curl -Ssf "$RTFD_API/mangadventure/versions/$tag/" \
+            -d 'active=false' -XPATCH -H "Authorization: Token $RTFD_TOKEN"
         env:
           RTFD_TOKEN: ${{secrets.RTFD_TOKEN}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

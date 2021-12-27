@@ -1,5 +1,7 @@
 """API viewsets for the groups app."""
 
+from django.db.models import Prefetch
+
 from rest_framework.parsers import MultiPartParser
 from rest_framework.viewsets import ModelViewSet
 
@@ -21,7 +23,13 @@ class GroupViewSet(CORSMixin, ModelViewSet):
     * delete: Delete the given group.
     """
     schema = OpenAPISchema(tags=('groups',))
-    queryset = models.Group.objects.all()
+    queryset = models.Group.objects.prefetch_related(
+        Prefetch('roles', queryset=(
+            models.Role.objects.only(
+                'member__name', 'role', 'group_id'
+            ).select_related('member')
+        ))
+    )
     serializer_class = serializers.GroupSerializer
     parser_classes = (MultiPartParser,)
 

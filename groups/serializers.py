@@ -38,7 +38,10 @@ class GroupSerializer(ModelSerializer):
     )
 
     def _get_members(self, obj: Group) -> List[str]:
-        return [f'{m} ({m.get_roles(obj)})' for m in obj.members.distinct()]
+        return [
+            f'{r.get_role_display()}: {r.member.name}'
+            for r in obj.roles.all()
+        ]
 
     def create(self, validated_data: Dict) -> Group:
         """Create a new ``Group`` instance."""

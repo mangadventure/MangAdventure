@@ -416,6 +416,7 @@ if env.bool('HTTPS', True):
     #: See :auth:`ACCOUNT_DEFAULT_HTTP_PROTOCOL <configuration.html>`.
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
+CDN = env.get('USE_CDN', '').lower()
 # Optional django-csp module
 if find_spec('csp'):
     #: Set the :csp:`default-src` CSP directive.
@@ -445,7 +446,7 @@ if find_spec('csp'):
         'statically': ("'self'", "https://cdn.statically.io"),
         'weserv': ("'self'", "https://images.weserv.nl"),
         'photon': ("'self'", "https://i3.wp.com")
-    }.get(env.get('USE_CDN', '').lower(), ("'self'",))
+    }.get(CDN, ("'self'",))
 
     #: Set the :csp:`form-action` CSP directive.
     CSP_FORM_ACTION = ("'self'",)
@@ -536,7 +537,7 @@ CONFIG = {
     'KEYWORDS': env['KEYWORDS'],
     'DISCORD': env.get('DISCORD'),
     'TWITTER': env.get('TWITTER'),
-    'FAVICON': env['FAVICON'],
+    'FAVICON': MEDIA_URL + env['FAVICON'],
     'LOGO': MEDIA_URL + LOGO,
     'LOGO_TW': MEDIA_URL + env.get('LOGO_TW', LOGO),
     'LOGO_OG': MEDIA_URL + env.get('LOGO_OG', LOGO),
@@ -547,7 +548,7 @@ CONFIG = {
     'SHADOW_COLOR': env['SHADOW_COLOR'],
     'FONT_NAME': env['FONT_NAME'],
     'FONT_URL': env['FONT_URL'],
-    'USE_CDN': env.get('USE_CDN', 'off'),
+    'USE_CDN': CDN,
     'ALLOW_DLS': env.bool('ALLOW_DLS', True),
     'MAX_RELEASES': env.int('MAX_RELEASES', 10),
     'MAX_CHAPTERS': env.int('MAX_CHAPTERS', 1),
@@ -585,4 +586,4 @@ if find_spec('sentry_sdk'):
         traces_sample_rate=env.float('SENTRY_SAMPLE_RATE', 0.0) / 100
     )
 
-del BOTS, LOGO, LOGS_DIR, VERSION
+del BOTS, CDN, LOGO, LOGS_DIR, VERSION

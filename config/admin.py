@@ -65,7 +65,7 @@ class InfoPageAdmin(FlatPageAdmin):
     change_list_form = ModelForm
     form = InfoPageForm
     fieldsets = (
-        (None, {'fields': ('url', 'title', 'content')}),
+        (None, {'fields': ('url', 'title', 'content', 'sites')}),
     )
     readonly_fields = ('url',)
     list_filter = ()

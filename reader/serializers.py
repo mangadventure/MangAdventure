@@ -242,10 +242,10 @@ class CubariSerializer(ModelSerializer):
         return self.context['view'].request.build_absolute_uri(path)
 
     def _get_artist(self, obj: Series) -> str:
-        return ', '.join(obj.artists.values_list('name', flat=True))
+        return ', '.join(a.name for a in obj.artists.all())
 
     def _get_author(self, obj: Series) -> str:
-        return ', '.join(obj.authors.values_list('name', flat=True))
+        return ', '.join(a.name for a in obj.authors.all())
 
     def _get_cover(self, obj: Series) -> str:
         return self.__uri(obj.cover.url)
@@ -261,22 +261,17 @@ class CubariSerializer(ModelSerializer):
         ]
 
     def _get_chapters(self, obj: Series) -> Dict[str, Dict]:
-        result = dict()
-        chapters = obj.chapters.prefetch_related('groups__name', 'pages')
-        for ch in chapters.order_by('volume', 'number').iterator():
-            groups = ch.groups.values_list('name', flat=True)
-            pages = ch.pages.order_by('number')
-            result[f'{ch.number:g}'] = {
+        return {
+            f'{ch.number:g}': {
                 'title': ch.title,
                 'volume': str(ch.volume),
                 'groups': {
-                    ', '.join(groups): [
-                        self.__uri(p.image.url) for p in pages.iterator()
-                    ]
+                    ', '.join(g.name for g in ch.groups.all()) or 'N/A':
+                    [self.__uri(p.image.url) for p in ch.pages.all()]
                 },
                 'last_updated': str(round(ch.modified.timestamp()))
-            }
-        return result
+            } for ch in obj.chapters.all()
+        }
 
     class Meta:
         model = Series

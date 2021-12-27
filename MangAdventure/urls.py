@@ -1,8 +1,5 @@
 """The root URLconf."""
 
-from importlib.util import find_spec
-
-from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
@@ -29,15 +26,6 @@ urlpatterns = [
     path('library.atom', feeds.LibraryAtom(), name='library.atom'),
     path('library.rss', feeds.LibraryAtom(), name='library.rss'),
 ]
-
-if settings.DEBUG:  # pragma: no cover
-    from django.conf.urls.static import static
-    urlpatterns += static(
-        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-    )
-    if find_spec('debug_toolbar'):
-        from debug_toolbar import urls as djdt_urls
-        urlpatterns.append(path('__debug__/', include(djdt_urls)))
 
 
 #: See :func:`MangAdventure.views.handler400`.

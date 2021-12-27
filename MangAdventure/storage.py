@@ -7,7 +7,7 @@ Custom storages.
 """
 
 from typing import Optional, Tuple
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
@@ -48,12 +48,13 @@ class CDNStorage(FileSystemStorage):
     def _photon_url(self, name: str) -> str:
         domain = settings.CONFIG['DOMAIN']
         scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
-        base, qs = f'{scheme}://i3.wp.com/', '?'
+        base = f'{scheme}://i3.wp.com/'
+        qs = {'ssl': 1} if scheme == 'https' else dict()
         if name.lower().endswith(('.jpg', '.jpeg')):
-            qs = '?quality=100&'
+            qs['quality'] = 100
         if self._fit:
-            qs += f'fit={self._fit["w"]},{self._fit["h"]}'
-        return base + domain + self.base_url + name + qs
+            qs['fit'] = f'{self._fit["w"]},{self._fit["h"]}'
+        return base + domain + self.base_url + name + '?' + urlencode(qs)
 
     def url(self, name: str) -> str:
         """

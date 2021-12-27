@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
+from django.db.models import Prefetch
 from django.urls import reverse
 
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -14,6 +15,7 @@ from rest_framework.viewsets import GenericViewSet, mixins
 
 from api.v2.mixins import CORSMixin
 from api.v2.schema import OpenAPISchema
+from reader.models import Series
 
 from .models import ApiKey, UserProfile
 from .serializers import (
@@ -48,7 +50,10 @@ class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
         return super().get_permissions()
 
     def get_queryset(self) -> QuerySet:
-        return self.request.user.bookmarks.all()
+        series = Series.objects.only('id', 'slug', 'title')
+        return self.request.user.bookmarks.prefetch_related(
+            Prefetch('series', queryset=series)
+        )
 
     def list(self, request: Request, *args, **kwargs) -> Response:
         token = request.user.profile.token

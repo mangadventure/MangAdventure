@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 from warnings import filterwarnings
 
-from django.db.models import Count, Max, Q, Sum
+from django.db.models import Count, Max, Prefetch, Q, Sum
 from django.utils import timezone as tz
 
 from rest_framework.mixins import (
@@ -18,6 +18,7 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from api.v2.mixins import CORSMixin
 from api.v2.pagination import PageLimitPagination
 from api.v2.schema import OpenAPISchema
+from groups.models import Group
 
 from . import filters, models, serializers
 
@@ -156,9 +157,25 @@ class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
     * read: Generate JSON for cubari.moe.
     """
     schema = OpenAPISchema(tags=('cubari',), operation_id_base='Cubari')
-    queryset = models.Series.objects.all()
     serializer_class = serializers.CubariSerializer
     lookup_field = 'slug'
+
+    def get_queryset(self) -> QuerySet:
+        pages = models.Page.objects.order_by('number')
+        groups = Group.objects.only('name')
+        chapters = models.Chapter.objects.prefetch_related(
+            Prefetch('pages', queryset=pages),
+            Prefetch('groups', queryset=groups)
+        ).order_by('volume', 'number').only(
+            'title', 'number', 'volume', 'modified', 'series'
+        )
+        return models.Series.objects.defer(
+            'manager_id', 'modified',
+            'created', 'completed', 'licensed'
+        ).prefetch_related(
+            Prefetch('authors'), Prefetch('artists'),
+            Prefetch('chapters', queryset=chapters)
+        )
 
 
 __all__ = [

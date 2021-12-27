@@ -5,6 +5,8 @@ v0.8.3
 ^^^^^^^
 
 * Added a webapp manifest
+* Added a Heroku demo deployment
+* Improved some API queries
 
 v0.8.2
 ^^^^^^

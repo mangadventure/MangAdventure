@@ -12,8 +12,7 @@ def add_scanlator_group(apps, schema_editor):
 
 
 def remove_scanlator_group(apps, schema_editor):
-    group = apps.get_model('auth', 'Group')
-    group.objects.get(name='Scanlator').delete()
+    apps.get_model('auth', 'Group').objects.get(name='Scanlator').delete()
 
 
 class Migration(migrations.Migration):

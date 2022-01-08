@@ -100,6 +100,7 @@ class TestOpenSearch(MangadvViewTestBase):
 
     def test_get(self):
         r = self.client.get(self.URL)
+        # TODO: test contents
         assert r.status_code == 200
         assert r['Content-Type'] == 'application/opesearchdescription+xml'
 
@@ -109,5 +110,16 @@ class TestContribute(MangadvViewTestBase):
 
     def test_get(self):
         r = self.client.get(self.URL)
+        # TODO: test contents
         assert r.status_code == 200
         assert r['Content-Type'] == 'application/json'
+
+
+class TestManifest(MangadvViewTestBase):
+    URL = reverse('manifest')
+
+    def test_get(self):
+        r = self.client.get(self.URL)
+        # TODO: test contents
+        assert r.status_code == 200
+        assert r['Content-Type'] == 'application/manifest+json'

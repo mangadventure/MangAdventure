@@ -87,7 +87,7 @@ class PageInline(admin.TabularInline):
 
         :return: An ``<img>`` tag with the page image.
         """
-        return utils.img_tag(obj.image, 'preview', height=150)
+        return utils.img_tag(obj._thumb, 'preview', height=150)
 
 
 class ChapterAdmin(admin.ModelAdmin):
@@ -132,7 +132,7 @@ class ChapterAdmin(admin.ModelAdmin):
         page = obj.pages.only('image').first()
         if page is None:
             return ''
-        return utils.img_tag(page.image, 'preview', height=50)
+        return utils.img_tag(page._thumb, 'preview', height=50)
 
     @admin.display(description='Toggle status of selected chapters')
     def toggle_final(self, request: HttpRequest, queryset: QuerySet):

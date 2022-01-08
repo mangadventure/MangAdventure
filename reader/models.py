@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 from hashlib import blake2b
+from importlib.util import find_spec
 from io import BytesIO
+from logging import getLogger
 from os import path, remove
 from pathlib import PurePath
 from shutil import rmtree
-from threading import Thread
+from threading import Lock, Thread
 from typing import Any, List, Tuple
 from zipfile import ZipFile
 
@@ -28,6 +30,14 @@ from django.utils.text import slugify
 from MangAdventure import storage, utils, validators
 
 from groups.models import Group
+
+if find_spec('sentry_sdk'):  # pragma: no cover
+    from sentry_sdk import capture_exception
+else:
+    def capture_exception(_): pass  # noqa: E704
+
+_update_lock = Lock()
+_logger = getLogger('django.db')
 
 
 def _cover_uploader(obj: Series, name: str) -> str:
@@ -325,7 +335,14 @@ class Chapter(models.Model):
                 views=models.F('views') + 1
             )
 
-        Thread(target=run, daemon=True, name='track_view').start()
+        _update_lock.acquire()
+        try:
+            Thread(target=run, daemon=True, name='track_view').start()
+        except Exception as exc:
+            _logger.exception(exc)
+            capture_exception(exc)
+        finally:
+            _update_lock.release()
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
@@ -539,6 +556,12 @@ class Page(models.Model):
                 name='page_number_nonzero'
             ),
         )
+
+    @cached_property
+    def _thumb(self) -> models.ImageField:
+        img = self.image
+        img.storage = storage.CDNStorage((150, 150))
+        return img
 
     @cached_property
     def _file_name(self) -> str:

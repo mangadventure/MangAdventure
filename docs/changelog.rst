@@ -8,6 +8,7 @@ v0.8.3
 * Added a Heroku demo deployment
 * Improved some API queries
 * Fixed chapter view tracking
+* Fixed next chapter button
 
 v0.8.2
 ^^^^^^

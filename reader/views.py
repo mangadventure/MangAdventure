@@ -199,9 +199,12 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
         'series__title', 'series__format'
     ).reverse())
     try:
-        current = next(c for c in chapters if c == (vol, num))
-        prev_ = next((c for c in chapters if c < (vol, num)), None)
-        next_ = next((c for c in chapters if c > (vol, num)), None)
+        max_ = len(chapters) - 1
+        for idx, current in enumerate(chapters):
+            if current == (vol, num):
+                next_ = chapters[idx - 1] if idx > 0 else None
+                prev_ = chapters[idx + 1] if idx < max_ else None
+                break
         if page == 1:
             Chapter.track_view(id=current.id)
         all_pages = list(current.pages.all())

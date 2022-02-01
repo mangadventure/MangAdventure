@@ -46,7 +46,8 @@ class Command(BaseCommand):
                     obj = repr(log.get_edited_object())
                 except ObjectDoesNotExist:
                     obj = '<INACCESSIBLE>'
-                out.write(f'[{user}] {{{date}}} ({act}) {obj}\n')
+                msg = f'[{user}] {{{date}}} ({act}) {obj}\n'
+                out.write(msg)  # lgtm[py/clear-text-logging-sensitive-data]
         finally:
             if file != '-':
                 out.close()

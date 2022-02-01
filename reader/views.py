@@ -16,7 +16,7 @@ from MangAdventure.utils import HttpResponseUnauthorized
 
 from groups.models import Group
 
-from .models import Chapter, Page, Series
+from .models import Chapter, Series
 
 if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime  # isort:skip
@@ -198,23 +198,25 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
         'final', 'series__slug', 'series__cover',
         'series__title', 'series__format'
     ).reverse())
+    if not chapters:
+        raise Http404('No chapters for this series')
+    max_ = len(chapters) - 1
+    for idx, current in enumerate(chapters):
+        if current == (vol, num):
+            next_ = chapters[idx - 1] if idx > 0 else None
+            prev_ = chapters[idx + 1] if idx < max_ else None
+            break
+    if page == 1:
+        Chapter.track_view(id=current.id)
+    all_pages = list(current.pages.all())
     try:
-        max_ = len(chapters) - 1
-        for idx, current in enumerate(chapters):
-            if current == (vol, num):
-                next_ = chapters[idx - 1] if idx > 0 else None
-                prev_ = chapters[idx + 1] if idx < max_ else None
-                break
-        if page == 1:
-            Chapter.track_view(id=current.id)
-        all_pages = list(current.pages.all())
         curr_page = next(p for p in all_pages if p.number == page)
-        preload = list(filter(
-            lambda p: curr_page < p < curr_page.number + 4, all_pages
-        ))
-        tags = current.series.categories.values_list('name', flat=True)
-    except (Chapter.DoesNotExist, Page.DoesNotExist, StopIteration) as e:
-        raise Http404 from e
+    except StopIteration as e:
+        raise Http404('No such page') from e
+    preload = list(filter(
+        lambda p: curr_page < p < curr_page.number + 4, all_pages
+    ))
+    tags = current.series.categories.values_list('name', flat=True)
     url = request.path
     p_url = url.rsplit('/', 4)[0] + '/'
     p2_url = url.rsplit('/', 5)[0] + '/'

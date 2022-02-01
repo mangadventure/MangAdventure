@@ -2,7 +2,7 @@ from django.core.cache import cache
 from django.http import FileResponse
 from django.urls import reverse
 
-from pytest import fixture
+from pytest import fixture, mark
 
 from MangAdventure.tests.utils import get_test_image, get_valid_zip_file
 
@@ -61,6 +61,8 @@ class TestSeries(ReaderViewTestBase):
 
 
 class TestChapterPage(ReaderViewTestBase):
+    _values = [('series', 0), ('series', 3), ('series2', 1)]
+
     def test_get(self, mock_track_view):
         url = reverse('reader:page', kwargs={
             'slug': 'series', 'vol': 0, 'num': 1, 'page': 1
@@ -68,16 +70,10 @@ class TestChapterPage(ReaderViewTestBase):
         r = self.client.get(url)
         assert r.status_code == 200
 
-    def test_get_page_zero(self):
+    @mark.parametrize('values', _values)
+    def test_get_not_found(self, values):
         url = reverse('reader:page', kwargs={
-            'slug': 'series', 'vol': 0, 'num': 1, 'page': 0
-        })
-        r = self.client.get(url)
-        assert r.status_code == 404
-
-    def test_get_page_not_found(self):
-        url = reverse('reader:page', kwargs={
-            'slug': 'series', 'vol': 1, 'num': 1, 'page': 3
+            'slug': values[0], 'vol': 1, 'num': 1, 'page': values[1]
         })
         r = self.client.get(url)
         assert r.status_code == 404

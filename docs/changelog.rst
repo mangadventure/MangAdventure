@@ -1,8 +1,13 @@
 Changelog
 ---------
 
+v0.8.4
+^^^^^^
+
+* Fixed licensed chapter page
+
 v0.8.3
-^^^^^^^
+^^^^^^
 
 * Added a webapp manifest
 * Added a Heroku demo deployment

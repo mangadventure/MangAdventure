@@ -1,3 +1,4 @@
+from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.models import EmailAddress, EmailConfirmation
 from pytest import fixture
 
@@ -6,7 +7,7 @@ from . import UsersTestBase
 
 @fixture
 def mock_allauth_adapter(monkeypatch):
-    class MockAdapter:
+    class MockAdapter(DefaultAccountAdapter):
         def confirm_email(self, *args):
             pass
 
@@ -14,7 +15,8 @@ def mock_allauth_adapter(monkeypatch):
             pass
 
     monkeypatch.setattr(
-        'allauth.account.models.get_adapter', lambda _: MockAdapter()
+        'allauth.account.models.get_adapter',
+        lambda *_: MockAdapter()
     )
 
 

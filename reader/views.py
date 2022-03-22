@@ -200,12 +200,15 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
     ).reverse())
     if not chapters:
         raise Http404('No chapters for this series')
-    max_ = len(chapters) - 1
+    max_, found = len(chapters) - 1, False
     for idx, current in enumerate(chapters):
         if current == (vol, num):
             next_ = chapters[idx - 1] if idx > 0 else None
             prev_ = chapters[idx + 1] if idx < max_ else None
+            found = True
             break
+    if not found:
+        raise Http404('No such chapter')
     if page == 1:
         Chapter.track_view(id=current.id)
     all_pages = list(current.pages.all())

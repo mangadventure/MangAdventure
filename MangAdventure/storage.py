@@ -49,9 +49,9 @@ class CDNStorage(FileSystemStorage):
         domain = settings.CONFIG['DOMAIN']
         scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
         base = f'{scheme}://i3.wp.com/'
-        qs = {'ssl': 1} if scheme == 'https' else dict()
+        qs = {'ssl': '1'} if scheme == 'https' else dict()
         if name.lower().endswith(('.jpg', '.jpeg')):
-            qs['quality'] = 100
+            qs['quality'] = '100'
         if self._fit:
             qs['fit'] = f'{self._fit["w"]},{self._fit["h"]}'
         return base + domain + self.base_url + name + '?' + urlencode(qs)

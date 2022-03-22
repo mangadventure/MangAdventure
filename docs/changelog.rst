@@ -5,6 +5,7 @@ v0.8.4
 ^^^^^^
 
 * Fixed licensed chapter page
+* Fixed invalid chapter page
 
 v0.8.3
 ^^^^^^

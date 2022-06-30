@@ -2,6 +2,8 @@
 
 from typing import Dict, Generic, List, Optional, Type, TypeVar
 
+from django.db.models import F
+
 from rest_framework.fields import (
     CharField, DateTimeField, IntegerField, SerializerMethodField, URLField
 )
@@ -93,7 +95,9 @@ class PageSerializer(ModelSerializer):
     """Serializer for chapter pages."""
     chapter = PrimaryKeyRelatedField(
         help_text="The ID of the page's chapter.",
-        queryset=Chapter.objects.all(), write_only=True
+        queryset=Chapter.objects.order_by(
+            'series', F('volume').asc(nulls_last=True), 'number'
+        ), write_only=True
     )
     url = URLField(
         source='get_absolute_url', read_only=True,

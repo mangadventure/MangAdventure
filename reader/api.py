@@ -5,14 +5,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 from warnings import filterwarnings
 
-from django.db.models import Count, Max, Prefetch, Q, Sum
+from django.db.models import Count, F, Max, Prefetch, Q, Sum
 from django.utils import timezone as tz
 
+from rest_framework.exceptions import APIException
 from rest_framework.mixins import (
     CreateModelMixin, DestroyModelMixin, ListModelMixin,
     RetrieveModelMixin, UpdateModelMixin
 )
 from rest_framework.parsers import MultiPartParser
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from api.v2.mixins import CORSMixin
@@ -23,10 +25,17 @@ from groups.models import Group
 from . import filters, models, serializers
 
 if TYPE_CHECKING:  # pragma: no cover
-    from django.db.models.query import QuerySet
+    from django.db.models.query import QuerySet  # isort:skip
+    from rest_framework.request import Request  # isort:skip
 
 # XXX: We are overriding the "Series" schema on purpose.
 filterwarnings('ignore', '^Schema', module=OpenAPISchema.__base__.__module__)
+
+
+class _LegalException(APIException):
+    status_code = 451
+    default_detail = 'This series is licensed.'
+    default_code = 'licensed_series'
 
 
 class ArtistViewSet(CORSMixin, ModelViewSet):
@@ -145,6 +154,13 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
     ordering = ('title',)
     lookup_field = 'slug'
 
+    def retrieve(self, request: Request, *args, **kwargs) -> Response:
+        instance = self.get_object()
+        if instance.licensed:
+            raise _LegalException()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def get_queryset(self) -> QuerySet:
         q = Q(chapters__published__lte=tz.now())
         return models.Series.objects.annotate(
@@ -167,18 +183,24 @@ class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
     serializer_class = serializers.CubariSerializer
     lookup_field = 'slug'
 
+    def retrieve(self, request: Request, *args, **kwargs) -> Response:
+        instance = self.get_object()
+        if instance.licensed:
+            raise _LegalException()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def get_queryset(self) -> QuerySet:
         pages = models.Page.objects.order_by('number')
         groups = Group.objects.only('name')
         chapters = models.Chapter.objects.prefetch_related(
             Prefetch('pages', queryset=pages),
             Prefetch('groups', queryset=groups)
-        ).order_by('volume', 'number').only(
+        ).order_by(F('volume').asc(nulls_last=True), 'number').only(
             'title', 'number', 'volume', 'modified', 'series'
         )
         return models.Series.objects.defer(
-            'manager_id', 'modified',
-            'created', 'completed', 'licensed'
+            'manager_id', 'modified', 'created', 'completed'
         ).prefetch_related(
             Prefetch('authors'), Prefetch('artists'),
             Prefetch('chapters', queryset=chapters)

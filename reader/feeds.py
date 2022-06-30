@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Iterable, Optional
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
-from django.db.models import Prefetch
+from django.db.models import F, Prefetch
 from django.utils import timezone as tz
 from django.utils.feedgenerator import Atom1Feed
 
@@ -147,7 +147,7 @@ class ReleasesRSS(Feed):
         ).filter(
             published__lte=tz.now(),
             series__licensed=False
-        )
+        ).order_by(F('volume').asc(nulls_last=True), 'number')
         return Series.objects.only(
             'slug', 'title', 'licensed', 'format'
         ).prefetch_related(

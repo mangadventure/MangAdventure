@@ -17,10 +17,8 @@
             </a>
           </h2>
           <div class="release-info">
-            {% with vol=release.volume num=release.number %}
-              <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
-                 class="release-link{% if release.final %} end{% endif %}">{{ release }}</a>
-            {% endwith %}
+            <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
+               class="release-link{% if release.final %} end{% endif %}">{{ release }}</a>
             <div class="chapter-metadata">
               <span class="divider"></span>
               {% with groups=release.groups.all  %}

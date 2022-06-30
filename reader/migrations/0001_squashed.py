@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from MangAdventure import storage, validators
 
-from reader.models import _cover_uploader, _PageNumberField
+from reader.models import _cover_uploader, _NonZeroIntegerField
 
 
 class Migration(migrations.Migration):
@@ -139,7 +139,7 @@ class Migration(migrations.Migration):
                     storage=storage.CDNStorage(),
                     upload_to='', max_length=255
                 )),
-                ('number', _PageNumberField()),
+                ('number', _NonZeroIntegerField()),
                 ('chapter', models.ForeignKey(
                     on_delete=models.deletion.CASCADE,
                     related_name='pages', to='reader.Chapter'

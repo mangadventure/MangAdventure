@@ -30,6 +30,7 @@ jobs:
       - name: "Set up coveralls"
         uses: AndreMiras/coveralls-python-action@v20201129
         if: success()
+        continue-on-error: true
         with:
           parallel: true
           flag-name: SQLite
@@ -79,6 +80,7 @@ jobs:
       - name: "Set up coveralls"
         uses: AndreMiras/coveralls-python-action@v20201129
         if: success()
+        continue-on-error: true
         with:
           parallel: true
           flag-name: MySQL
@@ -129,6 +131,7 @@ jobs:
       - name: "Set up coveralls"
         uses: AndreMiras/coveralls-python-action@v20201129
         if: success()
+        continue-on-error: true
         with:
           parallel: true
           flag-name: PostgreSQL

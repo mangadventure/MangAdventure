@@ -6,6 +6,8 @@ v0.8.4
 
 * Fixed licensed chapter page
 * Fixed invalid chapter page
+* Fixed API showing licensed chapters
+* Made chapter volume default to ``NULL``
 
 v0.8.3
 ^^^^^^

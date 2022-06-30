@@ -20,10 +20,8 @@
                 {{ release.series }}
               </a>
             </h2>
-            {% with vol=release.volume num=release.number %}
-              <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
-                 {% if release.final %}class="end"{% endif %}>{{ release }}</a>
-            {% endwith %}
+            <a href="{{ release.get_absolute_url }}" title="{{ release.title }}"
+               {% if release.final %}class="end"{% endif %}>{{ release }}</a>
             <span class="divider"></span>
             {% with published=release.published %}
               <time class="chapter-date" datetime="{{ published|date:'c' }}"

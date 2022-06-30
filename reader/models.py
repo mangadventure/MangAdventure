@@ -10,7 +10,7 @@ from os import path, remove
 from pathlib import PurePath
 from shutil import rmtree
 from threading import Lock, Thread
-from typing import Any, List, Tuple
+from typing import Any, List, Tuple, Union
 from zipfile import ZipFile
 
 from django.conf import settings
@@ -21,6 +21,7 @@ from django.contrib.contenttypes.fields import (
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models.expressions import F
 from django.db.models.query import Q
 from django.shortcuts import reverse
 from django.utils import timezone as tz
@@ -46,6 +47,16 @@ def _cover_uploader(obj: Series, name: str) -> str:
     if path.exists(name):  # pragma: no cover
         remove(name)
     return name
+
+
+class _NonZeroIntegerField(models.PositiveSmallIntegerField):
+    default_validators = (MinValueValidator(1),)
+
+    def formfield(self, **kwargs):  # pragma: no cover
+        # HACK: bypass parent to set min_value to 1
+        return super(
+            models.PositiveSmallIntegerField, self
+        ).formfield(min_value=1, **kwargs)
 
 
 class AliasManager(models.Manager):
@@ -264,11 +275,12 @@ class Chapter(models.Model):
     )
     #: The number of the chapter.
     number = models.FloatField(
-        default=0, help_text='The number of the chapter.'
+        help_text='The number of the chapter.',
+        default=0, validators=(MinValueValidator(0),)
     )
     #: The volume of the chapter.
-    volume = models.PositiveSmallIntegerField(default=0, help_text=(
-        'The volume of the chapter. Leave as 0 if the series has no volumes.'
+    volume = _NonZeroIntegerField(null=True, blank=True, help_text=(
+        'The volume of the chapter. Leave blank if the series has no volumes.'
     ))
     #: The series this chapter belongs to.
     series = models.ForeignKey(
@@ -310,7 +322,8 @@ class Chapter(models.Model):
     )
 
     class Meta:
-        ordering = ('series', 'volume', 'number')
+        # BUG: ordering with F() seems to be broken
+        # ordering = ('series', F('volume').asc(nulls_last=True), 'number')
         get_latest_by = ('published', 'modified')
         constraints = (
             models.UniqueConstraint(
@@ -320,6 +333,10 @@ class Chapter(models.Model):
             models.CheckConstraint(
                 check=Q(number__gte=0),
                 name='chapter_number_positive'
+            ),
+            models.CheckConstraint(
+                check=Q(volume__isnull=True) | Q(volume__gt=0),
+                name='volume_number_positive'
             )
         )
 
@@ -331,9 +348,7 @@ class Chapter(models.Model):
         :param kwargs: The arguments given to the queryset filter.
         """
         def run():
-            cls.objects.filter(**kwargs).update(
-                views=models.F('views') + 1
-            )
+            cls.objects.filter(**kwargs).update(views=F('views') + 1)
 
         _update_lock.acquire()
         try:
@@ -360,7 +375,7 @@ class Chapter(models.Model):
         :return: The URL of :func:`reader.views.chapter_redirect`.
         """
         return reverse('reader:chapter', args=(
-            self.series.slug, self.volume, self.number
+            self.series.slug, self.volume or 0, self.number
         ))
 
     def get_directory(self) -> PurePath:
@@ -371,7 +386,7 @@ class Chapter(models.Model):
                  :const:`~MangAdventure.settings.MEDIA_ROOT`.
         """
         return self.series.get_directory() / \
-            str(self.volume) / f'{self.number:g}'
+            str(self.volume or 0) / f'{self.number:g}'
 
     def unzip(self):
         """Unzip the chapter and save its images."""
@@ -379,7 +394,7 @@ class Chapter(models.Model):
         pages = []
         dir_path = path.join(
             'series', self.series.slug,
-            str(self.volume), f'{self.number:g}'
+            str(self.volume or 0), f'{self.number:g}'
         )
         full_path = settings.MEDIA_ROOT / dir_path
         if full_path.exists():
@@ -419,8 +434,8 @@ class Chapter(models.Model):
         return buf
 
     @cached_property
-    def _tuple(self) -> Tuple[int, float]:
-        return self.volume, self.number
+    def _tuple(self) -> Tuple[Union[int, float], float]:
+        return self.volume or float('inf'), self.number
 
     def __str__(self) -> str:
         """
@@ -429,20 +444,21 @@ class Chapter(models.Model):
         :return: The chapter formatted according to the
                  :attr:`~reader.models.Series.format`.
         """
+        # TODO: use removeprefix (Py3.9+)
         if not self.series:  # pragma: no cover
             return Series.format.default.format(
                 title=self.title or 'N/A',
-                volume=self.volume,
+                volume=self.volume or '?',
                 number=f'{self.number:g}',
                 date='', series=''
-            )
+            ).replace('Vol. ?, ', '')
         return self.series.format.format(
             title=self.title,
-            volume=self.volume,
+            volume=self.volume or '?',
             number=f'{self.number:g}',
             date=self.published.strftime('%F'),
             series=self.series.title
-        )
+        ).replace('Vol. ?, ', '')
 
     def __eq__(self, other: Any) -> bool:
         """
@@ -527,16 +543,6 @@ class Chapter(models.Model):
         return hash(str(self)) & 0x7FFFFFFF
 
 
-class _PageNumberField(models.PositiveSmallIntegerField):
-    default_validators = (MinValueValidator(1),)
-
-    def formfield(self, **kwargs):  # pragma: no cover
-        # HACK: bypass parent to set min_value to 1
-        return super(
-            models.PositiveSmallIntegerField, self
-        ).formfield(min_value=1, **kwargs)
-
-
 class Page(models.Model):
     """A model representing a page."""
     #: The chapter this page belongs to.
@@ -546,7 +552,7 @@ class Page(models.Model):
     #: The image of the page.
     image = models.ImageField(storage=storage.CDNStorage(), max_length=255)
     #: The number of the page.
-    number = _PageNumberField()
+    number = _NonZeroIntegerField()
 
     class Meta:
         ordering = ('chapter', 'number')
@@ -574,7 +580,8 @@ class Page(models.Model):
         :return: The URL of :func:`reader.views.chapter_page`.
         """
         return reverse('reader:page', args=(
-            self.chapter.series.slug, self.chapter.volume,
+            self.chapter.series.slug,
+            self.chapter.volume or 0,
             self.chapter.number, self.number
         ))
 

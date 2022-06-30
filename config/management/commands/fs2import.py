@@ -135,7 +135,7 @@ class Command(BaseCommand):
             chapter = Chapter(
                 id=cid, series_id=sid,
                 title=self._get_column(c, 'name'),
-                volume=volume, number=number
+                volume=volume or None, number=number
             )
             self._print(
                 f'- Found {self._sql_name("Chapter")}: {chapter.series} '

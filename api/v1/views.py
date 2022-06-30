@@ -42,10 +42,11 @@ def _latest(request: HttpRequest, slug: Optional[str] = None,
             ).distinct().get().modified
         if num is None:
             return Chapter.objects.only('modified').filter(
-                series__slug=slug, volume=vol, published__lte=tz.now()
+                series__slug=slug, volume=vol or None,
+                published__lte=tz.now()
             ).latest().modified
         return Chapter.objects.only('modified').filter(
-            series__slug=slug, volume=vol,
+            series__slug=slug, volume=vol or None,
             number=num, published__lte=tz.now()
         ).latest().modified
     except ObjectDoesNotExist:
@@ -256,7 +257,9 @@ def volume(request: HttpRequest, slug: str, vol: int) -> JsonResponse:
             .prefetch_related('chapters__pages').get(slug=slug)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    chapters = _series.chapters.filter(volume=vol, published__lte=tz.now())
+    chapters = _series.chapters.filter(
+        volume=vol or None, published__lte=tz.now()
+    )
     if not chapters:
         return JsonError('Not found', 404)
     return JsonResponse(_volume_response(request, chapters))
@@ -280,7 +283,7 @@ def chapter(request: HttpRequest, slug: str,
     """
     try:
         _chapter = Chapter.objects.prefetch_related('pages').get(
-            series__slug=slug, volume=vol,
+            series__slug=slug, volume=vol or None,
             number=num, published__lte=tz.now()
         )
     except ObjectDoesNotExist:

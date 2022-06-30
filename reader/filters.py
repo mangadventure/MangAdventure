@@ -262,8 +262,8 @@ class PageFilter(BaseFilterBackend):
                 'error': f'{params} are required parameters.'
             })
         series = request.query_params['series']
-        volume = request.query_params['volume']
-        number = request.query_params['number']
+        volume = int(request.query_params['volume']) or None
+        number = float(request.query_params['number'])
         if request.query_params.get('track') == 'true':
             Chapter.track_view(
                 series__slug=series,

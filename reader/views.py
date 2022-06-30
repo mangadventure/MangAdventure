@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from django.db.models import Count, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
 from django.utils import timezone as tz
@@ -40,7 +40,7 @@ def _latest(request: HttpRequest, slug: Optional[str] = None,
                 chapters__published__lte=tz.now(), slug=slug
             ).distinct().get().modified
         return Chapter.objects.only('modified').filter(
-            series__slug=slug, volume=vol,
+            series__slug=slug, volume=vol or None,
             number=num, published__lte=tz.now()
         ).latest().modified
     except (Series.DoesNotExist, Chapter.DoesNotExist):
@@ -105,6 +105,8 @@ def series(request: HttpRequest, slug: str) -> HttpResponse:
     try:
         chapters = Chapter.objects.filter(
             published__lte=tz.now()
+        ).order_by(
+            'series', F('volume').asc(nulls_last=True), 'number'
         ).reverse().defer('file', 'views', 'modified')
         groups = Group.objects.only('name')
         series = Series.objects.prefetch_related(
@@ -197,12 +199,14 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
         'title', 'number', 'volume', 'published',
         'final', 'series__slug', 'series__cover',
         'series__title', 'series__format'
+    ).order_by(
+        'series', F('volume').asc(nulls_last=True), 'number'
     ).reverse())
     if not chapters:
         raise Http404('No chapters for this series')
     max_, found = len(chapters) - 1, False
     for idx, current in enumerate(chapters):
-        if current == (vol, num):
+        if current == (vol or float('inf'), num):
             next_ = chapters[idx - 1] if idx > 0 else None
             prev_ = chapters[idx + 1] if idx < max_ else None
             found = True
@@ -282,11 +286,14 @@ def chapter_download(request: HttpRequest, slug: str, vol: int, num: float
             'series__title', 'volume', 'number'
         ).select_related('series').get(
             series__slug=slug, series__licensed=False,
-            volume=vol, number=num, published__lte=tz.now()
+            volume=vol or None, number=num, published__lte=tz.now()
         )
     except Chapter.DoesNotExist as e:
         raise Http404 from e
-    name = '{0.series} - v{0.volume} c{0.number:g}.cbz'.format(chapter)
+    if chapter.volume:
+        name = '{0.series} - v{0.volume} c{0.number:g}.cbz'.format(chapter)
+    else:  # pragma: no cover
+        name = '{0.series} - c{0.number:g}.cbz'.format(chapter)
     return FileResponse(
         chapter.zip(), as_attachment=True, filename=name,
         content_type='application/vnd.comicbook+zip'

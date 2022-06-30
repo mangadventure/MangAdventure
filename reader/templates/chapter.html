@@ -36,7 +36,7 @@
     <h1>
       <a href="{{ curr_chapter.series.get_absolute_url }}">
         {{ curr_chapter.series.title }}
-      </a><br>V{{ vol }} / C{{ num|stringformat:'g' }}
+      </a><br>{% if vol %}V{{ vol }} / {% endif %}C{{ num|stringformat:'g' }}
     </h1>
   {% endwith %}
   <div id="chapter">
@@ -61,7 +61,7 @@
       </div>
       {% if config.ALLOW_DLS and request.user.is_authenticated %}
         {% with slug=curr_chapter.series.slug vol=curr_chapter.volume num=curr_chapter.number %}
-          <a href="{% url 'reader:cbz' slug vol num %}" id="download"
+          <a href="{% url 'reader:cbz' slug vol|default_if_none:0 num %}" id="download"
              title="Download chapter" download><i class="mi mi-download"></i></a>
         {% endwith %}
       {% endif %}

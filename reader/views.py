@@ -131,7 +131,7 @@ def series(request: HttpRequest, slug: str) -> HttpResponse:
     ])
     tags = list(series.categories.values_list('name', flat=True))
     authors = list(series.authors.all())
-    artists = list(series.authors.all())
+    artists = list(series.artists.all())
     aliases = series.aliases.names()
     book = jsonld.schema('Book', {
         'url': uri,

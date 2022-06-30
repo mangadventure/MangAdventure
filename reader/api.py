@@ -112,6 +112,13 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
     filter_backends = filters.CHAPTER_FILTERS
     parser_classes = (MultiPartParser,)
 
+    def retrieve(self, request: Request, *args, **kwargs) -> Response:
+        instance = self.get_object()
+        if instance.series.licensed:
+            raise _LegalException()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def get_queryset(self) -> QuerySet:
         return models.Chapter.objects.select_related('series') \
             .filter(published__lte=tz.now()).order_by('-published')

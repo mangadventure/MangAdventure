@@ -167,6 +167,13 @@ class OpenAPISchema(AutoSchema):
         # only allow filters in list endpoints
         return self.view.action == 'list'
 
+    def get_responses(self, path: str, method: str) -> Dict[str, Any]:
+        responses = super().get_responses(path, method)
+        licensed_endpoints = ('/chapters/{id}', '/cubari/{slug}')
+        if method == 'GET' and path in licensed_endpoints:
+            responses['451'] = {'description': 'Licensed series'}
+        return responses
+
 
 class OpenAPISchemaGenerator(SchemaGenerator):
     """Custom OpenAPI generator class."""

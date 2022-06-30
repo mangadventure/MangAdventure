@@ -266,10 +266,13 @@ class PageFilter(BaseFilterBackend):
         number = request.query_params['number']
         if request.query_params.get('track') == 'true':
             Chapter.track_view(
-                series__slug=series, volume=volume, number=number
+                series__slug=series,
+                series__licensed=False,
+                volume=volume, number=number
             )
         return queryset.filter(
             chapter__series__slug=series,
+            chapter__series__licensed=False,
             chapter__volume=volume, chapter__number=number
         ).order_by('number')
 

@@ -67,7 +67,8 @@ class AliasManager(models.Manager):
 
         :return: The values of the ``alias`` field.
         """
-        return list(self.get_queryset().values_list('name', flat=True))
+        qs = self.get_queryset().order_by('name')
+        return list(qs.values_list('name', flat=True))
 
 
 class Alias(models.Model):

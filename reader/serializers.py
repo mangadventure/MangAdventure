@@ -260,8 +260,7 @@ class CubariSerializer(ModelSerializer):
     def _get_metadata(self, obj: Series) -> List[List[str]]:
         return [
             ['Author', self._get_author(obj)],
-            ['Artist', self._get_artist(obj)],
-            # TODO: Views & Last Updated
+            ['Artist', self._get_artist(obj)]
         ]
 
     def _get_chapters(self, obj: Series) -> Dict[str, Dict]:

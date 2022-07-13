@@ -187,7 +187,7 @@ class ChapterAdmin(admin.ModelAdmin):
         return obj.series.manager_id == request.user.id
 
 
-# TODO: find a cleaner way to adapt the help_text
+# HACK: use a factory to adapt the help_text
 def alias_inline(model: str) -> Type[GenericStackedInline]:
     """
     Get an inline admin model for :class:`~reader.models.Alias`.

@@ -154,13 +154,6 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
     ordering = ('title',)
     lookup_field = 'slug'
 
-    def retrieve(self, request: Request, *args, **kwargs) -> Response:
-        instance = self.get_object()
-        if instance.licensed:
-            raise _LegalException()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
     def get_queryset(self) -> QuerySet:
         q = Q(chapters__published__lte=tz.now())
         return models.Series.objects.annotate(

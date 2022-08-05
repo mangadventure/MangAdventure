@@ -71,3 +71,12 @@ static/styles/_variables.scss
 
 # GitHub Stuff
 docs/changes.md
+
+## Docker only
+.git/
+.github/
+.gitignore
+.gitattributes
+.readthedocs.yml
+app.json
+docker/Dockerfile

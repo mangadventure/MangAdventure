@@ -9,6 +9,14 @@ config.management.commands package
 Submodules
 ----------
 
+config.management.commands.createsuperuser module
+-------------------------------------------------
+
+.. automodule:: config.management.commands.createsuperuser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 config.management.commands.fs2import module
 -------------------------------------------
 

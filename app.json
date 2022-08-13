@@ -24,7 +24,7 @@
       "description": "The e-mail address of the superuser account."
     },
     "DJANGO_SUPERUSER_PASSWORD": {
-      "description": "The password of the superuser account",
+      "description": "The password of the superuser account.",
       "generator": "secret"
     },
     "ALLOWED_HOSTS": {

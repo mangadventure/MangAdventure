@@ -11,7 +11,7 @@ jobs:
     if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: "Initialize CodeQL"
         uses: github/codeql-action/init@v1
         with:
@@ -26,13 +26,13 @@ jobs:
     if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: "Verify release version"
         run: >-
-          grep -q "__version__ = '${GITHUB_REF##*/v}'" MangAdventure/__init__.py &&
-          grep -q "@${GITHUB_REF##*/}#egg=mangadventure\"" docs/install.rst &&
-          grep -q "@${GITHUB_REF##*/}#egg=mangadventure\[" docs/install.rst &&
-          grep -q "^${GITHUB_REF##*/}$" docs/changelog.rst
+          grep -q "__version__ = '${GITHUB_REF_NAME#v}'" MangAdventure/__init__.py &&
+          grep -q "@${GITHUB_REF_NAME}#egg=mangadventure\"" docs/install.rst &&
+          grep -q "@${GITHUB_REF_NAME}#egg=mangadventure\[" docs/install.rst &&
+          grep -q "^${GITHUB_REF_NAME}$" docs/changelog.rst
       - name: "Mark previous prerelease"
         continue-on-error: true
         run: |-
@@ -58,3 +58,42 @@ jobs:
           token: ${{secrets.GITHUB_TOKEN}}
           bodyFile: docs/changes.md
           allowUpdates: true
+
+  docker:
+    name: "Build Docker image"
+    needs: [codeql]
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'mangadventure'
+    env:
+      IMAGE_NAME: ghcr.io/mangadventure/app
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
+      - name: "Login to GHCR"
+        run: printf $GITHUB_TOKEN | docker login -u $GITHUB_ACTOR --password-stdin ghcr.io
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: "Build image"
+        run: docker build -t mangadventure -f docker/Dockerfile .
+      - name: "Slim image"
+        run: >-
+          curl -LSs $DSLIM_URL | tar xzf - -C /tmp &&
+          /tmp/dist_linux/docker-slim --report=off build --include-shell
+          --include-path=/web/.env --http-probe=false --continue-after=1
+          --tag=$IMAGE_NAME:$GITHUB_REF_NAME --target=mangadventure
+          --new-label org.opencontainers.image.title=MangAdventure
+          --new-label org.opencontainers.image.vendor=mangadventure
+          --new-label org.opencontainers.image.description=$DESCRIPTION
+          --new-label org.opencontainers.image.created=$(date -u -Is)
+          --new-label org.opencontainers.image.version=${GITHUB_REF_NAME#v}
+          --new-label org.opencontainers.image.revision=$GITHUB_SHA
+          --new-label org.opencontainers.image.source=$REPO_URL
+          --new-label org.opencontainers.image.url=$DOCS_URL
+          --new-label org.opencontainers.image.licenses=MIT
+        env:
+          REPO_URL: ${{github.repositoryUrl}}
+          DOCS_URL: https://mangadventure.readthedocs.io/
+          DSLIM_URL: https://downloads.dockerslim.com/releases/1.37.6/dist_linux.tar.gz
+          DESCRIPTION: A simple manga hosting CMS written in Django
+      - name: "Push image"
+        run: docker push $IMAGE_NAME:$GITHUB_REF_NAME

@@ -63,9 +63,9 @@ v0.8.x
 ^^^^^^
 
 | |u| Caching.
-| |u| Heroku demo.
-| |u| Docker container.
-| |u| Web App Manifest.
+| |c| Heroku demo.
+| |c| Docker container.
+| |c| Web App Manifest.
 | |u| Sitemaps.
 
 v0.9.x
@@ -93,7 +93,7 @@ v0.10.x
 | |u| AniList/MAL/Kitsu tracking.
 | |u| Twitter/Reddit link sharing.
 | |u| GDPR compliance.
-|    |u| Respect DNT.
+| |u| Analytics.
 | |u| Comments.
 | |u| News feeds.
 

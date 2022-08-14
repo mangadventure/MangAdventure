@@ -27,6 +27,7 @@ dist/
 PKG-INFO
 *.egg-info
 *.egg-link
+*.whl
 
 # Sphinx stuff
 _build/
@@ -51,6 +52,7 @@ coverage.xml
 *~
 
 # Server stuff
+.well-known/
 .htaccess
 *.log
 *.ini
@@ -58,6 +60,7 @@ coverage.xml
 *.sock
 *.gz
 *.br
+status_auth.txt
 !docker/uwsgi.ini
 
 # MangAdventure stuff
@@ -79,4 +82,3 @@ docs/changes.md
 .gitattributes
 .readthedocs.yml
 app.json
-docker/Dockerfile

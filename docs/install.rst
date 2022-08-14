@@ -6,14 +6,17 @@ Installation
    This project is still in an experimental state and may be unstable.
    Proceed at your own risk.
 
+If you'd prefer to use Docker instead of installing it manually, see
+the instructions `here <https://github.com/mangadventure/mangadocker>`_.
+
+Install the project
+^^^^^^^^^^^^^^^^^^^
+
 .. note::
 
    This tutorial assumes you are using Linux and plan on
    installing MangAdventure under ``/var/www/my-site.com/``.
    The instructions are similar for Windows and MacOS.
-
-Install the project
-^^^^^^^^^^^^^^^^^^^
 
 First, you will need Python_ (3.7+) and pip_.
 

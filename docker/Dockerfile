@@ -1,32 +1,39 @@
-FROM debian:bullseye-slim
+FROM alpine:edge
 
 WORKDIR /web
 
 COPY . .
 
-RUN mv .env.example .env \
-    && mkdir -p media logs static/COMPILED .well-known \
-    && useradd -M -d /web -s /sbin/nologin uwsgi \
-    && printf 'APT::Install-%s false;\n' \
-        Recommends Suggests >/etc/apt/apt.conf.d/00minimal \
-    && printf 'APT::Keep-Downloaded-Packages false;\n' \
-        >>/etc/apt/apt.conf.d/00minimal \
-    && apt-get update \
-    && apt-get install -y \
-        libjemalloc2 \
-        python3-pip \
-        python3-psycopg2 \
-        uwsgi-plugin-python3 \
-    && pip install --no-cache-dir -e .[csp,sentry] \
+RUN ([ -f .env ] || mv .env.example .env) \
+    && mkdir -p .well-known logs media static/COMPILED \
+    && touch static/styles/_variables.scss \
     && mv docker/uwsgi.ini /etc/uwsgi.ini \
-    && rm -rf docker /var/lib/apt/lists/* \
+    && apk add --no-cache \
+        mimalloc2 \
+        libsass \
+        python3 \
+        py3-psycopg2 \
+        uwsgi-python3 \
+        -X https://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
+    && apk add --no-cache -t .build-deps \
+        build-base \
+        libsass-dev \
+        py3-pip \
+        py3-wheel \
+        python3-dev \
+    && export SYSTEM_SASS=1 \
+    && pip install --no-cache-dir -e .[csp,sentry] \
     && ./manage.py collectstatic --no-input \
-    && chown -R uwsgi:uwsgi /web
+    && chown -R uwsgi:uwsgi /web \
+    && apk del .build-deps \
+    && rm -rf docker
 
-VOLUME /web/.well-known /web/media /web/logs
+VOLUME /web/logs \
+       /web/media \
+       /web/.well-known
 
 EXPOSE 3000 57475
 
 STOPSIGNAL SIGINT
 
-CMD ["uwsgi", "--ini", "/etc/uwsgi.ini"]
+CMD ["uwsgi", "--ini=/etc/uwsgi.ini", "--uid=uwsgi", "--gid=uwsgi"]

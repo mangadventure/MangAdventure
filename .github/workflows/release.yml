@@ -64,36 +64,50 @@ jobs:
     needs: [codeql]
     runs-on: ubuntu-latest
     if: github.repository_owner == 'mangadventure'
-    env:
-      IMAGE_NAME: ghcr.io/mangadventure/app
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v3
-      - name: "Login to GHCR"
-        run: printf $GITHUB_TOKEN | docker login -u $GITHUB_ACTOR --password-stdin ghcr.io
+      - name: "Log in to the Container registry"
+        uses: docker/login-action@v2.0.0
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+      - name: "Extract metadata for Docker"
+        uses: docker/metadata-action@v4.0.1
+        id: meta
+        with:
+          images: ghcr.io/mangadventure/app
+      - name: "Build and push Docker image"
+        uses: docker/build-push-action@v3.1.0
+        with:
+          context: .
+          push: true
+          file: docker/Dockerfile
+          tags: ${{steps.meta.outputs.tags}}
+          labels: ${{steps.meta.outputs.labels}}
+
+  webhook:
+    name: "Discord webhook"
+    needs: [release]
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'mangadventure'
+    steps:
+      - name: "Send data to Discord"
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: "Build image"
-        run: docker build -t mangadventure -f docker/Dockerfile .
-      - name: "Slim image"
-        run: >-
-          curl -LSs $DSLIM_URL | tar xzf - -C /tmp &&
-          /tmp/dist_linux/docker-slim --report=off build --include-shell
-          --include-path=/web/.env --http-probe=false --continue-after=1
-          --tag=$IMAGE_NAME:$GITHUB_REF_NAME --target=mangadventure
-          --new-label org.opencontainers.image.title=MangAdventure
-          --new-label org.opencontainers.image.vendor=mangadventure
-          --new-label org.opencontainers.image.description=$DESCRIPTION
-          --new-label org.opencontainers.image.created=$(date -u -Is)
-          --new-label org.opencontainers.image.version=${GITHUB_REF_NAME#v}
-          --new-label org.opencontainers.image.revision=$GITHUB_SHA
-          --new-label org.opencontainers.image.source=$REPO_URL
-          --new-label org.opencontainers.image.url=$DOCS_URL
-          --new-label org.opencontainers.image.licenses=MIT
-        env:
-          REPO_URL: ${{github.repositoryUrl}}
-          DOCS_URL: https://mangadventure.readthedocs.io/
-          DSLIM_URL: https://downloads.dockerslim.com/releases/1.37.6/dist_linux.tar.gz
-          DESCRIPTION: A simple manga hosting CMS written in Django
-      - name: "Push image"
-        run: docker push $IMAGE_NAME:$GITHUB_REF_NAME
+          RELEASE_BODY: ${{github.event.release.body}}
+          RELEASE_NAME: ${{github.event.release.tag_name}}
+          RELEASE_WEBHOOK: ${{secrets.RELEASE_WEBHOOK}}
+        run: |-
+          jq --arg name "$GITHUB_ACTOR" \
+             --arg author_url "$GITHUB_SERVER_URL/$GITHUB_ACTOR" \
+             --arg icon_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY_OWNER.png?s=40" \
+             --arg title "New release published: $RELEASE_NAME" \
+             --arg url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/$RELEASE_NAME" \
+             --arg description "$RELEASE_BODY" \
+             -Mn '{
+               username: "GitHub",
+               avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+               embeds: [{author: {$name, $icon_url, url: $author_url}, $url, $title, $description}]
+             }' | curl -d@- -Ssf "$RELEASE_WEBHOOK" -H 'Content-Type: application/json' \
+                       -A "GitHub-Actions ($GITHUB_SERVER_URL/$GITHUB_REPOSITORY, v0.1)"

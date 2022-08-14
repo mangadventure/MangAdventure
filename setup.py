@@ -42,7 +42,7 @@ setup(
         'pgsql': 'psycopg2',
         'csp': 'django-csp>=3.7',
         'uwsgi': 'uwsgi',
-        'sentry': 'sentry-sdk~=1.5',
+        'sentry': 'sentry-sdk~=1.9',
     },
     entry_points={
         'console_scripts': [

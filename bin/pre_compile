@@ -14,7 +14,10 @@ printf > "$BUILD_DIR/.env" 'MANGADV_DEBUG=true\n\n'
 sed >> "$BUILD_DIR/.env" "$BUILD_DIR/.env.example" \
     -e 's/favicon.ico/logo.png/;s/<user>@${DOMAIN}/${DJANGO_SUPERUSER_EMAIL}/'
 
+printf '       Setting Python runtime version.\n'
+printf > "$BUILD_DIR/runtime.txt" 'python-3.10.4\n'
+
 printf '       Generating default Procfile.\n'
 # shellcheck disable=SC2016
 printf > "$BUILD_DIR/Procfile" \
-    'web: uwsgi --die-on-term --http-socket :$PORT --module MangAdventure.wsgi'
+    'web: uwsgi --die-on-term --http-socket :$PORT --module MangAdventure.wsgi\n'

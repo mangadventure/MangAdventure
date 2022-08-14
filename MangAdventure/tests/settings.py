@@ -20,6 +20,7 @@ DEBUG = env.get('MANGADV_DEBUG', False)
 SITE_ID = 1
 
 INSTALLED_APPS = [
+    'config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.redirects',
     'django.contrib.flatpages',
+    'django.contrib.sitemaps',
     'django.contrib.humanize',
     'allauth',
     'allauth.account',
@@ -38,7 +40,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.discord',
     'rest_framework',
-    'config',
     'reader',
     'api',
     'groups',
@@ -206,8 +207,6 @@ SECURE_REFERRER_POLICY = 'strict-origin'
 LANGUAGE_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
-
-CSRF_COOKIE_SECURE = True
 
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 

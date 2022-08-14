@@ -65,6 +65,14 @@ groups.serializers module
    :undoc-members:
    :show-inheritance:
 
+groups.sitemaps module
+----------------------
+
+.. automodule:: groups.sitemaps
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 groups.urls module
 ------------------
 

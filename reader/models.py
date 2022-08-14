@@ -233,6 +233,10 @@ class Series(models.Model):
         )
     )
 
+    class Meta:
+        verbose_name_plural = 'series'
+        get_latest_by = 'modified'
+
     def get_absolute_url(self) -> str:
         """
         Get the absolute URL of the object.
@@ -250,9 +254,14 @@ class Series(models.Model):
         """
         return PurePath('series', self.slug)
 
-    class Meta:
-        verbose_name_plural = 'series'
-        get_latest_by = 'modified'
+    @cached_property
+    def sitemap_images(self) -> List[str]:
+        """
+        Get the list of images used in the sitemap.
+
+        :return: A list containing the cover.
+        """
+        return [self.cover.url] if self.cover else []
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
@@ -435,6 +444,15 @@ class Chapter(models.Model):
         return buf
 
     @cached_property
+    def sitemap_images(self) -> List[str]:
+        """
+        Get the list of images used in the sitemap.
+
+        :return: A list containing the pages.
+        """
+        return [p.image.url for p in self.pages.all()]
+
+    @cached_property
     def _tuple(self) -> Tuple[Union[int, float], float]:
         return self.volume or float('inf'), self.number
 
@@ -564,16 +582,6 @@ class Page(models.Model):
             ),
         )
 
-    @cached_property
-    def _thumb(self) -> models.ImageField:
-        img = self.image
-        img.storage = storage.CDNStorage((150, 150))
-        return img
-
-    @cached_property
-    def _file_name(self) -> str:
-        return self.image.name.rsplit('/')[-1]
-
     def get_absolute_url(self) -> str:
         """
         Get the absolute URL of the object.
@@ -585,6 +593,16 @@ class Page(models.Model):
             self.chapter.volume or 0,
             self.chapter.number, self.number
         ))
+
+    @cached_property
+    def _thumb(self) -> models.ImageField:
+        img = self.image
+        img.storage = storage.CDNStorage((150, 150))
+        return img
+
+    @cached_property
+    def _file_name(self) -> str:
+        return self.image.name.rsplit('/')[-1]
 
     def __str__(self) -> str:
         """

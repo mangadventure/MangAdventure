@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from enum import Enum, EnumMeta
 from pathlib import PurePath
+from typing import List
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
+from django.utils.functional import cached_property
 
 from MangAdventure.fields import (
     DiscordNameField, DiscordURLField, RedditField, TwitterField
@@ -100,6 +102,15 @@ class Group(models.Model):
                  :const:`~MangAdventure.settings.MEDIA_ROOT`.
         """
         return PurePath('groups', str(self.id))
+
+    @cached_property
+    def sitemap_images(self) -> List[str]:
+        """
+        Get the list of images used in the sitemap.
+
+        :return: A list containing the logo.
+        """
+        return [self.logo.url] if self.logo else []
 
     def __str__(self) -> str:
         """

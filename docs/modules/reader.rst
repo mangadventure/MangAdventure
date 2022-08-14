@@ -73,6 +73,14 @@ reader.serializers module
    :undoc-members:
    :show-inheritance:
 
+reader.sitemaps module
+----------------------
+
+.. automodule:: reader.sitemaps
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 reader.urls module
 ------------------
 

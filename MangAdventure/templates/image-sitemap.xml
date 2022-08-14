@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  {% spaceless %}
+    {% for url in urlset %}
+      <url>
+        <loc>{{ url.location }}</loc>
+        {% if url.lastmod %}<lastmod>{{ url.lastmod|date:"Y-m-d" }}</lastmod>{% endif %}
+        {% if url.changefreq %}<changefreq>{{ url.changefreq }}</changefreq>{% endif %}
+        {% if url.priority %}<priority>{{ url.priority }}</priority>{% endif %}
+        {% for img in url.item.sitemap_images %}
+          <image:image><image:loc>{{ img }}</image:loc></image:image>
+        {% endfor %}
+      </url>
+    {% endfor %}
+  {% endspaceless %}
+</urlset>

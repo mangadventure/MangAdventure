@@ -62,15 +62,15 @@ v0.7.x
 v0.8.x
 ^^^^^^
 
-| |u| Caching.
 | |c| Heroku demo.
 | |c| Docker container.
 | |c| Web App Manifest.
-| |u| Sitemaps.
+| |c| Sitemaps.
 
 v0.9.x
 ^^^^^^
 
+| |u| Caching.
 | |u| Redesign.
 |    |u| Pagination.
 |    |u| Mobile-friendly.

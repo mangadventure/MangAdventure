@@ -1,11 +1,15 @@
 """The root URLconf."""
 
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 
 from reader import feeds
 
+from .sitemaps import MiscSitemap
 from .views import contribute, index, manifest, opensearch, robots, search
+
+_sitemaps = {'sitemaps': {'main': MiscSitemap}}
 
 #: The main URL patterns.
 urlpatterns = [
@@ -25,6 +29,7 @@ urlpatterns = [
     path('releases.rss', feeds.ReleasesRSS(), name='releases.rss'),
     path('library.atom', feeds.LibraryAtom(), name='library.atom'),
     path('library.rss', feeds.LibraryAtom(), name='library.rss'),
+    path('sitemap.xml', sitemap, _sitemaps, name='sitemap.xml'),
 ]
 
 

@@ -1,11 +1,12 @@
 """The URLconf of the reader app."""
 
 from django.conf import settings
+from django.contrib.sitemaps.views import sitemap
 from django.urls import path, register_converter
 
 from MangAdventure.converters import FloatConverter
 
-from . import feeds, views
+from . import feeds, sitemaps, views
 
 register_converter(FloatConverter, 'float')
 
@@ -16,6 +17,14 @@ _slug = '<slug:slug>/'
 _chapter = f'{_slug}<int:vol>/<float:num>/'
 _page = f'{_chapter}<int:page>/'
 
+_sitemaps = {
+    'template_name': 'image-sitemap.xml',
+    'sitemaps': {
+        'series': sitemaps.SeriesSitemap,
+        'chapters': sitemaps.ChapterSitemap
+    }
+}
+
 #: The URL namespace of the reader app.
 urlpatterns = [
     path('', views.directory, name='directory'),
@@ -24,6 +33,7 @@ urlpatterns = [
     path(_page, views.chapter_page, name='page'),
     path(f'{_slug[:-1]}.atom', feeds.ReleasesAtom(), name='series.atom'),
     path(f'{_slug[:-1]}.rss', feeds.ReleasesRSS(), name='series.rss'),
+    path('<section>-sitemap.xml', sitemap, _sitemaps, name='sitemap.xml'),
 ]
 
 if settings.CONFIG['ALLOW_DLS']:

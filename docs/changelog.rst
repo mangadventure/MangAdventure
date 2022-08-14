@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+v0.8.5
+^^^^^^
+
+* Added sitemaps
+* Added Docker support
+
 v0.8.4
 ^^^^^^
 

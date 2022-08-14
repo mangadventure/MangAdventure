@@ -73,6 +73,14 @@ MangAdventure.settings module
    :undoc-members:
    :show-inheritance:
 
+MangAdventure.sitemaps module
+-----------------------------
+
+.. automodule:: MangAdventure.sitemaps
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 MangAdventure.storage module
 ----------------------------
 

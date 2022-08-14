@@ -218,7 +218,7 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
     all_pages = list(current.pages.all())
     try:
         curr_page = next(p for p in all_pages if p.number == page)
-    except StopIteration as e:
+    except StopIteration as e:  # pragma: no cover
         raise Http404('No such page') from e
     preload = list(filter(
         lambda p: curr_page < p < curr_page.number + 4, all_pages

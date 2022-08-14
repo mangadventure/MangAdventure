@@ -67,7 +67,9 @@ class CDNStorage(FileSystemStorage):
         """
         method = f'_{self._cdn}_url'
         if not hasattr(self, method):
-            return super().url(name)
+            domain = settings.CONFIG['DOMAIN']
+            scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+            return f'{scheme}://{domain}{self.base_url}{name}'
         return getattr(self, method)(name)
 
 

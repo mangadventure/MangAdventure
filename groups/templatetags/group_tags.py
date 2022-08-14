@@ -16,7 +16,7 @@ def group_roles(member: Member, group: Group) -> str:
     Get the roles of the member within the group.
 
     :param member: A ``Member`` model instance.
-    :param group: A ``Group``` model instance.
+    :param group: A ``Group`` model instance.
 
     :return: A comma-separated list of roles.
     """

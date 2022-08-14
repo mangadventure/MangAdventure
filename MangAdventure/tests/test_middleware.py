@@ -23,6 +23,10 @@ class TestBaseMiddleware(MangadvTestBase):
         r = self.bot.get(reverse('index'))
         assert r.status_code == 403
 
+    def test_early_data(self):
+        r = self.client.get(reverse('index'), HTTP_EARLY_DATA='1')
+        assert r.status_code == 425
+
 
 @mark.skipif(
     getenv('wsgi.url_scheme') != 'https',

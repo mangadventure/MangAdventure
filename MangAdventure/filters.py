@@ -23,8 +23,8 @@ def title_filter(title: str, klass: Type[FieldListFilter] =
 
     :return: A class that inherits from ``klass``.
     """
-    class _GenericFilter(klass):  # pragma: no cover
-        def __new__(cls, *args, **kwargs):
+    class _GenericFilter(klass):  # type: ignore
+        def __new__(cls, *args, **kwargs):  # pragma: no cover
             instance = super().create(*args, **kwargs)
             instance.title = title
             return instance

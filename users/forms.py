@@ -1,5 +1,7 @@
 """Form models for the users app."""
 
+from typing import cast
+
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -102,7 +104,7 @@ class UserProfileForm(forms.ModelForm):
         users = User.objects.filter(username=username)
         if users.exclude(id=self.instance.user_id).exists():
             raise forms.ValidationError('This username is already taken!')
-        return username
+        return cast(str, username)
 
     def clean_new_password2(self) -> str:
         """
@@ -116,7 +118,7 @@ class UserProfileForm(forms.ModelForm):
         password2 = self.cleaned_data.get('new_password2')
         if password1 != password2:
             raise forms.ValidationError("The passwords don't match!")
-        return password2
+        return cast(str, password2)
 
     def clean_curr_password(self) -> str:
         """
@@ -129,7 +131,7 @@ class UserProfileForm(forms.ModelForm):
         password = self.cleaned_data.get('curr_password')
         if not self.instance.user.check_password(password):
             raise forms.ValidationError('Wrong password!')
-        return password
+        return cast(str, password)
 
     def save(self, commit: bool = True) -> UserProfile:
         """

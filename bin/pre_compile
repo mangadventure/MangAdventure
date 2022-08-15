@@ -15,7 +15,7 @@ sed >> "$BUILD_DIR/.env" "$BUILD_DIR/.env.example" \
     -e 's/favicon.ico/logo.png/;s/<user>@${DOMAIN}/${DJANGO_SUPERUSER_EMAIL}/'
 
 printf '       Setting Python runtime version.\n'
-printf > "$BUILD_DIR/runtime.txt" 'python-3.10.4\n'
+printf > "$BUILD_DIR/runtime.txt" 'python-3.10.6\n'
 
 printf '       Generating default Procfile.\n'
 # shellcheck disable=SC2016

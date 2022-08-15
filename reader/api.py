@@ -81,7 +81,7 @@ class CategoryViewSet(CORSMixin, ModelViewSet):
     * delete: Delete the given category.
     """
     schema = OpenAPISchema(tags=('categories',), component_name='Category')
-    http_method_names = ('get', 'post', 'patch', 'delete', 'head', 'options')
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
     serializer_class = serializers.CategorySerializer
     queryset = models.Category.objects.all()
     lookup_field = 'name'
@@ -101,7 +101,7 @@ class PageViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin,
     schema = OpenAPISchema(tags=('pages',),)
     queryset = models.Page.objects.all()
     serializer_class = serializers.PageSerializer
-    filter_backends = filters.PAGE_FILTERS
+    filter_backends = filters.PAGE_FILTERS  # type: ignore
     parser_classes = (MultiPartParser,)
 
 
@@ -163,7 +163,7 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
         ).filter(chapter_count__gt=0).distinct()
 
     def get_serializer_class(self) -> Type[serializers.SeriesSerializer]:
-        return serializers.SeriesSerializer[self.action]
+        return serializers.SeriesSerializer[self.action]  # type: ignore
 
 
 class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):

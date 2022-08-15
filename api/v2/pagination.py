@@ -27,8 +27,8 @@ class PageLimitPagination(PageNumberPagination):
 
     def get_paginated_response(self, data: Any) -> Response:
         return Response({
-            'total': self.page.paginator.count,
-            'last': not self.page.has_next(),
+            'total': self.page.paginator.count,  # type: ignore
+            'last': not self.page.has_next(),  # type: ignore
             'results': data
         })
 
@@ -50,7 +50,7 @@ class PageLimitPagination(PageNumberPagination):
             }
         }
 
-    def get_schema_operation_parameters(self, view: Any) -> Dict:
+    def get_schema_operation_parameters(self, view: Any) -> List[Dict]:
         params = super().get_schema_operation_parameters(view)
         params[0]['schema']['minimum'] = 1
         params[1]['schema'].update({

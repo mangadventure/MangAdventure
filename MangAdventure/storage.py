@@ -6,7 +6,7 @@ Custom storages.
     https://docs.djangoproject.com/en/3.2/ref/files/storage/
 """
 
-from typing import Optional, Tuple
+from typing import Optional, Tuple, cast
 from urllib.parse import quote, urlencode
 
 from django.conf import settings
@@ -27,7 +27,7 @@ class CDNStorage(FileSystemStorage):
     """
     def __init__(self, fit: Optional[Tuple[int, int]] = None):
         super().__init__()
-        self._cdn = settings.CONFIG['USE_CDN'].lower()
+        self._cdn = cast(str, settings.CONFIG['USE_CDN']).lower()
         self._fit = {'w': fit[0], 'h': fit[1]} if fit else {}
 
     def _statically_url(self, name: str) -> str:
@@ -46,7 +46,7 @@ class CDNStorage(FileSystemStorage):
         return base + quote(url, '') + '&' + qs + '&we'
 
     def _photon_url(self, name: str) -> str:
-        domain = settings.CONFIG['DOMAIN']
+        domain = cast(str, settings.CONFIG['DOMAIN'])
         scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
         base = f'{scheme}://i3.wp.com/'
         qs = {'ssl': '1'} if scheme == 'https' else dict()

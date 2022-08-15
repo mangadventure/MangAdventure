@@ -55,7 +55,7 @@ class ChapterSerializer(ModelSerializer):
     )
     groups = StringRelatedField(
         many=True, help_text='The scanlation groups of the chapter.'
-    )
+    )  # type: StringRelatedField
     url = URLField(
         source='get_absolute_url', read_only=True,
         help_text='The absolute URL of the chapter.'
@@ -166,19 +166,19 @@ class _SeriesDetailSerializer(ModelSerializer):
     aliases = StringRelatedField(
         many=True, required=False,
         help_text='The alternative titles of the series.'
-    )
+    )  # type: StringRelatedField
     authors = StringRelatedField(
         many=True, required=False,
         help_text='The authors of the series.'
-    )
+    )  # type: StringRelatedField
     artists = StringRelatedField(
         many=True, required=False,
         help_text='The artists of the series.'
-    )
+    )  # type: StringRelatedField
     categories = StringRelatedField(
         many=True, required=False,
         help_text='The categories of the series.'
-    )
+    )  # type: StringRelatedField
     url = URLField(
         source='get_absolute_url', read_only=True,
         help_text='The absolute URL of the series.'
@@ -226,8 +226,8 @@ class SeriesSerializer(Generic[TSeriesSerializer]):
         :return: The actual type of the serializer.
         """
         if action == 'list':
-            return _SeriesListSerializer
-        return _SeriesDetailSerializer
+            return _SeriesListSerializer  # type: ignore
+        return _SeriesDetailSerializer  # type: ignore
 
 
 class CubariSerializer(ModelSerializer):

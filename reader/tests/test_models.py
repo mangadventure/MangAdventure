@@ -167,10 +167,10 @@ class TestPage(ReaderTestBase):
         file = get_test_image()
         return Page.objects.create(chapter=chapter, image=file, number=number)
 
-    def test_crate(self):
+    def test_create(self):
         page = self.create_page()
         assert str(page) == 'My Series - 1/0.5 #001'
-        assert hash(page) == 0x124cac9292d74411
+        assert hash(page) > 0
 
     def test_get_absolute_url(self):
         page = self.create_page()

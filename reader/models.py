@@ -23,7 +23,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.expressions import F
 from django.db.models.query import Q
-from django.shortcuts import reverse
+from django.urls import reverse
 from django.utils import timezone as tz
 from django.utils.functional import cached_property
 from django.utils.text import slugify

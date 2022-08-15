@@ -185,7 +185,7 @@ def all_releases(request: HttpRequest) -> JsonResponse:
             'url': request.build_absolute_uri(s.get_absolute_url()),
             'cover': request.build_absolute_uri(s.cover.url),
             'latest_chapter': {},
-        }
+        }  # type: dict
         try:
             series_res['latest_chapter'] = s.chapters.values(
                 'title', 'volume', 'number', 'published'

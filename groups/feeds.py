@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, cast
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
@@ -84,7 +84,7 @@ class GroupRSS(Feed):
 
         :return: An iterable of ``Chapter`` objects.
         """
-        _max = settings.CONFIG['MAX_RELEASES']
+        _max = cast(int, settings.CONFIG['MAX_RELEASES'])
         return obj.releases.all()[:_max]
 
     def item_description(self, item: Chapter) -> str:

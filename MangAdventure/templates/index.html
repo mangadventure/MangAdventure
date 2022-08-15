@@ -1,5 +1,9 @@
 {% extends 'layout.html' %}
 {% load cache humanize custom_tags %}
+{% block head_extras %}
+  <link href="{% url 'sitemap.xml' %}" rel="sitemap"
+        type="application/xml" title="Main sitemap">
+{% endblock %}
 {% block title %}
   <meta name="title" content="Latest Releases">
   <meta property="og:title" content="Home - {{ config.NAME }}">

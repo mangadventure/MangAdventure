@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Type
 
 from django.contrib import admin
 from django.db.models.functions import Lower
@@ -24,20 +24,20 @@ class MemberRoleInline(admin.StackedInline):
     extra = 1
 
     def get_formset(self, request: HttpRequest, obj: Optional[Role],
-                    **kwargs) -> BaseInlineFormSet:  # pragma: no cover
+                    **kwargs) -> Type[BaseInlineFormSet]:  # pragma: no cover
         formset = super().get_formset(request, obj, **kwargs)
         if request.user.is_superuser:
             return formset
         if 'group' in formset.form.base_fields:
-            formset.form.base_fields['group'].queryset = \
-                Group.objects.filter(manager_id=request.user.id)
+            qs = Group.objects.filter(manager_id=request.user.id)
+            formset.form.base_fields['group'].queryset = qs  # type: ignore
         return formset
 
 
 class MemberAdmin(admin.ModelAdmin):
     """Admin model for :class:`~groups.models.Member`."""
     inlines = (MemberRoleInline,)
-    ordering = (Lower('name'),)
+    ordering = [Lower('name')]  # type: ignore
     sortable_by = ('name',)
     list_display = ('name', '_twitter', 'discord', 'irc', '_reddit')
     search_fields = ('name', 'twitter', 'discord', 'irc', 'reddit')
@@ -64,7 +64,7 @@ class MemberAdmin(admin.ModelAdmin):
 class GroupAdmin(admin.ModelAdmin):
     """Admin model for :class:`~groups.models.Group`."""
     exclude = ('id',)
-    ordering = (Lower('name'),)
+    ordering = [Lower('name')]  # type: ignore
     sortable_by = ('name',)
     list_display = ('image', 'name', '_website', 'manager', 'description')
     search_fields = ('name', 'website', 'description')
@@ -75,7 +75,7 @@ class GroupAdmin(admin.ModelAdmin):
     empty_value_display = 'N/A'
 
     def get_form(self, request: HttpRequest, obj: Optional[Group]
-                 = None, change: bool = False, **kwargs) -> ModelForm:
+                 = None, change: bool = False, **kwargs) -> Type[ModelForm]:
         form = super().get_form(request, obj, change, **kwargs)
         if 'manager' in form.base_fields:
             form.base_fields['manager'].initial = request.user.id

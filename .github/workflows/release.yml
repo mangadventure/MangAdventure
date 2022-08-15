@@ -13,11 +13,11 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v3
       - name: "Initialize CodeQL"
-        uses: github/codeql-action/init@v1
+        uses: github/codeql-action/init@v2
         with:
           languages: javascript, python
       - name: "Perform CodeQL Analysis"
-        uses: github/codeql-action/analyze@v1
+        uses: github/codeql-action/analyze@v2
 
   release:
     name: "Create release"
@@ -86,28 +86,3 @@ jobs:
           file: docker/Dockerfile
           tags: ${{steps.meta.outputs.tags}}
           labels: ${{steps.meta.outputs.labels}}
-
-  webhook:
-    name: "Discord webhook"
-    needs: [release]
-    runs-on: ubuntu-latest
-    if: github.repository_owner == 'mangadventure'
-    steps:
-      - name: "Send data to Discord"
-        env:
-          RELEASE_BODY: ${{github.event.release.body}}
-          RELEASE_NAME: ${{github.event.release.tag_name}}
-          RELEASE_WEBHOOK: ${{secrets.RELEASE_WEBHOOK}}
-        run: |-
-          jq --arg name "$GITHUB_ACTOR" \
-             --arg author_url "$GITHUB_SERVER_URL/$GITHUB_ACTOR" \
-             --arg icon_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY_OWNER.png?s=40" \
-             --arg title "New release published: $RELEASE_NAME" \
-             --arg url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/$RELEASE_NAME" \
-             --arg description "$RELEASE_BODY" \
-             -Mn '{
-               username: "GitHub",
-               avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-               embeds: [{author: {$name, $icon_url, url: $author_url}, $url, $title, $description}]
-             }' | curl -d@- -Ssf "$RELEASE_WEBHOOK" -H 'Content-Type: application/json' \
-                       -A "GitHub-Actions ($GITHUB_SERVER_URL/$GITHUB_REPOSITORY, v0.1)"

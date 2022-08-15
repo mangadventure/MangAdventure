@@ -1,15 +1,17 @@
 """Serializers for the users app."""
 
+from typing import Dict
+
 from django.contrib.auth.models import User
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import (
     CharField, CurrentUserDefault, EmailField, HiddenField, URLField
 )
 from rest_framework.pagination import BasePagination
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer
-from rest_framework.validators import ValidationError
 
 from reader.models import Series
 
@@ -21,7 +23,7 @@ class BookmarkPagination(BasePagination):
     def to_html(self) -> str:
         return ''
 
-    def get_paginated_response_schema(self, schema: dict) -> dict:
+    def get_paginated_response_schema(self, schema: Dict) -> Dict:
         return {
             'type': 'object',
             'properties': {
@@ -46,7 +48,7 @@ class BookmarkSerializer(ModelSerializer):
     )
     user = HiddenField(default=CurrentUserDefault())
 
-    def validate(self, attrs: dict) -> dict:
+    def validate(self, attrs: Dict) -> Dict:
         if Bookmark.objects.filter(**attrs).exists():
             raise ValidationError(
                 {'error': 'This bookmark already exists.'}

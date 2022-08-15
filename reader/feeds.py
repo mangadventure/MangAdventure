@@ -200,7 +200,7 @@ class ReleasesRSS(Feed):
         if getattr(obj, 'licensed', False):  # pragma: no cover
             return []
         if hasattr(obj, 'chapters'):
-            return list(obj.chapters.all())
+            return list(obj.chapters.all())  # type: ignore
         return Chapter.objects.only(
             'title', 'volume', 'number', 'published', 'modified',
             'series__slug', 'series__title', 'series__format'

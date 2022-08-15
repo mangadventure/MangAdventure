@@ -103,14 +103,12 @@ def series(request: HttpRequest, slug: str) -> HttpResponse:
     :raises Http404: If there is no series with the specified ``slug``.
     """
     try:
-        chapters = Chapter.objects.filter(
-            published__lte=tz.now()
-        ).order_by(
+        qs = Chapter.objects.filter(published__lte=tz.now()).order_by(
             'series', F('volume').asc(nulls_last=True), 'number'
         ).reverse().defer('file', 'views', 'modified')
         groups = Group.objects.only('name')
         series = Series.objects.prefetch_related(
-            Prefetch('chapters', queryset=chapters),
+            Prefetch('chapters', queryset=qs),
             Prefetch('chapters__groups', queryset=groups),
             Prefetch('authors'), Prefetch('artists')
         ).defer('manager').get(slug=slug)

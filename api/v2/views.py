@@ -6,7 +6,8 @@ from importlib.util import find_spec
 from typing import TYPE_CHECKING
 
 from django.http import HttpResponse
-from django.shortcuts import render, reverse
+from django.shortcuts import render
+from django.urls import reverse
 from django.views.decorators.cache import cache_control
 
 from rest_framework.renderers import JSONOpenAPIRenderer
@@ -21,8 +22,9 @@ if TYPE_CHECKING:  # pragma: no cover
 #: The generated OpenAPI schema as a view.
 openapi = cache_control(public=True, max_age=1296000, immutable=True)(
     CORSMixin.decorator(get_schema_view(
-        title='MangAdventure API', renderer_classes=[JSONOpenAPIRenderer],
-        generator_class=OpenAPISchemaGenerator, public=True, version='2.2'
+        title='MangAdventure API', version='2.2',
+        generator_class=OpenAPISchemaGenerator, public=True,
+        renderer_classes=[JSONOpenAPIRenderer]  # type: ignore
     ))
 )
 

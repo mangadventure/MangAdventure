@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Optional, Tuple
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import DjangoObjectPermissions
@@ -18,7 +18,7 @@ class ApiKeyAuthentication(TokenAuthentication):
     keyword = 'X-API-Key'
     model = ApiKey
 
-    def authenticate(self, request: Request) -> Optional[Tuple]:
+    def authenticate(self, request: Request) -> Optional[Tuple[Any, Any]]:
         token = request.headers.get(
             self.keyword, request.GET.get('api_key')
         )

@@ -113,7 +113,7 @@ def query(params: _SearchParams) -> QuerySet:
     if not params:
         return Series.objects.none()
     q = Q(chapters__published__lte=tz.now())
-    return Series.objects.annotate(
+    return Series.objects.annotate(  # type: ignore
         chapter_count=Count('chapters', filter=q),
         latest_upload=Max('chapters__published'),
         views=Sum('chapters__views', distinct=True)

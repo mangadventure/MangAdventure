@@ -13,7 +13,7 @@ from django.forms.widgets import HiddenInput
 # XXX: cannot be resolved under TYPE_CHECKING
 from django.http import HttpRequest
 from django.utils import timezone as tz
-from django.utils.html import mark_safe
+from django.utils.safestring import mark_safe
 
 from MangAdventure import filters, utils
 
@@ -145,11 +145,11 @@ class ChapterAdmin(admin.ModelAdmin):
         queryset.update(final=Q(final=False))
 
     def get_form(self, request: HttpRequest, obj: Optional[Chapter],
-                 **kwargs) -> ModelForm:  # pragma: no cover
+                 **kwargs) -> Type[ModelForm]:  # pragma: no cover
         form = super().get_form(request, obj, **kwargs)
         if 'series' in form.base_fields and not request.user.is_superuser:
-            form.base_fields['series'].queryset = \
-                Series.objects.filter(manager_id=request.user.id)
+            qs = Series.objects.filter(manager_id=request.user.id)
+            form.base_fields['series'].queryset = qs  # type: ignore
         return form
 
     def has_change_permission(self, request: HttpRequest, obj:
@@ -237,7 +237,7 @@ class SeriesAdmin(admin.ModelAdmin):
     empty_value_display = 'N/A'
 
     def get_form(self, request: HttpRequest, obj: Optional[Series]
-                 = None, change: bool = False, **kwargs) -> ModelForm:
+                 = None, change: bool = False, **kwargs) -> Type[ModelForm]:
         form = super().get_form(request, obj, change, **kwargs)
         if 'format' in form.base_fields:
             form.base_fields['format'].help_text = mark_safe('<br>'.join((

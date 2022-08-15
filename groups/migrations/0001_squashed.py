@@ -8,7 +8,7 @@ from groups.models import _logo_uploader
 class Migration(migrations.Migration):
     initial = True
 
-    dependencies = []
+    dependencies = []  # type: list
 
     operations = [
         migrations.CreateModel(

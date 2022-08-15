@@ -108,7 +108,7 @@ htmlhelp_basename = f'{project}Doc'
 
 # -- Options for LaTeX output --
 
-latex_elements = {}
+latex_elements = {}  # type: dict
 latex_documents = [(
     master_doc, f'{project}.tex',
     f'{project} Documentation', author, 'manual'

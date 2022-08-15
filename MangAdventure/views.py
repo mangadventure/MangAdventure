@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from importlib.util import find_spec
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
 from django.conf import settings
 from django.db.models import Prefetch
@@ -37,7 +37,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     :return: A response with the rendered ``index.html`` template.
     """
-    max_ = settings.CONFIG['MAX_RELEASES']
+    max_ = cast(int, settings.CONFIG['MAX_RELEASES'])
     groups = Group.objects.only('name')
     latest = Chapter.objects.filter(
         published__lte=tz.now(),
@@ -68,9 +68,9 @@ def search(request: HttpRequest) -> HttpResponse:
     results = []
     params = parse(request)
     if request.GET.keys() & {'q', 'author', 'status', 'categories'}:
-        results = query(params).prefetch_related(
+        results = list(query(params).prefetch_related(
             'categories', 'authors', 'artists'
-        ).exclude(licensed=True).order_by('title')
+        ).exclude(licensed=True).order_by('title'))
     uri = request.build_absolute_uri(request.path)
     crumbs = breadcrumbs([('Search', uri)])
     categories = list(Category.objects.all())
@@ -81,7 +81,7 @@ def search(request: HttpRequest) -> HttpResponse:
         'in_categories': params.categories[0],
         'ex_categories': params.categories[1],
         'all_categories': categories,
-        'results': list(results),
+        'results': results,
         'breadcrumbs': crumbs
     })
 
@@ -95,7 +95,7 @@ def opensearch(request: HttpRequest) -> HttpResponse:
 
     :return: A response with the rendered ``opensearch.xml`` template.
     """
-    icon = request.build_absolute_uri(settings.CONFIG['FAVICON'])
+    icon = request.build_absolute_uri(cast(str, settings.CONFIG['FAVICON']))
     search_ = request.build_absolute_uri('/search/')
     self_ = request.build_absolute_uri('/opensearch.xml')
     return render(

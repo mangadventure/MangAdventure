@@ -18,7 +18,7 @@ from PIL import Image
 
 def _remove_file(file: File):
     try:
-        remove(file.path)
+        remove(file.path)  # type: ignore
     except FileNotFoundError:
         pass
 

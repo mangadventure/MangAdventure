@@ -1,5 +1,7 @@
 """Schema utilities."""
 
+from __future__ import annotations
+
 from re import compile as regex
 from typing import Any, Dict, List
 
@@ -21,7 +23,7 @@ class OpenAPISchema(AutoSchema):
         # map serializers to their $refs
         if isinstance(field, BaseSerializer):
             name = self.get_component_name(field)
-            ref = self._get_reference(name)
+            ref = self._get_reference(name)  # type: ignore
             if hasattr(field, 'child'):
                 return {'type': 'array', 'items': ref}
             return ref
@@ -177,16 +179,16 @@ class OpenAPISchema(AutoSchema):
 
 class OpenAPISchemaGenerator(SchemaGenerator):
     """Custom OpenAPI generator class."""
-    def get_info(self) -> Dict:
+    def get_info(self) -> Dict:  # type: ignore
         info = super().get_info()
         # add "contact" to the info schema
-        info['contact'] = {
+        info['contact'] = {  # type: ignore
             'name': 'API Support',
             'url': 'https://github.com/mangadventure/MangAdventure/issues'
         }
-        return info
+        return info  # type: ignore
 
-    def get_schema(self, *args, **kwargs) -> Dict:
+    def get_schema(self, *args, **kwargs) -> Dict:  # type: ignore
         from django.conf import settings
         from django.contrib.sites.models import Site
 
@@ -202,8 +204,8 @@ class OpenAPISchemaGenerator(SchemaGenerator):
                 'url': 'https://mangadventure.readthedocs.io/',
                 'description': 'Documentation'
             },
-            'security': ({'ApiKeyHeader': ()}, {'ApiKeyParam': ()}),
-            'tags': (
+            'security': [{'ApiKeyHeader': []}, {'ApiKeyParam': []}],
+            'tags': [
                 {'name': 'series'},
                 {'name': 'chapters'},
                 {'name': 'categories'},
@@ -215,7 +217,7 @@ class OpenAPISchemaGenerator(SchemaGenerator):
                 {'name': 'bookmarks'},
                 {'name': 'profile'},
                 {'name': 'token'},
-            )
+            ]
         })
         # add "securitySchemes" to the components schema
         schema['components']['securitySchemes'] = {
@@ -230,7 +232,7 @@ class OpenAPISchemaGenerator(SchemaGenerator):
                 'name': 'api_key'
             }
         }
-        return schema
+        return schema  # type: ignore
 
     def coerce_path(self, *args) -> str:
         # HACK: strip /api/v2 from the path

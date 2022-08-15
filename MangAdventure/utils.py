@@ -1,10 +1,12 @@
 """Various utility functions."""
 
+from __future__ import annotations
+
 from re import split
 from typing import Iterable, List, Union
 
 # XXX: not parsed properly when under TYPE_CHECKING
-from django.db.models.fields.files import FieldFile
+from django.db.models.fields.files import ImageField
 from django.http import HttpResponse
 from django.utils.html import format_html
 
@@ -25,12 +27,12 @@ class HttpResponseUnauthorized(HttpResponse):
         self.status_code = 401
 
 
-def img_tag(obj: 'FieldFile', alt: str,
+def img_tag(obj: ImageField, alt: str,
             height: int = 0, width: int = 0) -> str:
     """
     Create an HTML ``<img>`` from an :class:`~django.db.models.ImageField`.
 
-    :param obj: An ``ImageFieldFile`` instance.
+    :param obj: An ``ImageField`` instance.
     :param alt: The alternate text of the tag.
     :param height: The height of the ``<img>``. Unset if ``0``.
     :param width: The width of the ``<img>``. Unset if ``0``.
@@ -39,7 +41,7 @@ def img_tag(obj: 'FieldFile', alt: str,
     """
     return format_html(
         '<img src="{0}" alt="{3}" width="{1}" height="{2}">',
-        obj.url, width or '', height or '', alt or ''
+        obj.url, width or '', height or '', alt or ''  # type: ignore
     ) if obj and hasattr(obj, 'url') else ''
 
 

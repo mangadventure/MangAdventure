@@ -49,7 +49,7 @@ def profile(request: HttpRequest) -> HttpResponse:
     :raises Http404: If there is no active user with the specified ``id``.
     """
     try:
-        uid = int(request.GET.get('id', request.user.id))
+        uid = int(request.GET.get('id', request.user.id))  # type: ignore
         prof = UserProfile.objects.select_related('user').only(
             'avatar', 'bio', 'user__email', 'user__username',
             'user__first_name', 'user__last_name',
@@ -131,7 +131,7 @@ class EditUser(TemplateView):
         if form.is_valid():
             form.save()
             email = form.cleaned_data['email']
-            if request.user.email != email:
+            if request.user.email != email:  # type: ignore
                 EmailAddress.objects.add_email(
                     request, request.user, email, confirm=True
                 )

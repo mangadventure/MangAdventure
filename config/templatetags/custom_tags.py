@@ -8,7 +8,8 @@ from urllib.request import urlopen
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.defaultfilters import register, slice_filter
-from django.utils.html import format_html, mark_safe
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 
 @register.filter

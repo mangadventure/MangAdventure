@@ -2,16 +2,17 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, cast
 
 from django.db.models import Prefetch
 from django.urls import reverse
 
+from rest_framework import mixins
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet, mixins
+from rest_framework.viewsets import GenericViewSet
 
 from api.v2.mixins import CORSMixin
 from api.v2.schema import OpenAPISchema
@@ -51,12 +52,12 @@ class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
 
     def get_queryset(self) -> QuerySet:
         series = Series.objects.only('id', 'slug', 'title')
-        return self.request.user.bookmarks.prefetch_related(
+        return self.request.user.bookmarks.prefetch_related(  # type: ignore
             Prefetch('series', queryset=series)
         )
 
     def list(self, request: Request, *args, **kwargs) -> Response:
-        token = request.user.profile.token
+        token = request.user.profile.token  # type: ignore
         rss = request.build_absolute_uri(
             reverse('user_bookmarks.rss') + '?token=' + token
         )
@@ -81,7 +82,7 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     permission_classes = (IsAuthenticated,)
     parser_classes = (MultiPartParser,)
     serializer_class = ProfileSerializer
-    lookup_field = None
+    lookup_field = None  # type: ignore
     _restrict = True
 
     def get_permissions(self) -> List:
@@ -96,7 +97,7 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     def perform_update(self, serializer: ProfileSerializer):
         data = dict(serializer.validated_data)
         fields = data.pop('user', {})
-        profile = serializer.instance
+        profile = cast(UserProfile, serializer.instance)
         user = profile.user
         if fields:  # update the underlying user first
             for k, v in fields.items():

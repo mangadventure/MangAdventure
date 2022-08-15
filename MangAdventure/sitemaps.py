@@ -16,7 +16,7 @@ class MiscSitemap(Sitemap):
         """
         return ('index', 'search', 'reader:directory', 'info', 'privacy')
 
-    def location(self, item: str) -> str:  # type: ignore[override]
+    def location(self, item: str) -> str:
         """
         Get the location of the item.
 

@@ -8,7 +8,7 @@ from typing import List
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.shortcuts import reverse
+from django.urls import reverse
 from django.utils.functional import cached_property
 
 from MangAdventure.fields import (

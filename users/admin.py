@@ -6,8 +6,9 @@ from typing import List, Tuple, Type
 
 from django.contrib import admin
 from django.contrib.auth import models
+from django.db.models.expressions import Value as V
 from django.db.models.functions import Concat as C
-from django.db.models.query import QuerySet, Value as V
+from django.db.models.query import QuerySet
 from django.forms.fields import BooleanField
 from django.forms.models import ModelForm
 from django.forms.widgets import CheckboxSelectMultiple
@@ -75,7 +76,7 @@ class UserTypeFilter(admin.SimpleListFilter):
             'staff': queryset.filter(is_staff=True),
             'scanlator': queryset.filter(groups__name='Scanlator'),
             'regular': queryset.exclude(is_staff=True)
-        }.get(self.value(), queryset)
+        }.get(self.value() or '', queryset)
 
 
 class User(models.User):

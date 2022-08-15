@@ -1,5 +1,8 @@
+django-stubs
+djangorestframework-stubs
 flake8
 isort
+mypy
 pytest
 pytest-cov
 pytest-django

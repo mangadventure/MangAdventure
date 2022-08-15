@@ -1,3 +1,5 @@
+# type: ignore
+
 from typing import get_type_hints, Any, List, Optional, Type, Tuple
 
 from django.db.models.base import Model

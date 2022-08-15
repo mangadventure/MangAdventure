@@ -1,16 +1,22 @@
 """Signal receivers for the reader app."""
 
-from typing import Type
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Type
 
 from django.conf import settings
-from django.contrib.redirects.models import Redirect, Site
+from django.contrib.redirects.models import Redirect
+from django.contrib.sites.models import Site
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 
 from .models import Chapter, Page, Series
 
+if TYPE_CHECKING:
+    from os import PathLike
 
-def _move(old_dir: str, new_dir: str):
+
+def _move(old_dir: PathLike, new_dir: PathLike):
     new_path = settings.MEDIA_ROOT / new_dir
     if not new_path.exists():
         old_path = settings.MEDIA_ROOT / old_dir
@@ -52,7 +58,7 @@ def redirect_series(sender: Type[Series], instance: Series, **kwargs):
             Redirect(site_id=site_id, old_path=old_path, new_path=new_path)
             for site_id in Site.objects.values_list('id', flat=True)
         ])
-        _move(old_dir, str(new_dir))
+        _move(old_dir, new_dir)
         instance.cover = instance.cover.name.replace(
             str(old_dir), str(new_dir)
         )
@@ -86,10 +92,10 @@ def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
     new_dir = instance.get_directory()
     if old_dir != new_dir:
         if current.volume != instance.volume:
-            _move(str(old_dir.parent), str(new_dir.parent))
+            _move(old_dir.parent, new_dir.parent)
             old_dir = new_dir.parent / old_dir.name
         if current.number != instance.number:
-            _move(old_dir, str(new_dir))
+            _move(old_dir, new_dir)
             pages = current.pages.all()
             for page in pages:
                 page.image = page.image.name.replace(

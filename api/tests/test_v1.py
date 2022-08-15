@@ -26,7 +26,7 @@ class APIViewTestBase(APITestBase):
         r = self.client.get(url, params)
         assert isinstance(r, JsonResponse)
         assert 'Warning' in r.headers
-        return r.status_code, r.json()
+        return r.status_code, r.json()  # type: ignore
 
     def teardown_method(self):
         super().teardown_method()

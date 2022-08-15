@@ -92,7 +92,7 @@ class StatusFilter(BaseFilterBackend):
             'any': queryset,
             'completed': queryset.filter(completed=True),
             'ongoing': queryset.filter(completed=False)
-        }.get(request.query_params.get('status', 'any').lower())
+        }[request.query_params.get('status', 'any').lower()]
 
     def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
         return [{
@@ -262,8 +262,8 @@ class PageFilter(BaseFilterBackend):
                 'error': f'{params} are required parameters.'
             })
         series = request.query_params['series']
-        volume = int(request.query_params['volume']) or None
-        number = float(request.query_params['number'])
+        volume = int(request.query_params['volume']) or None  # type: ignore
+        number = float(request.query_params['number'])  # type: ignore
         if request.query_params.get('track') == 'true':
             Chapter.track_view(
                 series__slug=series,
@@ -301,7 +301,7 @@ class PageFilter(BaseFilterBackend):
             'in': 'query',
             'description': 'The number of the chapter.',
             'schema': {
-                'type': 'integer',
+                'type': 'number',
                 'minimum': 0
             }
         }, {
@@ -314,16 +314,16 @@ class PageFilter(BaseFilterBackend):
 
 
 #: The filters used in the series endpoint.
-SERIES_FILTERS = (
+SERIES_FILTERS = [
     TitleFilter, AuthorFilter, ArtistFilter,
     StatusFilter, CategoriesFilter, SlugFilter, SeriesSort
-)
+]
 
 #: The filters used in the chapters endpoint.
-CHAPTER_FILTERS = (ChapterFilter, DateFormat)
+CHAPTER_FILTERS = [ChapterFilter, DateFormat]
 
 #: The filters used in the pages endpoint.
-PAGE_FILTERS = (PageFilter,)
+PAGE_FILTERS = [PageFilter]
 
 
 __all__ = ['SERIES_FILTERS', 'CHAPTER_FILTERS', 'PAGE_FILTERS']

@@ -11,7 +11,8 @@ from . import ReaderTestBase
 
 
 def get_redirect_list() -> List[Tuple[str, str]]:
-    return list(Redirect.objects.values_list('old_path', 'new_path'))
+    redirects = Redirect.objects.values_list('old_path', 'new_path')
+    return list(redirects)  # type: ignore
 
 
 class TestRedirectSeries(ReaderTestBase):

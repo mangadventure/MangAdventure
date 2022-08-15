@@ -1,5 +1,9 @@
 {% extends 'layout.html' %}
 {% load cache static %}
+{% block head_extras %}
+  <link href="{% url 'groups:sitemap.xml' 'groups' %}"
+        rel="sitemap" type="application/xml" title="Groups sitemap">
+{% endblock %}
 {% block title %}
   <meta name="title" content="Groups">
   <meta property="og:title" content="Groups - {{ config.NAME }}">

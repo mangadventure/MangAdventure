@@ -20,8 +20,10 @@ jobs:
           python-version: 3.7
       - name: "Install dependencies"
         run: pip install wheel && pip install -e .[dev,csp]
+      - name: "Set up .env file"
+        run: cp .env.example .env
       - name: "Lint project"
-        run: flake8 && isort -q -c --df .
+        run: flake8 && isort -q -c --df . && mypy .
       - name: "Run tests"
         run: py.test --cov-report=xml
         if: success()
@@ -69,8 +71,10 @@ jobs:
           python-version: 3.8
       - name: "Install dependencies"
         run: pip install wheel && pip install -e .[dev,mysql]
+      - name: "Set up .env file"
+        run: cp .env.example .env
       - name: "Lint project"
-        run: flake8 && isort -q -c --df .
+        run: flake8 && isort -q -c --df . && mypy .
       - name: "Run tests"
         run: py.test
         if: success()
@@ -120,8 +124,10 @@ jobs:
           python-version: 3.9
       - name: "Install dependencies"
         run: pip install wheel && pip install -e .[dev,pgsql]
+      - name: "Set up .env file"
+        run: cp .env.example .env
       - name: "Lint project"
-        run: flake8 && isort -q -c --df .
+        run: flake8 && isort -q -c --df . && mypy .
       - name: "Run tests"
         run: py.test
         if: success()

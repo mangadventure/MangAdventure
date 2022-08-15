@@ -28,7 +28,8 @@ def test_jsonld():
     element_id = 'whatever'
     tag = jsonld(value, element_id)
     assert tag.startswith(f'<script id="{element_id}"')
-    body = match(r'<script.*?>(.*?)</script>', tag).group(1)
+    pattern = r'<script.*?>(.*?)</script>'
+    body = match(pattern, tag).group(1)  # lgtm[py/bad-tag-filter]
     assert '<' not in body
     assert '>' not in body
     assert '&' not in body

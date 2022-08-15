@@ -66,7 +66,7 @@ class BookmarksRSS(Feed):
                 status=403, content_type='text/plain'
             )
         feedgen = self.get_feed(obj, request)
-        res = HttpResponse(content_type=feedgen.content_type)
+        res = HttpResponse(content_type=feedgen.content_type)  # type: ignore
         patch_vary_headers(res, ('Authorization',))
         res['Last-Modified'] = http_date(
             feedgen.latest_post_date().timestamp()

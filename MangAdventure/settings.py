@@ -107,7 +107,7 @@ TEMPLATES = [{
     ]},
     'DIRS': [BASE_DIR / 'MangAdventure' / 'templates'],
     'APP_DIRS': True,
-}]
+}]  # type: list
 
 #: The full Python path of the WSGI application
 #: object that Django's built-in servers will use.
@@ -362,7 +362,7 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # Set up the e-mail server URL.
-vars().update(env.email('EMAIL_URL'))
+vars().update(env.email('EMAIL_URL') or {})
 
 #: The default e-mail address of the site.
 #: See :setting:`DEFAULT_FROM_EMAIL`.

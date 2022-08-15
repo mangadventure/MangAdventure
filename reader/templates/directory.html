@@ -4,6 +4,10 @@
   {{ library|jsonld:'library' }}
   <link href="{% url 'library.atom' %}"
         rel="alternate" type="application/atom+xml">
+  <link href="{% url 'reader:sitemap.xml' 'series' %}"
+        rel="sitemap" type="application/xml" title="Series sitemap">
+  <link href="{% url 'reader:sitemap.xml' 'chapters' %}"
+        rel="sitemap" type="application/xml" title="Chapters sitemap">
 {% endblock %}
 {% block title %}
   <meta name="title" content="Series List">

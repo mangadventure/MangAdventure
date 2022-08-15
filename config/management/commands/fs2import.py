@@ -56,7 +56,7 @@ class Command(BaseCommand):
         data = abspath(options['data'])
         tables = ET.parse(data).findall('database/table')
         content = join(root, 'content', 'comics')
-        directories = {'series': [], 'chapters': []}
+        directories = {'series': [], 'chapters': []}  # type: dict
         elements = {
             'series': self._get_element(tables, 'comics'),
             'chapters': self._get_element(tables, 'chapters'),
@@ -163,7 +163,7 @@ class Command(BaseCommand):
 
         self._print(f'Importing {self._sql_name("Pages")}...')
         all_pages = []
-        page_numbers = {}
+        page_numbers = {}  # type: dict
         for p in self._sort_children(elements['pages'], 'filename'):
             pid = self._get_column(p, 'id')
             cid = self._get_column(p, 'chapter_id')

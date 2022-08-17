@@ -1,11 +1,4 @@
-"""
-Model serializers for the groups app.
-
-.. admonition:: TODO
-   :class: warning
-
-   Add a serializer for members.
-"""
+"""Model serializers for the groups app."""
 
 from typing import Dict, List
 
@@ -13,10 +6,11 @@ from rest_framework.fields import RegexField, SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from MangAdventure.validators import (
-    DiscordServerValidator, RedditNameValidator, TwitterNameValidator
+    DiscordNameValidator, DiscordServerValidator,
+    RedditNameValidator, TwitterNameValidator
 )
 
-from .models import Group
+from .models import Group, Member
 
 
 class GroupSerializer(ModelSerializer):
@@ -65,4 +59,37 @@ class GroupSerializer(ModelSerializer):
         }
 
 
-__all__ = ['GroupSerializer']
+class MemberSerializer(ModelSerializer):
+    """Serializer for members."""
+    twitter = RegexField(
+        regex=TwitterNameValidator.regex, required=False,
+        help_text="The member's Twitter username.", max_length=15
+    )
+    discord = RegexField(
+        regex=DiscordNameValidator.regex, required=False, max_length=37,
+        help_text="The member's Discord name and discriminator."
+    )
+    reddit = RegexField(
+        regex=RedditNameValidator.regex, required=False,
+        help_text="The member's Reddit username.", max_length=21
+    )
+    groups = SerializerMethodField(
+        help_text='The groups this person belongs to.',
+        method_name='_get_groups'
+    )
+
+    def _get_groups(self, obj: Member) -> List[str]:
+        return [
+            f'{g.name} ({obj.get_roles(g)})' for g
+            in obj.groups.only('id', 'name').distinct()
+        ]
+
+    class Meta:
+        model = Member
+        fields = (
+            'id', 'name', 'twitter', 'discord',
+            'irc', 'reddit', 'groups'
+        )
+
+
+__all__ = ['GroupSerializer', 'MemberSerializer']

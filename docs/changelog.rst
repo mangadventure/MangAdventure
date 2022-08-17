@@ -6,6 +6,7 @@ v0.8.5
 
 * Added sitemaps
 * Added Docker support
+* Added members API endpoint
 
 v0.8.4
 ^^^^^^

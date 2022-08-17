@@ -20,6 +20,7 @@ router.register('authors', reader_api.AuthorViewSet, 'authors')
 router.register('categories', reader_api.CategoryViewSet, 'categories')
 router.register('pages', reader_api.PageViewSet, 'pages')
 router.register('groups', groups_api.GroupViewSet, 'groups')
+router.register('members', groups_api.MemberViewSet, 'members')
 router.register('bookmarks', users_api.BookmarkViewSet, 'bookmarks')
 router.register('token', users_api.ApiKeyViewSet, 'token')
 

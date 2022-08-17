@@ -18,7 +18,7 @@ class GroupViewSet(CORSMixin, ModelViewSet):
     * list: List groups.
     * read: View a certain group.
     * create: Create a new group.
-    * update: Update the given author.
+    * update: Update the given group.
     * patch: Edit the given group.
     * delete: Delete the given group.
     """
@@ -34,4 +34,25 @@ class GroupViewSet(CORSMixin, ModelViewSet):
     parser_classes = (MultiPartParser,)
 
 
-__all__ = ['GroupViewSet']
+class MemberViewSet(CORSMixin, ModelViewSet):
+    """
+    API endpoints for members.
+
+    * list: List members.
+    * read: View a certain member.
+    * create: Create a new member.
+    * update: Update the given member.
+    * patch: Edit the given member.
+    * delete: Delete the given member.
+    """
+    schema = OpenAPISchema(tags=('members',))
+    queryset = models.Member.objects.prefetch_related(
+        Prefetch('roles', queryset=(
+            models.Role.objects.only('role', 'group_id')
+        ))
+    )
+    serializer_class = serializers.MemberSerializer
+    parser_classes = (MultiPartParser,)
+
+
+__all__ = ['GroupViewSet', 'MemberViewSet']

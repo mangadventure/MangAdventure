@@ -179,15 +179,6 @@ class OpenAPISchema(AutoSchema):
 
 class OpenAPISchemaGenerator(SchemaGenerator):
     """Custom OpenAPI generator class."""
-    def get_info(self) -> Dict:  # type: ignore
-        info = super().get_info()
-        # add "contact" to the info schema
-        info['contact'] = {  # type: ignore
-            'name': 'API Support',
-            'url': 'https://github.com/mangadventure/MangAdventure/issues'
-        }
-        return info  # type: ignore
-
     def get_schema(self, *args, **kwargs) -> Dict:  # type: ignore
         from django.conf import settings
         from django.contrib.sites.models import Site
@@ -214,6 +205,7 @@ class OpenAPISchemaGenerator(SchemaGenerator):
                 {'name': 'authors'},
                 {'name': 'cubari'},
                 {'name': 'groups'},
+                {'name': 'members'},
                 {'name': 'bookmarks'},
                 {'name': 'profile'},
                 {'name': 'token'},
@@ -231,6 +223,11 @@ class OpenAPISchemaGenerator(SchemaGenerator):
                 'in': 'query',
                 'name': 'api_key'
             }
+        }
+        # add "contact" to the info schema
+        schema['info']['contact'] = {  # type: ignore
+            'name': 'API Support',
+            'url': 'https://github.com/mangadventure/MangAdventure/issues'
         }
         return schema  # type: ignore
 

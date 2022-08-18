@@ -6,8 +6,7 @@ from django.db import migrations, models
 
 def populate_tokens(apps, schema_editor):
     user_profile = apps.get_model('users', 'UserProfile')
-    profiles = user_profile.objects.select_related('user')
-    for p in profiles:
+    for p in (profiles := user_profile.objects.select_related('user')):
         data = f'{p.user.username}:{p.user.password}'
         p.token = blake2b(
             data.encode(), digest_size=16,

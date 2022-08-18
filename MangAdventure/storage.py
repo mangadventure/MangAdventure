@@ -3,7 +3,7 @@ Custom storages.
 
 .. seealso::
 
-    https://docs.djangoproject.com/en/3.2/ref/files/storage/
+    https://docs.djangoproject.com/en/4.1/ref/files/storage/
 """
 
 from typing import Optional, Tuple, cast
@@ -65,8 +65,7 @@ class CDNStorage(FileSystemStorage):
 
         :return: The URL of the file.
         """
-        method = f'_{self._cdn}_url'
-        if not hasattr(self, method):
+        if not hasattr(self, method := f'_{self._cdn}_url'):
             domain = settings.CONFIG['DOMAIN']
             scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
             return f'{scheme}://{domain}{self.base_url}{name}'

@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Type
+from typing import TYPE_CHECKING, Type
 
 from django.dispatch import receiver
-# XXX: cannot be resolved under TYPE_CHECKING
-from django.http import HttpRequest
 
 from allauth.account.models import EmailAddress
 from allauth.account.signals import email_confirmed
+
+if TYPE_CHECKING:  # pragma: no cover
+    from django.http import HttpRequest
 
 
 @receiver(email_confirmed)

@@ -3,21 +3,22 @@
 from __future__ import annotations
 
 from hashlib import blake2b
-from typing import Optional, Tuple, Type
+from typing import TYPE_CHECKING, Optional, Tuple, Type
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db.models import Q, QuerySet, Sum
 from django.forms.models import BaseInlineFormSet, ModelForm
 from django.forms.widgets import HiddenInput
-# XXX: cannot be resolved under TYPE_CHECKING
-from django.http import HttpRequest
 from django.utils import timezone as tz
 from django.utils.safestring import mark_safe
 
 from MangAdventure import filters, utils
 
 from .models import Alias, Artist, Author, Category, Chapter, Page, Series
+
+if TYPE_CHECKING:  # pragma: no cover
+    from django.http import HttpRequest
 
 
 class DateFilter(admin.DateFieldListFilter):
@@ -38,8 +39,7 @@ class PageFormset(BaseInlineFormSet):  # pragma: no cover
         super().clean()
         numbers = []
         for form in self.forms:
-            num = form.cleaned_data.get('number')
-            if num in numbers:
+            if (num := form.cleaned_data.get('number')) in numbers:
                 form._errors['number'] = \
                     self.error_class([self.get_form_error()])
                 del form.cleaned_data['number']
@@ -129,10 +129,9 @@ class ChapterAdmin(admin.ModelAdmin):
 
         :return: An ``<img>`` tag with the chapter preview.
         """
-        page = obj.pages.only('image').first()
-        if page is None:
-            return ''
-        return utils.img_tag(page._thumb, 'preview', height=50)
+        if (page := obj.pages.only('image').first()) is not None:
+            return utils.img_tag(page._thumb, 'preview', height=50)
+        return ''
 
     @admin.display(description='Toggle status of selected chapters')
     def toggle_final(self, request: HttpRequest, queryset: QuerySet):

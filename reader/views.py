@@ -288,9 +288,9 @@ def chapter_download(request: HttpRequest, slug: str, vol: int, num: float
         )
     except Chapter.DoesNotExist as e:
         raise Http404 from e
-    if chapter.volume:
+    if chapter.volume:  # pragma: no cover
         name = '{0.series} - v{0.volume} c{0.number:g}.cbz'.format(chapter)
-    else:  # pragma: no cover
+    else:
         name = '{0.series} - c{0.number:g}.cbz'.format(chapter)
     return FileResponse(
         chapter.zip(), as_attachment=True, filename=name,

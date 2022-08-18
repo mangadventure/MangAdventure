@@ -18,7 +18,7 @@ Install the project
    installing MangAdventure under ``/var/www/my-site.com/``.
    The instructions are similar for Windows and MacOS.
 
-First, you will need Python_ (3.7+) and pip_.
+First, you will need Python_ (3.8+) and pip_.
 
 .. _Python: https://www.python.org/downloads/
 
@@ -41,7 +41,7 @@ Finally, install MangAdventure inside the activated virtualenv:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.8.5#egg=mangadventure"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.9.0#egg=mangadventure"
 
 MangAdventure also provides the following extras:
 
@@ -55,7 +55,7 @@ For example, you can install ``csp`` & ``uwsgi`` like so:
 
 .. code-block:: shell
 
-   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.8.5#egg=mangadventure[csp,uwsgi]"
+   pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.9.0#egg=mangadventure[csp,uwsgi]"
 
 .. _MySQL database support:
    https://mysql.com/
@@ -168,7 +168,7 @@ Set up the server
 
 .. code-block:: shell
 
-   uwsgi --socket "127.0.0.1:25432" --chdir "/var/www/my-site.com" --module "MangAdventure.wsgi"
+   uwsgi --http-socket ":25432" --chdir "/var/www/my-site.com" --module "MangAdventure.wsgi"
 
 .. _uWSGI docs:
    https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django

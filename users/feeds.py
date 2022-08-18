@@ -42,10 +42,8 @@ class BookmarksRSS(Feed):
                  | A :status:`403` response if the provided token is invalid.
                  | A :status:`200` response with the bookmarks feed otherwise.
         """
-        token = request.GET.get('token')
-        if not token:
-            header = request.META.get('HTTP_AUTHORIZATION')
-            if not header:
+        if not (token := request.GET.get('token')):
+            if not (header := request.META.get('HTTP_AUTHORIZATION')):
                 return HttpResponseUnauthorized(
                     b'A token is required to access the feed.',
                     content_type='text/plain', realm='bookmarks feed'

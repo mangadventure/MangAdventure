@@ -183,10 +183,10 @@ class OpenAPISchemaGenerator(SchemaGenerator):
         from django.conf import settings
         from django.contrib.sites.models import Site
 
-        schema = super().get_schema(*args, **kwargs)
         proto = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+        # TODO: use dict union (Py3.9+)
         # add "servers", "externalDocs", "security", "tags" to the main schema
-        schema.update({
+        (schema := super().get_schema(*args, **kwargs)).update({
             'servers': [
                 {'url': f'{proto}://{site}/api/v2'} for site
                 in Site.objects.values_list('domain', flat=True)

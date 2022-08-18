@@ -2,20 +2,20 @@
 
 from __future__ import annotations
 
-from typing import Optional, Type
+from typing import TYPE_CHECKING, Optional, Type
 
 from django.contrib import admin
 from django.db.models.functions import Lower
-# XXX: cannot be resolved under TYPE_CHECKING
-from django.forms.models import BaseInlineFormSet, ModelForm
 from django.forms.widgets import HiddenInput
-# XXX: cannot be resolved under TYPE_CHECKING
-from django.http import HttpRequest
 from django.utils.html import format_html
 
 from MangAdventure import filters, utils
 
 from .models import Group, Member, Role
+
+if TYPE_CHECKING:  # pragma: no cover
+    from django.forms.models import BaseInlineFormSet, ModelForm  # isort:skip
+    from django.http import HttpRequest  # isort:skip
 
 
 class MemberRoleInline(admin.StackedInline):

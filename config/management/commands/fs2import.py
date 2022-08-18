@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 'Are you sure you want to proceed?\n'
             )
             answer = input("    Type 'yes' to continue, or 'no' to cancel: ")
-            if answer != 'yes':
+            if answer.lower() != 'yes':
                 self._print('Import cancelled.')
                 return
         call_command('flush', '--no-input')
@@ -105,8 +105,9 @@ class Command(BaseCommand):
             )
             self._print(f'- Found {self._sql_name("Series")}: {series}')
             thumb = self._get_column(s, 'thumbnail')
-            series_dir = join(content,
-                              f'{slug}_{self._get_column(s, "uniqid")}')
+            series_dir = join(
+                content, f'{slug}_{self._get_column(s, "uniqid")}'
+            )
             cover = join(series_dir, thumb)
             with open(cover, 'rb') as f:
                 series.cover.save(thumb, File(f), save=False)
@@ -141,14 +142,13 @@ class Command(BaseCommand):
                 f'- Found {self._sql_name("Chapter")}: {chapter.series} '
                 f'- {chapter.volume}/{chapter.number:g} - {chapter.title}'
             )
-            gid = self._get_column(c, 'team_id')
-            if gid:
+            if gid := self._get_column(c, 'team_id'):
                 chapter_groups.append(
                     groups_through(chapter_id=cid, group_id=gid)
                 )
-            _dir = next(d[1] for d in directories['series'] if d[0] == sid)
+            dir_ = next(d[1] for d in directories['series'] if d[0] == sid)
             directories['chapters'].append((
-                cid, join(_dir, '{stub}_{uniqid}'.format(
+                cid, join(dir_, '{stub}_{uniqid}'.format(
                     stub=self._get_column(c, 'stub'),
                     uniqid=self._get_column(c, 'uniqid')
                 ))
@@ -170,9 +170,9 @@ class Command(BaseCommand):
             page_numbers[cid] = page_numbers.get(cid, 0) + 1
             page = Page(id=pid, chapter_id=cid, number=page_numbers[cid])
             self._print(f'- Found {self._sql_name("Page")}: {page}')
-            _dir = next(d[1] for d in directories['chapters'] if d[0] == cid)
+            dir_ = next(d[1] for d in directories['chapters'] if d[0] == cid)
             fname = self._get_column(p, 'filename')
-            with open(join(_dir, fname), 'rb') as f:
+            with open(join(dir_, fname), 'rb') as f:
                 page.image.save(fname, File(f), save=False)
             all_pages.append(page)
         try:

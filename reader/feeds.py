@@ -91,9 +91,7 @@ class LibraryRSS(Feed):
 
         :return: The URL of the series' cover image, if available.
         """
-        if not item.cover:
-            return None
-        return item.cover.url
+        return item.cover.url if item.cover else None
 
     def item_enclosure_length(self, item: Series) -> Optional[int]:
         """

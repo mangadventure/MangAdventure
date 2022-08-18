@@ -143,8 +143,8 @@ class UserProfileForm(forms.ModelForm):
         :return: The updated ``UserProfile`` object.
         """
         self.full_clean()
-        if self.files.get('avatar'):
-            self.instance.avatar = self.files['avatar']
+        if avatar := self.files.get('avatar'):
+            self.instance.avatar = avatar
         self.instance.bio = self.cleaned_data.get('bio')
         self.instance.user.email = self.cleaned_data.get('email')
         self.instance.user.username = self.cleaned_data.get('username')

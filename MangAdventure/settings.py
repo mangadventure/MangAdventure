@@ -241,9 +241,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 #:    This is not enabled yet.
 USE_I18N = False
 
-#: Enable localized formatting of data. See :setting:`USE_L10N`.
-USE_L10N = True
-
 #: Enable timezone-aware datetimes. See :setting:`USE_TZ`.
 USE_TZ = True
 
@@ -462,9 +459,7 @@ if find_spec('csp'):
     CSP_BASE_URI = ("'none'",)
 
     #: Set the :csp:`report-uri` CSP directive.
-    CSP_REPORT_URI = env.list('CSP_REPORT_URI')
-
-    if CSP_REPORT_URI:
+    if CSP_REPORT_URI := env.list('CSP_REPORT_URI'):
         MIDDLEWARE.append('csp.contrib.rate_limiting.RateLimitedCSPMiddleware')
 
         #: Percentage of requests that should see the ``report-uri`` directive.
@@ -529,7 +524,6 @@ if not DEBUG:  # pragma: no cover
 #    Configuration    #
 #######################
 
-LOGO = env['LOGO']
 #: Configuration variables defined by the user in the ``.env`` file.
 CONFIG = {
     'NAME': env['NAME'],
@@ -539,7 +533,7 @@ CONFIG = {
     'DISCORD': env.get('DISCORD'),
     'TWITTER': env.get('TWITTER'),
     'FAVICON': MEDIA_URL + env['FAVICON'],
-    'LOGO': MEDIA_URL + LOGO,
+    'LOGO': MEDIA_URL + (LOGO := env['LOGO']),
     'LOGO_TW': MEDIA_URL + env.get('LOGO_TW', LOGO),
     'LOGO_OG': MEDIA_URL + env.get('LOGO_OG', LOGO),
     'MAIN_BG_COLOR': env['MAIN_BG_COLOR'],

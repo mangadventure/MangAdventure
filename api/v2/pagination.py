@@ -46,13 +46,14 @@ class PageLimitPagination(PageNumberPagination):
                     'example': False,
                     'description': 'Denotes whether this is the last page.'
                 },
-                'results': schema,
+                'results': schema
             }
         }
 
     def get_schema_operation_parameters(self, view: Any) -> List[Dict]:
         params = super().get_schema_operation_parameters(view)
         params[0]['schema']['minimum'] = 1
+        # TODO: use dict union (Py3.9+)
         params[1]['schema'].update({
             'minimum': 1, 'default': self.page_size
         })

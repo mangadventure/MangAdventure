@@ -117,8 +117,6 @@ MEDIA_ROOT = BASE_DIR / 'tests' / 'media'
 
 USE_I18N = False
 
-USE_L10N = True
-
 USE_TZ = True
 
 LANGUAGE_CODE = 'en-us'

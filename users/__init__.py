@@ -1,13 +1,18 @@
 """The app that handles users."""
 
+from __future__ import annotations
 
-# XXX: Can't add type hint due to circular import.
-def get_user_display(user) -> str:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # pragma: no cover
+    from django.contrib.auth.models import User
+
+
+def get_user_display(user: User) -> str:
     """
     Display the name of the user.
 
     :param user: A ``User`` model instance.
-    :type user: :class:`~django.contrib.auth.models.User`
 
     :return: The user's full name if available, otherwise the username.
     """

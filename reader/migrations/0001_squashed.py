@@ -1,7 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.db import migrations, models
-from django.utils import timezone
 
 from MangAdventure import storage, validators
 

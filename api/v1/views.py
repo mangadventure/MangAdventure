@@ -97,9 +97,9 @@ def _series_response(request: HttpRequest, _series: Series) -> Dict:
             response['volumes'][_chapter.volume] = _volume_response(
                 request, chapters.filter(volume=_chapter.volume)
             )
-    for _author in _series.authors.prefetch_related('aliases').iterator():
+    for _author in _series.authors.prefetch_related('aliases').all():
         response['authors'].append([_author.name, *_author.aliases.names()])
-    for _artist in _series.artists.prefetch_related('aliases').iterator():
+    for _artist in _series.artists.prefetch_related('aliases').all():
         response['artists'].append([_artist.name, *_artist.aliases.names()])
     return response
 
@@ -111,7 +111,7 @@ def _person_response(request: HttpRequest, _person: Person) -> Dict:
         'aliases': _person.aliases.names(),
         'series': [],
     }
-    for _series in _person.series_set.prefetch_related('aliases').iterator():
+    for _series in _person.series_set.prefetch_related('aliases').all():
         response['series'].append({
             'slug': _series.slug,
             'title': _series.title,
@@ -150,7 +150,7 @@ def _group_response(request: HttpRequest, _group: Group) -> Dict:
     }
     _series = []
     for _chapter in _group.releases.prefetch_related('series__aliases') \
-            .filter(published__lte=tz.now()).iterator():
+            .filter(published__lte=tz.now()).all():
         if _chapter.series_id not in _series:
             response['series'].append({
                 'slug': _chapter.series.slug,
@@ -178,7 +178,7 @@ def all_releases(request: HttpRequest) -> JsonResponse:
     _series = Series.objects.alias(
         chapter_count=Count('chapters', filter=q)
     ).filter(chapter_count__gt=0).distinct()
-    for s in _series.prefetch_related('chapters').iterator():
+    for s in _series.prefetch_related('chapters').all():
         series_res = {
             'slug': s.slug,
             'title': s.title,
@@ -311,7 +311,7 @@ def all_people(request: HttpRequest) -> JsonResponse:
         _person_response(request, p) for p in
         _type.objects.prefetch_related(
             'aliases', 'series_set__aliases'
-        ).iterator()
+        ).all()
     ], safe=False)
 
 
@@ -352,7 +352,7 @@ def all_groups(request: HttpRequest) -> JsonResponse:
         _group_response(request, g) for g in
         Group.objects.prefetch_related(
             'releases__series', 'roles__member'
-        ).iterator()
+        ).all()
     ], safe=False)
 
 

@@ -11,9 +11,9 @@ Python
      - Compatibility
    * - <=2.7
      - Incompatible
-   * - 3.0 - 3.6
+   * - 3.0 - 3.7
      - Incompatible
-   * - 3.7 - 3.10
+   * - 3.8 - 3.10
      - Compatible
 
 Databases
@@ -25,13 +25,11 @@ Databases
 
    * - Version
      - Compatibility
-   * - <5.7.0
+   * - <5.7
      - Incompatible
-   * - 5.7.0 - 5.7.31
-     - Untested
-   * - 5.7.32 - 5.7.34
+   * - 5.7
      - Compatible
-   * - >=8.0.0
+   * - >=8.0
      - Untested
 
 .. list-table:: MariadB
@@ -40,18 +38,14 @@ Databases
 
    * - Version
      - Compatibility
-   * - <10.2.0
+   * - <10.3
      - Incompatible
-   * - 10.2.0 - 10.3.28
-     - Untested
-   * - 10.3.29
+   * - 10.3
      - Compatible
-   * - 10.4.0 - 10.5.7
+   * - 10.4
      - Untested
-   * - 10.5.8 - 10.5.9
+   * - 10.5
      - Compatible
-   * - 10.5.10
-     - Incompatible
 
 .. list-table:: PostgreSQL
    :header-rows: 1
@@ -59,22 +53,16 @@ Databases
 
    * - Version
      - Compatibility
-   * - <9.6.0
+   * - <11
      - Incompatible
-   * - 9.6.0 - 9.6.22
-     - Untested
-   * - 10.0 - 10.14
-     - Untested
-   * - 10.15 - 10.17
+   * - 11
      - Compatible
-   * - 11.0 - 11.10
+   * - 12
      - Untested
-   * - 11.11 - 11.12
+   * - 13
      - Compatible
-   * - 12.0 - 12.7
+   * - 14
      - Untested
-   * - 13.0 - 13.3
-     - Compatible
 
 .. list-table:: Oracle
    :header-rows: 1
@@ -82,9 +70,9 @@ Databases
 
    * - Version
      - Compatibility
-   * - <12.2.0.1
+   * - <19.1
      - Incompatible
-   * - >=12.2.0.1
+   * - >=19.1
      - Untested
 
 .. list-table:: MSSQL
@@ -102,9 +90,9 @@ Databases
 
    * - Version
      - Compatibility
-   * - <3.9.0
+   * - <3.9
      - Incompatible
-   * - >=3.9.0
+   * - >=3.9
      - Compatible
 
 Browsers
@@ -143,31 +131,31 @@ Browsers
        | Samsung Internet
      - 5+
 
-.. |Chrome| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/chrome/chrome_32x32.png
+.. |Chrome| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/chrome/chrome_32x32.png
    :alt: Chrome
 
-.. |FF| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/firefox/firefox_32x32.png
+.. |FF| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/firefox/firefox_32x32.png
    :alt: Firefox
 
-.. |IE| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/archive/internet-explorer_9-11/internet-explorer_9-11_32x32.png
+.. |IE| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/archive/internet-explorer_9-11/internet-explorer_9-11_32x32.png
    :alt: Internet Explorer
 
-.. |Edge| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/edge/edge_32x32.png
+.. |Edge| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/edge/edge_32x32.png
    :alt: Edge
 
-.. |Safari| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/safari/safari_32x32.png
+.. |Safari| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/safari/safari_32x32.png
    :alt: Safari
 
-.. |Opera| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/opera/opera_32x32.png
+.. |Opera| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/opera/opera_32x32.png
    :alt: Opera
 
-.. |Samsung| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/samsung-internet/samsung-internet_32x32.png
+.. |Samsung| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/samsung-internet/samsung-internet_32x32.png
    :alt: Samsung Internet
 
-.. |Android| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/archive/android/android_32x32.png
+.. |Android| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/archive/android/android_32x32.png
    :alt: Android Browser
 
-.. |iOS| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/safari-ios/safari-ios_32x32.png
+.. |iOS| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/safari-ios/safari-ios_32x32.png
    :alt: iOS Safari
 
 .. |X| unicode:: U+2716

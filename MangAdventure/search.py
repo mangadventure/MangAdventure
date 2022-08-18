@@ -38,7 +38,7 @@ class _SearchParams(NamedTuple):
         return bool(
             self.query != '' or
             self.author != '' or
-            self.status != 'any' or
+            self.status != '' or
             self.categories != ([], [])
         )
 
@@ -56,7 +56,7 @@ def parse(request: HttpRequest) -> _SearchParams:
     return _SearchParams(
         query=request.GET.get('q', '').strip(),
         author=request.GET.get('author', '').strip(),
-        status=request.GET.get('status', 'any').lower().strip(),
+        status=request.GET.get('status', '').lower().strip(),
         categories=(
             [c.lower() for c in categories if c and c[0] != '-'],
             [c[1:].lower() for c in categories if c and c[0] == '-']
@@ -73,7 +73,7 @@ def qsfilter(params: _SearchParams) -> Q:
     :return: The created queryset filter.
 
     .. _`queryset filter`:
-        https://docs.djangoproject.com/en/3.2/
+        https://docs.djangoproject.com/en/4.1/
         topics/db/queries/#complex-lookups-with-q
     """
     filters = Q()
@@ -132,11 +132,9 @@ def get_response(request: HttpRequest) -> QuerySet:
 
     :return: A queryset of series matching the parameters of the request.
     """
-    slug = request.GET.get('slug')
-    if slug:
+    if slug := request.GET.get('slug'):
         return Series.objects.filter(slug=slug)
-    params = parse(request)
-    if params:
+    if params := parse(request):
         return query(params)
     return Series.objects.all()
 

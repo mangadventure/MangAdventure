@@ -162,8 +162,7 @@ class PasswordReset(PasswordResetFromKeyView):
     # HACK: patch PasswordResetFromKeyView.dispatch to fix #27
     def dispatch(self, request: HttpRequest, uidb36: str,
                  key: str, **kwargs) -> HttpResponse:  # pragma: no cover
-        self.request = request
-        self.key = key
+        self.request, self.key = request, key
         token_form = UserTokenForm(data={'uidb36': uidb36, 'key': self.key})
         if token_form.is_valid():
             self.reset_user = token_form.reset_user

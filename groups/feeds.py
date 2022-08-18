@@ -84,8 +84,8 @@ class GroupRSS(Feed):
 
         :return: An iterable of ``Chapter`` objects.
         """
-        _max = cast(int, settings.CONFIG['MAX_RELEASES'])
-        return obj.releases.all()[:_max]
+        max_ = cast(int, settings.CONFIG['MAX_RELEASES'])
+        return obj.releases.all()[:max_]
 
     def item_description(self, item: Chapter) -> str:
         """

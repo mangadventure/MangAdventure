@@ -40,22 +40,22 @@ needs_sphinx = '4.3'
 
 # -- InterSphinx & extlinks configuration --
 
-_django = 'https://docs.djangoproject.com/en/3.2/'
+_django = 'https://docs.djangoproject.com/en/4.1/'
 _mdn = 'https://developer.mozilla.org/en-US/docs/Web/'
 
 intersphinx_mapping = {
     'django': (_django, f'{_django}_objects/'),
-    'python': ('https://docs.python.org/3.7/', None),
+    'python': ('https://docs.python.org/3.8/', None),
 }
 
 extlinks = {
-    'setting': (f'{_django}ref/settings/#std:setting-%s', ''),
-    'tag': (f'{_django}ref/templates/builtins/#%s', ''),
-    'auth': ('https://django-allauth.rtfd.io/en/latest/%s', ''),
-    'csp': (f'{_mdn}HTTP/Headers/Content-Security-Policy/%s', ''),
-    'status': (f'{_mdn}HTTP/Status/%s', ''),
-    'header': (f'{_mdn}HTTP/Headers/%s', ''),
-    'schema': ('https://schema.org/%s', ''),
+    'setting': (f'{_django}ref/settings/#std:setting-%s', '%s'),
+    'tag': (f'{_django}ref/templates/builtins/#%s', '%s'),
+    'auth': ('https://django-allauth.rtfd.io/en/latest/%s', '%s'),
+    'csp': (f'{_mdn}HTTP/Headers/Content-Security-Policy/%s', '%s'),
+    'status': (f'{_mdn}HTTP/Status/%s', '%s'),
+    'header': (f'{_mdn}HTTP/Headers/%s', '%s'),
+    'schema': ('https://schema.org/%s', '%s'),
 }
 
 

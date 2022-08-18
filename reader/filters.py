@@ -117,16 +117,10 @@ class CategoriesFilter(BaseFilterBackend):
         if view.action != 'list':
             return queryset
         categories = request.query_params.get('categories', '').split(',')
-        include = [c.lower() for c in categories if c and c[0] != '-']
-        exclude = [c[1:].lower() for c in categories if c and c[0] == '-']
-        if include:
-            queryset = queryset.filter(
-                categories__in=list(map(str.lower, include))
-            )
-        if exclude:
-            queryset = queryset.exclude(
-                categories__in=list(map(str.lower, exclude))
-            )
+        if include := [c.lower() for c in categories if c and c[0] != '-']:
+            queryset = queryset.filter(categories__in=include)
+        if exclude := [c[1:].lower() for c in categories if c and c[0] == '-']:
+            queryset = queryset.exclude(categories__in=exclude)
         return queryset
 
     def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
@@ -178,6 +172,7 @@ class SeriesSort(OrderingFilter):
 
     def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
         params = super().get_schema_operation_parameters(view)
+        # TODO: use dict union (Py3.9+)
         params[0]['schema'].update({
             'default': 'title',
             'enum': self.ordering_fields + list(

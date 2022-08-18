@@ -40,7 +40,7 @@ jobs:
           export $(curl -Ssf "$GH_API/latest" | \
             jq -r '"id=\(.id) tag=\(.tag_name)"')
           # skip if the new tag has a different minor version
-          : ${GITHUB_REF##*/}; [[ ${_%.*} == ${tag%.*} ]] || exit 0
+          [[ ${GITHUB_REF_NAME%.*} == ${tag%.*} ]] || exit 0
           curl -Ssf "$GH_API/$id" -o /dev/null -XPATCH \
             -d '{"prerelease":true}' -H "Authorization: Token $GITHUB_TOKEN"
           curl -Ssf "$RTFD_API/mangadventure/versions/$tag/" -XPATCH \
@@ -58,6 +58,22 @@ jobs:
           token: ${{secrets.GITHUB_TOKEN}}
           bodyFile: docs/changes.md
           allowUpdates: true
+      - name: "Send data to Discord"
+        run: |-
+          jq --arg name "${GITHUB_REPOSITORY#*/}" \
+             --arg author_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY_OWNER" \
+             --arg icon_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY_OWNER.png?s=40" \
+             --arg title "New release published: $GITHUB_REF_NAME" \
+             --arg url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/$RELEASE_NAME" \
+             --arg description "$(<docs/changes.md)" \
+             -Mn '{
+               username: "GitHub",
+               avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+               embeds: [{author: {$name, $icon_url, url: $author_url}, $url, $title, $description}]
+             }' | curl -d@- -Ssf "$RELEASE_WEBHOOK" -H 'Content-Type: application/json' \
+                       -A "GitHub-Actions ($GITHUB_REPOSITORY, v0.1)"
+        env:
+          RELEASE_WEBHOOK: ${{secrets.RELEASE_WEBHOOK}}
 
   docker:
     name: "Build Docker image"

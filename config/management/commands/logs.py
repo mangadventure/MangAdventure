@@ -35,8 +35,7 @@ class Command(BaseCommand):
         :param args: The arguments of the command.
         :param options: The options of the command.
         """
-        file = options['file']
-        out = stdout if file == '-' else open(file, 'w')
+        out = stdout if (file := options['file']) == '-' else open(file, 'w')
         try:
             for log in LogEntry.objects.iterator():
                 user = log.user.username

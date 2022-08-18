@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Tuple, Type
+from typing import TYPE_CHECKING, List, Tuple, Type
 
 from django.contrib import admin
 from django.contrib.auth import models
@@ -12,8 +12,6 @@ from django.db.models.query import QuerySet
 from django.forms.fields import BooleanField
 from django.forms.models import ModelForm
 from django.forms.widgets import CheckboxSelectMultiple
-# XXX: cannot be resolved under TYPE_CHECKING
-from django.http import HttpRequest
 from django.utils.functional import cached_property
 from django.utils.html import format_html
 
@@ -22,6 +20,9 @@ from allauth.socialaccount.admin import SocialAppAdmin
 from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 
 from MangAdventure.filters import boolean_filter
+
+if TYPE_CHECKING:  # pragma: no cover
+    from django.http import HttpRequest
 
 
 class UserTypeFilter(admin.SimpleListFilter):

@@ -8,16 +8,16 @@ on:
 
 jobs:
   sqlite:
-    name: "SQLite & Python 3.7"
+    name: "SQLite & Python 3.8"
     runs-on: ubuntu-latest
     if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v3
-      - name: "Set up Python 3.7"
+      - name: "Set up Python 3.8"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.7
+          python-version: "3.8"
       - name: "Install dependencies"
         run: pip install wheel && pip install -e .[dev,csp]
       - name: "Set up .env file"
@@ -43,16 +43,16 @@ jobs:
         with:
           run-suffix: ".1"
           lang-name: Python
-          lang-version: 3.7
+          lang-version: "3.8"
           webhook-url: ${{secrets.BUILD_WEBHOOK}}
 
   mysql:
-    name: "MySQL & Python 3.8"
+    name: "MySQL & Python 3.9"
     runs-on: ubuntu-latest
     if: github.repository_owner == 'mangadventure'
     services:
       mysql:
-        image: mariadb:10.5.9
+        image: mariadb:10.5
         ports: ["3306:3306"]
         env:
           MYSQL_DATABASE: mangadv
@@ -65,10 +65,10 @@ jobs:
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v3
-      - name: "Set up Python 3.8"
+      - name: "Set up Python 3.9"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: "3.9"
       - name: "Install dependencies"
         run: pip install wheel && pip install -e .[dev,mysql]
       - name: "Set up .env file"
@@ -95,11 +95,11 @@ jobs:
         with:
           run-suffix: ".2"
           lang-name: Python
-          lang-version: 3.8
+          lang-version: "3.9"
           webhook-url: ${{secrets.BUILD_WEBHOOK}}
 
   postgresql:
-    name: "PostgreSQL & Python 3.9"
+    name: "PostgreSQL & Python 3.10"
     runs-on: ubuntu-latest
     if: github.repository_owner == 'mangadventure'
     services:
@@ -118,10 +118,10 @@ jobs:
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v3
-      - name: "Set up Python 3.9"
+      - name: "Set up Python 3.10"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.10"
       - name: "Install dependencies"
         run: pip install wheel && pip install -e .[dev,pgsql]
       - name: "Set up .env file"
@@ -148,7 +148,7 @@ jobs:
         with:
           run-suffix: ".3"
           lang-name: Python
-          lang-version: 3.9
+          lang-version: "3.10"
           webhook-url: ${{secrets.BUILD_WEBHOOK}}
 
   coveralls:

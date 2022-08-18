@@ -12,13 +12,12 @@ from django.dispatch import receiver
 
 from .models import Chapter, Page, Series
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from os import PathLike
 
 
 def _move(old_dir: PathLike, new_dir: PathLike):
-    new_path = settings.MEDIA_ROOT / new_dir
-    if not new_path.exists():
+    if not (new_path := settings.MEDIA_ROOT / new_dir).exists():
         old_path = settings.MEDIA_ROOT / old_dir
         old_path.rename(new_path)
 
@@ -62,7 +61,7 @@ def redirect_series(sender: Type[Series], instance: Series, **kwargs):
         instance.cover = instance.cover.name.replace(
             str(old_dir), str(new_dir)
         )
-        for chapter in instance.chapters.prefetch_related('pages').iterator():
+        for chapter in instance.chapters.prefetch_related('pages').all():
             pages = chapter.pages.all()
             for page in pages:
                 page.image = page.image.name.replace(
@@ -96,8 +95,7 @@ def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
             old_dir = new_dir.parent / old_dir.name
         if current.number != instance.number:
             _move(old_dir, new_dir)
-            pages = current.pages.all()
-            for page in pages:
+            for page in (pages := current.pages.all()):
                 page.image = page.image.name.replace(
                     str(old_dir), str(new_dir)
                 )

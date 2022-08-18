@@ -18,6 +18,7 @@ class TinyMCE(Textarea):
             attrs['class'] += ' tinymce'
         else:
             attrs['class'] = 'tinymce'
+        # TODO: use dict union (Py3.9+)
         attrs.update({'cols': '75', 'rows': '15'})
         mce_attrs = {
             'selector': '.tinymce',

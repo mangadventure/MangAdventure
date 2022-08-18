@@ -96,10 +96,10 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
 
     def perform_update(self, serializer: ProfileSerializer):
         data = dict(serializer.validated_data)
-        fields = data.pop('user', {})
         profile = cast(UserProfile, serializer.instance)
         user = profile.user
-        if fields:  # update the underlying user first
+        # update the underlying user first
+        if fields := data.pop('user', {}):
             for k, v in fields.items():
                 setattr(user, k, v)
             user.save(update_fields=list(fields))

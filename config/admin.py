@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from django.conf import settings
 from django.contrib import admin
@@ -14,10 +14,11 @@ from django.contrib.redirects.models import Redirect as _Redirect
 from django.contrib.sites.admin import SiteAdmin as _SiteAdmin
 from django.contrib.sites.models import Site as _Site
 from django.forms import ModelForm
-# XXX: cannot be resolved under TYPE_CHECKING
-from django.http import HttpRequest
 
 from MangAdventure.widgets import TinyMCE
+
+if TYPE_CHECKING:  # pragma: no cover
+    from django.http import HttpRequest
 
 admin.site.site_header = f'{settings.CONFIG["NAME"]} Administration'
 admin.site.site_title = admin.site.site_header

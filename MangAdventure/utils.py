@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from re import split
-from typing import Iterable, List, Union
+from typing import TYPE_CHECKING, Iterable, List, Union
 
-# XXX: not parsed properly when under TYPE_CHECKING
-from django.db.models.fields.files import ImageField
 from django.http import HttpResponse
 from django.utils.html import format_html
+
+if TYPE_CHECKING:  # pragma: no cover
+    from django.db.models.fields.files import ImageField
 
 
 class HttpResponseUnauthorized(HttpResponse):

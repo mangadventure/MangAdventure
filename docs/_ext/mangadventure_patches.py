@@ -120,6 +120,10 @@ def process_docstring(app: Sphinx, what: str, name: str, obj:
         }.get(name[28:], 'CharField')
         lines[0] = f':class:`~django.forms.{cls}` - {lines[0]}'
         return
+    # this one too
+    if name == 'users.admin.UserForm.is_scanlator':
+        lines[0] = f':class:`~django.forms.BooleanField` - {lines[0]}'
+        return
     if what == 'attribute':
         cls = getattr(obj, 'field', obj).__class__
     elif what == 'property':

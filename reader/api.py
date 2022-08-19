@@ -8,7 +8,8 @@ from warnings import filterwarnings
 from django.db.models import Count, F, Max, Prefetch, Q, Sum
 from django.utils import timezone as tz
 
-from rest_framework.exceptions import APIException
+from rest_framework.decorators import action
+from rest_framework.exceptions import APIException, NotFound
 from rest_framework.mixins import (
     CreateModelMixin, DestroyModelMixin, ListModelMixin,
     RetrieveModelMixin, UpdateModelMixin
@@ -17,8 +18,8 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from api.v2.mixins import CORSMixin
-from api.v2.pagination import PageLimitPagination
+from api.v2.mixins import METHODS, CORSMixin
+from api.v2.pagination import DummyPagination, PageLimitPagination
 from api.v2.schema import OpenAPISchema
 from groups.models import Group
 
@@ -45,13 +46,13 @@ class ArtistViewSet(CORSMixin, ModelViewSet):
     * list: List artists.
     * read: View a certain artist.
     * create: Create a new artist.
-    * update: Update the given artist.
     * patch: Edit the given artist.
     * delete: Delete the given artist.
     """
     schema = OpenAPISchema(tags=('artists',))
     queryset = models.Artist.objects.all()
     serializer_class = serializers.ArtistSerializer
+    http_method_names = METHODS
 
 
 class AuthorViewSet(CORSMixin, ModelViewSet):
@@ -61,13 +62,13 @@ class AuthorViewSet(CORSMixin, ModelViewSet):
     * list: List authors.
     * read: View a certain author.
     * create: Create a new author.
-    * update: Update the given author.
     * patch: Edit the given author.
     * delete: Delete the given author.
     """
     schema = OpenAPISchema(tags=('authors',))
     queryset = models.Author.objects.all()
     serializer_class = serializers.AuthorSerializer
+    http_method_names = METHODS
 
 
 class CategoryViewSet(CORSMixin, ModelViewSet):
@@ -81,10 +82,10 @@ class CategoryViewSet(CORSMixin, ModelViewSet):
     * delete: Delete the given category.
     """
     schema = OpenAPISchema(tags=('categories',), component_name='Category')
-    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
     serializer_class = serializers.CategorySerializer
     queryset = models.Category.objects.all()
     lookup_field = 'name'
+    http_method_names = METHODS
 
 
 class PageViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin,
@@ -94,7 +95,6 @@ class PageViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin,
 
     * list: List a chapter's pages.
     * create: Create a new page.
-    * update: Update the given page.
     * patch: Edit the given page.
     * delete: Delete the given page.
     """
@@ -103,6 +103,7 @@ class PageViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin,
     serializer_class = serializers.PageSerializer
     filter_backends = filters.PAGE_FILTERS  # type: ignore
     parser_classes = (MultiPartParser,)
+    http_method_names = METHODS
 
 
 class ChapterViewSet(CORSMixin, ModelViewSet):
@@ -112,7 +113,6 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
     * list: List chapters.
     * read: View a certain chapter.
     * create: Create a new chapter.
-    * update: Update the given chapter.
     * patch: Edit the given chapter.
     * delete: Delete the given chapter.
     """
@@ -120,6 +120,32 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
     serializer_class = serializers.ChapterSerializer
     filter_backends = filters.CHAPTER_FILTERS
     parser_classes = (MultiPartParser,)
+    http_method_names = METHODS
+
+    @action(methods=['get'], detail=True, name='Chapter Pages',
+            serializer_class=serializers.PageSerializer,
+            pagination_class=DummyPagination,
+            filter_backends=[filters.TrackingFilter])
+    def pages(self, request: Request, pk: int) -> Response:
+        """Get the pages of the chapter."""
+        try:
+            instance = models.Chapter.objects.filter(
+                published__lte=tz.now()
+            ).select_related('series').only(
+                'series__slug', 'volume',
+                'series__licensed', 'number'
+            ).prefetch_related('pages').get(id=pk)
+        except models.Chapter.DoesNotExist:
+            raise NotFound()
+        if instance.series.licensed:
+            raise _LegalException()
+        if request.query_params.get('track') == 'true':
+            models.Chapter.track_view(id=pk)
+        serializer = serializers.PageSerializer(
+            instance.pages.all(), many=True,
+            context=self.get_serializer_context()
+        )
+        return self.get_paginated_response(serializer.data)
 
     def retrieve(self, request: Request, *args, **kwargs) -> Response:
         instance = self.get_object()
@@ -140,7 +166,6 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
     * list: List or search for series.
     * read: View the details of a series.
     * create: Create a new series.
-    * update: Update the given series.
     * patch: Edit the given series.
     * delete: Delete the given series.
     """
@@ -153,6 +178,33 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
     pagination_class = PageLimitPagination
     ordering = ('title',)
     lookup_field = 'slug'
+    http_method_names = METHODS
+
+    @action(methods=['get'], detail=True, name='Series Chapters',
+            serializer_class=serializers.ChapterSerializer,
+            pagination_class=DummyPagination,
+            filter_backends=[filters.DateFormat])
+    def chapters(self, request: Request, slug: str) -> Response:
+        """Get the chapters of the series."""
+        try:
+            q = Q(chapters__published__lte=tz.now())
+            groups = Group.objects.only('name')
+            chapters = models.Chapter.objects.order_by('-published')
+            instance = models.Series.objects.annotate(
+                chapter_count=Count('chapters', filter=q),
+            ).filter(chapter_count__gt=0).prefetch_related(
+                Prefetch('chapters', queryset=chapters),
+                Prefetch('chapters__groups', queryset=groups)
+            ).only('title', 'slug').get(slug=slug)
+        except models.Series.DoesNotExist:
+            raise NotFound()
+        if instance.licensed:
+            raise _LegalException()
+        serializer = serializers.ChapterSerializer(
+            instance.chapters.all(), many=True,
+            context=self.get_serializer_context()
+        )
+        return self.get_paginated_response(serializer.data)
 
     def get_queryset(self) -> QuerySet:
         q = Q(chapters__published__lte=tz.now())
@@ -175,6 +227,7 @@ class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
     schema = OpenAPISchema(tags=('cubari',), operation_id_base='Cubari')
     serializer_class = serializers.CubariSerializer
     lookup_field = 'slug'
+    http_method_names = ['get', 'head', 'options']
 
     def retrieve(self, request: Request, *args, **kwargs) -> Response:
         instance = self.get_object()
@@ -190,13 +243,13 @@ class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
             Prefetch('pages', queryset=pages),
             Prefetch('groups', queryset=groups)
         ).order_by(F('volume').asc(nulls_last=True), 'number').only(
-            'title', 'number', 'volume', 'modified', 'series'
+            'id', 'title', 'number', 'volume', 'modified', 'series_id'
         )
         return models.Series.objects.defer(
             'manager_id', 'modified', 'created', 'completed'
         ).prefetch_related(
-            Prefetch('authors'), Prefetch('artists'),
-            Prefetch('chapters', queryset=chapters)
+            Prefetch('chapters', queryset=chapters),
+            Prefetch('authors'), Prefetch('artists')
         )
 
 

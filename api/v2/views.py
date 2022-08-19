@@ -22,7 +22,7 @@ if TYPE_CHECKING:  # pragma: no cover
 #: The generated OpenAPI schema as a view.
 openapi = cache_control(public=True, max_age=1296000, immutable=True)(
     CORSMixin.decorator(get_schema_view(
-        title='MangAdventure API', version='2.2',
+        title='MangAdventure API', version='2.3',
         generator_class=OpenAPISchemaGenerator, public=True,
         renderer_classes=[JSONOpenAPIRenderer]  # type: ignore
     ))

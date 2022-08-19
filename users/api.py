@@ -44,6 +44,7 @@ class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
     lookup_field = 'series__slug'
     lookup_url_kwarg = 'slug'
     _restrict = True
+    http_method_names = ['get', 'delete', 'head', 'options']
 
     def get_permissions(self) -> List:
         if self.request.method == 'OPTIONS':
@@ -74,7 +75,6 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     API endpoints for user profiles.
 
     * read: View your profile.
-    * update: Update your profile.
     * patch: Edit your profile.
     * delete: Delete your profile.
     """
@@ -83,6 +83,7 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     parser_classes = (MultiPartParser,)
     serializer_class = ProfileSerializer
     lookup_field = None  # type: ignore
+    http_method_names = ['get', 'patch', 'delete', 'head', 'options']
     _restrict = True
 
     def get_permissions(self) -> List:
@@ -123,7 +124,6 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     def as_view(cls, **initkwargs):
         return super().as_view(actions={
             'get': 'retrieve',
-            'put': 'update',
             'patch': 'partial_update',
             'delete': 'destroy',
             'options': 'options'
@@ -142,6 +142,7 @@ class ApiKeyViewSet(mixins.CreateModelMixin, CORSMixin, GenericViewSet):
     )
     serializer_class = AuthTokenSerializer
     permission_classes = ()
+    http_method_names = ['post', 'head', 'options']
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)

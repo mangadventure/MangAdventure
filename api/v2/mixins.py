@@ -5,6 +5,8 @@ from typing import Callable, Dict
 
 
 class CORSMixin:
+    """Mixin that sets CORS headers."""
+
     #: CORS headers dictionary.
     cors_headers = {
         'Access-Control-Allow-Origin': '*',
@@ -12,7 +14,6 @@ class CORSMixin:
         'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS'
     }
 
-    """Mixin that sets CORS headers."""
     @property
     def default_response_headers(self) -> Dict:
         allowed_methods = getattr(self, 'allowed_methods', [])
@@ -36,4 +37,7 @@ class CORSMixin:
         return inner
 
 
-__all__ = ['CORSMixin']
+#: The allowed HTTP request methods.
+METHODS = ['get', 'post', 'patch', 'delete', 'head', 'options']
+
+__all__ = ['CORSMixin', 'METHODS']

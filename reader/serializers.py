@@ -265,9 +265,10 @@ class CubariSerializer(ModelSerializer):
 
     def _get_chapters(self, obj: Series) -> Dict[str, Dict]:
         return {
-            f'{ch.number:g}': {
+            str(ch.id): {
                 'title': ch.title,
                 'volume': str(ch.volume),
+                'number': f'{ch.number:g}',
                 'groups': {
                     ', '.join(g.name for g in ch.groups.all()) or 'N/A':
                     [self.__uri(p.image.url) for p in ch.pages.all()]

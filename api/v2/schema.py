@@ -86,6 +86,11 @@ class OpenAPISchema(AutoSchema):
                                 'format': 'uint32',
                                 'default': '0'
                             },
+                            'number': {
+                                'type': 'string',
+                                'format': 'float',
+                                'default': '0'
+                            },
                             'groups': {
                                 'type': 'object',
                                 'minProperties': 1,
@@ -120,12 +125,17 @@ class OpenAPISchema(AutoSchema):
             op['security'] = ()
         elif not self.view.permission_classes:
             op['security'] = ()
-        # deprecate PUT operations
-        if method == 'PUT':
-            op['deprecated'] = True
-            op['description'] = 'Use `PATCH` instead.'
-        # describe when to track chapter views
+        # deprecate the /pages path
         if path == '/pages' and method == 'GET':
+            op['deprecated'] = True
+            op['description'] = (
+                '**Use [`/chapters/{id}/pages`]'
+                '(#get-/chapters/-id-/pages) instead.**\n\n'
+                'Third-party apps must set `track=true`'
+                ' to properly increment chapter views.'
+            )
+        # describe when to track chapter views
+        if path == '/chapters/{id}/pages':
             op['description'] = (
                 'Third-party apps must set `track=true`'
                 ' to properly increment chapter views.'
@@ -167,13 +177,27 @@ class OpenAPISchema(AutoSchema):
         if getattr(self.view, 'filter_backends', None) is None:
             return False
         # only allow filters in list endpoints
-        return self.view.action == 'list'
+        return self.view.action in ('list', 'chapters', 'pages')
+
+    def get_component_name(self, serializer: BaseSerializer) -> str:
+        # HACK: manually set custom action components
+        if self.view.action == 'chapters':
+            self.view.action = 'list'
+            return 'Chapter'
+        if self.view.action == 'pages':
+            self.view.action = 'list'
+            return 'Page'
+        return super().get_component_name(serializer)
 
     def get_responses(self, path: str, method: str) -> Dict[str, Any]:
         responses = super().get_responses(path, method)
-        licensed_endpoints = ('/chapters/{id}', '/cubari/{slug}')
+        licensed_endpoints = (
+            '/series/{slug}/chapters', '/cubari/{slug}',
+            '/chapters/{id}', '/chapters/{id}/pages'
+        )
+        # add 451 response to certain endpoints
         if method == 'GET' and path in licensed_endpoints:
-            responses['451'] = {'description': 'Licensed series'}
+            responses['451'] = {'description': '**The series is licensed.**'}
         return responses
 
 

@@ -61,11 +61,9 @@ def directory(request: HttpRequest) -> HttpResponse:
 
     :return: A response with the rendered ``all_series.html`` template.
     """
-    chapters = Chapter.objects.filter(
-        published__lte=tz.now()
-    ).order_by('-published').defer(
+    chapters = Chapter.objects.defer(
         'file', 'views', 'modified'
-    )
+    ).order_by('-published')
     groups = Group.objects.only('name')
     q = Q(chapters__published__lte=tz.now())
     series = list(Series.objects.alias(

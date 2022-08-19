@@ -235,9 +235,13 @@ class ChapterFilter(SearchFilter):
     def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
         return [{
             'name': self.search_param,
-            'required': True,
+            'deprecated': True,
             'in': 'query',
-            'description': self.search_description,
+            'description': (
+                '**Use [`/series/{slug}/chapters`]'
+                '(#get-/series/-slug-/chapters) instead.**\n\n' +
+                self.search_description
+            ),
             'schema': {
                 'type': 'string',
                 'pattern': '^[-a-zA-Z0-9_]+$'
@@ -300,6 +304,22 @@ class PageFilter(BaseFilterBackend):
                 'minimum': 0
             }
         }, {
+            'name': 'track',
+            'required': False,
+            'in': 'query',
+            'description': 'Track chapter views.',
+            'schema': {'type': 'boolean'}
+        }]
+
+
+class TrackingFilter(BaseFilterBackend):
+    """View tracking filter."""
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
+        return queryset  # no actual filtering is performed
+
+    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
+        return [{
             'name': 'track',
             'required': False,
             'in': 'query',

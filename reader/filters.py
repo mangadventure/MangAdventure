@@ -251,12 +251,13 @@ class ChapterFilter(SearchFilter):
 
 class PageFilter(BaseFilterBackend):
     """Chapter pages filter."""
+
     def filter_queryset(self, request: Request, queryset: QuerySet,
                         view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
         params = {'series', 'volume', 'number'}
-        if not params.issubset(request.query_params.keys()):
+        if not params <= request.query_params.keys():
             raise ValidationError(detail={
                 'error': f'{params} are required parameters.'
             })
@@ -314,6 +315,7 @@ class PageFilter(BaseFilterBackend):
 
 class TrackingFilter(BaseFilterBackend):
     """View tracking filter."""
+
     def filter_queryset(self, request: Request, queryset: QuerySet,
                         view: ViewSet) -> QuerySet:
         return queryset  # no actual filtering is performed

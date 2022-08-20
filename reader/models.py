@@ -19,6 +19,7 @@ from django.contrib.contenttypes.fields import (
     GenericForeignKey, GenericRelation
 )
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.expressions import F
@@ -61,6 +62,7 @@ class _NonZeroIntegerField(models.PositiveSmallIntegerField):
 
 class AliasManager(models.Manager):
     """A :class:`~django.db.models.Manager` for aliases."""
+
     def names(self) -> List[str]:
         """
         Get the names of the aliases.
@@ -426,6 +428,7 @@ class Chapter(models.Model):
         self.pages.all().delete()
         self.pages.bulk_create(pages)
         self.file.delete(save=True)
+        cache.delete(f'chapter.cbz.{self.id}')
 
     def zip(self) -> BytesIO:
         """
@@ -433,14 +436,16 @@ class Chapter(models.Model):
 
         :return: The file-like object of the generated file.
         """
-        buf = BytesIO()
-        with ZipFile(buf, 'a', compression=8) as zf:
-            for page in self.pages.all():
-                img = page.image.path
-                name = f'{page.number:03d}'
-                ext = path.splitext(img)[-1]
-                zf.write(img, name + ext)
-        buf.seek(0)
+        buf = cache.get(f'chapter.cbz.{self.id}', BytesIO())
+        if not buf.getvalue():
+            with ZipFile(buf, 'a', compression=8) as zf:
+                for page in self.pages.all():
+                    img = page.image.path
+                    name = f'{page.number:03d}'
+                    ext = path.splitext(img)[-1]
+                    zf.write(img, name + ext)
+            buf.seek(0)
+            cache.add(f'chapter.cbz.{self.id}', buf)
         return buf
 
     @cached_property

@@ -20,6 +20,7 @@ class HttpResponseUnauthorized(HttpResponse):
     :param realm: The realm of the :header:`WWW-Authenticate` header.
     :param auth_type: The type of the :header:`WWW-Authenticate` header.
     """
+
     def __init__(self, content: bytes = b'', realm: str = 'private',
                  auth_type: str = 'Bearer', **kwargs):
         super().__init__(content=content, **kwargs)

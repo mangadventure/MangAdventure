@@ -40,6 +40,8 @@ setup(
         'debug': 'django-debug-toolbar',
         'mysql': 'mysqlclient',
         'pgsql': 'psycopg2',
+        'redis': 'redis',
+        'memc': 'pylibmc',
         'csp': 'django-csp>=3.7',
         'uwsgi': 'uwsgi',
         'sentry': 'sentry-sdk~=1.9',

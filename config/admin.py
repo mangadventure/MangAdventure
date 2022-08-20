@@ -26,6 +26,7 @@ admin.site.site_title = admin.site.site_header
 
 class InfoPageForm(FlatpageForm):
     """Admin form for :class:`InfoPage`."""
+
     def __init__(self, *args, **kwargs):
         # HACK: bypass FlatpageForm.__init__
         super(FlatpageForm, self).__init__(*args, **kwargs)

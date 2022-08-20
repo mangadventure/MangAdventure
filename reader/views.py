@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from django.core.cache import cache
 from django.db.models import Count, F, Prefetch, Q
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
@@ -52,7 +53,7 @@ def _cbz_etag(request: HttpRequest, slug: str, vol: int, num: float) -> str:
 
 
 @condition(last_modified_func=_latest)
-@cache_control(max_age=600, must_revalidate=True)
+@cache_control(max_age=600, stale_if_error=300, must_revalidate=True)
 def directory(request: HttpRequest) -> HttpResponse:
     """
     View that serves a page which lists all the series.
@@ -85,7 +86,7 @@ def directory(request: HttpRequest) -> HttpResponse:
 
 
 @condition(last_modified_func=_latest)
-@cache_control(max_age=1800, must_revalidate=True)
+@cache_control(max_age=1800, stale_if_error=900, must_revalidate=True)
 def series(request: HttpRequest, slug: str) -> HttpResponse:
     """
     View that serves the page of a single series.
@@ -169,7 +170,7 @@ def series(request: HttpRequest, slug: str) -> HttpResponse:
 
 
 @condition(last_modified_func=_latest)
-@cache_control(max_age=3600, must_revalidate=True)
+@cache_control(max_age=3600, stale_if_error=1800, must_revalidate=True)
 def chapter_page(request: HttpRequest, slug: str, vol: int,
                  num: float, page: int) -> HttpResponse:
     """
@@ -185,19 +186,23 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
 
     :raises Http404: If there is no matching chapter or page.
     """
-    if page == 0:
-        raise Http404('Page cannot be 0')
-    chapters = list(Chapter.objects.filter(
-        series__slug=slug,
-        series__licensed=False,
-        published__lte=tz.now()
-    ).select_related('series').only(
-        'title', 'number', 'volume', 'published',
-        'final', 'series__slug', 'series__cover',
-        'series__title', 'series__format'
-    ).order_by(
-        'series', F('volume').asc(nulls_last=True), 'number'
-    ).reverse())
+    if page < 1:
+        raise Http404('Page number must be positive')
+    chapters = cache.get_or_set(
+        f'reader.chapters.{slug}',
+        list(Chapter.objects.filter(
+            series__slug=slug,
+            series__licensed=False,
+            published__lte=tz.now()
+        ).select_related('series').only(
+            'title', 'number', 'volume', 'published',
+            'final', 'series__slug', 'series__cover',
+            'series__title', 'series__format'
+        ).order_by(
+            'series', F('volume').asc(nulls_last=True), 'number'
+        ).reverse()),
+        timeout=1800
+    )
     if not chapters:
         raise Http404('No chapters for this series')
     max_, found = len(chapters) - 1, False
@@ -209,8 +214,6 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
             break
     if not found:
         raise Http404('No such chapter')
-    if page == 1:
-        Chapter.track_view(id=current.id)
     all_pages = list(current.pages.all())
     try:
         curr_page = next(p for p in all_pages if p.number == page)
@@ -257,7 +260,7 @@ def chapter_redirect(request: HttpRequest, slug: str, vol: int,
 
 
 @condition(etag_func=_cbz_etag, last_modified_func=_latest)
-@cache_control(public=True, max_age=3600)
+@cache_control(max_age=3600, must_revalidate=True)
 def chapter_download(request: HttpRequest, slug: str, vol: int, num: float
                      ) -> Union[FileResponse, HttpResponseUnauthorized]:
     """

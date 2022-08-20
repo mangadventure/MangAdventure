@@ -19,6 +19,7 @@ class HttpResponseTooEarly(HttpResponse):
 
 class BaseMiddleware(CommonMiddleware):
     """``CommonMiddleware`` with custom patches."""
+
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """
         Patched to allow :const:`blocked user agents
@@ -41,6 +42,7 @@ class BaseMiddleware(CommonMiddleware):
 
 class PreloadMiddleware:
     """Middleware that allows for preloading resources."""
+
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
         self.get_response = get_response
 

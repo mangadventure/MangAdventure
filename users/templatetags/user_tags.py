@@ -2,6 +2,7 @@
 
 from typing import List
 
+from django.core.cache import cache
 from django.template.defaultfilters import register
 
 from allauth.socialaccount.models import SocialApp
@@ -14,11 +15,14 @@ from allauth.socialaccount.templatetags.socialaccount import (
 @register.simple_tag
 def get_oauth_providers() -> List:
     """Get a list of available OAuth providers."""
-    registry.load()
-    return [
-        registry.provider_map[p](None) for p in
-        SocialApp.objects.values_list('provider', flat=True)
-    ]
+    if not (providers := cache.get('oauth.providers')):
+        registry.load()
+        providers = [
+            registry.provider_map[p](None) for p in
+            SocialApp.objects.values_list('provider', flat=True)
+        ]
+        cache.add('oauth.providers', providers)
+    return providers
 
 
 # :func:`allauth.socialaccount.templatetags.socialaccount.provider_login_url`

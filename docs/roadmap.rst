@@ -70,7 +70,7 @@ v0.8.x
 v0.9.x
 ^^^^^^
 
-| |u| Caching.
+| |c| Caching.
 | |u| Redesign.
 |    |u| Pagination.
 |    |u| Mobile-friendly.

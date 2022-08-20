@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path, register_converter
+from django.views.decorators.cache import cache_control
 
 from MangAdventure.converters import FloatConverter
 
@@ -25,6 +26,8 @@ _sitemaps = {
     }
 }
 
+_sitemap = cache_control(max_age=86400, must_revalidate=True)(sitemap)
+
 #: The URL namespace of the reader app.
 urlpatterns = [
     path('', views.directory, name='directory'),
@@ -33,7 +36,7 @@ urlpatterns = [
     path(_page, views.chapter_page, name='page'),
     path(f'{_slug[:-1]}.atom', feeds.ReleasesAtom(), name='series.atom'),
     path(f'{_slug[:-1]}.rss', feeds.ReleasesRSS(), name='series.rss'),
-    path('<section>-sitemap.xml', sitemap, _sitemaps, name='sitemap.xml'),
+    path('<section>-sitemap.xml', _sitemap, _sitemaps, name='sitemap.xml'),
 ]
 
 if settings.CONFIG['ALLOW_DLS']:

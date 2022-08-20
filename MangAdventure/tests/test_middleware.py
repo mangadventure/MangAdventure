@@ -1,6 +1,6 @@
-from os import getenv
 from random import randint
 
+from django.conf import settings
 from django.test import Client
 from django.urls import reverse
 
@@ -29,7 +29,7 @@ class TestBaseMiddleware(MangadvTestBase):
 
 
 @mark.skipif(
-    getenv('wsgi.url_scheme') != 'https',
+    settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL != 'https',
     reason='PreloadMiddleware requires HTTPS'
 )
 class TestPreloadMiddleware(MangadvTestBase):

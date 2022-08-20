@@ -25,6 +25,7 @@ class CDNStorage(FileSystemStorage):
     .. _weserv: https://images.weserv.nl/docs/
     .. _photon: https://developer.wordpress.com/docs/photon/
     """
+
     def __init__(self, fit: Optional[Tuple[int, int]] = None):
         super().__init__()
         self._cdn = cast(str, settings.CONFIG['USE_CDN']).lower()

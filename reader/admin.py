@@ -23,6 +23,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class DateFilter(admin.DateFieldListFilter):
     """Admin interface filter for dates."""
+
     def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.title = 'date'
@@ -40,8 +41,9 @@ class PageFormset(BaseInlineFormSet):  # pragma: no cover
         numbers = []
         for form in self.forms:
             if (num := form.cleaned_data.get('number')) in numbers:
-                form._errors['number'] = \
-                    self.error_class([self.get_form_error()])
+                form._errors['number'] = self.error_class(
+                    [self.get_form_error()]
+                )
                 del form.cleaned_data['number']
             if not form.cleaned_data.get('DELETE'):
                 numbers.append(num)

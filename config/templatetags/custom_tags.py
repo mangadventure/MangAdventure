@@ -1,11 +1,12 @@
 """Template tags of the config app."""
 
 from json import dumps
-from os.path import splitext
+from os.path import basename, splitext
 from typing import Dict, List
 from urllib.parse import urljoin as join
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
+from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.defaultfilters import register, slice_filter
 from django.utils.html import format_html
@@ -68,9 +69,13 @@ def get_type(link: str) -> str:
 
     :return: The mime type of the image.
     """
+    if (key := 'type.' + basename(link.lower())) in cache:
+        return cache.get(key)  # pragma: no cover
     try:
-        with urlopen(link) as response:
-            return response.info().get_content_type()
+        with urlopen(Request(link, method='HEAD')) as response:
+            type_ = response.info().get_content_type()
+            cache.add(key, type_)
+            return type_
     except Exception:
         return {
             '.apng': 'image/apng',

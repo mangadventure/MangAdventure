@@ -56,15 +56,15 @@ def mock_request(monkeypatch):
 
 
 def test_get_type(mock_urlopen):
-    assert get_type('my_link.png') == 'image/jpeg'
+    assert get_type('https://example.com/my_link.webp') == 'image/jpeg'
 
 
 def test_get_type_no_network():
-    assert get_type('my_link.png') == 'image/png'
+    assert get_type('https://example.com/my_link.png') == 'image/png'
 
 
 def test_get_type_invalid():
-    assert get_type('my_link.flif') == 'image/jpeg'
+    assert get_type('https://example.com/my_link.flif') == 'image/jpeg'
 
 
 @mark.django_db

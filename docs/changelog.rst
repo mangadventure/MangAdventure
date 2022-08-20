@@ -4,6 +4,7 @@ Changelog
 v0.9.0
 ^^^^^^
 
+* Added Redis & Memcached support
 * Added new API endpoints
 * Disabled ``PUT`` operations
 * Dropped support for Python 3.7

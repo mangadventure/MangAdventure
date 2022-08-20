@@ -2,13 +2,18 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Dict, Type
 
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
 from django.contrib.sites.models import Site
+from django.core.handlers.wsgi import WSGIHandler
+from django.core.signals import request_started
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
+from django.http.request import QueryDict
+from django.urls.base import resolve
+from django.urls.exceptions import Resolver404
 
 from .models import Chapter, Page, Series
 
@@ -115,4 +120,57 @@ def remove_page(sender: Type[Page], instance: Page, **kwargs):
     instance.image.storage.delete(instance.image.name)
 
 
-__all__ = ['redirect_series', 'redirect_chapter', 'remove_page']
+# TODO: figure out how to test this
+@receiver(request_started, sender=WSGIHandler)
+def track_view(sender: Type[WSGIHandler], environ:
+               Dict[str, str], **kwargs):  # pragma: no cover
+    """
+    Receive a signal when a request is processed.
+
+    Track the chapter view if necessary.
+
+    :param sender: The request handler class that sent the signal.
+    :param environ: The metadata dictionary provided to the request.
+    """
+    try:
+        url = resolve(environ.get('PATH_INFO', ''))
+    except Resolver404:
+        pass
+    else:
+        if url.url_name == 'page':
+            try:
+                args_ = url.captured_kwargs  # type: ignore
+                if args_['page'] == 1:
+                    Chapter.track_view(
+                        series__licensed=False,
+                        series__slug=args_['slug'],
+                        volume=args_['volume'] or None,
+                        number=args_['number']
+                    )
+            except KeyError:
+                pass
+        elif url.url_name == 'chapters-pages':
+            q = QueryDict(environ.get('QUERY_STRING', ''))
+            if q.get('track', '') == 'true':
+                try:
+                    Chapter.track_view(
+                        series__licensed=False,
+                        id=int(url.captured_kwargs['pk'])  # type: ignore
+                    )
+                except (KeyError, ValueError):
+                    pass
+        elif url.url_name == 'pages-list':
+            q = QueryDict(environ.get('QUERY_STRING', ''))
+            if q.get('track', '') == 'true':
+                try:
+                    Chapter.track_view(
+                        series__licensed=False,
+                        series__slug=q['series'],
+                        volume=int(q['volume']) or None,
+                        number=float(q['number'])
+                    )
+                except (KeyError, ValueError):
+                    pass
+
+
+__all__ = ['redirect_series', 'redirect_chapter', 'remove_page', 'track_view']

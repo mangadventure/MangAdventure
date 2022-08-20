@@ -54,10 +54,9 @@ MIDDLEWARE = [
     'django.middleware.http.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     'MangAdventure.middleware.PreloadMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
+    'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'MangAdventure.urls'
@@ -98,6 +97,12 @@ DATABASES = {'default': {
         'PORT': 5432
     }
 }.get(env.get('DB_TYPE', 'sqlite3'))}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
+    }
+}
 
 STATIC_URL = '/static/'
 
@@ -207,8 +212,6 @@ LANGUAGE_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
-
-env.setdefault('wsgi.url_scheme', 'https')
 
 # XXX: No SSL on localhost
 SECURE_SSL_REDIRECT = env.get('HTTPS', False)

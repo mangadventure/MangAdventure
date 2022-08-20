@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, List, cast
 
 from django.db.models import Prefetch
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
 
 from rest_framework import mixins
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -28,6 +30,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from rest_framework.request import Request  # isort:skip
 
 
+@method_decorator(cache_control(private=True, max_age=600), 'dispatch')
 class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
                       mixins.DestroyModelMixin, CORSMixin, GenericViewSet):
     """
@@ -69,6 +72,7 @@ class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
         return Response({'rss': rss, 'atom': atom, 'bookmarks': bookmarks})
 
 
+@method_decorator(cache_control(private=True, max_age=3600), 'dispatch')
 class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
                      mixins.DestroyModelMixin, CORSMixin, GenericViewSet):
     """

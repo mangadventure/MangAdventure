@@ -8,6 +8,7 @@ from django.urls import reverse
 
 class MiscSitemap(Sitemap):
     """Sitemap for miscellaneous pages."""
+
     def items(self) -> Tuple[str, ...]:
         """
         Get a tuple of the sitemap's items.

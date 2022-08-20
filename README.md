@@ -22,12 +22,13 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
   * [x] Series bookmarks.
   * [x] Chapter downloads.
   * [ ] Comments.
+* [x] Supports Redis/Memcached.
 * [x] Supports scheduled releases.
 * [x] Supports custom chapter names.
 * [x] Supports hiding licensed series.
 * [x] Supports tracking chapter views.
 * [x] Allows for migration from FoolSlide2.
-* [x] Has Tachiyomi & Paperback extensions.
+* [x] Has Tachiyomi & Aidoku extensions.
 * [ ] More features coming soon...
 
 ## Documentation

@@ -63,6 +63,10 @@ coverage.xml
 status_auth.txt
 !docker/uwsgi.ini
 
+# Redis stuff
+*.rdb
+*.aof
+
 # MangAdventure stuff
 media/
 static/admin/

@@ -8,7 +8,9 @@ from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.db.models import Prefetch
 from django.utils import timezone as tz
+from django.utils.decorators import method_decorator
 from django.utils.feedgenerator import Atom1Feed
+from django.views.decorators.cache import cache_control
 
 from reader.models import Chapter
 
@@ -19,6 +21,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest  # isort:skip
 
 
+@method_decorator(cache_control(public=True, max_age=600), '__call__')
 class GroupRSS(Feed):
     """RSS feed for a group's releases."""
     ttl = 600
@@ -124,6 +127,7 @@ class GroupRSS(Feed):
         return item.modified
 
 
+@method_decorator(cache_control(public=True, max_age=600), '__call__')
 class GroupAtom(GroupRSS):
     """Atom feed for a group's releases."""
     feed_type = Atom1Feed

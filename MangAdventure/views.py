@@ -28,7 +28,7 @@ def _error_context(msg: str, status: int = 500) -> Dict[str, Any]:
     return {'error_message': msg, 'error_status': status}
 
 
-@cache_control(max_age=600, must_revalidate=True)
+@cache_control(public=True, max_age=600, stale_if_error=300)
 def index(request: HttpRequest) -> HttpResponse:
     """
     View that serves the index page which shows the latest releases.
@@ -52,11 +52,11 @@ def index(request: HttpRequest) -> HttpResponse:
     crumbs = breadcrumbs([('Home', uri)])
     return render(request, 'index.html', {
         'breadcrumbs': crumbs,
-        'latest_releases': list(latest)
+        'latest_releases': latest
     })
 
 
-@cache_control(max_age=600, must_revalidate=True)
+@cache_control(public=True, max_age=600)
 def search(request: HttpRequest) -> HttpResponse:
     """
     View that serves a page used for searching for series.

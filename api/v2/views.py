@@ -64,12 +64,11 @@ def _rapidoc(request: HttpRequest) -> HttpResponse:
     })
 
 
+rapidoc = cache_control(public=True, max_age=604800)(_rapidoc)
+rapidoc.__doc__ = _rapidoc.__doc__
 if find_spec('csp'):  # pragma: no cover
     from csp.decorators import csp_update
-    rapidoc = csp_update(style_src="'unsafe-inline'")(_rapidoc)
-else:
-    rapidoc = _rapidoc
-rapidoc.__doc__ = _rapidoc.__doc__
+    rapidoc = csp_update(style_src="'unsafe-inline'")(rapidoc)
 
 
 __all__ = ['openapi', 'redoc_redirect', 'swagger_redirect', 'rapidoc']

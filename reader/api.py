@@ -7,6 +7,8 @@ from warnings import filterwarnings
 
 from django.db.models import Count, F, Max, Prefetch, Q, Sum
 from django.utils import timezone as tz
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
 
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, NotFound
@@ -39,6 +41,7 @@ class _LegalException(APIException):
     default_code = 'licensed_series'
 
 
+@method_decorator(cache_control(public=True, max_age=1800), 'dispatch')
 class ArtistViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for artists.
@@ -55,6 +58,7 @@ class ArtistViewSet(CORSMixin, ModelViewSet):
     http_method_names = METHODS
 
 
+@method_decorator(cache_control(public=True, max_age=1800), 'dispatch')
 class AuthorViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for authors.
@@ -71,6 +75,7 @@ class AuthorViewSet(CORSMixin, ModelViewSet):
     http_method_names = METHODS
 
 
+@method_decorator(cache_control(public=True, max_age=900), 'dispatch')
 class CategoryViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for categories.
@@ -88,6 +93,7 @@ class CategoryViewSet(CORSMixin, ModelViewSet):
     http_method_names = METHODS
 
 
+@method_decorator(cache_control(public=True, max_age=600), 'dispatch')
 class PageViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin,
                   UpdateModelMixin, CORSMixin, GenericViewSet):
     """
@@ -106,6 +112,7 @@ class PageViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin,
     http_method_names = METHODS
 
 
+@method_decorator(cache_control(public=True, max_age=600), 'dispatch')
 class ChapterViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for chapters.
@@ -139,8 +146,6 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
             raise NotFound()
         if instance.series.licensed:
             raise _LegalException()
-        if request.query_params.get('track') == 'true':
-            models.Chapter.track_view(id=pk)
         serializer = serializers.PageSerializer(
             instance.pages.all(), many=True,
             context=self.get_serializer_context()
@@ -159,6 +164,7 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
             .filter(published__lte=tz.now()).order_by('-published')
 
 
+@method_decorator(cache_control(public=True, max_age=300), 'dispatch')
 class SeriesViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for series.
@@ -218,6 +224,7 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
         return serializers.SeriesSerializer[self.action]  # type: ignore
 
 
+@method_decorator(cache_control(public=True, max_age=600), 'dispatch')
 class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
     """
     API endpoints for Cubari.

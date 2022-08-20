@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- {% load cache custom_tags %} -->
-<!-- {% cache 2628000 opensearch %} -->
 <OpenSearchDescription
     xmlns="http://a9.com/-/spec/opensearch/1.1/"
     xmlns:moz="http://www.mozilla.org/2006/browser/search/">
@@ -13,4 +11,3 @@
   <moz:SearchForm>{{ search }}</moz:SearchForm>
   <moz:UpdateUrl>{{ self }}</moz:UpdateUrl>
 </OpenSearchDescription>
-<!-- {% endcache %} -->

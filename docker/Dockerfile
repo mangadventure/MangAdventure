@@ -13,6 +13,7 @@ RUN ([ -f .env ] || mv .env.example .env) \
         libsass \
         python3 \
         py3-psycopg2 \
+        py3-redis \
         uwsgi-python3 \
         -X https://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
     && apk add --no-cache -t .build-deps \

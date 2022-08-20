@@ -9,6 +9,14 @@ MangAdventure package
 Submodules
 ----------
 
+MangAdventure.cache module
+--------------------------
+
+.. automodule:: MangAdventure.cache
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 MangAdventure.converters module
 -------------------------------
 

@@ -1,6 +1,8 @@
 """API viewsets for the groups app."""
 
 from django.db.models import Prefetch
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
 
 from rest_framework.parsers import MultiPartParser
 from rest_framework.viewsets import ModelViewSet
@@ -11,6 +13,7 @@ from api.v2.schema import OpenAPISchema
 from . import models, serializers
 
 
+@method_decorator(cache_control(public=True, max_age=7200), 'dispatch')
 class GroupViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for groups.
@@ -34,6 +37,7 @@ class GroupViewSet(CORSMixin, ModelViewSet):
     http_method_names = METHODS
 
 
+@method_decorator(cache_control(public=True, max_age=10800), 'dispatch')
 class MemberViewSet(CORSMixin, ModelViewSet):
     """
     API endpoints for members.

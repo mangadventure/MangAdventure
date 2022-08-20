@@ -10,8 +10,10 @@ from django.db.models import Subquery
 from django.http import HttpResponse
 from django.utils import timezone as tz
 from django.utils.cache import patch_vary_headers
+from django.utils.decorators import method_decorator
 from django.utils.feedgenerator import Atom1Feed
 from django.utils.http import http_date
+from django.views.decorators.cache import cache_control
 
 from MangAdventure.utils import HttpResponseUnauthorized
 
@@ -23,6 +25,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest  # isort:skip
 
 
+@method_decorator(cache_control(private=True, max_age=600), '__call__')
 class BookmarksRSS(Feed):
     """RSS feed for a user's bookmarks."""
     ttl = 600
@@ -141,6 +144,7 @@ class BookmarksRSS(Feed):
         return item.modified
 
 
+@method_decorator(cache_control(private=True, max_age=600), '__call__')
 class BookmarksAtom(BookmarksRSS):
     """Atom feed for a user's bookmarks."""
     feed_type = Atom1Feed

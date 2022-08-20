@@ -87,7 +87,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
 ]
 
@@ -117,12 +116,36 @@ WSGI_APPLICATION = 'MangAdventure.wsgi.application'
 #: Default primary key field type to use.
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-##################
-#    Database    #
-##################
+############################
+#    Database & Caching    #
+############################
 
 #: Database settings dictionary. See :setting:`DATABASES`.
 DATABASES = {'default': env.db('DB_URL', 'sqlite:///db.sqlite3')}
+
+#: Cache settings dictionary. See :setting:`CACHES`
+CACHES = {}
+if find_spec('redis'):  # pragma: no cover
+    CACHES['default'] = {
+        'BACKEND': 'MangAdventure.cache.SignedRedisCache',
+        'LOCATION': env['CACHE_URL'],
+        'KEY_PREFIX': env['NAME']
+    }
+elif find_spec('pylibmc'):  # pragma: no cover
+    CACHES['default'] = {
+        'BACKEND': 'MangAdventure.cache.SignedPyLibMCCache',
+        'LOCATION': env['CACHE_URL'],
+        'KEY_PREFIX': env['NAME']
+    }
+else:
+    __import__('warnings').warn_explicit((
+        "Neither redis-py nor pylibmc were installed. "
+        "Falling back to unsigned local memory cache."
+    ), UserWarning, __file__, 146)
+    CACHES['default'] = {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'KEY_PREFIX': env['NAME']
+    }
 
 ##################################
 #    Logging & Error Handling    #
@@ -382,8 +405,7 @@ DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
 SESSION_COOKIE_SAMESITE = 'Strict'
 
 if env.bool('HTTPS', True):
-    env.ENV['wsgi.url_scheme'] = 'https'
-    MIDDLEWARE.append('MangAdventure.middleware.PreloadMiddleware')
+    MIDDLEWARE.insert(-2, 'MangAdventure.middleware.PreloadMiddleware')
 
     #: HTTP header/value combination that signifies a secure request.
     #: See :setting:`SECURE_PROXY_SSL_HEADER`.
@@ -560,7 +582,7 @@ if DEBUG:
     ALLOWED_HOSTS += [f'192.168.1.{i}' for i in range(2, 256)]
     if find_spec('debug_toolbar'):
         INSTALLED_APPS.append('debug_toolbar')
-        MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+        MIDDLEWARE.insert(3, 'debug_toolbar.middleware.DebugToolbarMiddleware')
         TEMPLATES[0]['OPTIONS']['context_processors'].append(
             'django.template.context_processors.debug'
         )

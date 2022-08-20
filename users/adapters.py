@@ -14,6 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class AccountAdapter(DefaultAccountAdapter):
     """Adapter for user accounts."""
+
     def get_login_redirect_url(self, request: HttpRequest) -> str:
         """
         Return the URL to redirect to after a successful login.
@@ -37,6 +38,7 @@ class AccountAdapter(DefaultAccountAdapter):
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
     """Adapter for OAuth accounts."""
+
     def get_connect_redirect_url(self, request: HttpRequest,
                                  social_account: SocialAccount) -> str:
         """

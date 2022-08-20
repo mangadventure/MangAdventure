@@ -83,10 +83,10 @@ class TestSearch(MangadvViewTestBase):
         self._test_filter({'author': 'artist2'}, ['series2'])
 
     def test_get_status(self):
-        self._test_filter({'status': 'any'}, [])
-        self._test_filter({'status': 'completed'}, ['series2'])
+        self._test_filter({'status': ''}, [])
         self._test_filter({'status': 'ongoing'}, ['series'])
-        self._test_filter({'status': 'any', 'q': 's'}, ['series', 'series2'])
+        self._test_filter({'status': 'completed'}, ['series2'])
+        self._test_filter({'status': 'any'}, ['series', 'series2'])
 
     def test_get_categories(self):
         self._test_filter({'categories': 'adventure'}, ['series', 'series2'])

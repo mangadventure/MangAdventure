@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 class DummyPagination(BasePagination):
     """Dummy pagination class that simply wraps results."""
+
     def to_html(self) -> str:
         return ''
 

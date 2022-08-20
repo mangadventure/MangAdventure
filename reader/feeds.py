@@ -9,7 +9,9 @@ from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.db.models import F, Prefetch
 from django.utils import timezone as tz
+from django.utils.decorators import method_decorator
 from django.utils.feedgenerator import Atom1Feed
+from django.views.decorators.cache import cache_control
 
 from .models import Category, Chapter, Series
 
@@ -20,6 +22,7 @@ if TYPE_CHECKING:  # pragma: no cover
 _max = settings.CONFIG['MAX_RELEASES']
 
 
+@method_decorator(cache_control(public=True, max_age=600), '__call__')
 class LibraryRSS(Feed):
     """RSS feed for the series library."""
     ttl = 600
@@ -114,12 +117,14 @@ class LibraryRSS(Feed):
         return guess_type(item.cover.path)[0] if item.cover else None
 
 
+@method_decorator(cache_control(public=True, max_age=600), '__call__')
 class LibraryAtom(LibraryRSS):
     """Atom feed for the series library."""
     feed_type = Atom1Feed
     subtitle = LibraryRSS.description
 
 
+@method_decorator(cache_control(public=True, max_age=600), '__call__')
 class ReleasesRSS(Feed):
     """RSS feed for chapter releases."""
     ttl = 600
@@ -243,6 +248,7 @@ class ReleasesRSS(Feed):
         return item.modified
 
 
+@method_decorator(cache_control(public=True, max_age=600), '__call__')
 class ReleasesAtom(ReleasesRSS):
     """Atom feed for chapter releases."""
     feed_type = Atom1Feed

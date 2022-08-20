@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: "3.8"
       - name: "Install dependencies"
-        run: pip install wheel && pip install -e .[dev,csp]
+        run: pip install wheel && pip install -e .[dev,csp,redis,memc]
       - name: "Set up .env file"
         run: cp .env.example .env
       - name: "Lint project"
@@ -76,7 +76,7 @@ jobs:
       - name: "Lint project"
         run: flake8 && isort -q -c --df . && mypy .
       - name: "Run tests"
-        run: py.test
+        run: py.test --cov-report=xml
         if: success()
         env:
           DB_TYPE: mysql
@@ -129,7 +129,7 @@ jobs:
       - name: "Lint project"
         run: flake8 && isort -q -c --df . && mypy .
       - name: "Run tests"
-        run: py.test
+        run: py.test --cov-report=xml
         if: success()
         env:
           DB_TYPE: postgresql

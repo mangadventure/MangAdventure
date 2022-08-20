@@ -69,7 +69,7 @@ def profile(request: HttpRequest) -> HttpResponse:
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(cache_control(no_store=True), name='dispatch')
+@method_decorator(cache_control(private=True, no_store=True), name='dispatch')
 class EditUser(TemplateView):
     """View that serves the edit form for a user's profile."""
     #: The template that this view will render.
@@ -142,14 +142,13 @@ class EditUser(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(cache_control(no_store=True), name='dispatch')
 class Logout(LogoutView):
     """A :class:`LogoutView` that disallows ``GET`` requests."""
     #: The allowed HTTP methods.
     http_method_names = ('post', 'head', 'options')
 
 
-@method_decorator(cache_control(no_store=True), name='dispatch')
+@method_decorator(cache_control(private=True, no_store=True), name='dispatch')
 class PasswordReset(PasswordResetFromKeyView):
     """
     A :class:`PasswordResetFromKeyView` without the extra redirect.

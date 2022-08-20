@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from re import compile as regex
-from typing import Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from django.utils.encoding import force_str
 
@@ -12,6 +12,9 @@ from rest_framework.schemas.utils import get_pk_description
 from rest_framework.serializers import (
     BaseSerializer, PrimaryKeyRelatedField, SlugRelatedField
 )
+
+if TYPE_CHECKING:  # pragma: no cover
+    from rest_framework.request import Request
 
 
 class OpenAPISchema(AutoSchema):
@@ -203,16 +206,15 @@ class OpenAPISchema(AutoSchema):
 
 class OpenAPISchemaGenerator(SchemaGenerator):
     """Custom OpenAPI generator class."""
-    def get_schema(self, *args, **kwargs) -> Dict:  # type: ignore
-        from django.conf import settings
+
+    def get_schema(self, request: Request, public: bool = False) -> Dict:
         from django.contrib.sites.models import Site
 
-        proto = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
         # TODO: use dict union (Py3.9+)
         # add "servers", "externalDocs", "security", "tags" to the main schema
-        (schema := super().get_schema(*args, **kwargs)).update({
+        (schema := super().get_schema(request, public)).update({
             'servers': [
-                {'url': f'{proto}://{site}/api/v2'} for site
+                {'url': f'{request.scheme}://{site}/api/v2'} for site
                 in Site.objects.values_list('domain', flat=True)
             ],
             'externalDocs': {
@@ -256,7 +258,7 @@ class OpenAPISchemaGenerator(SchemaGenerator):
         return schema  # type: ignore
 
     def coerce_path(self, *args) -> str:
-        # HACK: strip /api/v2 from the path
+        # strip /api/v2 from the path
         return super().coerce_path(*args)[7:]
 
 

@@ -20,6 +20,7 @@ from .models import Bookmark, UserProfile
 
 class BookmarkPagination(BasePagination):
     """Fake pagination class to adapt the bookmarks list schema."""
+
     def to_html(self) -> str:
         return ''
 

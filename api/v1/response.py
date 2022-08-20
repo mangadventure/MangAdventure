@@ -25,6 +25,7 @@ class JsonError(JsonResponse):
     :param message: The error message of the response.
     :param status: The HTTP status of the response.
     """
+
     def __init__(self, message: str, status: int = 500, **kwargs):
         data = {'error': message, 'status': status}
         kwargs.setdefault('status', status)

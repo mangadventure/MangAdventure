@@ -7,6 +7,7 @@ v0.9.0
 * Added new API endpoints
 * Disabled ``PUT`` operations
 * Dropped support for Python 3.7
+* Removed Heroku demo
 
 v0.8.5
 ^^^^^^

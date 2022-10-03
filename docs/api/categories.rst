@@ -8,7 +8,7 @@ Retrieve a list of available categories.
 Example request
 ^^^^^^^^^^^^^^^
 
-.. sourcecode:: shell
+.. code-block:: bash
 
    curl -i http://example.com/api/v1/categories \
         -H 'If-None-Match: be534a1d37be8db1c3c57177e1305f6c'
@@ -19,15 +19,14 @@ Example request
 Example response
 ^^^^^^^^^^^^^^^^
 
-.. sourcecode:: http
+.. code-block:: http
 
    HTTP/1.1 200 OK
    Date: Tue, 28 Aug 2018 09:35:27 GMT
-   Server: WSGIServer/0.2 CPython/3.7.0
+   Server: WSGIServer/0.2 CPython/3.8.13
    Content-Type: application/json
    Last-Modified: Sun, 26 Aug 2018 16:40:11 GMT
    ETag: "fe35ca7670b351b38c1c1d5e4b1e773d"
-   X-Frame-Options: SAMEORIGIN
    Content-Length: 79
 
    [

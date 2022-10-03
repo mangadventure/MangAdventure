@@ -8,7 +8,7 @@ Retrieve the info of each artist.
 Example request
 ^^^^^^^^^^^^^^^
 
-.. sourcecode:: shell
+.. code-block:: bash
 
    curl -i http://example.com/api/v1/artists \
         -H 'If-None-Match: cb51bd8357e0c7fba317ee1331d765c4'
@@ -19,14 +19,13 @@ Example request
 Example response
 ^^^^^^^^^^^^^^^^
 
-.. sourcecode:: http
+.. code-block:: http
 
    HTTP/1.1 200 OK
    Date: Tue, 28 Aug 2018 09:35:27 GMT
-   Server: WSGIServer/0.2 CPython/3.7.0
+   Server: WSGIServer/0.2 CPython/3.8.13
    Content-Type: application/json
    ETag: "31b0b177cc7138befc5dd56ae745e313"
-   X-Frame-Options: SAMEORIGIN
    Content-Length: 133
 
    [

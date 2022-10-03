@@ -15,7 +15,5 @@ Response headers
   The content type of the response. (always `application/json <https://www.iana.org/assignments/media-types/application/json>`_)
 * `ETag <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag>`_:
   The version identifier of the resource. Useful for caching responses.
-* `X-Frame-Options <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options>`_:
-  Sent by Django's `clickjacking middleware <https://docs.djangoproject.com/en/stable/ref/clickjacking/#setting-x-frame-options-for-all-responses>`_.
 * `Content-Length <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length>`_:
   The size of the response body in bytes.

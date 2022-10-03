@@ -16,7 +16,7 @@ Request parameters
 Example request
 ^^^^^^^^^^^^^^^
 
-.. sourcecode:: shell
+.. code-block:: bash
 
    curl -i http://example.com/api/v1/series/some-manga/1/0 \
         -H 'If-Modified-Since: Fri, 24 Aug 2018 12:48:01 GMT'
@@ -27,15 +27,14 @@ Example request
 Example response
 ^^^^^^^^^^^^^^^^
 
-.. sourcecode:: http
+.. code-block:: http
 
    HTTP/1.1 200 OK
    Date: Tue, 28 Aug 2018 09:35:27 GMT
-   Server: WSGIServer/0.2 CPython/3.7.0
+   Server: WSGIServer/0.2 CPython/3.8.13
    Content-Type: application/json
    Last-Modified: Sun, 26 Aug 2018 16:14:52 GMT
    ETag: "11b9df2f0904dc4f1b2dfaa7d7419bbc"
-   X-Frame-Options: SAMEORIGIN
    Content-Length: 181
 
    {

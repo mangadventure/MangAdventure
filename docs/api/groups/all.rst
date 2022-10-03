@@ -8,7 +8,7 @@ Retrieve the info of each group.
 Example request
 ^^^^^^^^^^^^^^^
 
-.. sourcecode:: shell
+.. code-block:: bash
 
    curl -i http://example.com/api/v1/groups \
         -H 'If-None-Match: 2503eb9066af0aaef2274e8a7d158fd7'
@@ -19,14 +19,13 @@ Example request
 Example response
 ^^^^^^^^^^^^^^^^
 
-.. sourcecode:: http
+.. code-block:: http
 
    HTTP/1.1 200 OK
    Date: Tue, 28 Aug 2018 09:35:27 GMT
-   Server: WSGIServer/0.2 CPython/3.7.0
+   Server: WSGIServer/0.2 CPython/3.8.13
    Content-Type: application/json
    ETag: "ee0581f62afb372d5faea0092d674a87"
-   X-Frame-Options: SAMEORIGIN
    Content-Length: 286
 
    [

@@ -13,7 +13,7 @@ Request parameters
 Example request
 ^^^^^^^^^^^^^^^
 
-.. sourcecode:: shell
+.. code-block:: bash
 
    curl -i http://example.com/api/v1/authors/1 \
         -H 'If-None-Match: cf62b5e432293fc2b7cf32d5f100d415'
@@ -24,14 +24,13 @@ Example request
 Example response
 ^^^^^^^^^^^^^^^^
 
-.. sourcecode:: http
+.. code-block:: http
 
    HTTP/1.1 200 OK
    Date: Tue, 28 Aug 2018 09:35:27 GMT
-   Server: WSGIServer/0.2 CPython/3.7.0
+   Server: WSGIServer/0.2 CPython/3.8.13
    Content-Type: application/json
    ETag: "03785faa8c59138c6c16155f51f53bba"
-   X-Frame-Options: SAMEORIGIN
    Content-Length: 141
 
    {

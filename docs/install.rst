@@ -26,7 +26,7 @@ First, you will need Python_ (3.8+) and pip_.
 
 Then, set up a virtualenv for MangAdventure with the following commands:
 
-.. code-block:: shell
+.. code-block:: bash
 
    # This will install a virtualenv under /var/www/my-site.com/
    python3 -m venv /var/www/my-site.com/
@@ -39,7 +39,7 @@ Then, set up a virtualenv for MangAdventure with the following commands:
 
 Finally, install MangAdventure inside the activated virtualenv:
 
-.. code-block:: shell
+.. code-block:: bash
 
    pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.9.0#egg=mangadventure"
 
@@ -53,7 +53,7 @@ MangAdventure also provides the following extras:
 
 For example, you can install ``csp`` & ``uwsgi`` like so:
 
-.. code-block:: shell
+.. code-block:: bash
 
    pip install -e "git+https://github.com/mangadventure/MangAdventure@v0.9.0#egg=mangadventure[csp,uwsgi]"
 
@@ -86,7 +86,7 @@ Create the database
 
 This command will set up the database for your site.
 
-.. code-block:: shell
+.. code-block:: bash
 
    mangadventure migrate
 
@@ -96,7 +96,7 @@ Collect the static files
 This command will collect the static files into ``static/``.
 
 
-.. code-block:: shell
+.. code-block:: bash
 
    mangadventure collectstatic
 
@@ -107,7 +107,7 @@ You will be prompted for a name, email, and password.
 This account is needed to access the ``/admin-panel/`` page.
 You can create multiple administrator accounts.
 
-.. code-block:: shell
+.. code-block:: bash
 
    mangadventure createsuperuser
 
@@ -117,7 +117,7 @@ Load Categories
 If you want to load an initial set of manga categories imported from
 `MangaUpdates <https://www.mangaupdates.com/genres.html>`_, run this command:
 
-.. code-block:: shell
+.. code-block:: bash
 
    mangadventure loaddata categories
 
@@ -150,7 +150,7 @@ Next, import the data into MangAdventure:
 * Replace ``{root}`` with the path to your FoolSlide2 installation.
 * Replace ``{data}`` with the path to the XML file you exported.
 
-.. code-block:: shell
+.. code-block:: bash
 
    mangadventure fs2import "{root}" "{data}"
 
@@ -166,7 +166,7 @@ Set up the server
 | Lastly, don't forget to run ``uwsgi`` after setting up the server:
 | (For more details, check the `uWSGI docs`_.)
 
-.. code-block:: shell
+.. code-block:: bash
 
    uwsgi --http-socket ":25432" --chdir "/var/www/my-site.com" --module "MangAdventure.wsgi"
 
@@ -180,7 +180,6 @@ Apache requires `mod_uwsgi`_.
 
 .. literalinclude:: examples/apache.conf
    :language: apache
-   :end-before: # vim
 
 .. _mod_uwsgi:
    https://uwsgi-docs.readthedocs.io/en/latest/Apache.html
@@ -192,7 +191,6 @@ Nginx requires `uwsgi`_.
 
 .. literalinclude:: examples/nginx.conf
    :language: nginx
-   :end-before: # vim
 
 .. _uwsgi:
    https://uwsgi-docs.readthedocs.io/en/latest/Nginx.html
@@ -203,7 +201,7 @@ Updating
 | First, install the latest release from GitHub:
 | (Replace ``{tag}`` with the latest `release tag`_.)
 
-.. code-block:: shell
+.. code-block:: bash
 
    # Don't forget to activate the virtualenv
    source /var/www/my-site.com/bin/activate
@@ -214,7 +212,7 @@ Then, check ``.env.example`` for new variables. If there are any, set them in ``
 
 Finally, update the database:
 
-.. code-block:: shell
+.. code-block:: bash
 
    mangadventure migrate
 

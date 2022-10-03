@@ -8,7 +8,7 @@ Retrieve the info of each author.
 Example request
 ^^^^^^^^^^^^^^^
 
-.. sourcecode:: shell
+.. code-block:: bash
 
    curl -i http://example.com/api/v1/authors \
         -H 'If-None-Match: f2e17505f242cfbcd13496c3bd05f223'
@@ -19,14 +19,13 @@ Example request
 Example response
 ^^^^^^^^^^^^^^^^
 
-.. sourcecode:: http
+.. code-block:: http
 
    HTTP/1.1 200 OK
    Date: Tue, 28 Aug 2018 09:35:27 GMT
-   Server: WSGIServer/0.2 CPython/3.7.0
+   Server: WSGIServer/0.2 CPython/3.8.13
    Content-Type: application/json
    ETag: "5c67e7ccb7f5e711431e81053dad33bb"
-   X-Frame-Options: SAMEORIGIN
    Content-Length: 143
 
    [

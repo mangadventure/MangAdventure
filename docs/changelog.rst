@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.9.1
+^^^^^^
+
+* Added XML metadata to chapter archives
+
 v0.9.0
 ^^^^^^
 

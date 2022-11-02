@@ -17,7 +17,7 @@ from MangAdventure.utils import HttpResponseUnauthorized
 
 from groups.models import Group
 
-from .models import Chapter, Series
+from .models import Category, Chapter, Series
 
 if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime  # isort:skip
@@ -281,9 +281,16 @@ def chapter_download(request: HttpRequest, slug: str, vol: int, num: float
             content_type='text/plain', realm='chapter archive'
         )
     try:
+        groups = Group.objects.only('name')
+        categories = Category.objects.only('name')
         chapter = Chapter.objects.only(
-            'series__title', 'volume', 'number'
-        ).select_related('series').get(
+            'title', 'volume', 'number', 'published',
+            'series__format', 'series__title', 'series__slug'
+        ).select_related('series').prefetch_related(
+            'pages', 'series__authors', 'series__artists',
+            Prefetch('groups', queryset=groups),
+            Prefetch('series__categories', queryset=categories)
+        ).get(
             series__slug=slug, series__licensed=False,
             volume=vol or None, number=num, published__lte=tz.now()
         )

@@ -36,7 +36,8 @@ def breadcrumbs(items: List[Tuple[str, str]]) -> JSON:
 
     :return: A JSON-LD dictionary.
 
-    .. seealso:
+    .. seealso::
+
         https://developers.google.com/search/docs/data-types/breadcrumb
     """
     return schema('BreadcrumbList', {
@@ -57,7 +58,8 @@ def carousel(items: List[str]) -> JSON:
 
     :return: A JSON-LD dictionary.
 
-    .. seealso:
+    .. seealso::
+
         https://developers.google.com/search/docs/data-types/carousel
     """
     return schema('ItemList', {

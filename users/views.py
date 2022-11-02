@@ -153,7 +153,7 @@ class PasswordReset(PasswordResetFromKeyView):
     """
     A :class:`PasswordResetFromKeyView` without the extra redirect.
 
-    .. seealso: `pennersr/django-allauth#2201`__
+    .. seealso:: `pennersr/django-allauth#2201`__
 
         __ https://github.com/pennersr/django-allauth/issues/2201
     """

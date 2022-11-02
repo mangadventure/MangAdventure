@@ -36,7 +36,7 @@ class BaseMiddleware(CommonMiddleware):
         if request.META.get('HTTP_EARLY_DATA') == '1':
             return HttpResponseTooEarly()
         if request.path == '/robots.txt':
-            return self.get_response(request)  # type: ignore
+            return self.get_response(request)
         return super().__call__(request)
 
 

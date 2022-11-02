@@ -1,4 +1,11 @@
-"""Database models for the reader app."""
+"""
+Database models for the reader app.
+
+.. admonition:: TODO
+   :class: warning
+
+   Support multiple languages.
+"""
 
 from __future__ import annotations
 
@@ -11,6 +18,7 @@ from pathlib import PurePath
 from shutil import rmtree
 from threading import Lock, Thread
 from typing import Any, List, Tuple, Union
+from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
 from django.conf import settings
@@ -29,7 +37,7 @@ from django.utils import timezone as tz
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 
-from MangAdventure import storage, utils, validators
+from MangAdventure import __version__ as VERSION, storage, utils, validators
 
 from groups.models import Group
 
@@ -176,6 +184,14 @@ class Category(models.Model):
 
 
 class Series(models.Model):
+    """
+    A model representing a series.
+
+    .. admonition:: TODO
+       :class: warning
+
+       Add age rating & reading mode fields.
+    """
     #: The title of the series.
     title = models.CharField(
         max_length=250, db_index=True, help_text='The title of the series.'
@@ -438,15 +454,97 @@ class Chapter(models.Model):
         """
         buf = cache.get(f'chapter.cbz.{self.id}', BytesIO())
         if not buf.getvalue():
+            info = self.comicinfo()
+            pages = ET.SubElement(info, 'Pages')
+
             with ZipFile(buf, 'a', compression=8) as zf:
                 for page in self.pages.all():
                     img = page.image.path
                     name = f'{page.number:03d}'
                     ext = path.splitext(img)[-1]
                     zf.write(img, name + ext)
+
+                    ET.SubElement(pages, 'Page', {
+                        'Image': str(page.number),
+                        'ImageSize': str(page.image.size),
+                        'ImageWidth': str(page.image.width),
+                        'ImageHeight': str(page.image.height)
+                    })
+
+                zf.writestr('ComicInfo.xml', ET.tostring(
+                    info, encoding='UTF-8', xml_declaration=True
+                ))
             buf.seek(0)
             cache.add(f'chapter.cbz.{self.id}', buf)
         return buf
+
+    def comicinfo(self) -> ET.Element:
+        """
+        Generate an XML file containing the chapter's metadata.
+
+        :return: The root XML element.
+
+        .. seealso::
+
+            https://anansi-project.github.io/docs/comicinfo/documentation
+        """
+        root = ET.Element('ComicInfo', {
+            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            'xsi:noNamespaceSchemaLocation':
+                'https://raw.githubusercontent.com/anansi-project'
+                '/comicinfo/main/drafts/v2.1/ComicInfo.xsd'
+        })
+
+        title = ET.SubElement(root, 'Title')
+        title.text = str(self)
+
+        series = ET.SubElement(root, 'Series')
+        series.text = str(self.series)
+
+        number = ET.SubElement(root, 'Number')
+        number.text = str(self.number)
+
+        volume = ET.SubElement(root, 'Volume')
+        volume.text = str(self.volume)
+
+        notes = ET.SubElement(root, 'Notes')
+        notes.text = f'Created by MangAdventure v{VERSION}'
+
+        published = self.published.timetuple()
+        year = ET.SubElement(root, 'Year')
+        year.text = str(published.tm_year)
+        month = ET.SubElement(root, 'Month')
+        month.text = str(published.tm_mon)
+        day = ET.SubElement(root, 'Day')
+        day.text = str(published.tm_mday)
+
+        writer = ET.SubElement(root, 'Writer')
+        writer.text = ', '.join(a.name for a in self.series.authors.all())
+
+        penciller = ET.SubElement(root, 'Penciller')
+        penciller.text = ', '.join(a.name for a in self.series.artists.all())
+
+        translator = ET.SubElement(root, 'Translator')
+        translator.text = ', '.join(g.name for g in self.groups.all())
+
+        genre = ET.SubElement(root, 'Genre')
+        genre.text = ', '.join(c.name for c in self.series.categories.all())
+
+        domain = settings.CONFIG['DOMAIN']
+        scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+        web = ET.SubElement(root, 'Web')
+        web.text = f'{scheme}://{domain}{self.get_absolute_url()}'
+
+        count = ET.SubElement(root, 'PageCount')
+        count.text = str(len(self.pages.all()))
+
+        language = ET.SubElement(root, 'LanguageISO')
+        language.text = 'en'
+
+        manga = ET.SubElement(root, 'Manga')
+        manga.text = 'Yes'
+
+        return root
 
     @cached_property
     def sitemap_images(self) -> List[str]:
@@ -568,7 +666,14 @@ class Chapter(models.Model):
 
 
 class Page(models.Model):
-    """A model representing a page."""
+    """
+    A model representing a page.
+
+    .. admonition:: TODO
+       :class: warning
+
+       Add page type, double page, width/height fields.
+    """
     #: The chapter this page belongs to.
     chapter = models.ForeignKey(
         Chapter, related_name='pages', on_delete=models.CASCADE

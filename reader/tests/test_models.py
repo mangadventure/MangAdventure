@@ -159,6 +159,11 @@ class TestChapter(ReaderTestBase):
             chapter.file = get_zip_with_invalid_images()
             chapter.save()
 
+    def test_comicinfo(self):
+        info = self.create_chapter(number=2.5).comicinfo()
+        assert info.tag == 'ComicInfo'
+        assert info.find('./Number').text == '2.5'
+
 
 class TestPage(ReaderTestBase):
     @staticmethod

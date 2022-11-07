@@ -1,7 +1,9 @@
+from os.path import exists
 from typing import List, Tuple
 
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
+from django.core.cache import cache
 
 from MangAdventure.tests.utils import get_test_image, get_valid_zip_file
 
@@ -74,8 +76,18 @@ class TestRemovePage(ReaderTestBase):
         self.page = chapter.pages.create(number=1, image=get_test_image())
 
     def test_delete(self):
-        from os.path import exists
         path = self.page.image.path
         assert exists(path)
         self.page.delete()
         assert not exists(path)
+
+
+class TestClearChapterCache(ReaderTestBase):
+    def setup_method(self):
+        super().setup_method()
+        self.series = Series.objects.create(title='series')
+
+    def test_save(self):
+        cache.set(f'reader.chapters.{self.series.slug}', [])
+        self.series.chapters.create(title='Chapter', number=1)
+        assert f'reader.chapters.{self.series.slug}' not in cache

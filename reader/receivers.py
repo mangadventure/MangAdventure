@@ -7,9 +7,10 @@ from typing import TYPE_CHECKING, Dict, Type
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
 from django.contrib.sites.models import Site
+from django.core.cache import cache
 from django.core.handlers.wsgi import WSGIHandler
 from django.core.signals import request_started
-from django.db.models.signals import post_delete, pre_save
+from django.db.models import signals
 from django.dispatch import receiver
 from django.http.request import QueryDict
 from django.urls.base import resolve
@@ -27,7 +28,7 @@ def _move(old_dir: PathLike, new_dir: PathLike):
         old_path.rename(new_path)
 
 
-@receiver(pre_save, sender=Series)
+@receiver(signals.pre_save, sender=Series)
 def redirect_series(sender: Type[Series], instance: Series, **kwargs):
     """
     Receive a signal when a series is about to be saved.
@@ -75,7 +76,7 @@ def redirect_series(sender: Type[Series], instance: Series, **kwargs):
             Page.objects.bulk_update(pages, ('image',))
 
 
-@receiver(pre_save, sender=Chapter)
+@receiver(signals.pre_save, sender=Chapter)
 def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
     """
     Receive a signal when a series is about to be saved.
@@ -107,10 +108,10 @@ def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
             Page.objects.bulk_update(pages, ('image',))
 
 
-@receiver(post_delete, sender=Page)
+@receiver(signals.post_delete, sender=Page)
 def remove_page(sender: Type[Page], instance: Page, **kwargs):
     """
-    Receive a signal when a page is about to be deleted.
+    Receive a signal when a page has been deleted.
 
     Remove the image file of the page.
 
@@ -118,6 +119,22 @@ def remove_page(sender: Type[Page], instance: Page, **kwargs):
     :param instance: The instance of the model.
     """
     instance.image.storage.delete(instance.image.name)
+
+
+@receiver(signals.post_save, sender=Chapter)
+def clear_chapter_cache(sender: Type[Chapter], instance:
+                        Chapter, created: bool, **kwargs):
+    """
+    Receive a signal when a chapter has been saved.
+
+    Delete the relevant cache keys
+
+    :param sender: The model class that sent the signal.
+    :param instance: The instance of the model.
+    :param created: Whether a new instance was created.
+    """
+    if created:
+        cache.delete(f'reader.chapters.{instance.series.slug}')
 
 
 # TODO: figure out how to test this

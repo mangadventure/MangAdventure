@@ -4,6 +4,7 @@ Changelog
 v0.9.1
 ^^^^^^
 
+* Fixed stale cache on new chapter
 * Added XML metadata to chapter archives
 
 v0.9.0

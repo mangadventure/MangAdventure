@@ -405,8 +405,6 @@ DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
 SESSION_COOKIE_SAMESITE = 'Strict'
 
 if env.bool('HTTPS', True):
-    MIDDLEWARE.insert(-2, 'MangAdventure.middleware.PreloadMiddleware')
-
     #: HTTP header/value combination that signifies a secure request.
     #: See :setting:`SECURE_PROXY_SSL_HEADER`.
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

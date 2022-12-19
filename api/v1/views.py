@@ -24,7 +24,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime  # isort:skip
     from typing import Union  # isort:skip
     from django.http import HttpRequest  # isort:skip
-    Person = Union[Author, Artist]
+    _Person = Union[Author, Artist]
 
 
 def _latest(request: HttpRequest, slug: Optional[str] = None,
@@ -104,7 +104,7 @@ def _series_response(request: HttpRequest, _series: Series) -> Dict:
     return response
 
 
-def _person_response(request: HttpRequest, _person: Person) -> Dict:
+def _person_response(request: HttpRequest, _person: _Person) -> Dict:
     response = {
         'id': _person.id,
         'name': _person.name,
@@ -308,8 +308,8 @@ def all_people(request: HttpRequest) -> JsonResponse:
     """
     _type = Author if _is_author(request) else Artist
     return JsonResponse([
-        _person_response(request, p) for p in
-        _type.objects.prefetch_related(
+        _person_response(request, p)  # type: ignore
+        for p in _type.objects.prefetch_related(
             'aliases', 'series_set__aliases'
         ).all()
     ], safe=False)
@@ -334,7 +334,7 @@ def person(request: HttpRequest, p_id: int) -> JsonResponse:
         ).get(id=p_id)
     except ObjectDoesNotExist:
         return JsonError('Not found', 404)
-    return JsonResponse(_person_response(request, _person))
+    return JsonResponse(_person_response(request, _person))   # type: ignore
 
 
 @deprecate_api

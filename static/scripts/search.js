@@ -12,10 +12,10 @@
   }
 
   function matchQuery(q) {
-    if(q.matches) {
+    if (q.matches) {
       document.querySelectorAll('td.s-hidden').forEach((elem, i) => {
         const n = (i / 6 >> 0) + 1;
-        switch(elem.className) {
+        switch (elem.className) {
           case 'result-people s-hidden':
             appendInfo(n, 'people', 'Author/Artist', elem.innerHTML);
             break;
@@ -46,29 +46,30 @@
     const form = document.getElementById('search-form');
     const table = document.getElementById('result-table');
 
-    if(table && window.Tablesort) {
+    if (table && window.Tablesort) {
       new window.Tablesort(table);
       table.querySelector('th').removeAttribute('data-sort-default');
     }
 
     matchQuery(query);
 
-    form['categories[]'].forEach(c => {c.indeterminate = true});
+    form['categories[]'].forEach(c => { c.indeterminate = true });
     (url.searchParams.get('categories') || '').split(',')
       .filter(e => e !== '').forEach(c => {
         c = c.trim().toLowerCase();
         const val = c[0] === '-' ? c.slice(1) : c;
-        const input = Array.from(form['categories[]']).find(e => e.value === val);
+        const input = Array.from(form['categories[]'])
+          .find(e => e.value === val);
         input.indeterminate = false;
         input.checked = c[0] !== '-';
       });
     form.elements[5].lastChild.addEventListener('click', evt => {
       let el = evt.target;
-      if(el.tagName === 'I' || el.nodeType === 3)
+      if (el.tagName === 'I' || el.nodeType === 3)
         el = el.parentNode;
-      if(el.className !== 'tooltip category') return;
+      if (el.className !== 'tooltip category') return;
       const [state, input] = el.children;
-      switch(state.className) {
+      switch (state.className) {
         case 'mi mi-circle':
           state.className = 'mi mi-ok-circle';
           input.indeterminate = false;
@@ -92,19 +93,19 @@
       evt.stopPropagation();
       form.categories.value = Array.from(form['categories[]'])
         .reduce((acc, cur) => {
-          if(cur.indeterminate) return acc;
-          if(acc !== '') acc += ',';
-          if(!cur.checked) acc += '-';
+          if (cur.indeterminate) return acc;
+          if (acc !== '') acc += ',';
+          if (!cur.checked) acc += '-';
           return acc + cur.value;
         }, '');
       Array.from(form.elements).slice(0, 5).concat(form.categories)
-        .forEach(el => {el.disabled = !el.value});
+        .forEach(el => { el.disabled = !el.value });
       const search = form.action + '?' +
         new URLSearchParams(new FormData(form)).toString();
       const xhr = new XMLHttpRequest();
       xhr.open(form.method, search, true);
       xhr.onload = function() {
-        if(this.status !== 200) {
+        if (this.status !== 200) {
           document.open();
           document.write(this.responseText);
           document.close();
@@ -123,7 +124,9 @@
         history.replaceState({name: 'search'}, document.title, search);
         initialize();
       };
-      xhr.onerror = function() {console.error(this.statusText)};
+      xhr.onerror = function() {
+        console.error(this.statusText);
+      };
       xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
       xhr.send(null);
     });

@@ -18,6 +18,7 @@ quote_type = double
 
 [*.js]
 indent_size = 2
+max_line_length = 80
 quote_type = single
 curly_bracket_next_line = false
 

@@ -129,13 +129,13 @@ if find_spec('redis'):  # pragma: no cover
     CACHES['default'] = {
         'BACKEND': 'MangAdventure.cache.SignedRedisCache',
         'LOCATION': env['CACHE_URL'],
-        'KEY_PREFIX': env['NAME']
+        'KEY_PREFIX': env['NAME'].replace(' ', '_')
     }
 elif find_spec('pylibmc'):  # pragma: no cover
     CACHES['default'] = {
         'BACKEND': 'MangAdventure.cache.SignedPyLibMCCache',
         'LOCATION': env['CACHE_URL'],
-        'KEY_PREFIX': env['NAME']
+        'KEY_PREFIX': env['NAME'].replace(' ', '_')
     }
 else:
     __import__('warnings').warn_explicit((
@@ -144,7 +144,7 @@ else:
     ), UserWarning, __file__, 146)
     CACHES['default'] = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'KEY_PREFIX': env['NAME']
+        'KEY_PREFIX': env['NAME'].replace(' ', '_')
     }
 
 ##################################

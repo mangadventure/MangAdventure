@@ -135,7 +135,8 @@ class ChapterAdmin(admin.ModelAdmin):
             return utils.img_tag(page._thumb, 'preview', height=50)
         return ''
 
-    @admin.display(description='Toggle status of selected chapters')
+    @admin.display(  # type: ignore
+        description='Toggle status of selected chapters')
     def toggle_final(self, request: HttpRequest, queryset: QuerySet):
         """
         Toggle the status of the selected chapters.
@@ -285,7 +286,8 @@ class SeriesAdmin(admin.ModelAdmin):
         """
         return utils.img_tag(obj.cover, 'cover', height=75)
 
-    @admin.display(description='Toggle status of selected series')
+    @admin.display(   # type: ignore
+        description='Toggle status of selected series')
     def toggle_completed(self, request: HttpRequest, queryset: QuerySet):
         """
         Toggle the publication status of the selected series.
@@ -295,7 +297,8 @@ class SeriesAdmin(admin.ModelAdmin):
         """
         queryset.update(completed=Q(completed=False))
 
-    @admin.display(description='Toggle licensing of selected series')
+    @admin.display(   # type: ignore
+        description='Toggle licensing of selected series')
     def toggle_licensed(self, request: HttpRequest, queryset: QuerySet):
         """
         Toggle the licensing status of the selected series.

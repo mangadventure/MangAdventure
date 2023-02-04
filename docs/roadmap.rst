@@ -90,12 +90,26 @@ v0.9.x
 v0.10.x
 ^^^^^^^
 
-| |u| AniList/MAL/Kitsu tracking.
-| |u| Twitter/Reddit link sharing.
 | |u| GDPR compliance.
 | |u| Analytics.
 | |u| Comments.
 | |u| News feeds.
+
+v1.0.x
+^^^^^^
+
+| |u| Multiple languages.
+
+v1.1.x
+^^^^^^
+
+| |u| GraphQL API.
+
+v1.2.x
+^^^^^^
+
+| |u| AniList/MAL/Kitsu tracking.
+| |u| Twitter/Reddit link sharing.
 
 .. unchecked
 .. |u| unicode:: U+00A0 U+00A0 U+2610

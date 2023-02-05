@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% block description %}
+  <meta property="og:description" content="OAuth Login Failure">
+  <meta name="description" content="OAuth Login Failure">
+{% endblock %}
+{% block robots %}
+  <meta name="robots" content="noindex,nofollow,noarchive">
+{% endblock %}
+{% block title %}
+  <meta property="og:title" content="OAuth Login Failure">
+  <title>OAuth Login Failure &middot; {{ config.NAME }}</title>
+{% endblock %}
+{% block content %}
+  <h1 class="text-shadow alter-fg">OAuth Login Failure</h1>
+  <article>
+    {{ auth_error.exception }}
+  </article>
+{% endblock %}

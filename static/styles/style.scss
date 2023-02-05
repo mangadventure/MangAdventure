@@ -431,20 +431,23 @@ button {
   &-bio div { text-indent: 1em }
 }
 
-#oauth {
-  .provider {
-    text-decoration: unset;
-    display: inline-block;
-    box-sizing: border-box;
-    border: 2px solid $alter-bg;
-    border-radius: 3px;
-    padding: 5px;
-    margin: 7px;
-  }
-  &-or {
-    font-size: 1.2em;
-    margin-top: 5px;
-  }
+%field {
+  border-radius: 3px;
+  padding: 5px;
+  color: $main-fg;
+  background-color: $main-bg;
+  border: 2px solid $alter-bg;
+}
+
+#oauth-or {
+  font-size: 1.2em;
+  margin-top: 5px;
+}
+
+.provider {
+  display: inline-block;
+  margin: 7px;
+  button { @extend %field }
 }
 
 #user-edit .field {
@@ -456,14 +459,6 @@ button {
 
 #sign-in .input {
   width: 270px;
-}
-
-%field {
-  border-radius: 3px;
-  padding: 5px;
-  color: $main-fg;
-  background-color: $main-bg;
-  border: 2px solid $alter-bg;
 }
 
 .user-action {

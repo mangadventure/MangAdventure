@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.9.2
+^^^^^^
+
+* Removed Twitter OAuth provider
+
 v0.9.1
 ^^^^^^
 

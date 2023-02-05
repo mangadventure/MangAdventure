@@ -67,7 +67,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.reddit',
-    'allauth.socialaccount.providers.twitter',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.discord',
     'rest_framework',
@@ -349,7 +348,8 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'}
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'OAUTH_PKCE_ENABLED': True
     },
     'reddit': {
         'AUTH_PARAMS': {'duration': 'permanent'},

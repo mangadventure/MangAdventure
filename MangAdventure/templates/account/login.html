@@ -61,10 +61,11 @@
         {% get_oauth_providers as oauth_providers %}
         {% for provider in oauth_providers %}
           {% if forloop.first %}<div id="oauth-or">Or, sign in with:</div>{% endif %}
-          <a title="{{ provider.name }}" class="provider main-fg"
-             rel="noopener nofollow" href="{% provider_login_url provider.id %}">
-            <i class="mi mi-{{ provider.id }}"></i><span>{{ provider.name }}</span>
-          </a>
+          <form class="provider" action="{% provider_login_url provider.id %}" method="post">
+            <button type="submit">
+              <i class="mi mi-{{ provider.id }}"></i>{{ provider.name }}
+            </button>
+          </form>
         {% endfor %}
       </section>
     {% endif %}

@@ -4,6 +4,7 @@ Changelog
 v0.9.2
 ^^^^^^
 
+* Added GitHub OAuth provider
 * Removed Twitter OAuth provider
 
 v0.9.1

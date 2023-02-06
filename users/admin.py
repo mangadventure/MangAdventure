@@ -208,9 +208,9 @@ class OAuthAppAdmin(SocialAppAdmin):
     @admin.display(ordering='provider', description='provider')
     def _provider(self, obj: OAuthApp) -> str:
         return format_html(
-            '<a href="{}{}" rel="noopener noreferrer" target="_blank">{}</a>',
-            'https://django-allauth.readthedocs.io/en/stable/providers.html#',
-            obj.provider, obj.provider.capitalize()
+            '<a rel="noopener noreferrer" target="_blank" href='
+            '"https://django-allauth.readthedocs.io/en/stable/providers.html'
+            '#{0}">{0}</a>', obj.provider
         ) if obj.provider else ''
 
 

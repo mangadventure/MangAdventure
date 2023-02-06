@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.reddit',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.discord',
     'rest_framework',
     'reader',
@@ -344,12 +345,14 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
 #: Social account provider customization. See
 #: :auth:`Google <providers.html#google>`,
 #: :auth:`Reddit <providers.html#reddit>`,
+#: :auth:`GitHub <providers.html#github>`,
 #: :auth:`Discord <providers.html#discord>`.
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        'VERIFIED_EMAIL': True,
+        'OAUTH_PKCE_ENABLED': True,
         'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-        'OAUTH_PKCE_ENABLED': True
+        'AUTH_PARAMS': {'access_type': 'online'}
     },
     'reddit': {
         'AUTH_PARAMS': {'duration': 'permanent'},
@@ -358,8 +361,13 @@ SOCIALACCOUNT_PROVIDERS = {
             '(by https://github.com/mangadventure)'
         )
     },
+    'github': {
+        'VERIFIED_EMAIL': True,
+        'SCOPE': ['read:user', 'user:email']
+    },
     'discord': {
-        'SCOPE': ['identify', 'email'],
+        'VERIFIED_EMAIL': True,
+        'SCOPE': ['identify', 'email']
     }
 }
 
@@ -402,7 +410,7 @@ DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
 
 #: Prevent the session cookie from being sent in cross-site requests.
 #: See :setting:`SESSION_COOKIE_SAMESITE`.
-SESSION_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 if env.bool('HTTPS', True):
     #: HTTP header/value combination that signifies a secure request.

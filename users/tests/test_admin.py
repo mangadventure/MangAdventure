@@ -86,7 +86,7 @@ class TestOAuthAppAdmin(UsersTestBase):
         )
         provider_url = self.admin._provider(app)
         assert '#reddit"' in provider_url
-        assert 'Reddit</a>' in provider_url
+        assert 'reddit</a>' in provider_url
 
     def test_provider_empty(self):
         app = OAuthApp.objects.create(name='whatever', client_id='whatever')

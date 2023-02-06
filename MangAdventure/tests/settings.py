@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.reddit',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.discord',
     'rest_framework',
     'reader',
@@ -165,6 +166,8 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        'VERIFIED_EMAIL': True,
+        'OAUTH_PKCE_ENABLED': True,
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'}
     },
@@ -175,8 +178,13 @@ SOCIALACCOUNT_PROVIDERS = {
             '(by https://github.com/mangadventure)'
         )
     },
+    'github': {
+        'VERIFIED_EMAIL': True,
+        'SCOPE': ['read:user', 'user:email']
+    },
     'discord': {
-        'SCOPE': ['identify', 'email'],
+        'VERIFIED_EMAIL': True,
+        'SCOPE': ['identify', 'email']
     }
 }
 

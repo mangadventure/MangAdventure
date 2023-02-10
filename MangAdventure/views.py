@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from importlib.util import find_spec
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
 from django.conf import settings
@@ -207,9 +206,6 @@ def handler404(request: HttpRequest, exception: Optional[Exception]
     """
     if request.path.startswith('/api'):  # pragma: no cover
         return JsonResponse({'error': 'Invalid API endpoint'}, status=501)
-    if find_spec('sentry_sdk'):  # pragma: no cover
-        from sentry_sdk import capture_message
-        capture_message('Page not found', level='warning')
     context = _error_context("Sorry. This page doesn't exist.", 404)
     return render(request, template_name, context, status=404)
 

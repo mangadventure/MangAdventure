@@ -146,6 +146,9 @@ class OpenAPISchema(AutoSchema):
         # note that Cubari support is experimental
         if path == '/cubari/{slug}':
             op['x-badges'] = [{'color': 'red', 'label': 'Experimental'}]
+        # note that the redirect endpoint is temporary
+        if path == '/chapters/{id}/read':
+            op['x-badges'] = [{'color': 'orange', 'label': 'Temporary'}]
         return op
 
     def get_path_parameters(self, path: str, method: str) -> List[Dict]:
@@ -193,6 +196,19 @@ class OpenAPISchema(AutoSchema):
         return super().get_component_name(serializer)
 
     def get_responses(self, path: str, method: str) -> Dict[str, Any]:
+        # the redirect endpoint is a special case
+        if path == '/chapters/{id}/read':
+            return {
+                '308': {
+                    'headers': {
+                        'Location': {
+                            'description': 'The URL of the chapter.',
+                            'schema': {'type': 'string', 'format': 'uri'}
+                        }
+                    }
+                },
+                '451': {'description': '**The series is licensed.**'}
+            }
         responses = super().get_responses(path, method)
         licensed_endpoints = (
             '/series/{slug}/chapters', '/cubari/{slug}',

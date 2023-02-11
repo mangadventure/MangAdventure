@@ -152,6 +152,23 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
         )
         return self.get_paginated_response(serializer.data)
 
+    @action(methods=['get'], detail=True, name='Read Chapter')
+    def read(self, request: Request, pk: int) -> Response:
+        """Redirect to the reader."""
+        try:
+            instance = models.Chapter.objects.filter(
+                published__lte=tz.now()
+            ).select_related('series').only(
+                'series__slug', 'volume',
+                'series__licensed', 'number'
+            ).get(id=pk)
+        except models.Chapter.DoesNotExist:
+            raise NotFound()
+        if instance.series.licensed:
+            raise _LegalException()
+        url = request.build_absolute_uri(instance.get_absolute_url())
+        return Response(status=308, headers={'Location': url})
+
     def retrieve(self, request: Request, *args, **kwargs) -> Response:
         instance = self.get_object()
         if instance.series.licensed:

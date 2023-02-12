@@ -4,6 +4,7 @@ Changelog
 v0.9.2
 ^^^^^^
 
+* Fixed chapter list endpoint
 * Added GitHub OAuth provider
 * Removed Twitter OAuth provider
 

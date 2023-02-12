@@ -217,10 +217,6 @@ class ChapterFilter(SearchFilter):
                         view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
-        if 'series' not in request.query_params.keys():
-            raise ValidationError(detail={
-                'error': "'series' is a required parameter."
-            })
         queryset = queryset.filter(series__licensed=False)
         return super().filter_queryset(request, queryset, view)
 

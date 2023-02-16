@@ -20,7 +20,9 @@ During the beta phase, we will only patch security vulnerabilities in the [lates
 * You may encrypt the e-mail if you want (PGP key: `0x8A2DEA1DBAEBCA9E`).
 * Avoid including any confidential information in the e-mail.
 * Provide your GitHub username (if available), so that we can invite you to collaborate on a [security advisory][advisories].
+* Alternatively, you can report the vulnerability [here][report].
 
 [advisories]: https://help.github.com/en/articles/about-maintainer-security-advisories
+[report]: https://github.com/mangadventure/MangAdventure/security/advisories/new
 
 <!-- vim:set wrap brk=\ !*-+;,? lbr: -->

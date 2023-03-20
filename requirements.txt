@@ -2,7 +2,7 @@ django~=4.1
 djangorestframework>=3.14
 django-allauth>=0.52
 Pillow>=9.4
-libsass>=0.22
+libsass-bin>=0.22
 yaenv~=1.4.3; python_version=='3.8'
 yaenv~=1.5.2; python_version=='3.9'
 yaenv~=1.6.3; python_version>='3.10'

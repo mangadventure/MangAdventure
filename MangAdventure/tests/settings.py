@@ -97,6 +97,8 @@ DATABASES = {'default': {
     }
 }.get(env.get('DB_TYPE', 'sqlite3'))}
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
@@ -202,6 +204,8 @@ DEFAULT_FROM_EMAIL = 'evangelos-ch@users.noreply.github.com'
 
 DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]
 DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
+
+CSRF_USE_SESSIONS = True
 
 SESSION_COOKIE_SAMESITE = 'Strict'
 

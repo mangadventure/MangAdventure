@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.utils import timezone as tz
 from django.utils.http import http_date
 from django.views.decorators.cache import cache_control
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import last_modified
 
 from MangAdventure.search import get_response
@@ -161,6 +162,7 @@ def _group_response(request: HttpRequest, _group: Group) -> Dict:
     return response
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @last_modified(_latest)
@@ -200,6 +202,7 @@ def all_releases(request: HttpRequest) -> JsonResponse:
     return JsonResponse(response, safe=False)
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @last_modified(_latest)
@@ -218,6 +221,7 @@ def all_series(request: HttpRequest) -> JsonResponse:
     ], safe=False)
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @last_modified(_latest)
@@ -238,6 +242,7 @@ def series(request: HttpRequest, slug: str) -> JsonResponse:
     return JsonResponse(_series_response(request, _series))
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @last_modified(_latest)
@@ -265,6 +270,7 @@ def volume(request: HttpRequest, slug: str, vol: int) -> JsonResponse:
     return JsonResponse(_volume_response(request, chapters))
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @last_modified(_latest)
@@ -295,6 +301,7 @@ def _is_author(request: HttpRequest) -> bool:
     return request.path[:16] == '/api/v1/authors'
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
@@ -315,6 +322,7 @@ def all_people(request: HttpRequest) -> JsonResponse:
     ], safe=False)
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
@@ -337,6 +345,7 @@ def person(request: HttpRequest, p_id: int) -> JsonResponse:
     return JsonResponse(_person_response(request, _person))   # type: ignore
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
@@ -356,6 +365,7 @@ def all_groups(request: HttpRequest) -> JsonResponse:
     ], safe=False)
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)
@@ -377,6 +387,7 @@ def group(request: HttpRequest, g_id: int) -> JsonResponse:
     return JsonResponse(_group_response(request, _group))
 
 
+@csrf_exempt
 @deprecate_api
 @require_methods_api()
 @cache_control(public=True, max_age=1800, must_revalidate=True)

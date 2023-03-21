@@ -31,7 +31,7 @@ from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.expressions import F
-from django.db.models.query import Q
+from django.db.models.query_utils import Q
 from django.urls import reverse
 from django.utils import timezone as tz
 from django.utils.functional import cached_property

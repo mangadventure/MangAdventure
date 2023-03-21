@@ -132,6 +132,7 @@
               </li>
               <li class="dropdown-element">
                 <form action="{% url 'account_logout' %}" method="POST">
+                  {% csrf_token %}
                   <input type="hidden" name="next" value="{{ request.path }}">
                   <button type="submit" class="logout-btn">
                     <span>Logout</span><i class="mi mi-logout" aria-hidden="true"></i>

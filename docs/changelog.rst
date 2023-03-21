@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.9.3
+^^^^^^
+
+* Readded CSRF token
+
 v0.9.2
 ^^^^^^
 

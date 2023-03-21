@@ -21,6 +21,7 @@
       </div>
       {% url 'account_confirm_email' confirmation.key as confirm_url %}
       <form method="POST" action="{{ confirm_url }}">
+        {% csrf_token %}
         <input class="button" type="submit" value="Confirm">
       </form>
     {% else %}

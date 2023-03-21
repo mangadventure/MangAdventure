@@ -5,6 +5,7 @@
       const data = new FormData();
       data.append('series', btn.dataset.series);
       xhr.open('POST', btn.dataset.target, true);
+      xhr.setRequestHeader('X-CSRFToken', btn.dataset.token);
       xhr.onload = function() {
         switch (xhr.status) {
           case 201:

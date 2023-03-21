@@ -37,7 +37,7 @@
     {% if user.is_authenticated %}
       <i class="bookmark-btn mi mi-bookmark{{ marked|yesno:',-o' }}"
          title="{{ marked|yesno:'Unb,B' }}ookmark" data-series="{{ series.id }}"
-         data-target="{% url 'user_bookmarks' %}"></i>
+         data-token="{{ csrf_token }}" data-target="{% url 'user_bookmarks' %}"></i>
     {% endif %}
     <div id="series-info">
       {% if aliases %}

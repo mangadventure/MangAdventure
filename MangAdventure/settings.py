@@ -91,7 +91,7 @@ MIDDLEWARE = [
 ]
 
 #: A string representing the full Python import path to the root URLconf.
-#: See :setting:`ROOT_URLCONF`
+#: See :setting:`ROOT_URLCONF`.
 ROOT_URLCONF = 'MangAdventure.urls'
 
 #: A list containing the settings for all template engines to be used.
@@ -123,9 +123,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 #: Database settings dictionary. See :setting:`DATABASES`.
 DATABASES = {'default': env.db('DB_URL', 'sqlite:///db.sqlite3')}
 
-#: Cache settings dictionary. See :setting:`CACHES`
+#: Controls where session data is stored. See :setting:`SESSION_ENGINE`.
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
+#: Cache settings dictionary. See :setting:`CACHES`.
 CACHES = {}
 if find_spec('redis'):  # pragma: no cover
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
     CACHES['default'] = {
         'BACKEND': 'MangAdventure.cache.SignedRedisCache',
         'LOCATION': env['CACHE_URL'],
@@ -407,6 +411,10 @@ SILENCED_SYSTEM_CHECKS = ('security.W003', 'security.W004')
 #: See :setting:`DISALLOWED_USER_AGENTS`.
 DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]
 DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
+
+#: Store the CSRF token in a session.
+#: See :setting:`CSRF_USE_SESSIONS`.
+CSRF_USE_SESSIONS = True
 
 #: Prevent the session cookie from being sent in cross-site requests.
 #: See :setting:`SESSION_COOKIE_SAMESITE`.

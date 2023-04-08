@@ -79,7 +79,7 @@ def redirect_series(sender: Type[Series], instance: Series, **kwargs):
 @receiver(signals.pre_save, sender=Chapter)
 def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
     """
-    Receive a signal when a series is about to be saved.
+    Receive a signal when a chapter is about to be saved.
 
     If the chapter exists and the slug of the series
     it belongs to has changed, rename its directory.
@@ -106,6 +106,22 @@ def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
                     str(old_dir), str(new_dir)
                 )
             Page.objects.bulk_update(pages, ('image',))
+
+
+@receiver(signals.pre_save, sender=Chapter)
+def complete_series(sender: Type[Chapter], instance: Chapter, **kwargs):
+    """
+    Receive a signal when a chapter is about to be saved.
+
+    If the chapter is new and has been marked as final,
+    set the status of the series it belongs to as "Completed".
+
+    :param sender: The model class that sent the signal.
+    :param instance: The instance of the model.
+    """
+    if not instance.id and instance.final:
+        instance.series.status = 'completed'
+        instance.series.save(update_fields=('status',))
 
 
 @receiver(signals.post_delete, sender=Page)
@@ -190,4 +206,7 @@ def track_view(sender: Type[WSGIHandler], environ:
                     pass
 
 
-__all__ = ['redirect_series', 'redirect_chapter', 'remove_page', 'track_view']
+__all__ = [
+    'redirect_series', 'redirect_chapter',
+    'complete_series', 'remove_page', 'track_view'
+]

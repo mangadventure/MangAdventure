@@ -270,7 +270,7 @@ class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
             'id', 'title', 'number', 'volume', 'modified', 'series_id'
         )
         return models.Series.objects.defer(
-            'manager_id', 'modified', 'created', 'completed'
+            'manager_id', 'modified', 'created', 'status'
         ).prefetch_related(
             Prefetch('chapters', queryset=chapters),
             Prefetch('authors'), Prefetch('artists')

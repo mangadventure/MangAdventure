@@ -183,6 +183,14 @@ class Category(models.Model):
         return self.name
 
 
+class Status(models.TextChoices):
+    """The possible :attr:`Series.status` values."""
+    ONGOING = 'ongoing', 'Ongoing'
+    COMPLETED = 'completed', 'Completed'
+    HIATUS = 'hiatus', 'On Hiatus'
+    CANCELED = 'canceled', 'Canceled'
+
+
 class Series(models.Model):
     """
     A model representing a series.
@@ -221,8 +229,10 @@ class Series(models.Model):
     #: The categories of the series.
     categories = models.ManyToManyField(Category, blank=True)
     #: The publication status of the series.
-    completed = models.BooleanField(
-        default=False, help_text='Is the series completed?'
+    status = models.CharField(
+        blank=False, max_length=10,
+        choices=Status.choices, default=Status.ONGOING,
+        help_text='The publication status of the series.'
     )
     #: The licensing status of the series.
     licensed = models.BooleanField(
@@ -283,6 +293,7 @@ class Series(models.Model):
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
+        # TODO: move this to a receiver?
         self.slug = slugify(self.slug or self.title)
         super().save(*args, **kwargs)
 
@@ -393,8 +404,6 @@ class Chapter(models.Model):
         if self.file:
             validators.zipfile_validator(self.file)
             self.unzip()
-        self.series.completed = self.final
-        self.series.save(update_fields=('completed',))
 
     def get_absolute_url(self) -> str:
         """
@@ -815,6 +824,6 @@ class Page(models.Model):
 
 
 __all__ = [
-    'Author', 'Artist', 'Series',
+    'Author', 'Artist', 'Series', 'Status',
     'Chapter', 'Page', 'Category', 'Alias'
 ]

@@ -63,7 +63,7 @@
         input.indeterminate = false;
         input.checked = c[0] !== '-';
       });
-    form.elements[5].lastChild.addEventListener('click', evt => {
+    form.elements[7].lastChild.addEventListener('click', evt => {
       let el = evt.target;
       if (el.tagName === 'I' || el.nodeType === 3)
         el = el.parentNode;
@@ -98,7 +98,7 @@
           if (!cur.checked) acc += '-';
           return acc + cur.value;
         }, '');
-      Array.from(form.elements).slice(0, 5).concat(form.categories)
+      Array.from(form.elements).slice(0, 7).concat(form.categories)
         .forEach(el => { el.disabled = !el.value });
       const search = form.action + '?' +
         new URLSearchParams(new FormData(form)).toString();

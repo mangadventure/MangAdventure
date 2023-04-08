@@ -183,6 +183,12 @@ class _SeriesDetailSerializer(ModelSerializer):
         source='get_absolute_url', read_only=True,
         help_text='The absolute URL of the series.'
     )
+    completed = SerializerMethodField(
+        method_name='_get_completed', help_text='Replaced by `status`.'
+    )
+
+    def _get_completed(self, obj: Series) -> Optional[bool]:
+        return obj.status in ('completed', 'canceled')
 
     def create(self, validated_data: Dict) -> Series:
         """Create a new ``Series`` instance."""
@@ -196,7 +202,7 @@ class _SeriesDetailSerializer(ModelSerializer):
         model = Series
         fields = (
             'slug', 'title', 'url', 'cover', 'updated',
-            'description', 'views', 'completed', 'licensed',
+            'description', 'views', 'status', 'completed', 'licensed',
             'format', 'aliases', 'authors', 'artists', 'categories'
         )
         extra_kwargs = {

@@ -7,7 +7,7 @@
       "slug": "test-series",
       "description": "",
       "cover": "series/test-series/cover.png",
-      "completed": false,
+      "status": "OG",
       "created": "2019-12-30T13:58:18.645Z",
       "modified": "2019-12-30T13:58:18.645Z",
       "authors": [
@@ -29,7 +29,7 @@
       "slug": "test-series-2",
       "description": "",
       "cover": "series/test-series/cover.png",
-      "completed": false,
+      "status": "OG",
       "created": "2019-12-30T13:58:18.645Z",
       "modified": "2019-12-30T13:58:18.645Z",
       "authors": [],

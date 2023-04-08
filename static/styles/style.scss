@@ -48,6 +48,11 @@ button {
   cursor: pointer;
 }
 
+fieldset {
+  border: none;
+  legend { margin: auto }
+}
+
 :focus { outline: none }
 
 ::-moz-focus-inner { border: 0 }
@@ -185,7 +190,6 @@ button {
   .release {
     padding: 3px 2px;
     display: block;
-    vertical-align: top;
     &-info {
       flex: 1;
       display: flex;
@@ -217,7 +221,6 @@ button {
     }
     &-info {
       display: block;
-      vertical-align: top;
       position: relative;
       left: 0.3em;
     }
@@ -593,8 +596,10 @@ button {
   &-book, &-book-o { margin: 0 }
   &-down { margin: -0.1em }
   &-circle { color: lightslategray }
-  &-ok-circle { color: limegreen }
-  &-x-circle { color: tomato }
+  &.green, &-ok-circle { color: limegreen }
+  &.red, &-x-circle { color: tomato }
+  &.yellow { color: yellowgreen }
+  &.orange { color: goldenrod }
 }
 
 .mce {
@@ -702,10 +707,6 @@ button {
         }
       }
     }
-  }
-  &-categories {
-    border: none;
-    legend { margin: auto }
   }
   &-submit {
     padding: 3px 5px;

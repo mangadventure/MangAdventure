@@ -1,7 +1,7 @@
-django~=4.1
+django~=4.1.8
 djangorestframework>=3.14
-django-allauth>=0.52
-Pillow>=9.4
+django-allauth>=0.54
+Pillow>=9.5
 libsass-bin>=0.22
 yaenv~=1.4.3; python_version=='3.8'
 yaenv~=1.5.2; python_version=='3.9'

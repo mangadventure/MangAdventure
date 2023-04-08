@@ -68,6 +68,21 @@ class TestRedirectChapter(ReaderTestBase):
         assert not (series_path / '0' / '1').exists()
 
 
+class TestCompleteSeries(ReaderTestBase):
+    def setup_method(self):
+        super().setup_method()
+        self.series = Series.objects.create(
+            title='series', slug='old-slug', cover=get_test_image()
+        )
+
+    def test_complete(self):
+        assert self.series.status == 'ongoing'
+        self.series.chapters.create(
+            title='Chapter', number=1, final=True, file=get_valid_zip_file()
+        )
+        assert self.series.status == 'completed'
+
+
 class TestRemovePage(ReaderTestBase):
     def setup_method(self):
         super().setup_method()

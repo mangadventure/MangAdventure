@@ -89,10 +89,8 @@ def qsfilter(params: _SearchParams) -> Q:
             Q(authors__aliases__name__icontains=params.author) |
             Q(artists__aliases__name__icontains=params.author)
         )
-    if params.status == 'completed':
-        filters &= Q(completed=True)
-    elif params.status == 'ongoing':
-        filters &= Q(completed=False)
+    if params.status and params.status != 'any':
+        filters &= Q(status=params.status)
     included, excluded = params.categories
     if excluded:
         filters &= ~Q(categories__in=excluded)

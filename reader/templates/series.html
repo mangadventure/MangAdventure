@@ -66,7 +66,7 @@
       {% endif %}
       <div id="series-status">
         <strong class="alter-fg">Status: </strong>
-        <span>{{ series.completed|yesno:'Completed,Ongoing' }}</span>
+        <span>{{ series.get_status_display }}</span>
       </div>
     </div>
     {% if series.description %}

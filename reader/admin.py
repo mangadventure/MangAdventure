@@ -218,7 +218,7 @@ class SeriesAdmin(admin.ModelAdmin):
     inlines = (alias_inline('series'),)
     list_display = (
         'cover_image', 'title', 'manager', 'created',
-        'modified', 'views', 'completed', 'licensed'
+        'modified', 'views', 'status', 'licensed'
     )
     list_display_links = ('title',)
     date_hierarchy = 'created'
@@ -227,15 +227,13 @@ class SeriesAdmin(admin.ModelAdmin):
     search_fields = ('title', 'aliases__name')
     autocomplete_fields = ('categories',)
     list_filter = (
+        'status',
         ('authors', filters.related_filter('author')),
         ('artists', filters.related_filter('artist')),
         ('categories', filters.related_filter('category')),
-        filters.boolean_filter(
-            'status', 'completed', ('Completed', 'Ongoing')
-        ),
         ('manager', filters.related_filter('manager')),
     )
-    actions = ('toggle_completed', 'toggle_licensed')
+    actions = ('toggle_licensed',)
     empty_value_display = 'N/A'
 
     def get_form(self, request: HttpRequest, obj: Optional[Series]
@@ -285,17 +283,6 @@ class SeriesAdmin(admin.ModelAdmin):
         :return: An ``<img>`` tag with the series cover.
         """
         return utils.img_tag(obj.cover, 'cover', height=75)
-
-    @admin.display(   # type: ignore
-        description='Toggle status of selected series')
-    def toggle_completed(self, request: HttpRequest, queryset: QuerySet):
-        """
-        Toggle the publication status of the selected series.
-
-        :param request: The original request.
-        :param queryset: The original queryset.
-        """
-        queryset.update(completed=Q(completed=False))
 
     @admin.display(   # type: ignore
         description='Toggle licensing of selected series')

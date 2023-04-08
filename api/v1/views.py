@@ -17,7 +17,7 @@ from django.views.decorators.http import last_modified
 from MangAdventure.search import get_response
 
 from groups.models import Group, Member
-from reader.models import Artist, Author, Category, Chapter, Series
+from reader.models import Artist, Author, Category, Chapter, Series, Status
 
 from .response import JsonError, deprecate_api, require_methods_api
 
@@ -89,7 +89,7 @@ def _series_response(request: HttpRequest, _series: Series) -> Dict:
             _series.categories.values('name', 'description')
         ),
         'cover': request.build_absolute_uri(_series.cover.url),
-        'completed': _series.completed,
+        'completed': _series.status in (Status.COMPLETED, Status.CANCELED),
         'volumes': {},
     }
     chapters = _series.chapters.filter(published__lte=tz.now())

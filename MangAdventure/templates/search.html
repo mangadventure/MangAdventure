@@ -31,6 +31,7 @@
         </div>
         <div id="search-status">
           <label for="status">Series Status: </label>
+          {# TODO: clean this up #}
           <input {% if status == 'any' %}checked="checked"{% endif %}
                  name="status" id="status-any" value="any" type="radio">
           <label for="status-any">Any</label>
@@ -40,6 +41,12 @@
           <input {% if status == 'ongoing' %}checked="checked"{% endif %}
                  name="status" id="status-ongoing" value="ongoing" type="radio">
           <label for="status-ongoing">Ongoing</label>
+          <input {% if status == 'hiatus' %}checked="checked"{% endif %}
+                 name="status" id="status-hiatus" value="hiatus" type="radio">
+          <label for="status-hiatus">On Hiatus</label>
+          <input {% if status == 'canceled' %}checked="checked"{% endif %}
+                 name="status" id="status-canceled" value="canceled" type="radio">
+          <label for="status-canceled">Canceled</label>
         </div>
         <fieldset id="search-categories">
           <legend>Categories:</legend>
@@ -85,10 +92,14 @@
           {% for series in results %}
             <tr class="result">
               <td class="result-title">
-                {% if series.completed %}
-                  <i class="mi mi-book" title="Completed"></i>
-                {% else %}
-                  <i class="mi mi-book-o" title="Ongoing"></i>
+                {% if series.status == "completed" %}
+                  <i class="mi mi-book orange" title="Completed"></i>
+                {% elif series.status == "ongoing" %}
+                  <i class="mi mi-book-o green" title="Ongoing"></i>
+                {% elif series.status == "canceled" %}
+                  <i class="mi mi-book red" title="Canceled"></i>
+                {% elif series.status == "hiatus" %}
+                  <i class="mi mi-book-o yellow" title="On Hiatus"></i>
                 {% endif %}
                 <a href="{{ series.get_absolute_url }}"
                    title="{{ series.title }}">

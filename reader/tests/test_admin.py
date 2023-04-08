@@ -85,11 +85,6 @@ class TestSeriesAdmin(ReaderAdminTestBase):
     def test_cover_none(self):
         assert self.admin.cover_image(self.series) == ''
 
-    def test_toggle_completed(self):
-        Series.objects.create(title='series2')
-        self.admin.toggle_completed(self.request, Series.objects.all())
-        assert not Series.objects.filter(completed=False)
-
     def test_toggle_licensed(self):
         Series.objects.create(title='series2')
         self.admin.toggle_licensed(self.request, Series.objects.all())

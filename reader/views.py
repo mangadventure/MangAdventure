@@ -147,9 +147,7 @@ def series(request: HttpRequest, slug: str) -> HttpResponse:
             # 'alternateName': ar.aliases.names()
         } for ar in artists],
         'alternateName': aliases,
-        'creativeWorkStatus': (
-            'Published' if series.completed else 'Incomplete'
-        ),
+        'creativeWorkStatus': series.status,
         'isAccessibleForFree': not series.licensed,
         'dateCreated': series.created.strftime('%F'),
         'dateModified': series.modified.strftime('%F'),

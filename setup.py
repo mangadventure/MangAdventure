@@ -44,7 +44,7 @@ setup(
         'memc': 'pylibmc',
         'csp': 'django-csp>=3.7',
         'uwsgi': 'uwsgi',
-        'sentry': 'sentry-sdk~=1.9',
+        'sentry': 'sentry-sdk~=1.19',
     },
     entry_points={
         'console_scripts': [

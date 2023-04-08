@@ -9,7 +9,7 @@ from rest_framework.filters import (
     BaseFilterBackend, OrderingFilter, SearchFilter
 )
 
-from reader.models import Chapter
+from reader.models import Chapter, Status
 
 if TYPE_CHECKING:  # pragma no cover
     from django.db.models.query import QuerySet  # isort:skip
@@ -88,11 +88,8 @@ class StatusFilter(BaseFilterBackend):
                         view: ViewSet) -> QuerySet:
         if view.action != 'list':
             return queryset
-        return {
-            'any': queryset,
-            'completed': queryset.filter(completed=True),
-            'ongoing': queryset.filter(completed=False)
-        }[request.query_params.get('status', 'any').lower()]
+        status = request.query_params.get('status', 'any').lower()
+        return queryset if status == 'any' else queryset.filter(status=status)
 
     def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
         return [{
@@ -103,7 +100,7 @@ class StatusFilter(BaseFilterBackend):
             'schema': {
                 'type': 'string',
                 'default': 'any',
-                'enum': ('any', 'completed', 'ongoing')
+                'enum': Status.values
             }
         }]
 

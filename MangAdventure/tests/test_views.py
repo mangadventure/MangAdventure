@@ -29,7 +29,7 @@ class MangadvViewTestBase(MangadvTestBase):
             title='chapter', number=1, file=get_valid_zip_file()
         )
 
-        series2 = Series.objects.create(title='series2', completed=True)
+        series2 = Series.objects.create(title='series2', status='completed')
         author2 = series2.authors.create(name='Author 2')
         author2.aliases.create(name='author2')
         artist2 = series2.artists.create(name='Artist 2')

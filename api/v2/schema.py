@@ -34,6 +34,9 @@ class OpenAPISchema(AutoSchema):
         if isinstance(field, PrimaryKeyRelatedField):
             return {'type': 'integer'}
         result = super().map_field(field)
+        # deprecate the Series.completed field
+        if field.field_name == 'completed':
+            result['deprecated'] = True
         # specify pattern for slug related fields
         if isinstance(field, SlugRelatedField):
             result['pattern'] = '^[-a-zA-Z0-9_]+$'

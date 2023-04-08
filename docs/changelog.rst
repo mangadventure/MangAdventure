@@ -4,6 +4,7 @@ Changelog
 v0.9.3
 ^^^^^^
 
+* Added more series statuses
 * Readded CSRF token
 
 v0.9.2

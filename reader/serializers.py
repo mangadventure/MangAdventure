@@ -64,14 +64,13 @@ class ChapterSerializer(ModelSerializer):
     def to_representation(self, instance: Chapter) -> Dict:
         rep = super().to_representation(instance)
         # HACK: adapt the date format based on a query param
-        dt_format = self.context['request'] \
-            .query_params.get('date_format', 'iso-8601')
+        fmt = self.context['request'].query_params.get('date_format')
         published = instance.published
         rep['published'] = {
             'iso-8601': published.strftime('%Y-%m-%dT%H:%M:%SZ'),
             'rfc-5322': published.strftime('%a, %d %b %Y %H:%M:%S GMT'),
             'timestamp': str(round(published.timestamp() * 1e3))
-        }.get(dt_format)
+        }.get(fmt or 'iso-8601')
         return rep
 
     def __uri(self, path: str) -> str:

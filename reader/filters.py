@@ -185,9 +185,15 @@ class SeriesSort(OrderingFilter):
 class DateFormat(BaseFilterBackend):
     """Date format filter."""
     description = 'Change the displayed date format.'
+    _values = ('iso-8601', 'rfc-5322', 'timestamp')
 
     def filter_queryset(self, request: Request, queryset: QuerySet,
                         view: ViewSet) -> QuerySet:
+        fmt = request.query_params.get('date_format')
+        if fmt and fmt not in self._values:
+            raise ValidationError(detail={
+                'error': f"Invalid date format: '{fmt}'."
+            })
         return queryset  # no actual filtering is performed
 
     def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
@@ -199,7 +205,7 @@ class DateFormat(BaseFilterBackend):
             'schema': {
                 'type': 'string',
                 'default': 'iso-8601',
-                'enum': ('iso-8601', 'rfc-5322', 'timestamp')
+                'enum': self._values
             }
         }]
 

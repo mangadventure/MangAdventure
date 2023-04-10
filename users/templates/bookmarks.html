@@ -24,8 +24,8 @@
                {% if release.final %}class="end"{% endif %}>{{ release }}</a>
             <span class="divider"></span>
             {% with published=release.published %}
-              <time class="chapter-date" datetime="{{ published|date:'c' }}"
-                    title="{{ published|naturaltime }}">{{ published|naturaltime }}</time>
+              <time class="chapter-date" title="{{ published|date:'DATETIME_FORMAT' }}"
+                    datetime="{{ published|date:'c' }}">{{ published|naturaltime }}</time>
             {% endwith %}
           </div>
         </section>

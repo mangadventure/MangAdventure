@@ -95,8 +95,8 @@
             {% endwith %}
             <span class="divider"></span>
             {% with published=chapter.published %}
-              <time class="chapter-date" datetime="{{ published|date:'c' }}"
-                    title="{{ published|naturaltime }}">{{ published|naturaltime }}</time>
+              <time class="chapter-date" title="{{ published|date:'DATETIME_FORMAT' }}"
+                    datetime="{{ published|date:'c' }}">{{ published|naturaltime }}</time>
             {% endwith %}
           </div>
         </div>

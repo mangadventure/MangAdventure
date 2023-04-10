@@ -129,7 +129,8 @@
               <td class="result-date s-hidden" data-sort-method="number"
                 {% if series.latest_upload %}
                   {% with latest=series.latest_upload %}data-sort="{{ latest.timestamp }}">
-                    <time datetime="{{ latest|date:'Y-m-d' }}">{{ latest|naturaltime }}</time>
+                    <time title="{{ published|date:'DATETIME_FORMAT' }}"
+                          datetime="{{ latest|date:'Y-m-d' }}">{{ latest|naturaltime }}</time>
                   {% endwith %}
                 {% else %}data-sort="0">N/A{% endif %}
               </td>

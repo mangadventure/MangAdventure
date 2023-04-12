@@ -54,7 +54,8 @@ class ChapterSerializer(ModelSerializer):
         slug_field='slug', help_text='The series of the chapter.'
     )
     groups = StringRelatedField(
-        many=True, help_text='The scanlation groups of the chapter.'
+        many=True, read_only=True,
+        help_text='The scanlation groups of the chapter.'
     )  # type: StringRelatedField
     url = URLField(
         source='get_absolute_url', read_only=True,
@@ -163,19 +164,19 @@ class _SeriesDetailSerializer(ModelSerializer):
         help_text='The total chapter views of the series.'
     )
     aliases = StringRelatedField(
-        many=True, required=False,
+        many=True, required=False, read_only=True,
         help_text='The alternative titles of the series.'
     )  # type: StringRelatedField
     authors = StringRelatedField(
-        many=True, required=False,
+        many=True, required=False, read_only=True,
         help_text='The authors of the series.'
     )  # type: StringRelatedField
     artists = StringRelatedField(
-        many=True, required=False,
+        many=True, required=False, read_only=True,
         help_text='The artists of the series.'
     )  # type: StringRelatedField
     categories = StringRelatedField(
-        many=True, required=False,
+        many=True, required=False, read_only=True,
         help_text='The categories of the series.'
     )  # type: StringRelatedField
     url = URLField(

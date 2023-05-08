@@ -88,6 +88,10 @@ class TestChapterRedirect(ReaderViewTestBase):
 
         assert str(r1.content) == str(r2.content)
 
+    def test_no_match(self):
+        r = self.client.get('/reader/series/0/6936167464014960228/')
+        assert r.status_code == 404
+
 
 class TestChapterDownload(ReaderViewTestBase):
     def test_get(self):

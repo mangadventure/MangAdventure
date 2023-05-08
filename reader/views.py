@@ -8,6 +8,7 @@ from django.core.cache import cache
 from django.db.models import Count, F, Prefetch, Q
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
+from django.urls.exceptions import NoReverseMatch
 from django.utils import timezone as tz
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import condition
@@ -253,8 +254,13 @@ def chapter_redirect(request: HttpRequest, slug: str, vol: int,
     :param num: The number of the chapter.
 
     :return: A redirect to :func:`chapter_page`.
+
+    :raises Http404: If the chapter does not exist.
     """
-    return redirect('reader:page', slug, vol, num, 1, permanent=True)
+    try:
+        return redirect('reader:page', slug, vol, num, 1, permanent=True)
+    except NoReverseMatch as e:
+        raise Http404 from e
 
 
 @condition(etag_func=_cbz_etag, last_modified_func=_latest)

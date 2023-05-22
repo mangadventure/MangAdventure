@@ -31,11 +31,12 @@ class BaseMiddleware(CommonMiddleware):
 
         :return: The response to the request.
         """
-        if request.META.get('HTTP_EARLY_DATA') == '1':
-            return HttpResponseTooEarly()
         if request.path == '/robots.txt':
-            return self.get_response(request)
-        return super().__call__(request)
+            return self.get_response(request)  # type: ignore
+        if request.method != 'GET' and \
+                request.META.get('HTTP_EARLY_DATA') == '1':
+            return HttpResponseTooEarly()
+        return super().__call__(request)  # type: ignore
 
 
 __all__ = ['BaseMiddleware']

@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from allauth.account.adapter import DefaultAccountAdapter
+from allauth.account.utils import get_next_redirect_url
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -23,7 +24,7 @@ class AccountAdapter(DefaultAccountAdapter):
 
         :return: The URL of the redirect.
         """
-        return request.GET.get('next', '/user')
+        return get_next_redirect_url(request) or '/user'
 
     def get_logout_redirect_url(self, request: HttpRequest) -> str:
         """
@@ -33,7 +34,7 @@ class AccountAdapter(DefaultAccountAdapter):
 
         :return: The URL of the redirect.
         """
-        return request.POST.get('next', '/')
+        return get_next_redirect_url(request) or '/'
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
@@ -49,7 +50,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
 
         :return: The URL of the redirect.
         """
-        return request.POST.get('next', '/user')
+        return get_next_redirect_url(request) or '/user'
 
 
 __all__ = ['AccountAdapter', 'SocialAccountAdapter']

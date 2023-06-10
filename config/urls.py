@@ -31,6 +31,8 @@ if settings.DEBUG:  # pragma: no cover
     )
     if find_spec('debug_toolbar'):
         from debug_toolbar import urls as djdt_urls
-        urlpatterns.append(path('__debug__/', include(djdt_urls)))
+        urlpatterns.append(
+            path('__debug__/', include(djdt_urls))  # type: ignore
+        )
 
 __all__ = ['urlpatterns']

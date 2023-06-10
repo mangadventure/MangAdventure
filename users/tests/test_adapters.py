@@ -15,6 +15,8 @@ class UserAdapterTestBase(UsersTestBase):
         self.request.GET = {'next': self.next_url}
         self.request.POST = {'next': self.next_url}
         self.empty_request = HttpRequest()
+        self.external_request = HttpRequest()
+        self.external_request.GET = {'next': 'https://test.com'}
         self.adapter = AccountAdapter()
         self.social_adapter = SocialAccountAdapter()
 
@@ -28,6 +30,10 @@ class TestAccountAdapter(UserAdapterTestBase):
         assert '/user' == self.adapter \
             .get_login_redirect_url(self.empty_request)
 
+    def test_get_login_redirect_url_external(self):
+        assert '/user' == self.adapter \
+            .get_login_redirect_url(self.external_request)
+
     def test_get_logout_redirect_url(self):
         assert self.next_url == self.adapter \
             .get_logout_redirect_url(self.request)
@@ -35,6 +41,10 @@ class TestAccountAdapter(UserAdapterTestBase):
     def test_get_logout_redirect_url_no_next(self):
         assert '/' == self.adapter \
             .get_logout_redirect_url(self.empty_request)
+
+    def test_get_logout_redirect_url_external(self):
+        assert '/' == self.adapter \
+            .get_logout_redirect_url(self.external_request)
 
 
 class TestSocialAccountAdapter(UserAdapterTestBase):
@@ -45,9 +55,16 @@ class TestSocialAccountAdapter(UserAdapterTestBase):
         )
 
     def test_get_connect_redirect_url(self):
-        assert self.next_url == self.social_adapter \
-            .get_connect_redirect_url(self.request, self.social_account)
+        assert self.next_url == self.social_adapter.get_connect_redirect_url(
+            self.request, self.social_account
+        )
 
     def test_get_connect_redirect_url_no_next(self):
-        assert '/user' == self.social_adapter \
-            .get_connect_redirect_url(self.empty_request, self.social_account)
+        assert '/user' == self.social_adapter.get_connect_redirect_url(
+            self.empty_request, self.social_account
+        )
+
+    def test_get_connect_redirect_url_external(self):
+        assert '/user' == self.social_adapter.get_connect_redirect_url(
+            self.external_request, self.social_account
+        )

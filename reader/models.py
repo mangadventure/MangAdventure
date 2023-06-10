@@ -577,7 +577,7 @@ class Chapter(models.Model):
         """
         # TODO: use removeprefix (Py3.9+)
         if not self.series:  # pragma: no cover
-            return Series.format.default.format(
+            return Series.format.default.format(  # type: ignore
                 title=self.title or 'N/A',
                 volume=self.volume or '?',
                 number=f'{self.number:g}',

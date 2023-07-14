@@ -293,8 +293,8 @@ class Series(models.Model):
 
     def save(self, *args, **kwargs):
         """Save the current instance."""
-        # TODO: move this to a receiver?
-        self.slug = slugify(self.slug or self.title)
+        if not self.slug:
+            self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:

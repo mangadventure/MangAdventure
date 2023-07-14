@@ -70,6 +70,7 @@ class TestSeries(ReaderTestBase):
     def test_create(self):
         series = self.create_series()
         assert str(series) == 'My Series'
+        assert series.slug == 'my-series'
 
     def test_get_absolute_url(self):
         series = self.create_series()

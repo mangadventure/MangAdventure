@@ -15,6 +15,7 @@ from django.dispatch import receiver
 from django.http.request import QueryDict
 from django.urls.base import resolve
 from django.urls.exceptions import Resolver404
+from django.utils.text import slugify
 
 from .models import Chapter, Page, Series
 
@@ -46,6 +47,10 @@ def redirect_series(sender: Type[Series], instance: Series, **kwargs):
         current = Series.objects.get(id=instance.id)
     except Series.DoesNotExist:
         return
+    # update the slug while we're at it
+    if current.title != instance.title and \
+            current.slug == instance.slug == slugify(current.title):
+        instance.slug = slugify(instance.title)
     if current.slug != instance.slug:
         old_path = current.get_absolute_url()
         old_dir = current.get_directory()

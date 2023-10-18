@@ -86,6 +86,7 @@ MIDDLEWARE = [
     'django.middleware.http.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
 ]
@@ -325,6 +326,10 @@ ACCOUNT_USER_DISPLAY = 'users.get_user_display'
 #: The user is required to hand over an e-mail address when signing up.
 #: See :auth:`ACCOUNT_EMAIL_REQUIRED <configuration.html>`.
 ACCOUNT_EMAIL_REQUIRED = True
+
+#: The user cannot have more than one e-mail address.
+#: See :auth:`ACCOUNT_CHANGE_EMAIL <configuration.html>`.
+ACCOUNT_CHANGE_EMAIL = True
 
 #: Use either the username or the email to login.
 #: See :auth:`ACCOUNT_AUTHENTICATION_METHOD <configuration.html>`.

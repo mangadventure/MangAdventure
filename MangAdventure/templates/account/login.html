@@ -60,11 +60,11 @@
       </section>
       <section id="oauth">
         {% get_oauth_providers as oauth_providers %}
-        {% for provider in oauth_providers %}
+        {% for oauth in oauth_providers %}
           {% if forloop.first %}<div id="oauth-or">Or, sign in with:</div>{% endif %}
-          <form class="provider" action="{% provider_login_url provider.id %}" method="post">
+          <form class="provider" action="{% provider_login_url oauth.provider %}" method="post">
             <button type="submit">
-              <i class="mi mi-{{ provider.id }}"></i>{{ provider.name }}
+              <i class="mi mi-{{ oauth.provider }}"></i>{{ oauth.name }}
             </button>
           </form>
         {% endfor %}

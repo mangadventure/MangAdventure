@@ -197,6 +197,7 @@ class OAuthApp(SocialApp):
 class OAuthAppAdmin(SocialAppAdmin):
     """Admin model for :class:`OAuthApp`."""
     list_display = ('name', '_provider', 'client_id')
+    exclude = ('provider_id', 'settings')
     sortable_by = ('name', '_provider')
     radio_fields = {'provider': admin.HORIZONTAL}
 

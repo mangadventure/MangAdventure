@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.http.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
 ]
@@ -155,6 +156,8 @@ ACCOUNT_ADAPTER = 'users.adapters.AccountAdapter'
 ACCOUNT_USER_DISPLAY = 'users.get_user_display'
 
 ACCOUNT_EMAIL_REQUIRED = True
+
+ACCOUNT_CHANGE_EMAIL = True
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 

@@ -2,15 +2,25 @@
 
 from __future__ import annotations
 
+from functools import partial
 from typing import TYPE_CHECKING
 
+from django.conf import settings
+from django.utils.http import url_has_allowed_host_and_scheme
+
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.utils import get_next_redirect_url
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest  # isort:skip
     from allauth.socialaccount.models import SocialAccount  # isort:skip
+
+
+_is_safe_url = partial(
+    url_has_allowed_host_and_scheme,
+    allowed_hosts=settings.ALLOWED_HOSTS,
+    require_https=settings.SECURE_SSL_REDIRECT
+)
 
 
 class AccountAdapter(DefaultAccountAdapter):
@@ -24,7 +34,8 @@ class AccountAdapter(DefaultAccountAdapter):
 
         :return: The URL of the redirect.
         """
-        return get_next_redirect_url(request) or '/user'
+        url = request.GET.get('next')
+        return url if url and _is_safe_url(url) else '/user'
 
     def get_logout_redirect_url(self, request: HttpRequest) -> str:
         """
@@ -34,7 +45,8 @@ class AccountAdapter(DefaultAccountAdapter):
 
         :return: The URL of the redirect.
         """
-        return get_next_redirect_url(request) or '/'
+        url = request.POST.get('next')
+        return url if url and _is_safe_url(url) else '/'
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
@@ -50,7 +62,8 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
 
         :return: The URL of the redirect.
         """
-        return get_next_redirect_url(request) or '/user'
+        url = request.POST.get('next') or request.GET.get('next')
+        return url if url and _is_safe_url(url) else '/user'
 
 
 __all__ = ['AccountAdapter', 'SocialAccountAdapter']

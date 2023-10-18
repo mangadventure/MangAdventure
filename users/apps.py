@@ -8,9 +8,5 @@ class UsersConfig(AppConfig):
     #: The name of the app.
     name = 'users'
 
-    def ready(self):
-        """Register the :mod:`~users.receivers` when the app is ready."""
-        __import__('users.receivers')
-
 
 __all__ = ['UsersConfig']

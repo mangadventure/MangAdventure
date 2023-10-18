@@ -316,7 +316,7 @@ def all_people(request: HttpRequest) -> JsonResponse:
     _type = Author if _is_author(request) else Artist
     return JsonResponse([
         _person_response(request, p)  # type: ignore
-        for p in _type.objects.prefetch_related(
+        for p in _type.objects.prefetch_related(  # type: ignore
             'aliases', 'series_set__aliases'
         ).all()
     ], safe=False)
@@ -337,7 +337,7 @@ def person(request: HttpRequest, p_id: int) -> JsonResponse:
     """
     try:
         _type = Author if _is_author(request) else Artist
-        _person = _type.objects.prefetch_related(
+        _person = _type.objects.prefetch_related(  # type: ignore
             'aliases', 'series_set__aliases'
         ).get(id=p_id)
     except ObjectDoesNotExist:

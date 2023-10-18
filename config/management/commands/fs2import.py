@@ -156,7 +156,7 @@ class Command(BaseCommand):
             all_chapters.append(chapter)
         try:
             Chapter.objects.bulk_create(all_chapters)
-            groups_through.objects.bulk_create(chapter_groups)
+            groups_through.objects.bulk_create(chapter_groups)  # type: ignore
             self._print_success('Chapters successfully imported.')
         except IntegrityError as e:  # pragma: no cover
             raise CommandError('Failed to insert chapters') from e

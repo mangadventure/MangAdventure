@@ -130,7 +130,8 @@ class Member(models.Model):
         blank=True, help_text="The member's Reddit username."
     )
     #: The groups of this member.
-    groups = models.ManyToManyField(Group, 'members', through='Role')
+    groups = models.ManyToManyField(  # type: ignore
+        Group, 'members', through='Role')
 
     def get_roles(self, group: Group) -> str:
         """

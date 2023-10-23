@@ -66,7 +66,6 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.reddit',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.discord',
@@ -353,7 +352,6 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 #: Social account provider customization. See
 #: :auth:`Google <providers.html#google>`,
-#: :auth:`Reddit <providers.html#reddit>`,
 #: :auth:`GitHub <providers.html#github>`,
 #: :auth:`Discord <providers.html#discord>`.
 SOCIALACCOUNT_PROVIDERS = {
@@ -362,13 +360,6 @@ SOCIALACCOUNT_PROVIDERS = {
         'OAUTH_PKCE_ENABLED': True,
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'}
-    },
-    'reddit': {
-        'AUTH_PARAMS': {'duration': 'permanent'},
-        'USER_AGENT': (
-            f'Django:MangAdventure:{VERSION} '
-            '(by https://github.com/mangadventure)'
-        )
     },
     'github': {
         'VERIFIED_EMAIL': True,

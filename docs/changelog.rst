@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.9.5
+^^^^^^
+
+* Removed Reddit OAuth provider
+
 v0.9.4
 ^^^^^^
 

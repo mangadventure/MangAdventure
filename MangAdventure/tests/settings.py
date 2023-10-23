@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.reddit',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.discord',
@@ -175,13 +174,6 @@ SOCIALACCOUNT_PROVIDERS = {
         'OAUTH_PKCE_ENABLED': True,
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'}
-    },
-    'reddit': {
-        'AUTH_PARAMS': {'duration': 'permanent'},
-        'USER_AGENT': (
-            f'Django:MangAdventure:{VERSION} '
-            '(by https://github.com/mangadventure)'
-        )
     },
     'github': {
         'VERIFIED_EMAIL': True,

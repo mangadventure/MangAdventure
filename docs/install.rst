@@ -15,7 +15,7 @@ Install the project
 .. note::
 
    This tutorial assumes you are using Linux and plan on
-   installing MangAdventure under ``/var/www/my-site.com/``.
+   installing MangAdventure under ``/srv/http/my-site.com/``.
    The instructions are similar for Windows and MacOS.
 
 First, you will need Python_ (3.8+) and pip_.
@@ -28,11 +28,11 @@ Then, set up a virtualenv for MangAdventure with the following commands:
 
 .. code-block:: bash
 
-   # This will install a virtualenv under /var/www/my-site.com/
-   python3 -m venv /var/www/my-site.com/
+   # This will install a virtualenv under /srv/http/my-site.com/
+   python3 -m venv /srv/http/my-site.com/
 
    # This will activate the virtualenv
-   source /var/www/my-site.com/bin/activate
+   source /srv/http/my-site.com/bin/activate
 
    # You may need to install wheel manually
    pip install wheel
@@ -168,7 +168,7 @@ Set up the server
 
 .. code-block:: bash
 
-   uwsgi --http-socket ":25432" --chdir "/var/www/my-site.com" --module "MangAdventure.wsgi"
+   uwsgi --http-socket ":25432" --chdir "/srv/http/my-site.com" --module "MangAdventure.wsgi"
 
 .. _uWSGI docs:
    https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django
@@ -204,7 +204,7 @@ Updating
 .. code-block:: bash
 
    # Don't forget to activate the virtualenv
-   source /var/www/my-site.com/bin/activate
+   source /srv/http/my-site.com/bin/activate
 
    pip install -U -e "git+https://github.com/mangadventure/MangAdventure@{tag}#egg=MangAdventure"
 

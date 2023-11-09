@@ -81,14 +81,6 @@ users.models module
    :undoc-members:
    :show-inheritance:
 
-users.receivers module
-----------------------
-
-.. automodule:: users.receivers
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 users.serializers module
 ------------------------
 

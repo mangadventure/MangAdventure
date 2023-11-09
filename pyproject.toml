@@ -1,0 +1,179 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MangAdventure"
+description = "A simple manga hosting CMS written in Django."
+requires-python = ">=3.8"
+license = {text = "MIT"}
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Web Environment",
+  "Framework :: Django",
+  "Framework :: Django :: 4.1",
+  "Intended Audience :: Other Audience",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System",
+]
+keywords = ["manga", "scanlation", "reader"]
+dynamic = ["version", "readme"]
+dependencies = [
+  "django~=4.1.12",
+  "djangorestframework>=3.14",
+  "django-allauth>=0.57",
+  "Pillow>=10.1",
+  # because asottile is a jackass
+  # https://github.com/sass/libsass-python/pull/400
+  "libsass-bin>=0.22",
+  "yaenv~=1.4.4; python_version=='3.8'",
+  "yaenv~=1.5.3; python_version=='3.9'",
+  "yaenv~=1.6.4; python_version>='3.10'"
+]
+
+[project.optional-dependencies]
+dev = [
+  "django-stubs~=4.1",
+  "djangorestframework-stubs>=3.14",
+  "flake8~=6.1",
+  # because asottile is a jackass, again
+  # https://github.com/PyCQA/flake8/issues/234
+  "flake8-pyproject>=1.2",
+  "isort>=5.12",
+  "mypy~=1.6",
+  "pytest~=7.4",
+  "pytest-cov>=4.1",
+  "pytest-django>=4.7"
+]
+docs = [
+  "sphinx~=5.3.0",
+  "sphinx-rtd-theme>=1.3",
+  "sphinx-autodoc-typehints~=1.19.5"
+]
+mysql = ["mysqlclient>=2.2"]
+pgsql = ["psycopg2>=2.9"]
+redis = ["redis>5.0"]
+memc = ["pylibmc>=1.6"]
+csp = ["django-csp>=3.7"]
+sentry = ["sentry-sdk>=1.34"]
+debug = ["django-debug-toolbar>=4.2"]
+uwsgi = ["uwsgi~=2.0"]
+
+[[project.authors]]
+name = "evangelos-ch"
+email = "me@evangelos.ai"
+
+[[project.authors]]
+name = "ObserverOfTime"
+email = "chronobserver@disroot.org"
+
+[project.scripts]
+mangadventure = "MangAdventure.__main__:run"
+
+[project.urls]
+Homepage = "https://github.com/mangadventure/MangAdventure"
+Documentation = "https://mangadventure.readthedocs.io"
+
+[tool.setuptools.dynamic.version]
+attr = "MangAdventure.__version__"
+
+[tool.setuptools.dynamic.readme]
+file = "README.md"
+content-type = "text/x-markdown"
+
+[tool.flake8]
+ignore = "W504"
+show_source = true
+max_line_length = 80
+exclude = [
+  ".git/*",
+  ".venv/*",
+  ".eggs/*",
+  ".mypy_cache/*",
+  "__pycache__/*",
+  "docs/*",
+  "build/*",
+  "dist/*"
+]
+
+[tool.isort]
+balanced_wrapping = true
+combine_as_imports = true
+default_section = "THIRDPARTY"
+known_django = "django"
+known_mangadv = "MangAdventure"
+length_sort = false
+multi_line_output = 6
+known_first_party = [
+  "api",
+  "config",
+  "groups",
+  "reader",
+  "users"
+]
+sections = [
+  "FUTURE",
+  "STDLIB",
+  "DJANGO",
+  "THIRDPARTY",
+  "MANGADV",
+  "FIRSTPARTY",
+  "LOCALFOLDER"
+]
+skip = [
+  ".git",
+  ".venv",
+  ".eggs",
+  ".mypy_cache",
+  "__pycache__",
+  "docs",
+  "build",
+  "dist"
+]
+
+[tool.mypy]
+show_error_codes = true
+warn_unused_ignores = false
+ignore_missing_imports = true
+disable_error_code = ["misc", "override"]
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "MangAdventure.settings"
+
+[tool.pytest.ini_options]
+addopts = "-rfsx --cov=. --cov-report=term"
+norecursedirs = ["docs", "*/migrations"]
+filterwarnings = [
+  "ignore:Schema component:UserWarning",
+  "ignore::django.utils.deprecation.RemovedInDjango50Warning"
+]
+DJANGO_SETTINGS_MODULE = "MangAdventure.tests.settings"
+
+[tool.coverage.run]
+relative_files = true
+omit = [
+  "*tests/*",
+  "*migrations/*",
+  ".venv/*",
+  ".eggs/*",
+  "env/*",
+  "docs/*",
+  "build/*",
+  "dist/*",
+  "setup.py",
+  "*wsgi.py",
+  "*settings.py",
+  "*createsuperuser.py",
+  "*apps.py",
+  "*logs.py",
+  "*__main__.py"
+]

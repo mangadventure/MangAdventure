@@ -13,29 +13,30 @@ jobs:
     if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: "Set up Python 3.8"
         uses: actions/setup-python@v4
         with:
           python-version: "3.8"
       - name: "Install dependencies"
-        run: pip install wheel && pip install -e .[dev,csp,redis,memc]
+        run: pip install -e .[dev,csp,redis,memc]
       - name: "Set up .env file"
         run: cp .env.example .env
       - name: "Lint project"
         run: flake8 && isort -q -c --df . && mypy .
       - name: "Run tests"
         run: py.test --cov-report=xml
-        if: success()
         env:
           DB_TYPE: sqlite3
       - name: "Set up coveralls"
-        uses: AndreMiras/coveralls-python-action@v20201129
-        if: success()
+        run: |-
+          pip install coveralls
+          coveralls --service=github
         continue-on-error: true
-        with:
-          parallel: true
-          flag-name: SQLite
+        env:
+          COVERALLS_PARALLEL: true
+          COVERALLS_FLAG_NAME: SQLite
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send status to Discord"
         uses: MangAdventure/discord-webhook@v0.4
         if: always() && github.event_name == 'push'
@@ -64,30 +65,31 @@ jobs:
           --health-retries=3
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: "Set up Python 3.9"
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
       - name: "Install dependencies"
-        run: pip install wheel && pip install -e .[dev,mysql]
+        run: pip install -e .[dev,mysql]
       - name: "Set up .env file"
         run: cp .env.example .env
       - name: "Lint project"
         run: flake8 && isort -q -c --df . && mypy .
       - name: "Run tests"
         run: py.test --cov-report=xml
-        if: success()
         env:
           DB_TYPE: mysql
           DB_PASSWORD: ${{secrets.DB_PASSWORD}}
       - name: "Set up coveralls"
-        uses: AndreMiras/coveralls-python-action@v20201129
-        if: success()
+        run: |-
+          pip install coveralls
+          coveralls --service=github
         continue-on-error: true
-        with:
-          parallel: true
-          flag-name: MySQL
+        env:
+          COVERALLS_PARALLEL: true
+          COVERALLS_FLAG_NAME: MySQL
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send status to Discord"
         uses: MangAdventure/discord-webhook@v0.4
         if: always() && github.event_name == 'push'
@@ -117,30 +119,31 @@ jobs:
           --health-retries=3
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: "Set up Python 3.10"
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
       - name: "Install dependencies"
-        run: pip install wheel && pip install -e .[dev,pgsql]
+        run: pip install -e .[dev,pgsql]
       - name: "Set up .env file"
         run: cp .env.example .env
       - name: "Lint project"
         run: flake8 && isort -q -c --df . && mypy .
       - name: "Run tests"
         run: py.test --cov-report=xml
-        if: success()
         env:
           DB_TYPE: postgresql
           DB_PASSWORD: ${{secrets.DB_PASSWORD}}
       - name: "Set up coveralls"
-        uses: AndreMiras/coveralls-python-action@v20201129
-        if: success()
+        run: |-
+          pip install coveralls
+          coveralls --service=github
         continue-on-error: true
-        with:
-          parallel: true
-          flag-name: PostgreSQL
+        env:
+          COVERALLS_PARALLEL: true
+          COVERALLS_FLAG_NAME: PostgreSQL
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send status to Discord"
         uses: MangAdventure/discord-webhook@v0.4
         if: always() && github.event_name == 'push'
@@ -155,9 +158,12 @@ jobs:
     name: "Coveralls"
     needs: [sqlite, mysql, postgresql]
     runs-on: ubuntu-latest
+    container: python:3-slim
     if: github.repository_owner == 'mangadventure'
     steps:
+      - name: "Install coveralls package"
+        run: pip install coveralls
       - name: "Upload coverage to coveralls"
-        uses: AndreMiras/coveralls-python-action@v20201129
-        with:
-          parallel-finished: true
+        run: coveralls --service=github --finish
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

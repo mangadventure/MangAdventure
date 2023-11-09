@@ -12,12 +12,12 @@ __import__('django').setup()
 
 # -- Project information --
 
-import MangAdventure as MA  # noqa: E402
+import MangAdventure  # noqa: E402
 
 project = 'MangAdventure'
-author = MA.__author__
-release = MA.__version__
-copyright = f'2018-2023, {project}, {MA.__license__} license'
+author = 'evangelos-ch, ObserverOfTime'
+copyright = f'2018-2023, {project}, MIT license'
+release = MangAdventure.__version__
 
 
 # -- General configuration --
@@ -35,7 +35,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 language = 'en'
 pygments_style = 'manni'
-needs_sphinx = '4.3'
+# TODO: update the patches for 7.2
+needs_sphinx = '5.3'
 
 
 # -- InterSphinx & extlinks configuration --
@@ -127,5 +128,5 @@ man_pages = [(
 
 texinfo_documents = [(
     master_doc, project, f'{project} Documentation',
-    author, project, MA.__doc__, 'Miscellaneous'
+    author, project, MangAdventure.__doc__, 'Miscellaneous'
 )]

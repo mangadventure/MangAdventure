@@ -24,6 +24,11 @@
   <link href="{% static 'COMPILED/styles/chapter.css' %}"
         rel="stylesheet preload" type="text/css" as="style">
 {% endblock %}
+{% block head_extras %}
+  {% for page in prefetch %}
+    <link href="{{ page.image.url }}" rel="prefetch" as="image">
+  {% endfor %}
+{% endblock %}
 {% block title %}
   <meta name="title" content="{{ curr_chapter.title }}">
   {% with title=curr_chapter.series.title|add:' ~ '|add:config.NAME %}
@@ -127,10 +132,5 @@
         </div>
       </section>
     {% endwith %}
-  </div>
-  <div id="preload" class="no-display">
-    {% for page in preload %}
-      <img alt="preload" src="{{ page.image.url }}">
-    {% endfor %}
   </div>
 {% endblock %}

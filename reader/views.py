@@ -218,8 +218,8 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
         curr_page = next(p for p in all_pages if p.number == page)
     except StopIteration as e:  # pragma: no cover
         raise Http404('No such page') from e
-    preload = list(filter(
-        lambda p: curr_page < p < curr_page.number + 4, all_pages
+    prefetch = list(filter(
+        lambda p: curr_page < p < curr_page.number + 3, all_pages
     ))
     tags = current.series.categories.values_list('name', flat=True)
     url = request.path
@@ -237,7 +237,7 @@ def chapter_page(request: HttpRequest, slug: str, vol: int,
         'prev_chapter': prev_,
         'all_pages': all_pages,
         'curr_page': curr_page,
-        'preload': preload,
+        'prefetch': prefetch,
         'breadcrumbs': crumbs,
         'tags': ','.join(tags)
     })

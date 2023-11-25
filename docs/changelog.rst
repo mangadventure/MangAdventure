@@ -5,6 +5,7 @@ v0.9.5
 ^^^^^^
 
 * Removed Reddit OAuth provider
+* Reduced prefetched pages from 3 to 2
 
 v0.9.4
 ^^^^^^

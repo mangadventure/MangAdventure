@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-issue-forms.json
 name: ❓ Question
 labels: ["Type: Question"]
 description: Do you have a question regarding this project?

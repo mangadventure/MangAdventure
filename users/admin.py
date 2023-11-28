@@ -137,7 +137,8 @@ class UserAdmin(admin.ModelAdmin):
     form = UserForm
     exclude = ('password', 'groups')
     list_display = (
-        'username', '_email', 'full_name', 'date_joined', 'is_active'
+        'username', '_email', 'full_name',
+        'date_joined', 'last_login', 'is_active'
     )
     list_editable = ('is_active',)
     search_fields = ('username', 'email', 'first_name', 'last_name')
@@ -146,7 +147,7 @@ class UserAdmin(admin.ModelAdmin):
         UserTypeFilter,
     )
     ordering = ('username',)
-    sortable_by = ('username', 'full_name', 'date_joined')
+    sortable_by = ('username', 'full_name', 'date_joined', 'last_login')
 
     @admin.display(description='e-mail address')
     def _email(self, obj: User) -> str:

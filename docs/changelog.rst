@@ -4,6 +4,7 @@ Changelog
 v0.9.5
 ^^^^^^
 
+* Added last login date to the user list
 * Removed Reddit OAuth provider
 * Reduced prefetched pages from 3 to 2
 

@@ -7,6 +7,7 @@
 import re
 from importlib.util import find_spec
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from yaenv import Env
 
@@ -27,8 +28,7 @@ env = Env(BASE_DIR / '.env')
 #: See :setting:`ALLOWED_HOSTS`.
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [
     '127.0.0.1', '0.0.0.0', 'localhost', '[::1]',
-    # From https://stackoverflow.com/questions/9626535/#36609868
-    env['DOMAIN'].split('//')[-1].split('/')[0].split('?')[0]
+    urlsplit(env['DOMAIN']).hostname
 ])
 
 #: | A boolean that turns debug mode on/off. See :setting:`DEBUG`.
@@ -39,6 +39,9 @@ DEBUG = env.bool('MANGADV_DEBUG', False)
 #:   See :setting:`SECRET_KEY`.
 #: | **SECURITY WARNING: this must be kept secret!**
 SECRET_KEY = env.secret('SECRET_KEY')
+
+#: A list of site administrators. See :setting:`ADMINS`.
+ADMINS = [tuple(env.list('ADMIN', []))] if 'ADMIN' in env else []
 
 #: The ID of the current site. See :setting:`SITE_ID`.
 SITE_ID = 1
@@ -167,8 +170,7 @@ IGNORABLE_404_URLS = [
     re.compile(r'^/api'),
 ]
 
-LOGS_DIR = BASE_DIR / 'logs'
-LOGS_DIR.mkdir(exist_ok=True)
+(LOGS_DIR := BASE_DIR / 'logs').mkdir(exist_ok=True)
 
 #: Logging configuration dictionary. See :setting:`LOGGING`.
 LOGGING = {
@@ -183,11 +185,11 @@ LOGGING = {
         'verbose': {
             'format': '{levelname} {asctime} {pathname}'
                       ' {funcName}:{lineno} {message}',
-            'style': '{',
+            'style': '{'
         },
         'simple': {
             'format': '{asctime} {module} {funcName} {message}',
-            'style': '{',
+            'style': '{'
         },
     },
     'handlers': {
@@ -196,13 +198,13 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filters': ['require_debug_true'],
             'filename': LOGS_DIR / 'debug.log',
-            'formatter': 'verbose',
+            'formatter': 'verbose'
         },
         'error': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filename': LOGS_DIR / 'errors.log',
-            'formatter': 'simple',
+            'formatter': 'simple'
         },
         'query': {
             'level': 'DEBUG',
@@ -337,6 +339,13 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 #: The user is blocked from logging in until the email address is verified.
 #: See :auth:`ACCOUNT_EMAIL_VERIFICATION <configuration.html>`.
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+#: Override some of the builtin forms.
+#: See :auth:`ACCOUNT_FORMS <configuration.html>`.
+ACCOUNT_FORMS = {
+    'signup': 'users.forms.RegistrationForm',
+    'reset_password': 'users.forms.PasswordResetForm'
+}
 
 #: The social account adapter class to use.
 #: See :auth:`SOCIALACCOUNT_ADAPTER <configuration.html>`.

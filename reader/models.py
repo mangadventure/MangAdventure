@@ -47,7 +47,7 @@ else:
     def capture_exception(_): pass  # noqa: E704
 
 _update_lock = Lock()
-_logger = getLogger('django.db')
+_logger = getLogger('django.db.models')
 
 
 def _cover_uploader(obj: Series, name: str) -> str:

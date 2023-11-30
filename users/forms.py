@@ -1,14 +1,77 @@
 """Form models for the users app."""
 
-from typing import cast
+from importlib.util import find_spec
+from typing import Optional, cast
 
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
+from allauth.account.forms import ResetPasswordForm, SignupForm
+
 from MangAdventure.validators import FileSizeValidator
 
 from .models import UserProfile
+
+if find_spec('sentry_sdk'):  # pragma: no cover
+    from sentry_sdk import capture_message, configure_scope
+
+    def _log_honeypot(message: str, username: Optional[str], email: str):
+        with configure_scope() as scope:
+            scope.set_tag('username', username)
+            scope.set_tag('email', email)
+            capture_message(message, 'warning', scope)
+else:  # pragma: no cover
+    from django.core.mail import mail_admins
+
+    def _log_honeypot(message: str, username: Optional[str], email: str):
+        body = f'Username: {username or "N/A"}\nE-mail: {email}'
+        mail_admins(message, body, fail_silently=True)
+
+
+class RegistrationForm(SignupForm):  # pragma: no cover
+    """Registration form with a honeypot field."""
+    email2 = forms.EmailField(
+        label='Email (again)',
+        required=False,
+        widget=forms.EmailInput(
+            attrs={
+                'placeholder': 'Email address confirmation'
+            }
+        )
+    )
+
+    def clean(self):
+        result = super().clean()
+        if self.cleaned_data.get('email2'):
+            msg = 'Possible spam bot detected'
+            username = self.cleaned_data['username']
+            email = self.cleaned_data['email']
+            _log_honeypot(msg, username, email)
+            raise forms.ValidationError('Nope!')
+        return result
+
+
+class PasswordResetForm(ResetPasswordForm):  # pragma: no cover
+    """Password reset form with a honeypot field."""
+    email2 = forms.EmailField(
+        label='Email (again)',
+        required=False,
+        widget=forms.EmailInput(
+            attrs={
+                'placeholder': 'Email address confirmation'
+            }
+        )
+    )
+
+    def clean(self):
+        result = super().clean()
+        if self.cleaned_data.get('email2'):
+            msg = 'Possible spam bot detected'
+            email = self.cleaned_data['email']
+            _log_honeypot(msg, None, email)
+            raise forms.ValidationError('Nope!')
+        return result
 
 
 class UserProfileForm(forms.ModelForm):
@@ -16,7 +79,7 @@ class UserProfileForm(forms.ModelForm):
     #: The user's e-mail address.
     email = forms.EmailField(
         max_length=254, min_length=5, label='E-mail',
-        widget=forms.TextInput(attrs={
+        widget=forms.EmailInput(attrs={
             'placeholder': 'E-mail address'
         })
     )
@@ -166,4 +229,4 @@ class UserProfileForm(forms.ModelForm):
         )
 
 
-__all__ = ['UserProfileForm']
+__all__ = ['RegistrationForm', 'PasswordResetForm', 'UserProfileForm']

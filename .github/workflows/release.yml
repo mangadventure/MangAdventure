@@ -5,25 +5,10 @@ on:
     tags: ['*']
 
 jobs:
-  codeql:
-    name: "CodeQL"
-    runs-on: ubuntu-latest
-    if: github.repository_owner == 'mangadventure'
-    steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
-      - name: "Initialize CodeQL"
-        uses: github/codeql-action/init@v2
-        with:
-          languages: javascript, python
-      - name: "Perform CodeQL Analysis"
-        uses: github/codeql-action/analyze@v2
-
   release:
     name: "Create release"
     needs: [codeql]
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
@@ -36,42 +21,36 @@ jobs:
       - name: "Mark previous prerelease"
         continue-on-error: true
         run: |-
-          GH_API="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases"
-          export $(curl -Ssf "$GH_API/latest" | \
-            jq -r '"id=\(.id) tag=\(.tag_name)"')
+          export tag="$(gh release view --json tagName -t '{{.tagName}}')"
           # skip if the new tag has a different minor version
           [[ ${GITHUB_REF_NAME%.*} == ${tag%.*} ]] || exit 0
-          curl -Ssf "$GH_API/$id" -o /dev/null -XPATCH \
-            -d '{"prerelease":true}' -H "Authorization: Token $GITHUB_TOKEN"
-          curl -Ssf "$RTFD_API/mangadventure/versions/$tag/" -XPATCH \
-            -d 'active=false' -H "Authorization: Token $RTFD_TOKEN"
+          gh release edit "$tag" --prerelease
+          curl -Ssf -XPATCH -d 'active=false' -H "Authorization: Token $RTFD_TOKEN" \
+               "https://readthedocs.org/api/v3/projects/mangadventure/versions/$tag/"
         env:
           RTFD_TOKEN: ${{secrets.RTFD_TOKEN}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          RTFD_API: https://readthedocs.org/api/v3/projects
       - name: "Parse release body"
         run: make changes > changes.md
         working-directory: docs
       - name: "Upload release"
-        uses: ncipollo/release-action@v1
-        with:
-          token: ${{secrets.GITHUB_TOKEN}}
-          bodyFile: docs/changes.md
-          allowUpdates: true
+        run: gh release create -F docs/changes.md --generate-notes $GITHUB_REF_NAME
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send data to Discord"
         run: |-
           jq --arg name "${GITHUB_REPOSITORY#*/}" \
              --arg author_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY_OWNER" \
              --arg icon_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY_OWNER.png?s=40" \
              --arg title "New release published: $GITHUB_REF_NAME" \
-             --arg url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/$RELEASE_NAME" \
+             --arg url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/$GITHUB_REF_NAME" \
              --arg description "$(<docs/changes.md)" \
              -Mn '{
                username: "GitHub",
                avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
                embeds: [{author: {$name, $icon_url, url: $author_url}, $url, $title, $description}]
              }' | curl -d@- -Ssf "$RELEASE_WEBHOOK" -H 'Content-Type: application/json' \
-                       -A "GitHub-Actions ($GITHUB_REPOSITORY, v0.1)"
+                       -A "GitHub-Actions ($GITHUB_REPOSITORY, v0.1.1)"
         env:
           RELEASE_WEBHOOK: ${{secrets.RELEASE_WEBHOOK}}
 
@@ -79,7 +58,6 @@ jobs:
     name: "Build Docker image"
     needs: [codeql]
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4

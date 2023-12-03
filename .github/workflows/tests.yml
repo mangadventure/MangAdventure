@@ -10,7 +10,6 @@ jobs:
   sqlite:
     name: "SQLite & Python 3.8"
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
@@ -50,7 +49,6 @@ jobs:
   mysql:
     name: "MySQL & Python 3.9"
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'mangadventure'
     services:
       mysql:
         image: mariadb:10.5
@@ -103,7 +101,6 @@ jobs:
   postgresql:
     name: "PostgreSQL & Python 3.10"
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'mangadventure'
     services:
       postgres:
         image: postgres:13
@@ -159,7 +156,6 @@ jobs:
     needs: [sqlite, mysql, postgresql]
     runs-on: ubuntu-latest
     container: python:3-slim
-    if: github.repository_owner == 'mangadventure'
     steps:
       - name: "Install coveralls package"
         run: pip install coveralls

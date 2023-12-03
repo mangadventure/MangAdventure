@@ -1,0 +1,47 @@
+name: Scans
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [master]
+    paths:
+      - "**/*.py"
+      - "**/*.js"
+      - pyproject.toml
+
+jobs:
+  codeql:
+    name: "CodeQL"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+      - name: "Initialize CodeQL"
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript, python
+      - name: "Perform CodeQL Analysis"
+        uses: github/codeql-action/analyze@v2
+
+  dependency-review:
+    name: "Dependencies"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+      - name: "Review dependencies"
+        uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure
+          deny-licenses: >-
+            AGPL-3.0-only,
+            AGPL-3.0-or-later,
+            GPL-2.0-only,
+            GPL-2.0-or-later,
+            GPL-3.0-only,
+            GPL-3.0-or-later

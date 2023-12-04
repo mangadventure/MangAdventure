@@ -4,21 +4,20 @@ from __future__ import annotations
 
 from io import StringIO
 from os.path import abspath, join
-from typing import TYPE_CHECKING
-from xml.etree import ElementTree as ET
+from typing import TYPE_CHECKING, List
 
 from django.core.files import File
 from django.core.management import BaseCommand, CommandError, call_command
 from django.db.utils import IntegrityError
+
+from defusedxml import ElementTree as ET
 
 from groups.models import Group
 from reader.models import Chapter, Page, Series
 
 if TYPE_CHECKING:  # pragma: no cover
     from argparse import ArgumentParser
-    from typing import List
-    Elem = ET.Element
-    Elems = List[ET.Element]
+    from xml.etree.ElementTree import Element  # nosec: B405
 
 
 class Command(BaseCommand):
@@ -183,18 +182,18 @@ class Command(BaseCommand):
         self._print_success('Successfully imported FoolSlide2 data.')
 
     @staticmethod
-    def _get_element(tables: Elems, name: str) -> Elems:
+    def _get_element(tables: List[Element], name: str) -> List[Element]:
         return list(filter(
             lambda t: t.attrib['name'].endswith(name), tables
         ))
 
     @staticmethod
-    def _get_column(table: Elem, name: str) -> str:
+    def _get_column(table: Element, name: str) -> str:
         elem = table.find(f'column[@name="{name}"]')
         return getattr(elem, 'text', None) or ''
 
     @staticmethod
-    def _sort_children(tables: Elems, name: str) -> Elems:
+    def _sort_children(tables: List[Element], name: str) -> List[Element]:
         return sorted(tables, key=lambda p: Command._get_column(p, name))
 
     def _print(self, text: str, **kwargs):

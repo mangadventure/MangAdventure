@@ -21,7 +21,7 @@ jobs:
       - name: "Mark previous prerelease"
         continue-on-error: true
         run: |-
-          export tag="$(gh release view --json tagName -t '{{.tagName}}')"
+          tag="$(gh release view --json tagName -t '{{.tagName}}')"
           # skip if the new tag has a different minor version
           [[ ${GITHUB_REF_NAME%.*} == ${tag%.*} ]] || exit 0
           gh release edit "$tag" --prerelease
@@ -49,8 +49,8 @@ jobs:
                username: "GitHub",
                avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
                embeds: [{author: {$name, $icon_url, url: $author_url}, $url, $title, $description}]
-             }' | curl -d@- -Ssf "$RELEASE_WEBHOOK" -H 'Content-Type: application/json' \
-                       -A "GitHub-Actions ($GITHUB_REPOSITORY, v0.1.1)"
+             }' | curl "$RELEASE_WEBHOOK" -H 'Content-Type: application/json' \
+                       -Ssf -d@- -A "GitHub-Actions ($GITHUB_REPOSITORY, v0.1.1)"
         env:
           RELEASE_WEBHOOK: ${{secrets.RELEASE_WEBHOOK}}
 

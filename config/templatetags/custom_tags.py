@@ -39,11 +39,12 @@ def jsonld(value: Dict, element_id: str) -> str:
     .. seealso:: :tag:`json_script template tag <json-script>`
     """
     sep = (',', ':')
+    # Escape special HTML characters for JSON output
     escapes = {ord('>'): '\\u003E', ord('<'): '\\u003C', ord('&'): '\\u0026'}
     jstr = dumps(value, cls=DjangoJSONEncoder, indent=None, separators=sep)
     return format_html(
         '<script id="{}" type="application/ld+json">{}</script>',
-        element_id, mark_safe(jstr.translate(escapes))
+        element_id, mark_safe(jstr.translate(escapes))  # nosec: B308
     )
 
 
@@ -72,7 +73,11 @@ def get_type(link: str) -> str:
     if (key := 'type.' + basename(link.lower())) in cache:
         return cache.get(key)  # pragma: no cover
     try:
-        with urlopen(Request(link, method='HEAD')) as response:
+        # Disallow non-HTTP(S) schemes
+        if not link.startswith(('http://', 'https://')):
+            raise Exception('Invalid scheme')
+        request = Request(link, method='HEAD')
+        with urlopen(request) as response:  # nosec: B310
             type_ = response.info().get_content_type()
             cache.add(key, type_)
             return type_

@@ -248,7 +248,7 @@ class SeriesAdmin(admin.ModelAdmin):
                 '<b>{number}</b>: The number of the chapter.',
                 '<b>{date}</b>: The chapter\'s upload date (YYYY-MM-DD).',
                 '<b>{series}</b>: The title of the series.'
-            )))
+            )))  # nosec: B308
         if 'manager' in form.base_fields:
             form.base_fields['manager'].initial = request.user.id
             if request.user.is_superuser:  # pragma: no cover

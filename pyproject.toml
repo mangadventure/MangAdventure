@@ -48,6 +48,7 @@ dev = [
   # https://github.com/PyCQA/flake8/issues/234
   "flake8-pyproject>=1.2",
   "isort>=5.12",
+  "bandit~=1.7",
   "mypy~=1.6",
   "pytest~=7.4",
   "pytest-cov>=4.1",
@@ -145,6 +146,25 @@ warn_unused_ignores = false
 ignore_missing_imports = true
 disable_error_code = ["misc", "override"]
 plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+
+[tool.bandit]
+exclude_dirs = [
+  "./.git/*",
+  "./.venv/*",
+  "./.eggs/*",
+  "./.mypy_cache/*",
+  "./__pycache__/*",
+  "./docs/*",
+  "./build/*",
+  "./dist/*",
+  "./*/tests/*"
+]
+skips = [
+  "B104", # 0.0.0.0 is only used in debug mode
+  "B301", # pickled data is verified with HMAC
+  "B403", # pickled data is verified with HMAC
+  "B703", # covered by B308 (mark_safe)
+]
 
 [tool.django-stubs]
 django_settings_module = "MangAdventure.settings"

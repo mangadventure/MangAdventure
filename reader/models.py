@@ -18,7 +18,7 @@ from pathlib import PurePath
 from shutil import rmtree
 from threading import Lock, Thread
 from typing import Any, List, Tuple, Union
-from xml.etree import ElementTree as ET
+from xml.etree import ElementTree as ET  # nosec: B405
 from zipfile import ZipFile
 
 from django.conf import settings

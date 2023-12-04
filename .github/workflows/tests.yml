@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [master]
 
+concurrency:
+  group: ${{github.workflow}}-${{github.head_ref}}
+  cancel-in-progress: true
+
 jobs:
   sqlite:
     name: "SQLite & Python 3.8"
@@ -22,7 +26,7 @@ jobs:
       - name: "Set up .env file"
         run: cp .env.example .env
       - name: "Lint project"
-        run: flake8 && isort -q -c --df . && mypy .
+        run: scripts/lint.sh
       - name: "Run tests"
         run: py.test --cov-report=xml
         env:
@@ -38,7 +42,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send status to Discord"
         uses: MangAdventure/discord-webhook@v0.4
-        if: always() && github.event_name == 'push'
+        if: github.event_name == 'push' && !cancelled()
         continue-on-error: true
         with:
           run-suffix: ".1"
@@ -73,7 +77,7 @@ jobs:
       - name: "Set up .env file"
         run: cp .env.example .env
       - name: "Lint project"
-        run: flake8 && isort -q -c --df . && mypy .
+        run: scripts/lint.sh
       - name: "Run tests"
         run: py.test --cov-report=xml
         env:
@@ -90,7 +94,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send status to Discord"
         uses: MangAdventure/discord-webhook@v0.4
-        if: always() && github.event_name == 'push'
+        if: github.event_name == 'push' && !cancelled()
         continue-on-error: true
         with:
           run-suffix: ".2"
@@ -126,7 +130,7 @@ jobs:
       - name: "Set up .env file"
         run: cp .env.example .env
       - name: "Lint project"
-        run: flake8 && isort -q -c --df . && mypy .
+        run: scripts/lint.sh
       - name: "Run tests"
         run: py.test --cov-report=xml
         env:
@@ -143,7 +147,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send status to Discord"
         uses: MangAdventure/discord-webhook@v0.4
-        if: always() && github.event_name == 'push'
+        if: github.event_name == 'push' && !cancelled()
         continue-on-error: true
         with:
           run-suffix: ".3"

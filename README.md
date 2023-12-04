@@ -4,6 +4,7 @@
 [![Tests](https://img.shields.io/github/actions/workflow/status/mangadventure/MangAdventure/tests.yml?branch=master&label=Tests&logo=github-actions&logoColor=white)](https://github.com/mangadventure/MangAdventure/actions?query=workflow%3ATests)
 [![Coverage](https://img.shields.io/coveralls/github/mangadventure/MangAdventure?label=Coverage&logo=coveralls)](https://coveralls.io/github/mangadventure/MangAdventure)
 [![Discord](https://img.shields.io/discord/678589874475106312?color=7289DA&label=Discord&logo=discord)](https://discord.gg/GsJyhSz)
+[![Render](https://img.shields.io/badge/Render-deploy-4F65F1?logo=render)](https://render.com/deploy)
 
 MangAdventure, aka MangADV, is a simple manga hosting CMS.
 

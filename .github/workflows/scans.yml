@@ -23,22 +23,6 @@ jobs:
       - name: "Perform CodeQL analysis"
         uses: github/codeql-action/analyze@v2
 
-  bandit:
-    name: "Bandit"
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
-      - name: "Install bandit"
-        run: pip install bandit[toml] bandit-sarif-formatter
-      - name: "Run bandit"
-        run: bandit -c pyproject.toml -f sarif -o bandit.sarif -r .
-      - name: "Upload bandit analysis"
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          category: bandit
-          sarif_file: bandit.sarif
-
   dependency-review:
     name: "Dependencies"
     runs-on: ubuntu-latest

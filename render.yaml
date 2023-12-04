@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: mangadventure
+    runtime: python
+    region: frankfurt
+    plan: free
+    autoDeploy: false
+    buildFilter:
+      ignoredPaths:
+        - "docs/**"
+        - "docker/*"
+        - "*/tests/*"
+    buildCommand: scripts/deploy.sh
+    startCommand: >-
+      ./manage.py migrate -v0 --no-input &&
+      uwsgi --http-socket :25432 --module MangAdventure.wsgi
+      --static-map /static=/opt/render/project/src/static
+      --static-map /media=/opt/render/project/src/media
+    envVars:
+      - key: DOMAIN
+        sync: false
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: superuser
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        generateValue: true
+      - key: SECRET_KEY
+        generateValue: true
+      - key: MANGADV_DEBUG
+        value: "true"
+      - key: LOGO_URL
+        value: https://github.com/mangadventure.png
+      - key: CACHE_URL
+        fromService:
+          type: redis
+          name: cache
+          property: connectionString
+  - type: redis
+    name: cache
+    region: frankfurt
+    plan: free
+    ipAllowList: []

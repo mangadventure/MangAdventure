@@ -71,6 +71,12 @@ v0.9.x
 ^^^^^^
 
 | |c| Caching.
+| |u| Analytics.
+| |u| 2FA.
+
+v1.0.x
+^^^^^^^
+
 | |u| Redesign.
 |    |u| Pagination.
 |    |u| Mobile-friendly.
@@ -86,30 +92,23 @@ v0.9.x
 |    |u| Double page.
 |    |u| Right to left.
 | |u| 18+ filter.
-
-v0.10.x
-^^^^^^^
-
-| |u| GDPR compliance.
-| |u| Analytics.
 | |u| Comments.
 | |u| News feeds.
-
-v1.0.x
-^^^^^^
-
-| |u| Multiple languages.
 
 v1.1.x
 ^^^^^^
 
-| |u| GraphQL API.
+| |u| Multiple languages.
 
 v1.2.x
 ^^^^^^
+| |u| GraphQL API.
+
+v1.3.x
+^^^^^^
 
 | |u| AniList/MAL/Kitsu tracking.
-| |u| Twitter/Reddit link sharing.
+| |u| MangaUpdates release automation.
 
 .. unchecked
 .. |u| unicode:: U+00A0 U+00A0 U+2610
@@ -117,4 +116,4 @@ v1.2.x
 .. checked
 .. |c| unicode:: U+00A0 U+00A0 U+2611
 
-.. _webpub: https://readium.org/webpub-manifest/extensions/divina.html
+.. _webpub: https://readium.org/webpub-manifest/profiles/divina.html

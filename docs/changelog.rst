@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.9.6
+^^^^^^
+
+* Added Render demo
+
 v0.9.5
 ^^^^^^
 

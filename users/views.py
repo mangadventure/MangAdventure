@@ -2,16 +2,21 @@
 
 from __future__ import annotations
 
+from io import BytesIO
+from json import dumps
 from typing import TYPE_CHECKING
 
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import error, info
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.db.models import Subquery
-from django.http import Http404, HttpResponse
-from django.shortcuts import render
+from django.http import FileResponse, Http404, HttpResponse
+from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
+from django.views.decorators.csrf import requires_csrf_token
 from django.views.generic import FormView
 from django.views.generic.base import TemplateView
 
@@ -66,6 +71,24 @@ def profile(request: HttpRequest) -> HttpResponse:
     return render(request, 'profile.html', {
         'profile': prof, 'breadcrumbs': crumbs
     })
+
+
+@login_required
+@requires_csrf_token
+def export(request: HttpRequest) -> FileResponse:
+    """
+    View that exports a user's data.
+
+    :param request: The original request.
+
+    :return: A response with the JSON data.
+    """
+    profile = UserProfile.objects.get_or_create(user_id=request.user.id)[0]
+    data = dumps(profile.export(), cls=DjangoJSONEncoder).encode()
+    return FileResponse(
+        BytesIO(data), as_attachment=True,
+        filename='data.json', content_type='application/json'
+    )
 
 
 @method_decorator(login_required, name='dispatch')
@@ -191,7 +214,7 @@ class Bookmarks(TemplateView):
         :param request: The original request.
 
         :return: A response with the rendered
-                 :obj:`template <EditUser.template_name>`.
+                 :obj:`template <Bookmarks.template_name>`.
         """
         url = request.path
         p_url = url.rsplit('/', 2)[0] + '/'
@@ -231,4 +254,40 @@ class Bookmarks(TemplateView):
         return HttpResponse(status=201 if created else 204)
 
 
-__all__ = ['profile', 'EditUser', 'Bookmarks', 'Logout', 'PasswordReset']
+@method_decorator(login_required, name='dispatch')
+@method_decorator(requires_csrf_token, name='post')
+@method_decorator(cache_control(private=True, no_store=True), name='dispatch')
+class Delete(TemplateView):
+    """View that allows users to delete their accounts."""
+    #: The template that this view will render.
+    template_name = 'delete.html'
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        """
+        Handle ``GET`` requests (confirm the deactivation).
+
+        :param request: The original request.
+
+        :return: A response with the rendered
+                 :obj:`template <Delete.template_name>`.
+        """
+        return self.render_to_response({})
+
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        """
+        Handle ``POST`` requests (delete the account).
+
+        :param request: The original request.
+
+        :return: A redirect to :func:`index`.
+        """
+        uid = request.user.id
+        logout(request)
+        UserProfile.objects.get(user_id=uid).delete()
+        return redirect('index')
+
+
+__all__ = [
+    'profile', 'export', 'EditUser', 'Bookmarks',
+    'Logout', 'PasswordReset', 'Delete'
+]

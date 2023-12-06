@@ -17,9 +17,10 @@
       "first_name": "evangelos",
       "last_name": "ch",
       "email": "test@email.com",
-      "is_staff": false,
+      "is_staff": true,
       "is_active": true,
       "date_joined": "2019-12-31T21:16:47.153Z",
+      "last_login": "2019-12-31T21:16:47.153Z",
       "groups": [],
       "user_permissions": []
     }
@@ -38,6 +39,7 @@
       "is_staff": true,
       "is_active": true,
       "date_joined": "2019-12-31T21:16:47.155Z",
+      "last_login": "2019-12-31T21:16:47.155Z",
       "groups": [1],
       "user_permissions": []
     }
@@ -53,9 +55,10 @@
       "first_name": "",
       "last_name": "",
       "email": "",
-      "is_staff": false,
+      "is_staff": true,
       "is_active": true,
       "date_joined": "2019-12-31T21:16:47.156Z",
+      "last_login": "2019-12-31T21:16:47.156Z",
       "groups": [],
       "user_permissions": []
     }

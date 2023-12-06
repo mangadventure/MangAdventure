@@ -31,7 +31,16 @@
           {% endfor %}
         </div>
       {% endfor %}
-      <input class="button" type="submit" value="Save">
+      <input class="button" type="submit" value="Save profile">
     </form>
+    <section class="user-action" id="user-other">
+      <form action="{% url 'user_data' %}" method="POST">
+        {% csrf_token %}
+        <input class="button" type="submit" value="Export data">
+      </form>
+      <form action="{% url 'user_delete' %}" method="GET">
+        <input class="button delete" type="submit" value="Delete account">
+      </form>
+    </section>
   </article>
 {% endblock %}

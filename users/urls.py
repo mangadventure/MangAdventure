@@ -5,12 +5,16 @@ from django.urls import path, re_path
 from allauth.urls import urlpatterns as allauth_urls
 
 from .feeds import BookmarksAtom, BookmarksRSS
-from .views import Bookmarks, EditUser, Logout, PasswordReset, profile
+from .views import (
+    Bookmarks, Delete, EditUser, Logout, PasswordReset, export, profile
+)
 
 #: The URL patterns of the users app.
 urlpatterns = [
     path('', profile, name='user_profile'),
+    path('data/', export, name='user_data'),
     path('edit/', EditUser.as_view(), name='user_edit'),
+    path('delete/', Delete.as_view(), name='user_delete'),
     path('logout/', Logout.as_view(), name='account_logout'),
     path('bookmarks/', Bookmarks.as_view(), name='user_bookmarks'),
     path('bookmarks.atom', BookmarksAtom(), name='user_bookmarks.atom'),

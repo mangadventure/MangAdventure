@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% load account custom_tags %}
+{% block robots %}
+  <meta name="robots" content="noindex,nofollow">
+{% endblock %}
+{% with user=user_display %}
+  {% block title %}
+    <meta name="title" content="Delete">
+    <meta property="og:title" content="Delete ~ {{ config.NAME }}">
+    <title>Delete ~ {{ config.NAME }}</title>
+  {% endblock %}
+{% endwith %}
+{% block content %}
+  <h1 class="text-shadow alter-bg">Delete Account</h1>
+  <article class="user-action" id="user-delete">
+    <div>Are you sure you want to delete your account?</div>
+    <div>This will remove all associated data.</div>
+    <form action="{% url 'user_delete' %}" method="POST">
+      {% csrf_token %}
+      <input class="button" type="submit" value="Delete">
+    </form>
+  </article>
+{% endblock %}

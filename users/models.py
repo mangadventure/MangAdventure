@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime as dt
 from hashlib import blake2b
 from pathlib import PurePath
 from secrets import token_hex
@@ -95,6 +96,53 @@ class UserProfile(models.Model):
                  :const:`~MangAdventure.settings.MEDIA_ROOT`.
         """
         return PurePath('users', str(self.id))
+
+    def delete(self):
+        """Delete or anonymize data associated with the user."""
+        self.user.username = f'ANON-{token_hex(8)}'
+        self.user.email = ''
+        self.user.first_name = ''
+        self.user.last_name = ''
+        self.user.is_active = False
+        self.user.last_login = None
+        self.user.date_joined = dt.fromtimestamp(0)
+        self.user.save(update_fields=(
+            'username', 'first_name', 'last_name',
+            'is_active', 'email', 'date_joined', 'last_login'
+        ))
+        self.user.bookmarks.all().delete()
+        self.user.emailaddress_set.all().delete()
+        self.user.socialaccount_set.all().delete()
+        ApiKey.objects.filter(user_id=self.user.id).delete()
+        if self.avatar:
+            self.avatar.delete()
+        super().delete()
+
+    def export(self) -> dict:
+        """Export the data associated with the user."""
+        bookmarks = self.user.bookmarks.values(
+            slug=models.F('series__slug'),
+            title=models.F('series__title')
+        )
+        api_key = ApiKey.objects.filter(
+            user_id=self.user.id
+        ).values('key', 'created').first()
+        avatar = self.avatar.url if self.avatar else None
+        return {
+            'username': self.user.username,
+            'email': self.user.email,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
+            'date_joined': self.user.date_joined,
+            'last_login': self.user.last_login,
+            'bio': self.bio,
+            'avatar': avatar,
+            'api_key': api_key,
+            'bookmarks': {
+                'token': self.token,
+                'series': list(bookmarks)
+            }
+        }
 
     def __str__(self) -> str:
         """

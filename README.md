@@ -22,6 +22,7 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
   * [x] OAuth registration.
   * [x] Series bookmarks.
   * [x] Chapter downloads.
+  * [x] GDPR compliant.
   * [ ] Comments.
 * [x] Supports Redis/Memcached.
 * [x] Supports scheduled releases.

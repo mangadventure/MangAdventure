@@ -47,6 +47,25 @@ class TestUserProfile(UsersTestBase):
         assert self.profile.get_absolute_url() \
             .endswith(f'?id={self.profile.id}')
 
+    def test_export(self):
+        """Test data export."""
+        data = self.profile.export()
+        assert data['bio'] == 'Test'
+        assert data['username'] == self.user.username
+        assert data['api_key'] is None
+        assert len(data['bookmarks']['series']) == 0
+
+    def test_delete(self):
+        """Test account deletion."""
+        self.profile.delete()
+        self.user.refresh_from_db()
+        assert self.user.email == ''
+        assert self.user.first_name == ''
+        assert self.user.last_name == ''
+        assert self.user.last_login is None
+        assert self.user.date_joined.year == 1970
+        assert self.user.username.startswith('ANON-')
+
 
 class TestApiKey(UsersTestBase):
     def setup_method(self):

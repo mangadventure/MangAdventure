@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Sequence, cast
+from typing import TYPE_CHECKING, Sequence
 
 from django.db.models import Prefetch
 from django.urls import reverse
@@ -101,28 +101,16 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
 
     def perform_update(self, serializer: ProfileSerializer):
         data = dict(serializer.validated_data)
-        profile = cast(UserProfile, serializer.instance)
-        user = profile.user
+        profile: UserProfile = serializer.instance   # type: ignore
         # update the underlying user first
-        if fields := data.pop('user', {}):
+        if fields := data.pop('user', None):
             for k, v in fields.items():
-                setattr(user, k, v)
-            user.save(update_fields=list(fields))
+                setattr(profile.user, k, v)
+            profile.user.save(update_fields=list(fields))
         if data:  # and then update the profile
             for k, v in data.items():
                 setattr(profile, k, v)
             profile.save(update_fields=list(data))
-
-    def perform_destroy(self, instance: UserProfile):
-        # deactivate and anonymize the user
-        instance.user.is_active = False
-        instance.user.first_name = ''
-        instance.user.last_name = ''
-        instance.user.api_key.delete()
-        instance.user.save(update_fields=(
-            'is_active', 'first_name', 'last_name'
-        ))
-        instance.delete()
 
     @classmethod
     def as_view(cls, **initkwargs):

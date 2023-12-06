@@ -1,10 +1,11 @@
+from json import loads
 from urllib.parse import urlencode
 
 from django.urls import reverse
 
 from pytest import mark
 
-from users.models import Bookmark, User
+from users.models import Bookmark, User, UserProfile
 
 from . import UsersTestBase
 
@@ -13,6 +14,7 @@ class UsersViewTestBase(UsersTestBase):
     def setup_method(self):
         super().setup_method()
         self.client.force_login(self.user)
+        UserProfile.objects.get_or_create(user_id=self.user.id)
 
 
 class TestEditUser(UsersViewTestBase):
@@ -94,6 +96,28 @@ class TestProfile(UsersViewTestBase):
         from math import nan
         r = self.client.get(self.URL, data={'id': nan})
         assert r.status_code == 404
+
+
+class TestExport(UsersViewTestBase):
+    URL = reverse('user_data')
+
+    def test_get(self):
+        r = self.client.get(self.URL)
+        assert r.status_code == 200
+        data = loads(r.getvalue().decode())
+        assert data['username'] == self.user.username
+
+
+class TestDelete(UsersViewTestBase):
+    URL = reverse('user_delete')
+
+    def test_get(self):
+        r = self.client.get(self.URL)
+        assert r.status_code == 200
+
+    def test_post(self):
+        r = self.client.post(self.URL)
+        assert r.status_code == 302
 
 
 class TestBookmarks(UsersViewTestBase):

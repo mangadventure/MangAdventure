@@ -19,16 +19,18 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
 * [x] Doesn't require JavaScript.
 * [x] Supports searching for series.
 * [x] Supports users.
+  * [x] GDPR compliant.
   * [x] OAuth registration.
   * [x] Series bookmarks.
   * [x] Chapter downloads.
-  * [x] GDPR compliant.
+  * [ ] Optional 2FA.
   * [ ] Comments.
 * [x] Supports Redis/Memcached.
 * [x] Supports scheduled releases.
 * [x] Supports custom chapter names.
 * [x] Supports hiding licensed series.
-* [x] Supports tracking chapter views.
+* [x] Supports web analytics.
+  * [x] And tracking chapter views.
 * [x] Allows for migration from FoolSlide2.
 * [x] Has Tachiyomi & Aidoku extensions.
 * [ ] More features coming soon...
@@ -56,6 +58,7 @@ You are welcome to contribute after reading the [guidelines](.github/CONTRIBUTIN
 * Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
 * Search results are sorted using [tablesort](https://tristen.ca/tablesort/demo/)
 * Info pages use the [TinyMCE](https://www.tiny.cloud/docs-4x/) editor
+* Web analytics are provided by [umami](https://umami.is/)
 * API docs use the [RapiDoc](https://mrin9.github.io/RapiDoc/) viewer
 * Browser logos are taken from [alrra/browser-logos](https://github.com/alrra/browser-logos)
 

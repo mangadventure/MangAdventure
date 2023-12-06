@@ -67,6 +67,10 @@
         </noscript>
       {% endcache %}
     {% endblock %}
+    {% if config.UMAMI_ID and config.UMAMI_URL %}
+      <script data-website-id="{{config.UMAMI_ID}}" data-host-url="{{config.UMAMI_URL}}" data-do-not-track="true"
+              type="application/javascript" src="{% static 'vendor/umami.js' %}" async></script>
+    {% endif %}
     {% block head_extras %}{% endblock %}
     {{ searchbox|jsonld:'website' }}
     {{ organization|jsonld:'organization' }}

@@ -100,8 +100,10 @@
         }, '');
       Array.from(form.elements).slice(0, 7).concat(form.categories)
         .forEach(el => { el.disabled = !el.value });
-      const search = form.action + '?' +
-        new URLSearchParams(new FormData(form)).toString();
+      const params = new URLSearchParams(new FormData(form));
+      if ('umami' in window)
+        window.umami.track('Search', Object.fromEntries(params));
+      const search = form.action + '?' + params.toString();
       const xhr = new XMLHttpRequest();
       xhr.open(form.method, search, true);
       xhr.onload = function() {

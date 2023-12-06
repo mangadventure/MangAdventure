@@ -105,57 +105,45 @@ Browsers
      - Versions
    * - | |Chrome|
        | Chrome
-     - 51+
+     - 73+
    * - | |FF|
        | Firefox
-     - 60+
+     - 63+
    * - | |IE|
        | Internet Explorer
      - |X|
    * - | |Edge|
        | Edge
-     - 16+
+     - 79+
    * - | |Safari|
        | Safari
      - 14.1+
    * - | |Opera|
        | Opera
-     - 39+
+     - 60+
    * - | |iOS|
        | iOS Safari
      - 13+
-   * - | |Android|
-       | Android Browser
-     - |X|
-   * - | |Samsung|
-       | Samsung Internet
-     - 5+
 
-.. |Chrome| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/chrome/chrome_32x32.png
+.. |Chrome| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.0.0/chrome/chrome_32x32.png
    :alt: Chrome
 
-.. |FF| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/firefox/firefox_32x32.png
+.. |FF| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.0.0/firefox/firefox_32x32.png
    :alt: Firefox
 
-.. |IE| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/archive/internet-explorer_9-11/internet-explorer_9-11_32x32.png
+.. |IE| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.0.0/archive/internet-explorer_9-11/internet-explorer_9-11_32x32.png
    :alt: Internet Explorer
 
-.. |Edge| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/edge/edge_32x32.png
+.. |Edge| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.0.0/edge/edge_32x32.png
    :alt: Edge
 
-.. |Safari| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/safari/safari_32x32.png
+.. |Safari| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.0.0/safari/safari_32x32.png
    :alt: Safari
 
-.. |Opera| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/opera/opera_32x32.png
+.. |Opera| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.0.0/opera/opera_32x32.png
    :alt: Opera
 
-.. |Samsung| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/samsung-internet/samsung-internet_32x32.png
-   :alt: Samsung Internet
-
-.. |Android| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/archive/android/android_32x32.png
-   :alt: Android Browser
-
-.. |iOS| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/72.0.0/safari-ios/safari-ios_32x32.png
+.. |iOS| image:: https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.0.0/safari-ios/safari-ios_32x32.png
    :alt: iOS Safari
 
 .. |X| unicode:: U+2716

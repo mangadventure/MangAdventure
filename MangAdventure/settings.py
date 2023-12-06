@@ -455,13 +455,14 @@ if env.bool('HTTPS', True):
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 CDN = env.get('USE_CDN', '').lower()
+UMAMI_URL = env.get('UMAMI_URL')
 # Optional django-csp module
 if find_spec('csp'):
     #: Set the :csp:`default-src` CSP directive.
     CSP_DEFAULT_SRC = ("'none'",)
 
     #: Set the :csp:`connect-src` CSP directive.
-    CSP_CONNECT_SRC = ("'self'",)
+    CSP_CONNECT_SRC = ("'self'", UMAMI_URL) if UMAMI_URL else ("'self'",)
 
     #: Set the :csp:`manifest-src` CSP directive.
     CSP_MANIFEST_SRC = ("'self'",)
@@ -584,6 +585,8 @@ CONFIG = {
     'FONT_NAME': env['FONT_NAME'],
     'FONT_URL': env['FONT_URL'],
     'USE_CDN': CDN,
+    'UMAMI_URL': UMAMI_URL,
+    'UMAMI_ID': env.get('UMAMI_ID'),
     'ALLOW_DLS': env.bool('ALLOW_DLS', True),
     'MAX_RELEASES': env.int('MAX_RELEASES', 10),
     'MAX_CHAPTERS': env.int('MAX_CHAPTERS', 1),
@@ -621,4 +624,4 @@ if find_spec('sentry_sdk'):
         traces_sample_rate=env.float('SENTRY_SAMPLE_RATE', 0.0) / 100
     )
 
-del BOTS, CDN, LOGO, LOGS_DIR, VERSION
+del BOTS, CDN, UMAMI_URL, LOGO, LOGS_DIR, VERSION

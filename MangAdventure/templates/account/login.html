@@ -50,7 +50,7 @@
         {% if redirect_field_value %}
           <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
         {% endif %}
-        <input class="button" type="submit" value="Login">
+        <input class="button" type="submit" value="Login" data-umami-event="Login">
       </form>
       <section id="forgot-password">
         <a href="{% url 'account_reset_password' %}" rel="nofollow">Forgot your password?</a>
@@ -63,7 +63,7 @@
         {% for oauth in oauth_providers %}
           {% if forloop.first %}<div id="oauth-or">Or, sign in with:</div>{% endif %}
           <form class="provider" action="{% provider_login_url oauth.provider %}" method="post">
-            <button type="submit">
+            <button type="submit" data-umami-event="Login" data-umami-event-oauth="{{oauth.name}}">
               <i class="mi mi-{{ oauth.provider }}"></i>{{ oauth.name }}
             </button>
           </form>

@@ -30,14 +30,14 @@
       {% if redirect_field_value %}
         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
       {% endif %}
-      <input class="button" type="submit" value="Register">
+      <input class="button" type="submit" value="Register" data-umami-event="Signup">
     </form>
     <section id="oauth">
       {% get_oauth_providers as oauth_providers %}
       {% for oauth in oauth_providers %}
         {% if forloop.first %}<div id="oauth-or">Or, sign up with:</div>{% endif %}
         <form class="provider" action="{% provider_login_url oauth.provider %}" method="post">
-          <button type="submit">
+          <button type="submit" data-umami-event="Signup" data-umami-event-oauth="{{oauth.name}}">
             <i class="mi mi-{{ oauth.provider }}"></i>{{ oauth.name }}
           </button>
         </form>

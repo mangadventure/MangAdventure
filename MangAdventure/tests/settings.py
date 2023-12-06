@@ -291,6 +291,8 @@ CONFIG = {
     'FONT_NAME': 'Lato',
     'FONT_URL': 'https://fonts.googleapis.com/css?family=Lato&display=swap',
     'USE_CDN': 'none',
+    'UMAMI_URL': '',
+    'UMAMI_ID': '',
     'ALLOW_DLS': True,
     'MAX_RELEASES': 10,
     'MAX_CHAPTERS': 1,

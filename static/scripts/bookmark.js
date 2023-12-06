@@ -9,6 +9,8 @@
       xhr.onload = function() {
         switch (xhr.status) {
           case 201:
+            if ('umami' in window)
+              window.umami.track('Bookmark');
             btn.className = 'mi mi-bookmark bookmark-btn';
             break;
           case 204:

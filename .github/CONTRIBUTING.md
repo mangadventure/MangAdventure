@@ -48,7 +48,7 @@ log in with the administrator account you created earlier to add content to the 
 You can lint the code and run tests like so:
 
 ```sh
-flake8 && isort -q -c --df . # lint
+scripts/lint.sh # lint
 py.test # run tests
 ```
 
@@ -68,7 +68,7 @@ Follow the style defined by [EditorConfig](../.editorconfig).
 * Use imperative form in the title.
   * "Fix" rather than "Fixed" or "Fixes".
 * Start the title with a capital letter.
-* Do not include tags like `(feat):` or `[BUG]`.
+* Do not include tags like `feat:` or `[BUG]`.
   * `[no ci]` is used to skip workflows.
 * Use the body to elaborate if needed.
 * Wrap lines in the body to 72 characters.

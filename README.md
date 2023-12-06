@@ -55,12 +55,12 @@ You are welcome to contribute after reading the [guidelines](.github/CONTRIBUTIN
 
 ## Credits
 
-* Inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
+* Initially inspired by [FoOlSlide 2](https://github.com/chocolatkey/FoOlSlide2)
 * Search results are sorted using [tablesort](https://tristen.ca/tablesort/demo/)
 * Info pages use the [TinyMCE](https://www.tiny.cloud/docs-4x/) editor
 * Web analytics are provided by [umami](https://umami.is/)
 * API docs use the [RapiDoc](https://mrin9.github.io/RapiDoc/) viewer
-* Browser logos are taken from [alrra/browser-logos](https://github.com/alrra/browser-logos)
+* Browser logos are taken from [browser-logos](https://github.com/alrra/browser-logos)
 
 ## License
 

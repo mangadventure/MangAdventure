@@ -71,8 +71,8 @@ v0.9.x
 ^^^^^^
 
 | |c| Caching.
-| |u| Analytics.
-| |u| 2FA.
+| |c| Analytics.
+| |c| GDPR compliance.
 
 v1.0.x
 ^^^^^^^
@@ -94,6 +94,7 @@ v1.0.x
 | |u| 18+ filter.
 | |u| Comments.
 | |u| News feeds.
+| |u| 2FA.
 
 v1.1.x
 ^^^^^^

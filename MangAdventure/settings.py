@@ -351,13 +351,9 @@ ACCOUNT_FORMS = {
 #: See :auth:`SOCIALACCOUNT_ADAPTER <configuration.html>`.
 SOCIALACCOUNT_ADAPTER = 'users.adapters.SocialAccountAdapter'
 
-#: An email address is not required for social accounts.
-#: See :auth:`SOCIALACCOUNT_EMAIL_REQUIRED <configuration.html>`.
-SOCIALACCOUNT_EMAIL_REQUIRED = False
-
-#: Verifying the email address is not required for social accounts.
-#: See :auth:`SOCIALACCOUNT_EMAIL_VERIFICATION <configuration.html>`.
-SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
+#: Automatically connect social accounts to local ones. See
+#: :auth:`SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT <configuration.html>`.
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 
 #: Social account provider customization. See
 #: :auth:`Google <providers.html#google>`,
@@ -367,15 +363,18 @@ SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'VERIFIED_EMAIL': True,
         'OAUTH_PKCE_ENABLED': True,
+        'EMAIL_AUTHENTICATION': True,
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'}
     },
     'github': {
         'VERIFIED_EMAIL': True,
+        'EMAIL_AUTHENTICATION': True,
         'SCOPE': ['read:user', 'user:email']
     },
     'discord': {
         'VERIFIED_EMAIL': True,
+        'EMAIL_AUTHENTICATION': True,
         'SCOPE': ['identify', 'email']
     }
 }

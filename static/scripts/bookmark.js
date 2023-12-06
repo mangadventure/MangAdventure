@@ -10,7 +10,7 @@
         switch (xhr.status) {
           case 201:
             if ('umami' in window)
-              window.umami.track('Bookmark');
+              window.umami.track('Bookmark', {url: location.href});
             btn.className = 'mi mi-bookmark bookmark-btn';
             break;
           case 204:

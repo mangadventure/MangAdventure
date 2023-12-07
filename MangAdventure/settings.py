@@ -20,6 +20,9 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 # Load environment variables from .env file.
 env = Env(BASE_DIR / '.env')
 
+if find_spec('django_stubs_ext'):  # pragma: no cover
+    __import__('django_stubs_ext').monkeypatch()
+
 ###############
 #    Basic    #
 ###############

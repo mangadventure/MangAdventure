@@ -27,7 +27,7 @@ classifiers = [
 keywords = ["manga", "scanlation", "reader"]
 dynamic = ["version", "readme"]
 dependencies = [
-  "django~=4.1.12",
+  "django~=4.2.8",
   "djangorestframework>=3.14",
   "django-allauth>=0.57",
   "Pillow>=10.1",
@@ -41,7 +41,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "django-stubs~=4.1",
+  "django-stubs~=4.2",
   "djangorestframework-stubs>=3.14",
   "flake8~=6.1",
   # because asottile is a jackass, again
@@ -60,7 +60,7 @@ docs = [
   "sphinx-autodoc-typehints~=1.19.5"
 ]
 mysql = ["mysqlclient>=2.2"]
-pgsql = ["psycopg2>=2.9"]
+pgsql = ["psycopg>=3.1"]
 redis = ["redis>5.0"]
 memc = ["pylibmc>=1.6"]
 csp = ["django-csp>=3.7"]

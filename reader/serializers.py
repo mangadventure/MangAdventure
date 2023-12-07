@@ -74,11 +74,9 @@ class ChapterSerializer(ModelSerializer):
         }.get(fmt or 'iso-8601')
         return rep
 
-    def __uri(self, path: str) -> str:
-        return self.context['view'].request.build_absolute_uri(path)
-
     def _get_pages(self, obj: Chapter) -> List[str]:
-        return [self.__uri(p.image.url) for p in obj.pages.iterator()]
+        uri = self.context['view'].request.build_absolute_uri
+        return [uri(p.image.url) for p in obj.pages.iterator()]
 
     class Meta:
         model = Chapter
@@ -147,14 +145,7 @@ class _SeriesListSerializer(ModelSerializer):
 
 
 class _SeriesDetailSerializer(ModelSerializer):
-    """
-    Serializer for series details.
-
-    .. admonition:: TODO
-       :class: warning
-
-       Make M2M fields editable.
-    """
+    """Serializer for series details."""
     updated = DateTimeField(
         source='latest_upload', read_only=True,
         help_text='The latest chapter upload date.'
@@ -248,9 +239,6 @@ class CubariSerializer(ModelSerializer):
     metadata = SerializerMethodField(method_name='_get_metadata')
     chapters = SerializerMethodField(method_name='_get_chapters')
 
-    def __uri(self, path: str) -> str:
-        return self.context['view'].request.build_absolute_uri(path)
-
     def _get_artist(self, obj: Series) -> str:
         return ', '.join(a.name for a in obj.artists.all())
 
@@ -258,7 +246,7 @@ class CubariSerializer(ModelSerializer):
         return ', '.join(a.name for a in obj.authors.all())
 
     def _get_cover(self, obj: Series) -> str:
-        return self.__uri(obj.cover.url)
+        return self.context['view'].request.build_absolute_uri(obj.cover.url)
 
     def _get_aliases(self, obj: Series) -> List[str]:
         return obj.aliases.names()
@@ -270,6 +258,7 @@ class CubariSerializer(ModelSerializer):
         ]
 
     def _get_chapters(self, obj: Series) -> Dict[str, Dict]:
+        uri = self.context['view'].request.build_absolute_uri
         return {
             str(ch.id): {
                 'title': ch.title,
@@ -277,7 +266,7 @@ class CubariSerializer(ModelSerializer):
                 'number': f'{ch.number:g}',
                 'groups': {
                     ', '.join(g.name for g in ch.groups.all()) or 'N/A':
-                    [self.__uri(p.image.url) for p in ch.pages.all()]
+                    [uri(p.image.url) for p in ch.pages.all()]
                 },
                 'last_updated': str(round(ch.modified.timestamp()))
             } for ch in obj.chapters.all()

@@ -31,28 +31,20 @@
         </div>
         <div id="search-status">
           <label for="status">Series Status: </label>
-          {# TODO: clean this up #}
-          <input {% if status == 'any' %}checked="checked"{% endif %}
-                 name="status" id="status-any" value="any" type="radio">
-          <label for="status-any">Any</label>
-          <input {% if status == 'completed' %}checked="checked"{% endif %}
-                 name="status" id="status-completed" value="completed" type="radio">
-          <label for="status-completed">Completed</label>
-          <input {% if status == 'ongoing' %}checked="checked"{% endif %}
-                 name="status" id="status-ongoing" value="ongoing" type="radio">
-          <label for="status-ongoing">Ongoing</label>
-          <input {% if status == 'hiatus' %}checked="checked"{% endif %}
-                 name="status" id="status-hiatus" value="hiatus" type="radio">
-          <label for="status-hiatus">On Hiatus</label>
-          <input {% if status == 'canceled' %}checked="checked"{% endif %}
-                 name="status" id="status-canceled" value="canceled" type="radio">
-          <label for="status-canceled">Canceled</label>
+          {% with 'any completed ongoing hiatus canceled' as statuses %}
+            {% for value in statuses.split %}
+              {% cycle 'Any' 'Completed' 'Ongoing' 'On Hiatus' 'Canceled' as label silent %}
+              <input {% if status == value %}checked="checked"{% endif %} type="radio"
+                     name="status" id="status-{{ value }}" value="{{ value }}">
+              <label for="status-{{ value }}">{{ label }}</label>
+            {% endfor %}
+          {% endwith %}
         </div>
         <fieldset id="search-categories">
           <legend>Categories:</legend>
-          <div>(
-            <i class="mi mi-ok-circle"></i> = include /
-            <i class="mi mi-x-circle"></i> = exclude )
+          <div>
+            (<i class="mi mi-ok-circle"></i> = include /
+            <i class="mi mi-x-circle"></i> = exclude)
           </div>
           <input type="hidden" class="no-display" id="categories" name="categories">
           <div id="category-container">

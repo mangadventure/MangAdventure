@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime as dt
+from datetime import datetime as dt, timezone as tz
 from hashlib import blake2b
 from pathlib import PurePath
 from secrets import token_hex
@@ -105,7 +105,7 @@ class UserProfile(models.Model):
         self.user.last_name = ''
         self.user.is_active = False
         self.user.last_login = None
-        self.user.date_joined = dt.fromtimestamp(0)
+        self.user.date_joined = dt.fromtimestamp(0, tz=tz.utc)
         self.user.save(update_fields=(
             'username', 'first_name', 'last_name',
             'is_active', 'email', 'date_joined', 'last_login'

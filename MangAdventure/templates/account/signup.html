@@ -36,7 +36,7 @@
       {% for oauth in oauth_providers %}
         {% if forloop.first %}<div id="oauth-or">Or, sign up with:</div>{% endif %}
         <form class="provider" action="{% provider_login_url oauth.provider %}" method="post">
-          <button type="submit" data-umami-event="Signup" data-umami-event-oauth="{{oauth.name}}">
+          <button type="submit" data-umami-event="Signup" data-umami-event-oauth="{{ oauth.name }}">
             <i class="mi mi-{{ oauth.provider }}"></i>{{ oauth.name }}
           </button>
         </form>

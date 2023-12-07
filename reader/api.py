@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException, NotFound
+from rest_framework.exceptions import APIException, NotFound, ParseError
 from rest_framework.mixins import (
     CreateModelMixin, DestroyModelMixin, ListModelMixin,
     RetrieveModelMixin, UpdateModelMixin
@@ -142,6 +142,8 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
                 'series__slug', 'volume',
                 'series__licensed', 'number'
             ).prefetch_related('pages').get(id=pk)
+        except ValueError:
+            raise ParseError()
         except models.Chapter.DoesNotExist:
             raise NotFound()
         if instance.series.licensed:
@@ -162,6 +164,8 @@ class ChapterViewSet(CORSMixin, ModelViewSet):
                 'series__slug', 'volume',
                 'series__licensed', 'number'
             ).get(id=pk)
+        except ValueError:
+            raise ParseError()
         except models.Chapter.DoesNotExist:
             raise NotFound()
         if instance.series.licensed:

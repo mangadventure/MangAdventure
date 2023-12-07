@@ -173,42 +173,30 @@ def track_view(sender: Type[WSGIHandler], environ:
     try:
         url = resolve(environ.get('PATH_INFO', ''))
     except Resolver404:
-        pass
-    else:
-        if url.url_name == 'page':
+        return
+
+    if url.url_name == 'page':
+        try:
+            args_ = url.captured_kwargs  # type: ignore
+            if args_['page'] == 1:
+                Chapter.track_view(
+                    series__licensed=False,
+                    series__slug=args_['slug'],
+                    volume=args_['volume'] or None,
+                    number=args_['number']
+                )
+        except KeyError:
+            return
+    elif url.url_name == 'chapters-pages':
+        q = QueryDict(environ.get('QUERY_STRING', ''))
+        if q.get('track', '') == 'true':
             try:
-                args_ = url.captured_kwargs  # type: ignore
-                if args_['page'] == 1:
-                    Chapter.track_view(
-                        series__licensed=False,
-                        series__slug=args_['slug'],
-                        volume=args_['volume'] or None,
-                        number=args_['number']
-                    )
-            except KeyError:
-                pass
-        elif url.url_name == 'chapters-pages':
-            q = QueryDict(environ.get('QUERY_STRING', ''))
-            if q.get('track', '') == 'true':
-                try:
-                    Chapter.track_view(
-                        series__licensed=False,
-                        id=int(url.captured_kwargs['pk'])  # type: ignore
-                    )
-                except (KeyError, ValueError):
-                    pass
-        elif url.url_name == 'pages-list':
-            q = QueryDict(environ.get('QUERY_STRING', ''))
-            if q.get('track', '') == 'true':
-                try:
-                    Chapter.track_view(
-                        series__licensed=False,
-                        series__slug=q['series'],
-                        volume=int(q['volume']) or None,
-                        number=float(q['number'])
-                    )
-                except (KeyError, ValueError):
-                    pass
+                Chapter.track_view(
+                    series__licensed=False,
+                    id=int(url.captured_kwargs['pk'])  # type: ignore
+                )
+            except (KeyError, ValueError):
+                return
 
 
 __all__ = [

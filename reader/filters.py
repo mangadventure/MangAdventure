@@ -261,8 +261,18 @@ class PageFilter(BaseFilterBackend):
                 'error': f'{params} are required parameters.'
             })
         series = request.query_params['series']
-        volume = int(request.query_params['volume']) or None  # type: ignore
-        number = float(request.query_params['number'])  # type: ignore
+        try:
+            volume = int(request.query_params['volume']) or None  # type: ignore
+        except ValueError:
+            raise ValidationError(detail={
+                'error': f'Invalid volume: {request.query_params["volume"]}'
+            })
+        try:
+            number = float(request.query_params['number'])  # type: ignore
+        except ValueError:
+            raise ValidationError(detail={
+                'error': f'Invalid number: {request.query_params["number"]}'
+            })
         if request.query_params.get('track') == 'true':
             Chapter.track_view(
                 series__slug=series,

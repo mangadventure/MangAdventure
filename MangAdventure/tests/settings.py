@@ -200,8 +200,6 @@ DEFAULT_FROM_EMAIL = 'evangelos-ch@users.noreply.github.com'
 DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]
 DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
 
-CSRF_USE_SESSIONS = True
-
 SESSION_COOKIE_SAMESITE = 'Strict'
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

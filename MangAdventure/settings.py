@@ -416,10 +416,6 @@ SILENCED_SYSTEM_CHECKS = ('security.W003', 'security.W004')
 DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]
 DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
 
-#: Store the CSRF token in a session.
-#: See :setting:`CSRF_USE_SESSIONS`.
-CSRF_USE_SESSIONS = True
-
 #: Prevent the session cookie from being sent in cross-site requests.
 #: See :setting:`SESSION_COOKIE_SAMESITE`.
 SESSION_COOKIE_SAMESITE = 'Lax'

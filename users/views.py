@@ -16,7 +16,6 @@ from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
-from django.views.decorators.csrf import requires_csrf_token
 from django.views.generic import FormView
 from django.views.generic.base import TemplateView
 
@@ -74,7 +73,6 @@ def profile(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-@requires_csrf_token
 def export(request: HttpRequest) -> FileResponse:
     """
     View that exports a user's data.
@@ -91,8 +89,8 @@ def export(request: HttpRequest) -> FileResponse:
     )
 
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(cache_control(private=True, no_store=True), name='dispatch')
+@method_decorator(login_required, 'dispatch')
+@method_decorator(cache_control(private=True, no_store=True), 'dispatch')
 class EditUser(TemplateView):
     """View that serves the edit form for a user's profile."""
     #: The template that this view will render.
@@ -164,14 +162,14 @@ class EditUser(TemplateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, 'dispatch')
 class Logout(LogoutView):
     """A :class:`LogoutView` that disallows ``GET`` requests."""
     #: The allowed HTTP methods.
     http_method_names = ('post', 'head', 'options')
 
 
-@method_decorator(cache_control(private=True, no_store=True), name='dispatch')
+@method_decorator(cache_control(private=True, no_store=True), 'dispatch')
 class PasswordReset(PasswordResetFromKeyView):
     """
     A :class:`PasswordResetFromKeyView` without the extra redirect.
@@ -200,8 +198,8 @@ class PasswordReset(PasswordResetFromKeyView):
         )
 
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(cache_control(private=True, max_age=600), name='dispatch')
+@method_decorator(login_required, 'dispatch')
+@method_decorator(cache_control(private=True, max_age=600), 'dispatch')
 class Bookmarks(TemplateView):
     """View that serves a user's bookmarks page."""
     #: The template that this view will render.
@@ -254,9 +252,8 @@ class Bookmarks(TemplateView):
         return HttpResponse(status=201 if created else 204)
 
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(requires_csrf_token, name='post')
-@method_decorator(cache_control(private=True, no_store=True), name='dispatch')
+@method_decorator(login_required, 'dispatch')
+@method_decorator(cache_control(private=True, no_store=True), 'dispatch')
 class Delete(TemplateView):
     """View that allows users to delete their accounts."""
     #: The template that this view will render.

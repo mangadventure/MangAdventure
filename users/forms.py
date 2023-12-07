@@ -31,17 +31,17 @@ else:  # pragma: no cover
 
 class RegistrationForm(SignupForm):  # pragma: no cover
     """Registration form with a honeypot field."""
+    #: The honeypot field.
     email2 = forms.EmailField(
         label='Email (again)',
         required=False,
-        widget=forms.EmailInput(
-            attrs={
-                'placeholder': 'Email address confirmation'
-            }
-        )
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'Email address confirmation'
+        })
     )
 
     def clean(self):
+        """Fail validation if the honeypot field was set."""
         result = super().clean()
         if self.cleaned_data.get('email2'):
             msg = 'Possible spam bot detected'
@@ -54,17 +54,17 @@ class RegistrationForm(SignupForm):  # pragma: no cover
 
 class PasswordResetForm(ResetPasswordForm):  # pragma: no cover
     """Password reset form with a honeypot field."""
+    #: The honeypot field.
     email2 = forms.EmailField(
         label='Email (again)',
         required=False,
-        widget=forms.EmailInput(
-            attrs={
-                'placeholder': 'Email address confirmation'
-            }
-        )
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'Email address confirmation'
+        })
     )
 
     def clean(self):
+        """Fail validation if the honeypot field was set."""
         result = super().clean()
         if self.cleaned_data.get('email2'):
             msg = 'Possible spam bot detected'

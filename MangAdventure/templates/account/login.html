@@ -26,7 +26,6 @@
         <div class="error">{{ error }}</div>
       {% endfor %}
       <form method="POST" action="{% url 'account_login' %}">
-        {% csrf_token %}
         <div class="field">
           <label for="login">{{ form.login.label }}:</label>
           <input placeholder="{{ form.login.field.widget.attrs.placeholder }}"

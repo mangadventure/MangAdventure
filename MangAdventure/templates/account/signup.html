@@ -12,7 +12,6 @@
   <h1 class="text-shadow alter-bg">Sign up</h1>
   <article class="user-action" id="sign-up">
     <form method="POST" action="{% url 'account_signup' %}">
-      {% csrf_token %}
       {% for item in form %}
         <div class="field{% if item.name == 'email2' %} no-display{% endif %}">
           <label for="{{ item.name }}">{{ item.label }}</label>

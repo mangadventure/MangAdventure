@@ -16,7 +16,6 @@
     <div>Are you sure you want to delete your account?</div>
     <div>This will remove all associated data.</div>
     <form action="{% url 'user_delete' %}" method="POST">
-      {% csrf_token %}
       <input class="button" type="submit" value="Delete">
     </form>
   </article>

@@ -35,9 +35,9 @@
   <article id="series">
     <img src="{{ series.cover.url }}" alt="{{ series }} Cover" class="cover">
     {% if user.is_authenticated %}
-      <i class="bookmark-btn mi mi-bookmark{{ marked|yesno:',-o' }}"
-         title="{{ marked|yesno:'Unb,B' }}ookmark" data-series="{{ series.id }}"
-         data-token="{{ csrf_token }}" data-target="{% url 'user_bookmarks' %}"></i>
+      <i data-series="{{ series.id }}" data-target="{% url 'user_bookmarks' %}"
+         class="bookmark-btn mi mi-bookmark{{ marked|yesno:',-o' }}"
+         title="{{ marked|yesno:'Unb,B' }}ookmark"></i>
     {% endif %}
     <div id="series-info">
       {% if aliases %}

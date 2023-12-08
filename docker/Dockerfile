@@ -6,7 +6,7 @@ COPY . .
 
 # hadolint ignore=DL3018
 RUN ([ -f .env ] || mv .env.example .env) \
-    && mkdir -p .well-known logs media static/COMPILED \
+    && mkdir -p .well-known logs media \
     && touch static/styles/_variables.scss \
     && mv docker/uwsgi.ini /etc/uwsgi.ini \
     && apk add --no-cache \

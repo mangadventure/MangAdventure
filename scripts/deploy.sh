@@ -12,9 +12,6 @@ sed .env.example > .env \
   -e 's/${DOMAIN},www.${DOMAIN}/.onrender.com/' \
   -e 's/<user>@${DOMAIN}/${DJANGO_SUPERUSER_EMAIL}/'
 
-printf 'Creating the extra style file.\n'
-mkdir -p static/extra && touch static/extra/style.scss
-
 printf 'Installing the dependencies.\n'
 pip install -q -e '.[redis,uwsgi]'
 
@@ -27,7 +24,6 @@ settings.MEDIA_ROOT.mkdir(exist_ok=True)
 (settings.MEDIA_ROOT / "logo.png").write_bytes(
     get(env("LOGO_URL"), allow_redirects=True).content
 )
-(settings.STATIC_ROOT / "COMPILED").mkdir(exist_ok=True)
 '
 
 printf 'Setting up the database.\n'

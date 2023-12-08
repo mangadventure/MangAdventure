@@ -6,11 +6,94 @@ Custom storages.
     https://docs.djangoproject.com/en/4.1/ref/files/storage/
 """
 
-from typing import Optional, Tuple, cast
+from pathlib import Path
+from typing import Dict, Iterator, Optional, Tuple, cast
 from urllib.parse import quote, urlencode
 
 from django.conf import settings
+from django.contrib.staticfiles.finders import FileSystemFinder
+from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.files.storage import FileSystemStorage
+
+from sass import compile as sassc
+
+#: Variables used to generate ``static/styles/_variables.scss``.
+SCSS_VARS = """\
+$main-bg: %(MAIN_BG_COLOR)s;
+$alter-bg: %(ALTER_BG_COLOR)s;
+$main-fg: %(MAIN_TEXT_COLOR)s;
+$alter-fg: %(ALTER_TEXT_COLOR)s;
+$shadow-color: %(SHADOW_COLOR)s;
+$font-family: %(FONT_NAME)s;
+"""
+
+
+def _is_newer(a: Path, b: Path) -> bool:
+    """Check if file ``a`` is newer than file ``b``."""
+    return a.stat().st_mtime > b.stat().st_mtime
+
+
+class ProcessedStaticFilesFinder(FileSystemFinder):
+    """Static files finder that for processed files."""
+    def find_location(self, root: str, path: str,
+                      prefix: Optional[str] = None) -> Optional[str]:
+        if path.startswith('COMPILED'):
+            # TODO: use removesuffix (Py3.9+)
+            root = root[:-6] + 'COMPILED'
+            return super().find_location(root, path, 'COMPILED')
+        return super().find_location(root, path, prefix)
+
+
+class ProcessedStaticFilesStorage(StaticFilesStorage):
+    """Static files storage class with postprocessing."""
+    def __init__(self, *args, **kwargs):  # pragma: no cover
+        super().__init__(*args, **kwargs)
+
+        self._src = Path(self.location)
+        self._dst = Path(self.location, 'COMPILED')
+        self._dst.mkdir(exist_ok=True)
+
+        content = SCSS_VARS % settings.CONFIG
+        variables = Path(self.location, 'styles', '_variables.scss')
+        if not variables.exists() or variables.read_text() != content:
+            variables.write_text(content)
+
+        extra = Path(self.location, 'styles', 'extra.scss')
+        if not extra.exists():
+            extra.touch(0o644)
+
+    def url(self, name: Optional[str]) -> str:
+        url = super().url(name)
+        if name is None or not name.endswith('.scss'):
+            return url
+        return url.replace('styles', 'COMPILED').replace('.scss', '.css')
+
+    def post_process(self, paths: Dict[str, Tuple[FileSystemStorage, str]],
+                     dry_run: bool = False, **kwargs
+                     ) -> Optional[Iterator[Tuple[str, str, bool]]]:
+        """
+        Post process static files.
+
+        This is used to compile SCSS stylesheets.
+
+        :param paths: The static file paths.
+        :param dry_run: Don't do anything if ``True``.
+
+        :return: Yields a tuple for each static file.
+        """
+        if dry_run:  # pragma: no cover
+            return
+        for k, v in paths.items():
+            src: Path = self._src / k
+            if src.suffix == '.scss' and src.name[0] != '_':
+                dst = self._dst / src.with_suffix('.css').name
+                if not dst.exists() or _is_newer(src, dst):  # pragma: no cover
+                    dst.write_text(
+                        sassc(filename=str(src), output_style='compressed')
+                    )
+                yield k, str(dst), True
+            else:
+                yield k, v[1], False
 
 
 class CDNStorage(FileSystemStorage):
@@ -73,4 +156,7 @@ class CDNStorage(FileSystemStorage):
         return getattr(self, method)(name)
 
 
-__all__ = ['CDNStorage']
+__all__ = [
+    'SCSS_VARS', 'ProcessedStaticFilesFinder',
+    'ProcessedStaticFilesStorage', 'CDNStorage'
+]

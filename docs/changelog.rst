@@ -11,6 +11,7 @@ v0.9.6
 * Added an account deletion button
 * Added a ``clearcache`` command
 * Added a Render demo deployment
+* Improved stylesheet compilation
 
 v0.9.5
 ^^^^^^

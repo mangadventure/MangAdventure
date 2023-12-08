@@ -235,6 +235,16 @@ LOGGING = {
 #    Static & Media Files    #
 ##############################
 
+#: Storage configuration dictionary. See :setting:`STORAGES`.
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage'
+    },
+    'staticfiles': {
+        'BACKEND': 'MangAdventure.storage.ProcessedStaticFilesStorage'
+    }
+}
+
 #: URL that handles the files served from :const:`STATIC_ROOT`.
 #: See :setting:`STATIC_URL`.
 STATIC_URL = '/static/'
@@ -243,13 +253,18 @@ STATIC_URL = '/static/'
 #: See :setting:`STATIC_ROOT`.
 STATIC_ROOT = BASE_DIR / 'static'
 
+#: A list of static file finders to use.
+#: See :setting:`STATICFILES_FINDERS`.
+STATICFILES_FINDERS = [
+    'MangAdventure.storage.ProcessedStaticFilesFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder'
+]
+
 #: A list of directories containing static files.
 #: See :setting:`STATICFILES_DIRS`.
 STATICFILES_DIRS = [
     ('styles', str(STATIC_ROOT / 'styles')),
     ('scripts', str(STATIC_ROOT / 'scripts')),
-    ('COMPILED', str(STATIC_ROOT / 'COMPILED')),
-    ('extra', str(STATIC_ROOT / 'extra')),
     ('vendor', str(STATIC_ROOT / 'vendor')),
 ]
 

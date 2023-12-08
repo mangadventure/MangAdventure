@@ -3,15 +3,7 @@
 from django.apps import AppConfig
 from django.conf import settings
 
-#: Variables used to generate ``static/styles/_variables.scss``.
-SCSS_VARS = """\
-$main-bg: %(MAIN_BG_COLOR)s;
-$alter-bg: %(ALTER_BG_COLOR)s;
-$main-fg: %(MAIN_TEXT_COLOR)s;
-$alter-fg: %(ALTER_TEXT_COLOR)s;
-$shadow-color: %(SHADOW_COLOR)s;
-$font-family: %(FONT_NAME)s;
-"""
+from PIL import Image
 
 
 class SiteConfig(AppConfig):
@@ -27,21 +19,6 @@ class SiteConfig(AppConfig):
         # we don't need to attempt to fetch up to 21 results
         # to figure out if there's an error in the get query
         __import__('django').db.models.query.MAX_GET_RESULTS = 3
-
-    @staticmethod
-    def _init():
-        from PIL import Image
-        from sass import compile as sassc
-
-        # compile SCSS styles
-        src = settings.STATIC_ROOT / 'styles'
-        dst = settings.STATIC_ROOT / 'COMPILED' / 'styles'
-        (src / '_variables.scss').write_text(SCSS_VARS % settings.CONFIG)
-        sassc(dirname=(src, dst), output_style='compressed')
-
-        src = settings.STATIC_ROOT / 'extra'
-        dst = settings.STATIC_ROOT / 'COMPILED' / 'extra'
-        sassc(dirname=(src, dst), output_style='compressed')
 
         # create manifest icons
         logo = settings.BASE_DIR / settings.CONFIG['LOGO_OG'].lstrip('/')
@@ -61,4 +38,4 @@ class SiteConfig(AppConfig):
                 img.close()
 
 
-__all__ = ['SCSS_VARS', 'SiteConfig']
+__all__ = ['SiteConfig']

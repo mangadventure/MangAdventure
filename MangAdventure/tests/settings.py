@@ -105,6 +105,15 @@ CACHES = {
     }
 }
 
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage'
+    },
+    'staticfiles': {
+        'BACKEND': 'MangAdventure.storage.ProcessedStaticFilesStorage'
+    }
+}
+
 STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'static'
@@ -113,7 +122,6 @@ STATICFILES_DIRS = [
     ('styles', str(STATIC_ROOT / 'styles')),
     ('scripts', str(STATIC_ROOT / 'scripts')),
     ('COMPILED', str(STATIC_ROOT / 'COMPILED')),
-    ('extra', str(STATIC_ROOT / 'extra')),
     ('vendor', str(STATIC_ROOT / 'vendor')),
 ]
 

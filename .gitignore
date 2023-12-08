@@ -70,11 +70,11 @@ status_auth.txt
 # MangAdventure stuff
 media/
 static/admin/
-static/extra/
 static/COMPILED/
 static/debug_toolbar/
 static/rest_framework/
 static/styles/_variables.scss
+static/styles/extra.scss
 
 # GitHub Stuff
 docs/changes.md

@@ -79,7 +79,7 @@ Before proceeding, there are some settings you will need to configure.
 To configure them, copy the ``.env.example`` file to ``.env`` and edit it.
 
 You can also override the styling of the site by writing some SCSS
-(or regular CSS) in the ``static/extra/style.scss`` file.
+(or regular CSS) in the ``static/styles/extra.scss`` file.
 
 Create the database
 ^^^^^^^^^^^^^^^^^^^

@@ -214,11 +214,15 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
     def chapters(self, request: Request, slug: str) -> Response:
         """Get the chapters of the series."""
         try:
-            q = Q(chapters__published__lte=tz.now())
+            now = tz.now()
             groups = Group.objects.only('name')
-            chapters = models.Chapter.objects.order_by('-published')
+            chapters = models.Chapter.objects.filter(
+                published__lte=now
+            ).order_by('-published')
             instance = models.Series.objects.annotate(
-                chapter_count=Count('chapters', filter=q),
+                chapter_count=Count('chapters', filter=Q(
+                    chapters__published__lte=now
+                )),
             ).filter(chapter_count__gt=0).prefetch_related(
                 Prefetch('chapters', queryset=chapters),
                 Prefetch('chapters__groups', queryset=groups)
@@ -237,7 +241,7 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
         q = Q(chapters__published__lte=tz.now())
         return models.Series.objects.annotate(
             chapter_count=Count('chapters', filter=q),
-            latest_upload=Max('chapters__published'),
+            latest_upload=Max('chapters__published', filter=q),
             views=Sum('chapters__views', distinct=True)
         ).filter(chapter_count__gt=0).distinct()
 

@@ -4,6 +4,7 @@ Changelog
 v0.9.6
 ^^^^^^
 
+* Fixed chapter scheduling
 * Fixed parsing errors in API
 * Added web analytics (umami)
 * Added a data export button

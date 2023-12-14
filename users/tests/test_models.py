@@ -1,7 +1,11 @@
+from os.path import exists
+
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 
 from pytest import raises
+
+from MangAdventure.tests.utils import get_test_image
 
 from reader.models import Series
 from users.models import ApiKey, Bookmark, UserProfile, _avatar_uploader
@@ -35,7 +39,9 @@ class TestBookmark(UsersTestBase):
 class TestUserProfile(UsersTestBase):
     def setup_method(self):
         super().setup_method()
-        self.profile = UserProfile.objects.create(user=self.user, bio='Test')
+        self.profile = UserProfile.objects.create(
+            user=self.user, bio='Test', avatar=get_test_image()
+        )
 
     def test_create(self):
         """Test object creation & relations."""
@@ -57,8 +63,9 @@ class TestUserProfile(UsersTestBase):
 
     def test_delete(self):
         """Test account deletion."""
+        path = self.profile.avatar.path
         self.profile.delete()
-        self.user.refresh_from_db()
+        assert not exists(path)
         assert self.user.email == ''
         assert self.user.first_name == ''
         assert self.user.last_name == ''

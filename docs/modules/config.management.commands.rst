@@ -9,6 +9,14 @@ config.management.commands package
 Submodules
 ----------
 
+config.management.commands.clearcache module
+--------------------------------------------
+
+.. automodule:: config.management.commands.clearcache
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 config.management.commands.createsuperuser module
 -------------------------------------------------
 

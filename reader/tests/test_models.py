@@ -1,3 +1,5 @@
+from os.path import exists
+
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
@@ -177,6 +179,13 @@ class TestPage(ReaderTestBase):
         page = self.create_page()
         assert str(page) == 'My Series - 1/0.5 #001'
         assert hash(page) > 0
+
+    def test_delete(self):
+        page = self.create_page()
+        path = page.image.path
+        assert exists(path)
+        page.delete()
+        assert not exists(path)
 
     def test_get_absolute_url(self):
         page = self.create_page()

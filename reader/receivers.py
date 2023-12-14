@@ -129,19 +129,6 @@ def complete_series(sender: Type[Chapter], instance: Chapter, **kwargs):
         instance.series.save(update_fields=('status',))
 
 
-@receiver(signals.post_delete, sender=Page)
-def remove_page(sender: Type[Page], instance: Page, **kwargs):
-    """
-    Receive a signal when a page has been deleted.
-
-    Remove the image file of the page.
-
-    :param sender: The model class that sent the signal.
-    :param instance: The instance of the model.
-    """
-    instance.image.storage.delete(instance.image.name)
-
-
 @receiver(signals.post_save, sender=Chapter)
 def clear_chapter_cache(sender: Type[Chapter], instance:
                         Chapter, created: bool, **kwargs):
@@ -201,5 +188,5 @@ def track_view(sender: Type[WSGIHandler], environ:
 
 __all__ = [
     'redirect_series', 'redirect_chapter',
-    'complete_series', 'remove_page', 'track_view'
+    'complete_series', 'track_view'
 ]

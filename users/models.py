@@ -6,6 +6,7 @@ from datetime import datetime as dt, timezone as tz
 from hashlib import blake2b
 from pathlib import PurePath
 from secrets import token_hex
+from typing import Dict, Optional, Tuple
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -80,6 +81,29 @@ class UserProfile(models.Model):
             ).hexdigest()
         super().save(*args, **kwargs)
 
+    def delete(self, using: Optional[str] = None,
+               keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
+        """Delete or anonymize data associated with the user."""
+        if not keep_parents:
+            self.user.username = f'ANON-{token_hex(8)}'
+            self.user.email = ''
+            self.user.first_name = ''
+            self.user.last_name = ''
+            self.user.is_active = False
+            self.user.last_login = None
+            self.user.date_joined = dt.fromtimestamp(0, tz=tz.utc)
+            self.user.save(update_fields=(
+                'username', 'first_name', 'last_name',
+                'is_active', 'email', 'date_joined', 'last_login'
+            ))
+            self.user.bookmarks.all().delete()
+            self.user.emailaddress_set.all().delete()  # type: ignore
+            self.user.socialaccount_set.all().delete()  # type: ignore
+            ApiKey.objects.filter(user_id=self.user.id).delete()
+        if self.avatar:
+            self.avatar.delete()
+        return super().delete()
+
     def get_absolute_url(self) -> str:
         """
         Get the absolute URL of the object.
@@ -96,27 +120,6 @@ class UserProfile(models.Model):
                  :const:`~MangAdventure.settings.MEDIA_ROOT`.
         """
         return PurePath('users', str(self.id))
-
-    def delete(self):
-        """Delete or anonymize data associated with the user."""
-        self.user.username = f'ANON-{token_hex(8)}'
-        self.user.email = ''
-        self.user.first_name = ''
-        self.user.last_name = ''
-        self.user.is_active = False
-        self.user.last_login = None
-        self.user.date_joined = dt.fromtimestamp(0, tz=tz.utc)
-        self.user.save(update_fields=(
-            'username', 'first_name', 'last_name',
-            'is_active', 'email', 'date_joined', 'last_login'
-        ))
-        self.user.bookmarks.all().delete()
-        self.user.emailaddress_set.all().delete()
-        self.user.socialaccount_set.all().delete()
-        ApiKey.objects.filter(user_id=self.user.id).delete()
-        if self.avatar:
-            self.avatar.delete()
-        super().delete()
 
     def export(self) -> dict:
         """Export the data associated with the user."""

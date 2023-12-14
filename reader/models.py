@@ -17,8 +17,8 @@ from os import path, remove
 from pathlib import PurePath
 from shutil import rmtree
 from threading import Lock, Thread
-from typing import Any, List, Tuple, Union
-from xml.etree import ElementTree as ET  # nosec: B405
+from typing import Any, Dict, List, Optional, Tuple, Union
+from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
 from django.conf import settings
@@ -545,7 +545,7 @@ class Chapter(models.Model):
         web.text = f'{scheme}://{domain}{self.get_absolute_url()}'
 
         count = ET.SubElement(root, 'PageCount')
-        count.text = str(len(self.pages.all()))
+        count.text = str(self.pages.count())
 
         language = ET.SubElement(root, 'LanguageISO')
         language.text = 'en'
@@ -700,6 +700,13 @@ class Page(models.Model):
                 name='page_number_nonzero'
             ),
         )
+
+    def delete(self, using: Optional[str] = None,
+               keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
+        if self.image:
+            # XXX: can't use self.image.delete() for some reason
+            self.image.storage.delete(self.image.name)
+        return super().delete()
 
     def get_absolute_url(self) -> str:
         """

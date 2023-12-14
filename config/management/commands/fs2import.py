@@ -17,7 +17,7 @@ from reader.models import Chapter, Page, Series
 
 if TYPE_CHECKING:  # pragma: no cover
     from argparse import ArgumentParser
-    from xml.etree.ElementTree import Element  # nosec: B405
+    from xml.etree.ElementTree import Element
 
 
 class Command(BaseCommand):

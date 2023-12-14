@@ -1,4 +1,3 @@
-from os.path import exists
 from typing import List, Tuple
 
 from django.conf import settings
@@ -86,20 +85,6 @@ class TestCompleteSeries(ReaderTestBase):
             title='Chapter', number=1, final=True, file=get_valid_zip_file()
         )
         assert self.series.status == 'completed'
-
-
-class TestRemovePage(ReaderTestBase):
-    def setup_method(self):
-        super().setup_method()
-        series = Series.objects.create(title='series')
-        chapter = series.chapters.create(title='Chapter', number=1)
-        self.page = chapter.pages.create(number=1, image=get_test_image())
-
-    def test_delete(self):
-        path = self.page.image.path
-        assert exists(path)
-        self.page.delete()
-        assert not exists(path)
 
 
 class TestClearChapterCache(ReaderTestBase):

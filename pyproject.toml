@@ -163,6 +163,7 @@ skips = [
   "B104", # 0.0.0.0 is only used in debug mode
   "B301", # pickled data is verified with HMAC
   "B403", # pickled data is verified with HMAC
+  "B405", # covered by B314 (xml parse)
   "B703", # covered by B308 (mark_safe)
 ]
 

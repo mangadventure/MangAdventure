@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Tuple, Type
+from typing import TYPE_CHECKING
 
 from django.contrib import admin
 from django.contrib.auth import models
@@ -33,7 +33,7 @@ class UserTypeFilter(admin.SimpleListFilter):
     parameter_name = 'type'
 
     def lookups(self, request: HttpRequest, model_admin:
-                Type[admin.ModelAdmin]) -> List[Tuple[str, str]]:
+                type[admin.ModelAdmin]) -> list[tuple[str, str]]:
         """
         Return a list of lookups for this filter.
 

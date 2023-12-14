@@ -1,7 +1,5 @@
 """Miscellaneous sitemaps."""
 
-from typing import Tuple
-
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
@@ -9,7 +7,7 @@ from django.urls import reverse
 class MiscSitemap(Sitemap):
     """Sitemap for miscellaneous pages."""
 
-    def items(self) -> Tuple[str, ...]:
+    def items(self) -> tuple[str, ...]:
         """
         Get a tuple of the sitemap's items.
 

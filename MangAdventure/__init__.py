@@ -1,3 +1,3 @@
 """A simple manga hosting CMS written in Django."""
 
-__version__ = '0.9.6'
+__version__ = '1.0.0'

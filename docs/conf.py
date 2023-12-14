@@ -16,7 +16,7 @@ import MangAdventure  # noqa: E402
 
 project = 'MangAdventure'
 author = 'evangelos-ch, ObserverOfTime'
-copyright = f'2018-2023, {project}, MIT license'
+copyright = f'2018-2024, {project}, MIT license'
 release = MangAdventure.__version__
 
 
@@ -35,18 +35,17 @@ source_suffix = '.rst'
 master_doc = 'index'
 language = 'en'
 pygments_style = 'manni'
-# TODO: update the patches for 7.2
-needs_sphinx = '5.3'
+needs_sphinx = '7.2'
 
 
 # -- InterSphinx & extlinks configuration --
 
-_django = 'https://docs.djangoproject.com/en/4.1/'
+_django = 'https://docs.djangoproject.com/en/5.0/'
 _mdn = 'https://developer.mozilla.org/en-US/docs/Web/'
 
 intersphinx_mapping = {
     'django': (_django, f'{_django}_objects/'),
-    'python': ('https://docs.python.org/3.8/', None),
+    'python': ('https://docs.python.org/3.10/', None),
 }
 
 extlinks = {

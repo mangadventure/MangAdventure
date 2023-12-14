@@ -6,7 +6,6 @@ from datetime import datetime as dt, timezone as tz
 from hashlib import blake2b
 from pathlib import PurePath
 from secrets import token_hex
-from typing import Dict, Optional, Tuple
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -81,8 +80,8 @@ class UserProfile(models.Model):
             ).hexdigest()
         super().save(*args, **kwargs)
 
-    def delete(self, using: Optional[str] = None,
-               keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
+    def delete(self, using: str | None = None,
+               keep_parents: bool = False) -> tuple[int, dict[str, int]]:
         """Delete or anonymize data associated with the user."""
         if not keep_parents:
             self.user.username = f'ANON-{token_hex(8)}'

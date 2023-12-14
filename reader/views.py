@@ -22,15 +22,14 @@ from .models import Category, Chapter, Series
 
 if TYPE_CHECKING:  # pragma: no cover
     from datetime import datetime  # isort:skip
-    from typing import Optional, Union  # isort:skip
     from django.http import (  # isort:skip
         HttpRequest, HttpResponse, HttpResponsePermanentRedirect
     )
 
 
-def _latest(request: HttpRequest, slug: Optional[str] = None,
-            vol: Optional[int] = None, num: Optional[float] = None,
-            page: Optional[int] = None) -> Optional[datetime]:
+def _latest(request: HttpRequest, slug: str | None = None,
+            vol: int | None = None, num: float | None = None,
+            page: int | None = None) -> datetime | None:
     try:
         if slug is None:
             q = Q(chapters__published__lte=tz.now())
@@ -267,7 +266,7 @@ def chapter_redirect(request: HttpRequest, slug: str, vol: int,
 @condition(etag_func=_cbz_etag, last_modified_func=_latest)
 @cache_control(max_age=3600, must_revalidate=True)
 def chapter_download(request: HttpRequest, slug: str, vol: int, num: float
-                     ) -> Union[FileResponse, HttpResponseUnauthorized]:
+                     ) -> FileResponse | HttpResponseUnauthorized:
     """
     View that generates a ``.cbz`` file from a chapter.
 

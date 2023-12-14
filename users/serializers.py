@@ -1,7 +1,5 @@
 """Serializers for the users app."""
 
-from typing import Dict
-
 from django.contrib.auth.models import User
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
@@ -24,7 +22,7 @@ class BookmarkPagination(BasePagination):
     def to_html(self) -> str:
         return ''
 
-    def get_paginated_response_schema(self, schema: Dict) -> Dict:
+    def get_paginated_response_schema(self, schema: dict) -> dict:
         return {
             'type': 'object',
             'properties': {
@@ -49,7 +47,7 @@ class BookmarkSerializer(ModelSerializer):
     )
     user = HiddenField(default=CurrentUserDefault())
 
-    def validate(self, attrs: Dict) -> Dict:
+    def validate(self, attrs: dict) -> dict:
         if Bookmark.objects.filter(**attrs).exists():
             raise ValidationError(
                 {'error': 'This bookmark already exists.'}

@@ -1,7 +1,7 @@
 """API mixin classes."""
 
 from functools import wraps
-from typing import Callable, Dict
+from typing import Callable
 
 
 class CORSMixin:
@@ -15,7 +15,7 @@ class CORSMixin:
     }
 
     @property
-    def default_response_headers(self) -> Dict:
+    def default_response_headers(self) -> dict:
         allowed_methods = getattr(self, 'allowed_methods', [])
         renderer_classes = getattr(self, 'renderer_classes', [])
         headers = self.cors_headers

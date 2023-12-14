@@ -3,11 +3,11 @@ Custom storages.
 
 .. seealso::
 
-    https://docs.djangoproject.com/en/4.1/ref/files/storage/
+    https://docs.djangoproject.com/en/5.0/ref/files/storage/
 """
 
 from pathlib import Path
-from typing import Dict, Iterator, Optional, Tuple, cast
+from typing import Iterator
 from urllib.parse import quote, urlencode
 
 from django.conf import settings
@@ -36,10 +36,9 @@ def _is_newer(a: Path, b: Path) -> bool:
 class ProcessedStaticFilesFinder(FileSystemFinder):
     """Static files finder that for processed files."""
     def find_location(self, root: str, path: str,
-                      prefix: Optional[str] = None) -> Optional[str]:
+                      prefix: str | None = None) -> str | None:
         if path.startswith('COMPILED'):
-            # TODO: use removesuffix (Py3.9+)
-            root = root[:-6] + 'COMPILED'
+            root = root.removesuffix('styles') + 'COMPILED'
             return super().find_location(root, path, 'COMPILED')
         return super().find_location(root, path, prefix)
 
@@ -62,15 +61,15 @@ class ProcessedStaticFilesStorage(StaticFilesStorage):
         if not extra.exists():
             extra.touch(0o644)
 
-    def url(self, name: Optional[str]) -> str:
+    def url(self, name: str | None) -> str:
         url = super().url(name)
         if name is None or not name.endswith('.scss'):
             return url
         return url.replace('styles', 'COMPILED').replace('.scss', '.css')
 
-    def post_process(self, paths: Dict[str, Tuple[FileSystemStorage, str]],
+    def post_process(self, paths: dict[str, tuple[FileSystemStorage, str]],
                      dry_run: bool = False, **kwargs
-                     ) -> Optional[Iterator[Tuple[str, str, bool]]]:
+                     ) -> Iterator[tuple[str, str, bool] | None]:
         """
         Post process static files.
 
@@ -109,9 +108,9 @@ class CDNStorage(FileSystemStorage):
     .. _photon: https://developer.wordpress.com/docs/photon/
     """
 
-    def __init__(self, fit: Optional[Tuple[int, int]] = None):
+    def __init__(self, fit: tuple[int, int] | None = None):
         super().__init__()
-        self._cdn = cast(str, settings.CONFIG['USE_CDN']).lower()
+        self._cdn: str = settings.CONFIG['USE_CDN']
         self._fit = {'w': fit[0], 'h': fit[1]} if fit else {}
 
     def _statically_url(self, name: str) -> str:
@@ -130,10 +129,10 @@ class CDNStorage(FileSystemStorage):
         return base + quote(url, '') + '&' + qs + '&we'
 
     def _photon_url(self, name: str) -> str:
-        domain = cast(str, settings.CONFIG['DOMAIN'])
+        domain = settings.CONFIG['DOMAIN']
         scheme = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
         base = f'{scheme}://i3.wp.com/'
-        qs = {'ssl': '1'} if scheme == 'https' else dict()
+        qs = {'ssl': '1'} if scheme == 'https' else {}
         if name.lower().endswith(('.jpg', '.jpeg')):
             qs['quality'] = '100'
         if self._fit:

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, Type
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
@@ -30,7 +30,7 @@ def _move(old_dir: PathLike, new_dir: PathLike):
 
 
 @receiver(signals.pre_save, sender=Series)
-def redirect_series(sender: Type[Series], instance: Series, **kwargs):
+def redirect_series(sender: type[Series], instance: Series, **kwargs):
     """
     Receive a signal when a series is about to be saved.
 
@@ -82,7 +82,7 @@ def redirect_series(sender: Type[Series], instance: Series, **kwargs):
 
 
 @receiver(signals.pre_save, sender=Chapter)
-def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
+def redirect_chapter(sender: type[Chapter], instance: Chapter, **kwargs):
     """
     Receive a signal when a chapter is about to be saved.
 
@@ -114,7 +114,7 @@ def redirect_chapter(sender: Type[Chapter], instance: Chapter, **kwargs):
 
 
 @receiver(signals.pre_save, sender=Chapter)
-def complete_series(sender: Type[Chapter], instance: Chapter, **kwargs):
+def complete_series(sender: type[Chapter], instance: Chapter, **kwargs):
     """
     Receive a signal when a chapter is about to be saved.
 
@@ -124,13 +124,13 @@ def complete_series(sender: Type[Chapter], instance: Chapter, **kwargs):
     :param sender: The model class that sent the signal.
     :param instance: The instance of the model.
     """
-    if not instance.id and instance.final:
-        instance.series.status = 'completed'
-        instance.series.save(update_fields=('status',))
+    if not instance.id and instance.final:  # type: ignore
+        instance.series.status = 'completed'  # type: ignore
+        instance.series.save(update_fields=('status',))  # type: ignore
 
 
 @receiver(signals.post_save, sender=Chapter)
-def clear_chapter_cache(sender: Type[Chapter], instance:
+def clear_chapter_cache(sender: type[Chapter], instance:
                         Chapter, created: bool, **kwargs):
     """
     Receive a signal when a chapter has been saved.
@@ -147,8 +147,8 @@ def clear_chapter_cache(sender: Type[Chapter], instance:
 
 # TODO: figure out how to test this
 @receiver(request_started, sender=WSGIHandler)
-def track_view(sender: Type[WSGIHandler], environ:
-               Dict[str, str], **kwargs):  # pragma: no cover
+def track_view(sender: type[WSGIHandler], environ:
+               dict[str, str], **kwargs):  # pragma: no cover
     """
     Receive a signal when a request is processed.
 
@@ -188,5 +188,5 @@ def track_view(sender: Type[WSGIHandler], environ:
 
 __all__ = [
     'redirect_series', 'redirect_chapter',
-    'complete_series', 'track_view'
+    'complete_series', 'clear_chapter_cache', 'track_view'
 ]

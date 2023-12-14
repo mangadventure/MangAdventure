@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.contrib import admin
@@ -83,7 +83,7 @@ class InfoPageAdmin(FlatPageAdmin):
         return False
 
     def has_delete_permission(self, request: HttpRequest,
-                              obj: Optional[InfoPage] = None) -> bool:
+                              obj: InfoPage | None = None) -> bool:
         """
         Return whether deleting an ``InfoPage`` object is permitted.
 
@@ -109,7 +109,7 @@ class SiteAdmin(_SiteAdmin):
     change_list_form = ModelForm
 
     def has_delete_permission(self, request: HttpRequest,
-                              obj: Optional[Site] = None) -> bool:
+                              obj: Site | None = None) -> bool:
         """
         Return whether deleting a ``Site`` object is permitted.
 

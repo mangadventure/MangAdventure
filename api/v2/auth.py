@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional, Tuple
+from typing import TYPE_CHECKING
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import DjangoObjectPermissions
@@ -10,7 +10,8 @@ from rest_framework.permissions import DjangoObjectPermissions
 from users.models import ApiKey
 
 if TYPE_CHECKING:  # pragma: no cover
-    from rest_framework.request import Request
+    from django.contrib.auth.models import User  # isort:skip
+    from rest_framework.request import Request  # isort:skip
 
 
 class ApiKeyAuthentication(TokenAuthentication):
@@ -18,7 +19,7 @@ class ApiKeyAuthentication(TokenAuthentication):
     keyword = 'X-API-Key'
     model = ApiKey
 
-    def authenticate(self, request: Request) -> Optional[Tuple[Any, Any]]:
+    def authenticate(self, request: Request) -> tuple[User, ApiKey] | None:
         token = request.headers.get(
             self.keyword, request.GET.get('api_key')
         )

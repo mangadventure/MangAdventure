@@ -7,6 +7,7 @@
 import re
 from importlib.util import find_spec
 from pathlib import Path
+from typing import TypedDict
 from urllib.parse import urlsplit
 
 from yaenv import Env
@@ -468,6 +469,10 @@ if env.bool('HTTPS', True):
     #: See :auth:`ACCOUNT_DEFAULT_HTTP_PROTOCOL <configuration.html>`.
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
+    #: The default protocol used in URL fields.
+    #: See :setting:`FORMS_URLFIELD_ASSUME_HTTPS`.
+    FORMS_URLFIELD_ASSUME_HTTPS = True
+
 CDN = env.get('USE_CDN', '').lower()
 UMAMI_URL = env.get('UMAMI_URL')
 # Optional django-csp module
@@ -579,8 +584,37 @@ if not DEBUG:  # pragma: no cover
 #    Configuration    #
 #######################
 
+
+class _Config(TypedDict):
+    NAME: str
+    DOMAIN: str
+    DESCRIPTION: str
+    KEYWORDS: str
+    DISCORD: str | None
+    TWITTER: str | None
+    FAVICON: str
+    LOGO: str
+    LOGO_TW: str
+    LOGO_OG: str
+    MAIN_BG_COLOR: str
+    MAIN_TEXT_COLOR: str
+    ALTER_BG_COLOR: str
+    ALTER_TEXT_COLOR: str
+    SHADOW_COLOR: str
+    FONT_NAME: str
+    FONT_URL: str
+    USE_CDN: str
+    UMAMI_URL: str | None
+    UMAMI_ID: str | None
+    ALLOW_DLS: bool
+    MAX_RELEASES: int
+    MAX_CHAPTERS: int
+    SHOW_CREDITS: bool
+    ENABLE_API_V1: bool
+
+
 #: Configuration variables defined by the user in the ``.env`` file.
-CONFIG = {
+CONFIG: _Config = {
     'NAME': env['NAME'],
     'DOMAIN': env['DOMAIN'],
     'DESCRIPTION': env['DESCRIPTION'],

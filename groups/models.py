@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from pathlib import PurePath
-from typing import List
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -92,7 +91,7 @@ class Group(models.Model):
         return PurePath('groups', str(self.id))
 
     @cached_property
-    def sitemap_images(self) -> List[str]:
+    def sitemap_images(self) -> list[str]:
         """
         Get the list of images used in the sitemap.
 
@@ -130,8 +129,7 @@ class Member(models.Model):
         blank=True, help_text="The member's Reddit username."
     )
     #: The groups of this member.
-    groups = models.ManyToManyField(  # type: ignore
-        Group, 'members', through='Role')
+    groups = models.ManyToManyField(Group, 'members', through='groups.Role')
 
     def get_roles(self, group: Group) -> str:
         """
@@ -177,9 +175,7 @@ class Role(models.Model):
         Group, on_delete=models.CASCADE, related_name='roles'
     )
     #: The value of the role.
-    role = models.CharField(
-        blank=False, max_length=2, choices=Choices.choices
-    )
+    role = models.CharField(blank=False, max_length=2, choices=Choices)
 
     class Meta:
         verbose_name = 'role'

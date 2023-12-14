@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import (
@@ -30,10 +30,10 @@ class TitleFilter(SearchFilter):
         return super().filter_queryset(request, queryset, view)
 
     def get_search_fields(self, view: ViewSet,
-                          request: Request) -> List[str]:
+                          request: Request) -> list[str]:
         return ['title', 'aliases__name']
 
-    def get_search_terms(self, request: Request) -> List[str]:
+    def get_search_terms(self, request: Request) -> list[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
@@ -51,10 +51,10 @@ class AuthorFilter(SearchFilter):
         return super().filter_queryset(request, queryset, view)
 
     def get_search_fields(self, view: ViewSet,
-                          request: Request) -> List[str]:
+                          request: Request) -> list[str]:
         return ['authors__name', 'authors__aliases__name']
 
-    def get_search_terms(self, request: Request) -> List[str]:
+    def get_search_terms(self, request: Request) -> list[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
@@ -72,10 +72,10 @@ class ArtistFilter(SearchFilter):
         return super().filter_queryset(request, queryset, view)
 
     def get_search_fields(self, view: ViewSet,
-                          request: Request) -> List[str]:
+                          request: Request) -> list[str]:
         return ['artists__name', 'artists__aliases__name']
 
-    def get_search_terms(self, request: Request) -> List[str]:
+    def get_search_terms(self, request: Request) -> list[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
@@ -91,7 +91,7 @@ class StatusFilter(BaseFilterBackend):
         status = request.query_params.get('status', 'any').lower()
         return queryset if status == 'any' else queryset.filter(status=status)
 
-    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
         return [{
             'name': 'status',
             'required': False,
@@ -120,7 +120,7 @@ class CategoriesFilter(BaseFilterBackend):
             queryset = queryset.exclude(categories__in=exclude)
         return queryset
 
-    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
         return [{
             'name': 'categories',
             'required': False,
@@ -148,10 +148,10 @@ class SlugFilter(SearchFilter):
         return super().filter_queryset(request, queryset, view)
 
     def get_search_fields(self, view: ViewSet,
-                          request: Request) -> List[str]:
+                          request: Request) -> list[str]:
         return ['=slug']
 
-    def get_search_terms(self, request: Request) -> List[str]:
+    def get_search_terms(self, request: Request) -> list[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
@@ -167,15 +167,14 @@ class SeriesSort(OrderingFilter):
             return queryset
         return super().filter_queryset(request, queryset, view)
 
-    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
         params = super().get_schema_operation_parameters(view)
-        # TODO: use dict union (Py3.9+)
-        params[0]['schema'].update({
+        params[0]['schema'] |= {
             'default': 'title',
             'enum': self.ordering_fields + list(
                 map('-'.__add__, self.ordering_fields)
             )
-        })
+        }
         return params
 
     def to_html(self, *args, **kwargs) -> str:
@@ -196,7 +195,7 @@ class DateFormat(BaseFilterBackend):
             })
         return queryset  # no actual filtering is performed
 
-    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
         return [{
             'name': 'date_format',
             'required': False,
@@ -224,14 +223,14 @@ class ChapterFilter(SearchFilter):
         return super().filter_queryset(request, queryset, view)
 
     def get_search_fields(self, view: ViewSet,
-                          request: Request) -> List[str]:
+                          request: Request) -> list[str]:
         return ['=series__slug']
 
-    def get_search_terms(self, request: Request) -> List[str]:
+    def get_search_terms(self, request: Request) -> list[str]:
         param = request.query_params.get(self.search_param, None)
         return [] if param is None else [param.replace('\x00', '')]
 
-    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
         return [{
             'name': self.search_param,
             'deprecated': True,
@@ -262,13 +261,13 @@ class PageFilter(BaseFilterBackend):
             })
         series = request.query_params['series']
         try:
-            volume = int(request.query_params['volume']) or None  # type: ignore
+            volume = int(request.query_params['volume']) or None
         except ValueError:
             raise ValidationError(detail={
                 'error': f'Invalid volume: {request.query_params["volume"]}'
             })
         try:
-            number = float(request.query_params['number'])  # type: ignore
+            number = float(request.query_params['number'])
         except ValueError:
             raise ValidationError(detail={
                 'error': f'Invalid number: {request.query_params["number"]}'
@@ -285,7 +284,7 @@ class PageFilter(BaseFilterBackend):
             chapter__volume=volume, chapter__number=number
         ).order_by('number')
 
-    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
         return [{
             'name': 'series',
             'required': True,
@@ -329,7 +328,7 @@ class TrackingFilter(BaseFilterBackend):
                         view: ViewSet) -> QuerySet:
         return queryset  # no actual filtering is performed
 
-    def get_schema_operation_parameters(self, view: ViewSet) -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
         return [{
             'name': 'track',
             'required': False,

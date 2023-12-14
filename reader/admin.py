@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from hashlib import blake2b
-from typing import TYPE_CHECKING, Optional, Tuple, Type
+from typing import TYPE_CHECKING
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
@@ -146,8 +146,8 @@ class ChapterAdmin(admin.ModelAdmin):
         """
         queryset.update(final=Q(final=False))
 
-    def get_form(self, request: HttpRequest, obj: Optional[Chapter],
-                 **kwargs) -> Type[ModelForm]:  # pragma: no cover
+    def get_form(self, request: HttpRequest, obj: Chapter | None,
+                 **kwargs) -> type[ModelForm]:  # pragma: no cover
         form = super().get_form(request, obj, **kwargs)
         if 'series' in form.base_fields and not request.user.is_superuser:
             qs = Series.objects.filter(manager_id=request.user.id)
@@ -155,7 +155,7 @@ class ChapterAdmin(admin.ModelAdmin):
         return form
 
     def has_change_permission(self, request: HttpRequest, obj:
-                              Optional[Chapter] = None) -> bool:
+                              Chapter | None = None) -> bool:
         """
         Return ``True`` if editing the object is permitted.
 
@@ -172,7 +172,7 @@ class ChapterAdmin(admin.ModelAdmin):
         return obj.series.manager_id == request.user.id
 
     def has_delete_permission(self, request: HttpRequest, obj:
-                              Optional[Chapter] = None) -> bool:
+                              Chapter | None = None) -> bool:
         """
         Return ``True`` if deleting the object is permitted.
 
@@ -190,7 +190,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
 
 # HACK: use a factory to adapt the help_text
-def alias_inline(model: str) -> Type[GenericStackedInline]:
+def alias_inline(model: str) -> type[GenericStackedInline]:
     """
     Get an inline admin model for :class:`~reader.models.Alias`.
 
@@ -236,8 +236,8 @@ class SeriesAdmin(admin.ModelAdmin):
     actions = ('toggle_licensed',)
     empty_value_display = 'N/A'
 
-    def get_form(self, request: HttpRequest, obj: Optional[Series]
-                 = None, change: bool = False, **kwargs) -> Type[ModelForm]:
+    def get_form(self, request: HttpRequest, obj: Series | None
+                 = None, change: bool = False, **kwargs) -> type[ModelForm]:
         form = super().get_form(request, obj, change, **kwargs)
         if 'format' in form.base_fields:
             form.base_fields['format'].help_text = mark_safe('<br>'.join((
@@ -296,7 +296,7 @@ class SeriesAdmin(admin.ModelAdmin):
         queryset.update(licensed=Q(licensed=False))
 
     def has_change_permission(self, request: HttpRequest, obj:
-                              Optional[Series] = None) -> bool:
+                              Series | None = None) -> bool:
         """
         Return ``True`` if editing the object is permitted.
 
@@ -313,7 +313,7 @@ class SeriesAdmin(admin.ModelAdmin):
         return obj.manager_id == request.user.id
 
     def has_delete_permission(self, request: HttpRequest, obj:
-                              Optional[Series] = None) -> bool:
+                              Series | None = None) -> bool:
         """
         Return ``True`` if deleting the object is permitted.
 
@@ -377,7 +377,7 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
 
     def get_readonly_fields(self, request: HttpRequest, obj:
-                            Optional[Category] = None) -> Tuple:
+                            Category | None = None) -> tuple:
         """
         Return the fields that cannot be changed.
 

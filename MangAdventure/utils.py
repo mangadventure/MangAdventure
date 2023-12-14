@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from re import split
-from typing import TYPE_CHECKING, Iterable, List, Union
+from typing import TYPE_CHECKING, Iterable
 
 from django.http import HttpResponse
 from django.utils.html import format_html
@@ -43,21 +43,21 @@ def img_tag(obj: ImageField, alt: str,
     """
     return format_html(
         '<img src="{0}" alt="{3}" width="{1}" height="{2}">',
-        obj.url, width or '', height or '', alt or ''  # type: ignore
+        obj.url, width or '', height or '', alt or ''
     ) if obj and hasattr(obj, 'url') else ''
 
 
-def atoi(s: str) -> Union[int, str]:
+def atoi(s: str) -> int | str:
     """Convert a :class:`str` to an :class:`int` if possible."""
     return int(s) if s.isdigit() else s.lower()
 
 
-def alnum_key(k: str) -> List[Union[int, str]]:
+def alnum_key(k: str) -> list[int | str]:
     """Generate an alphanumeric key for sorting."""
     return list(map(atoi, split('([0-9]+)', k)))
 
 
-def natsort(original: Iterable[str]) -> List[str]:
+def natsort(original: Iterable[str]) -> list[str]:
     """
     Sort a list in natural order.
 

@@ -1,6 +1,6 @@
 """Model serializers for the reader app."""
 
-from typing import Dict, Generic, List, Optional, Type, TypeVar
+from typing import Generic, TypeVar
 
 from django.db.models import F
 
@@ -62,7 +62,7 @@ class ChapterSerializer(ModelSerializer):
         help_text='The absolute URL of the chapter.'
     )
 
-    def to_representation(self, instance: Chapter) -> Dict:
+    def to_representation(self, instance: Chapter) -> dict:
         rep = super().to_representation(instance)
         # HACK: adapt the date format based on a query param
         fmt = self.context['request'].query_params.get('date_format')
@@ -74,7 +74,7 @@ class ChapterSerializer(ModelSerializer):
         }.get(fmt or 'iso-8601')
         return rep
 
-    def _get_pages(self, obj: Chapter) -> List[str]:
+    def _get_pages(self, obj: Chapter) -> list[str]:
         uri = self.context['view'].request.build_absolute_uri
         return [uri(p.image.url) for p in obj.pages.iterator()]
 
@@ -133,7 +133,7 @@ class _SeriesListSerializer(ModelSerializer):
         help_text='The number of chapters or null if licensed.'
     )
 
-    def _get_chapters(self, obj: Series) -> Optional[int]:
+    def _get_chapters(self, obj: Series) -> int | None:
         return None if obj.licensed else getattr(obj, 'chapter_count')
 
     class Meta:
@@ -178,10 +178,10 @@ class _SeriesDetailSerializer(ModelSerializer):
         method_name='_get_completed', help_text='Replaced by `status`.'
     )
 
-    def _get_completed(self, obj: Series) -> Optional[bool]:
+    def _get_completed(self, obj: Series) -> bool | None:
         return obj.status in ('completed', 'canceled')
 
-    def create(self, validated_data: Dict) -> Series:
+    def create(self, validated_data: dict) -> Series:
         """Create a new ``Series`` instance."""
         # manually set the manager to the current user
         return super().create({
@@ -207,8 +207,8 @@ class _SeriesDetailSerializer(ModelSerializer):
 #: A series serializer type.
 TSeriesSerializer = TypeVar(
     'TSeriesSerializer',
-    Type[_SeriesListSerializer],
-    Type[_SeriesDetailSerializer]
+    type[_SeriesListSerializer],
+    type[_SeriesDetailSerializer]
 )
 
 
@@ -248,16 +248,16 @@ class CubariSerializer(ModelSerializer):
     def _get_cover(self, obj: Series) -> str:
         return self.context['view'].request.build_absolute_uri(obj.cover.url)
 
-    def _get_aliases(self, obj: Series) -> List[str]:
+    def _get_aliases(self, obj: Series) -> list[str]:
         return obj.aliases.names()
 
-    def _get_metadata(self, obj: Series) -> List[List[str]]:
+    def _get_metadata(self, obj: Series) -> list[list[str]]:
         return [
             ['Author', self._get_author(obj)],
             ['Artist', self._get_artist(obj)]
         ]
 
-    def _get_chapters(self, obj: Series) -> Dict[str, Dict]:
+    def _get_chapters(self, obj: Series) -> dict[str, dict]:
         uri = self.context['view'].request.build_absolute_uri
         return {
             str(ch.id): {

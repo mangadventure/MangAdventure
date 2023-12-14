@@ -16,8 +16,10 @@ _groups = 'groups'
 #: The URL namespace of the api.v1 app.
 app_name = 'v1'
 
+
 def _gone(*args, **kwargs) -> HttpResponseGone:
     return HttpResponseGone('Use API v2 instead.')
+
 
 #: The URL patterns of the api.v1 app.
 urlpatterns = [

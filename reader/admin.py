@@ -3,22 +3,27 @@
 from __future__ import annotations
 
 from hashlib import blake2b
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db.models import Q, QuerySet, Sum
-from django.forms.models import BaseInlineFormSet, ModelForm
+from django.forms.models import BaseInlineFormSet, ModelChoiceField, ModelForm
 from django.forms.widgets import HiddenInput
-from django.utils import timezone as tz
 from django.utils.safestring import mark_safe
+from django.utils.timezone import now
 
 from MangAdventure import filters, utils
 
 from .models import Alias, Artist, Author, Category, Chapter, Page, Series
 
 if TYPE_CHECKING:  # pragma: no cover
+    from django.db.models import ForeignKey
     from django.http import HttpRequest
+
+
+def _page_number(obj: Page) -> str:
+    return f'#{obj.number:03d}'
 
 
 class DateFilter(admin.DateFieldListFilter):
@@ -28,7 +33,7 @@ class DateFilter(admin.DateFieldListFilter):
         super().__init__(*args, **kwargs)
         self.title = 'date'
         self.links += (('Scheduled', {
-            self.lookup_kwarg_since: tz.now()
+            self.lookup_kwarg_since: now()
         }),)
 
 
@@ -53,11 +58,11 @@ class PageFormset(BaseInlineFormSet):  # pragma: no cover
         """Replace an existing chapter page."""
         with form.instance.image.open('rb') as img:
             dgst = blake2b(img.read(), digest_size=16)
-            ext = form.instance.image.name.split(".")[-1]
+            ext = form.instance.image.name.split('.')[-1]
             path = form.instance.chapter.get_directory()
             name = str(path / f'{dgst.hexdigest()}.{ext}')
             form.instance.image.name = name
-            return form.save(commit=commit)
+        return form.save(commit=commit)
 
     def save_new(self, form: ModelForm, commit: bool = True) -> Page:
         """Add a new page to the chapter."""
@@ -66,19 +71,22 @@ class PageFormset(BaseInlineFormSet):  # pragma: no cover
 
 
 class PageInline(admin.TabularInline):
-    """
-    Inline admin model for :class:`~reader.models.Page`.
-
-    .. admonition:: TODO
-       :class: warning
-
-       Add a way to delete all the pages.
-    """
+    """Inline admin model for :class:`~reader.models.Page`."""
     model = Page
     extra = 1
     formset = PageFormset
-    fields = ('image', 'preview', 'number')
-    readonly_fields = ('preview',)
+    fields = ('image', 'preview', 'number', 'spread', 'position', 'size')
+    readonly_fields = ('preview', 'size')
+
+    def size(self, obj: Page) -> str:
+        """
+        Get the size of the page.
+
+        :param obj: A ``Page`` model instance.
+
+        :return: The size of the page.
+        """
+        return f'{obj.height}x{obj.width}' if obj.image else ''
 
     @admin.display(description='')
     def preview(self, obj: Page) -> str:
@@ -116,22 +124,24 @@ class ChapterAdmin(admin.ModelAdmin):
         ('published', DateFilter),
         ('series__manager', filters.related_filter('manager')),
     )
-    actions = ('toggle_final',)
+    actions = ('toggle_final', 'delete_pages')
     empty_value_display = 'N/A'
 
     @admin.display(ordering='number', description='number')
     def _number(self, obj: Chapter) -> str:
         return f'{obj.number:g}'
 
+    @admin.display(description='cover')
     def preview(self, obj: Chapter) -> str:
         """
-        Get the first image of the chapter as an HTML ``<img>``.
+        Get the cover of the chapter as an HTML ``<img>``.
 
         :param obj: A ``Chapter`` model instance.
 
         :return: An ``<img>`` tag with the chapter preview.
         """
-        if (page := obj.pages.only('image').first()) is not None:
+        page = obj.cover or obj.pages.only('image').first()
+        if page is not None:
             return utils.img_tag(page._thumb, 'preview', height=50)
         return ''
 
@@ -146,13 +156,36 @@ class ChapterAdmin(admin.ModelAdmin):
         """
         queryset.update(final=Q(final=False))
 
+    @admin.display(  # type: ignore
+        description='Delete the pages of the selected chapters')
+    def delete_pages(self, request: HttpRequest, queryset: QuerySet):
+        """
+        Delete the pages of the selected chapters.
+
+        :param request: The original request.
+        :param queryset: The original queryset.
+        """
+        ids = queryset.values_list('id', flat=True)
+        Page.objects.filter(chapter_id__in=ids).delete()
+
     def get_form(self, request: HttpRequest, obj: Chapter | None,
                  **kwargs) -> type[ModelForm]:  # pragma: no cover
         form = super().get_form(request, obj, **kwargs)
         if 'series' in form.base_fields and not request.user.is_superuser:
             qs = Series.objects.filter(manager_id=request.user.id)
-            form.base_fields['series'].queryset = qs  # type: ignore
+            cast(ModelChoiceField, form.base_fields['series']).queryset = qs
+        if 'cover' in form.base_fields and obj is not None:
+            qs = Page.objects.filter(chapter_id=obj.id)
+            cast(ModelChoiceField, form.base_fields['cover']).queryset = qs
         return form
+
+    def formfield_for_foreignkey(self, db_field: ForeignKey,
+                                 request: HttpRequest, **kwargs
+                                 ) -> ModelChoiceField:  # pragma: no cover
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == 'cover':
+            field.label_from_instance = _page_number
+        return field
 
     def has_change_permission(self, request: HttpRequest, obj:
                               Chapter | None = None) -> bool:

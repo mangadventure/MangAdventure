@@ -104,10 +104,14 @@ class PageSerializer(ModelSerializer):
 
     class Meta:
         model = Page
-        fields = ('id', 'chapter', 'image', 'number', 'url')
+        fields = (
+            'id', 'chapter', 'image', 'number',
+            'spread', 'position', 'url'
+        )
         extra_kwargs = {
             'image': {'help_text': 'The image of the page.'},
-            'number': {'help_text': 'The number of the page.'}
+            'number': {'help_text': 'The number of the page.'},
+            'position': {'help_text': 'The position of the page.'}
         }
         validators = (
             UniqueTogetherValidator(
@@ -192,8 +196,8 @@ class _SeriesDetailSerializer(ModelSerializer):
     class Meta:
         model = Series
         fields = (
-            'slug', 'title', 'url', 'cover', 'updated',
-            'description', 'views', 'status', 'completed', 'licensed',
+            'slug', 'title', 'url', 'cover', 'updated', 'description',
+            'views', 'status', 'kind', 'rating', 'completed', 'licensed',
             'format', 'aliases', 'authors', 'artists', 'categories'
         )
         extra_kwargs = {

@@ -17,7 +17,7 @@ class TestUserTypeFilter(UsersTestBase):
         self.request.user = self.user
         self.filter = UserTypeFilter(
             model=self.model, model_admin=self.model_admin,
-            request=self.request, params={'type': 'superuser'}
+            request=self.request, params={'type': ['scanlator']}
         )
 
     def test_lookups(self):
@@ -33,7 +33,7 @@ class TestUserTypeFilter(UsersTestBase):
         queryset = self.filter.queryset(
             request=self.request, queryset=User.objects.all()
         )
-        assert queryset.count() == 2
+        assert queryset.count() == 1
 
 
 class TestUserAdmin(UsersTestBase):

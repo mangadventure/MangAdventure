@@ -1,6 +1,9 @@
+from unittest.mock import patch
+
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
 from django.core.cache import cache
+from django.db.models.fields.files import ImageFileDescriptor
 
 from MangAdventure.tests.utils import get_test_image, get_valid_zip_file
 
@@ -60,6 +63,9 @@ class TestRedirectChapter(ReaderTestBase):
             title='Chapter', number=1, file=get_valid_zip_file()
         )
 
+    @patch.object(
+        ImageFileDescriptor, '__set__',
+        ImageFileDescriptor.__mro__[1].__set__)
     def test_redirect(self):
         self.chapter.number = 2
         self.chapter.volume = 2

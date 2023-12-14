@@ -49,9 +49,18 @@ class TestChapterAdmin(ReaderAdminTestBase):
         )
         assert not Chapter.objects.filter(final=False)
 
+    def test_delete_pages(self):
+        self.chapter.pages.create(number=1, image=get_test_image())
+        assert self.chapter.pages.count() == 1
+        self.admin.delete_pages(
+            request=self.request, queryset=Chapter.objects.all()
+        )
+        assert self.chapter.pages.count() == 0
+
     def test_pages(self):
         page = self.chapter.pages.create(number=1, image=get_test_image())
         inline = self.admin.get_inline_instances(self.request, self.chapter)
+        assert inline[0].size(page) == '200x200'
         assert inline[0].preview(page).startswith('<img src="')
 
     def test_permissions(self):

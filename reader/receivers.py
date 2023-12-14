@@ -82,12 +82,12 @@ def redirect_series(sender: type[Series], instance: Series, **kwargs):
 
 
 @receiver(signals.pre_save, sender=Chapter)
-def redirect_chapter(sender: type[Chapter], instance: Chapter, **kwargs):
+def move_chapter(sender: type[Chapter], instance: Chapter, **kwargs):
     """
     Receive a signal when a chapter is about to be saved.
 
-    If the chapter exists and the slug of the series
-    it belongs to has changed, rename its directory.
+    If the chapter exists and any of its path components
+    (volume, number) has changed, rename its directory.
 
     :param sender: The model class that sent the signal.
     :param instance: The instance of the model.
@@ -100,10 +100,12 @@ def redirect_chapter(sender: type[Chapter], instance: Chapter, **kwargs):
         return
     old_dir = current.get_directory()
     new_dir = instance.get_directory()
+    print(old_dir, new_dir)
     if old_dir != new_dir:
         if current.volume != instance.volume:
             _move(old_dir.parent, new_dir.parent)
             old_dir = new_dir.parent / old_dir.name
+            print(old_dir, new_dir)
         if current.number != instance.number:
             _move(old_dir, new_dir)
             for page in (pages := current.pages.all()):
@@ -187,6 +189,6 @@ def track_view(sender: type[WSGIHandler], environ:
 
 
 __all__ = [
-    'redirect_series', 'redirect_chapter',
-    'complete_series', 'clear_chapter_cache', 'track_view'
+    'redirect_series', 'complete_series',
+    'move_chapter', 'track_view', 'clear_chapter_cache'
 ]

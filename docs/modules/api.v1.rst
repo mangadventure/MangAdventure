@@ -17,26 +17,10 @@ api.v1.apps module
    :undoc-members:
    :show-inheritance:
 
-api.v1.response module
-----------------------
-
-.. automodule:: api.v1.response
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 api.v1.urls module
 ------------------
 
 .. automodule:: api.v1.urls
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-api.v1.views module
--------------------
-
-.. automodule:: api.v1.views
    :members:
    :undoc-members:
    :show-inheritance:

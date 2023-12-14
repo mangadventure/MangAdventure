@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v1.0.0
+^^^^^^
+
+* Removed the old API views
+
 v0.9.6
 ^^^^^^
 

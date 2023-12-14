@@ -152,7 +152,7 @@ class Category(models.Model):
     """A model representing a category."""
     #: The category's ID.
     id = models.CharField(
-        primary_key=True, db_default='', max_length=25, auto_created=True
+        primary_key=True, max_length=25, auto_created=True
     )
     #: The unique name of the category.
     name = models.CharField(
@@ -191,15 +191,24 @@ class Status(models.TextChoices):
     CANCELED = 'canceled', 'Canceled'
 
 
+class Kind(models.TextChoices):
+    """The possible :attr:`Series.kind` values."""
+    MANGA = 'manga', 'Manga'
+    COMIC = 'comic', 'Comic'
+    WEBTOON = 'webtoon', 'Webtoon'
+    # TODO: support novels
+    # NOVEL = 'novel', 'Novel'
+
+
+class Rating(models.TextChoices):
+    """The possible :attr:`Series.rating` values."""
+    SAFE = 'safe', 'Safe'
+    SUGGESTIVE = 'suggestive', 'Suggestive'
+    EXPLICIT = 'explicit', 'Explicit'
+
+
 class Series(models.Model):
-    """
-    A model representing a series.
-
-    .. admonition:: TODO
-       :class: warning
-
-       Add age rating & reading mode fields.
-    """
+    """A model representing a series."""
     #: The title of the series.
     title = models.CharField(
         max_length=250, db_index=True, help_text='The title of the series.'
@@ -233,6 +242,18 @@ class Series(models.Model):
         blank=False, max_length=10,
         choices=Status, default=Status.ONGOING,
         help_text='The publication status of the series.'
+    )
+    #: The series kind (Manga/Comic/Webtoon/Novel).
+    kind = models.CharField(
+        blank=False, max_length=8,
+        choices=Kind, default=Kind.MANGA,
+        help_text='Determines the page layout.'
+    )
+    #: The content rating of the series.
+    rating = models.CharField(
+        blank=False, max_length=11,
+        choices=Rating, default=Rating.SAFE,
+        help_text='The content rating.'
     )
     #: The licensing status of the series.
     licensed = models.BooleanField(
@@ -318,9 +339,12 @@ class Chapter(models.Model):
         default=0, validators=(MinValueValidator(0),)
     )
     #: The volume of the chapter.
-    volume = _NonZeroIntegerField(null=True, blank=True, help_text=(
-        'The volume of the chapter. Leave blank if the series has no volumes.'
-    ))
+    volume = _NonZeroIntegerField(
+        null=True, blank=True, help_text=(
+            'The volume of the chapter. '
+            'Leave blank if the series has no volumes.'
+        )
+    )
     #: The series this chapter belongs to.
     series = models.ForeignKey(
         Series, on_delete=models.CASCADE, related_name='chapters',
@@ -358,6 +382,11 @@ class Chapter(models.Model):
     views = models.PositiveIntegerField(
         db_default=0, db_index=True, editable=False,
         help_text='The total views of the chapter.'
+    )
+    #: The cover page of the chapter.
+    cover = models.OneToOneField(
+        'reader.Page', null=True, on_delete=models.CASCADE,
+        related_name='_cover_for', help_text='The cover page of the chapter.'
     )
 
     class Meta:
@@ -473,12 +502,17 @@ class Chapter(models.Model):
                     ext = path.splitext(img)[-1]
                     zf.write(img, name + ext)
 
-                    ET.SubElement(pages, 'Page', {
+                    data = {
                         'Image': str(page.number),
-                        'ImageSize': str(page.image.size),
-                        'ImageWidth': str(page.image.width),
-                        'ImageHeight': str(page.image.height)
-                    })
+                        'ImageWidth': str(page.width),
+                        'ImageHeight': str(page.height),
+                        'ImageSize': str(page.image.size)
+                    }
+                    if hasattr(page, '_cover_for'):  # pragma: no cover
+                        data['Type'] = 'FrontCover'
+                    if page.spread:  # pragma: no cover
+                        data['DoublePage'] = 'true'
+                    ET.SubElement(pages, 'Page', data)
 
                 zf.writestr('ComicInfo.xml', ET.tostring(
                     info, encoding='UTF-8', xml_declaration=True
@@ -551,7 +585,18 @@ class Chapter(models.Model):
         language.text = 'en'
 
         manga = ET.SubElement(root, 'Manga')
-        manga.text = 'Yes'
+        manga.text = ({
+            'manga': 'YesAndRightToLeft',
+            'comic': 'Yes',
+            'webtoon': 'No'
+        })[self.series.kind]
+
+        rating = ET.SubElement(root, 'AgeRating')
+        rating.text = ({
+            'safe': 'Everyone',
+            'suggestive': 'Teen',
+            'explicit': 'Adults Only 18+'
+        })[self.series.rating]
 
         return root
 
@@ -674,22 +719,31 @@ class Chapter(models.Model):
 
 
 class Page(models.Model):
-    """
-    A model representing a page.
-
-    .. admonition:: TODO
-       :class: warning
-
-       Add page type, double page, width/height fields.
-    """
+    """A model representing a page."""
     #: The chapter this page belongs to.
     chapter = models.ForeignKey(
         Chapter, related_name='pages', on_delete=models.CASCADE
     )
     #: The image of the page.
-    image = models.ImageField(storage=storage.CDNStorage(), max_length=255)
+    image = models.ImageField(
+        storage=storage.CDNStorage(), max_length=255,
+        height_field='height', width_field='width'
+    )
+    #: The height of the image.
+    height = models.PositiveIntegerField(editable=False)
+    #: The width of the image.
+    width = models.PositiveIntegerField(editable=False)
     #: The number of the page.
     number = _NonZeroIntegerField()
+    #: The position of the page.
+    position = models.CharField(
+        choices=[('l', 'left'), ('r', 'right'), ('c', 'center')],
+        max_length=1, help_text='Use "center" for webtoons and spreads.'
+    )
+    #: Single or double page.
+    spread = models.BooleanField(
+        default=False, help_text='Is this a double-page spread?'
+    )
 
     class Meta:
         ordering = ('chapter', 'number')
@@ -736,8 +790,8 @@ class Page(models.Model):
         :return: The title of the series, the volume, number, title
                  of the chapter, and the file name of the page.
         """
-        return '{0.series.title} - {0.volume}/{0.number} #{1:03d}' \
-            .format(self.chapter, self.number)
+        return '{0.series.title} - {1}/{0.number} #{2:03d}' \
+            .format(self.chapter, self.chapter.volume or '?', self.number)
 
     def __eq__(self, other: Any) -> bool:
         """
@@ -830,6 +884,7 @@ class Page(models.Model):
 
 
 __all__ = [
-    'Author', 'Artist', 'Series', 'Status',
-    'Chapter', 'Page', 'Category', 'Alias'
+    'Alias', 'Author', 'Artist', 'Series',
+    'Chapter', 'Page', 'Category',
+    'Status', 'Kind', 'Rating', 'Alias'
 ]

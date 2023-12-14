@@ -127,7 +127,7 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = BASE_DIR / 'tests' / 'media'
+MEDIA_ROOT = BASE_DIR / 'MangAdventure' / 'tests' / 'media'
 
 USE_I18N = False
 

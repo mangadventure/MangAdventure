@@ -4,6 +4,7 @@ Changelog
 v1.0.0
 ^^^^^^
 
+* Added series kind & rating
 * Dropped support for Python<3.10
 * Dropped support for Django<5.0
 * Removed the old API views

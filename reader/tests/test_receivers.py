@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 from django.conf import settings
 from django.contrib.redirects.models import Redirect
 from django.core.cache import cache
@@ -11,9 +9,8 @@ from reader.models import Series
 from . import ReaderTestBase
 
 
-def get_redirect_list() -> List[Tuple[str, str]]:
-    redirects = Redirect.objects.values_list('old_path', 'new_path')
-    return list(redirects)  # type: ignore
+def get_redirect_list() -> list[tuple[str, str]]:
+    return list(Redirect.objects.values_list('old_path', 'new_path'))
 
 
 class TestRedirectSeries(ReaderTestBase):

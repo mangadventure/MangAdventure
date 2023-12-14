@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from django.contrib.auth.backends import ModelBackend
 
@@ -24,7 +24,7 @@ class ScanlationBackend(ModelBackend):
         return user_obj.groups.filter(name='Scanlator').exists()
 
     def has_perm(self, user_obj: User, perm: str,
-                 obj: Optional[Any] = None) -> bool:
+                 obj: Any | None = None) -> bool:
         if not user_obj.is_active:
             return False
         if self.is_scanlator(user_obj):

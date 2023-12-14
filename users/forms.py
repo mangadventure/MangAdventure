@@ -1,7 +1,7 @@
 """Form models for the users app."""
 
 from importlib.util import find_spec
-from typing import Optional, cast
+from typing import cast
 
 from django import forms
 from django.contrib.auth.models import User
@@ -16,7 +16,7 @@ from .models import UserProfile
 if find_spec('sentry_sdk'):  # pragma: no cover
     from sentry_sdk import capture_message, configure_scope
 
-    def _log_honeypot(message: str, username: Optional[str], email: str):
+    def _log_honeypot(message: str, username: str | None, email: str):
         with configure_scope() as scope:
             scope.set_tag('username', username)
             scope.set_tag('email', email)
@@ -24,7 +24,7 @@ if find_spec('sentry_sdk'):  # pragma: no cover
 else:  # pragma: no cover
     from django.core.mail import mail_admins
 
-    def _log_honeypot(message: str, username: Optional[str], email: str):
+    def _log_honeypot(message: str, username: str | None, email: str):
         body = f'Username: {username or "N/A"}\nE-mail: {email}'
         mail_admins(message, body, fail_silently=True)
 

@@ -1,7 +1,7 @@
 from hashlib import blake2b
 from pickle import UnpicklingError, dumps, loads
 from secrets import compare_digest
-from typing import Any, Tuple
+from typing import Any
 
 from django.conf import settings
 from django.core.cache.backends.memcached import PyLibMCCache
@@ -57,7 +57,7 @@ class SignedPyLibMCCache(PyLibMCCache):
             return flag & 23 == 1
 
         class _SignedMCClient(self._lib.Client):
-            def serialize(self, value: Any) -> Tuple[bytes, int]:
+            def serialize(self, value: Any) -> tuple[bytes, int]:
                 data, flag = super().serialize(value)
                 if _is_pickle(flag):
                     return _sign_data(data) + data, flag

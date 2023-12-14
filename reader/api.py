@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 from warnings import filterwarnings
 
 from django.db.models import Count, F, Max, Prefetch, Q, Sum
@@ -107,7 +107,7 @@ class PageViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin,
     schema = OpenAPISchema(tags=('pages',),)
     queryset = models.Page.objects.all()
     serializer_class = serializers.PageSerializer
-    filter_backends = filters.PAGE_FILTERS  # type: ignore
+    filter_backends = filters.PAGE_FILTERS
     parser_classes = (MultiPartParser,)
     http_method_names = METHODS
 
@@ -245,7 +245,7 @@ class SeriesViewSet(CORSMixin, ModelViewSet):
             views=Sum('chapters__views', distinct=True)
         ).filter(chapter_count__gt=0).distinct()
 
-    def get_serializer_class(self) -> Type[serializers.SeriesSerializer]:
+    def get_serializer_class(self) -> type[serializers.SeriesSerializer]:
         return serializers.SeriesSerializer[self.action]  # type: ignore
 
 
@@ -274,9 +274,9 @@ class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
         chapters = models.Chapter.objects.prefetch_related(
             Prefetch('pages', queryset=pages),
             Prefetch('groups', queryset=groups)
-        ).order_by(F('volume').asc(nulls_last=True), 'number').only(
-            'id', 'title', 'number', 'volume', 'modified', 'series_id'
-        )
+        ).filter(published__lte=tz.now()).order_by(
+            F('volume').asc(nulls_last=True), 'number'
+        ).only('id', 'title', 'number', 'volume', 'modified', 'series_id')
         return models.Series.objects.defer(
             'manager_id', 'modified', 'created', 'status'
         ).prefetch_related(

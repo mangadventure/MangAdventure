@@ -1,6 +1,6 @@
 # type: ignore
 
-from typing import get_type_hints, Any, List, Optional, Type, Tuple
+from typing import get_type_hints, Any
 
 from django.db.models.base import Model
 from django.db.models.fields import AutoField
@@ -17,7 +17,7 @@ from sphinx.application import Sphinx
 from sphinx.ext.autodoc import DataDocumenter, Options, PropertyDocumenter
 
 
-def _get_module(cls: Optional[Type]) -> str:
+def _get_module(cls: type[Any] | None) -> str:
     if not hasattr(cls, '__module__'):
         return 'builtins'
     if not cls.__module__.startswith('django'):
@@ -53,7 +53,7 @@ def _patched_add_directive_header(self: DataDocumenter, sig: str):
         self._original_add_directive_header(sig)
 
 
-def _patched_can_document_member(cls: Type[PropertyDocumenter],
+def _patched_can_document_member(cls: type[PropertyDocumenter],
                                  member: Any, membername: str,
                                  isattr: bool, parent: Any) -> bool:
     return member.__class__.__name__ == 'cached_property' or \
@@ -96,8 +96,8 @@ def skip_django_junk(app: Sphinx, what: str, name: str,
 
 
 def process_signature(app: Sphinx, what: str, name: str, obj: Any, options:
-                      Options, signature: Optional[str], return_annotation:
-                      Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+                      Options, signature: str | None, return_annotation:
+                      str | None) -> tuple[str | None, str | None]:
     if what != 'class':
         return signature, return_annotation
     if issubclass(obj, Model):
@@ -110,7 +110,7 @@ def process_signature(app: Sphinx, what: str, name: str, obj: Any, options:
 
 
 def process_docstring(app: Sphinx, what: str, name: str, obj:
-                      Any, options: Options, lines: List[str]):
+                      Any, options: Options, lines: list[str]):
     if obj is None or not lines:
         return
     # this class is broken for some reason
@@ -133,8 +133,6 @@ def process_docstring(app: Sphinx, what: str, name: str, obj:
         return
     if cls.__module__ == 'builtins':
         qname = cls.__name__
-    elif cls.__name__ in {'dict', 'list', 'tuple'}:
-        qname = f'typing.{cls.__name__.capitalize()}'
     else:
         qname = f'{_get_module(cls)}.{cls.__name__}'
     lines[0] = f':class:`~{qname}` – {lines[0]}'

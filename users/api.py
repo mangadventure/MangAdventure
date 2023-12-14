@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, cast
 
 from django.db.models import Prefetch
 from django.urls import reverse
@@ -49,10 +49,10 @@ class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
     _restrict = True
     http_method_names = ['get', 'delete', 'head', 'options']
 
-    def get_permissions(self) -> Sequence:
+    def get_permissions(self) -> list:
         if self.request.method == 'OPTIONS':
             return []
-        return super().get_permissions()
+        return cast(list, super().get_permissions())
 
     def get_queryset(self) -> QuerySet:
         series = Series.objects.only('id', 'slug', 'title')
@@ -90,10 +90,10 @@ class ProfileViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     http_method_names = ['get', 'patch', 'delete', 'head', 'options']
     _restrict = True
 
-    def get_permissions(self) -> Sequence:
+    def get_permissions(self) -> list:
         if self.request.method == 'OPTIONS':
             return []
-        return super().get_permissions()
+        return cast(list, super().get_permissions())
 
     def get_object(self) -> UserProfile:
         return UserProfile.objects.select_related('user') \

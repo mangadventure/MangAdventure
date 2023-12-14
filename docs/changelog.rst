@@ -4,6 +4,8 @@ Changelog
 v1.0.0
 ^^^^^^
 
+* Dropped support for Python<3.10
+* Dropped support for Django<5.0
 * Removed the old API views
 
 v0.9.6

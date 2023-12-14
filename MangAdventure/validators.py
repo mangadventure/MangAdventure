@@ -18,7 +18,8 @@ from PIL import Image
 
 def _remove_file(file: File):
     try:
-        remove(file.path)  # type: ignore
+        if hasattr(file, 'path'):
+            remove(file.path)
     except FileNotFoundError:
         pass
 
@@ -47,8 +48,7 @@ class FileSizeValidator:
         :raises ValidationError: If the file is too large.
         """
         if file.size >= self.max_mb << 20:
-            if hasattr(file, 'path'):
-                _remove_file(file)
+            _remove_file(file)
             raise ValidationError(
                 self.message, code=self.code,
                 params={'max': self.max_mb}

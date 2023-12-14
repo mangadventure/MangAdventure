@@ -64,7 +64,7 @@ You are welcome to contribute after reading the [guidelines](.github/CONTRIBUTIN
 
 ## License
 
-    Copyright (c) 2018-2023 MangAdventure
+    Copyright (c) 2018-2024 MangAdventure
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

@@ -1,7 +1,6 @@
 """Custom form widgets."""
 
 from json import dumps
-from typing import Any, Dict
 
 from django.forms import Textarea
 
@@ -14,13 +13,12 @@ class TinyMCE(Textarea):
     :param attrs: A dictionary of the widget's attributes.
     """
 
-    def __init__(self, attrs: Dict[str, Any] = {}):
+    def __init__(self, attrs: dict[str, str] = {}):
         if 'class' in attrs:  # pragma: no cover
             attrs['class'] += ' tinymce'
         else:
             attrs['class'] = 'tinymce'
-        # TODO: use dict union (Py3.9+)
-        attrs.update({'cols': '75', 'rows': '15'})
+        attrs |= {'cols': '75', 'rows': '15'}
         mce_attrs = {
             'selector': '.tinymce',
             'theme': 'modern',

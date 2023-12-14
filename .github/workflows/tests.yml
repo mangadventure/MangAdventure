@@ -12,15 +12,15 @@ concurrency:
 
 jobs:
   sqlite:
-    name: "SQLite & Python 3.8"
+    name: "SQLite & Python 3.10"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
-      - name: "Set up Python 3.8"
+      - name: "Set up Python 3.10"
         uses: actions/setup-python@v4
         with:
-          python-version: "3.8"
+          python-version: "3.10"
       - name: "Install dependencies"
         run: pip install -e .[dev,csp,redis,memc]
       - name: "Set up .env file"
@@ -47,11 +47,11 @@ jobs:
         with:
           run-suffix: ".1"
           lang-name: Python
-          lang-version: "3.8"
+          lang-version: "3.10"
           webhook-url: ${{secrets.BUILD_WEBHOOK}}
 
   mysql:
-    name: "MySQL & Python 3.9"
+    name: "MySQL & Python 3.11"
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -68,10 +68,10 @@ jobs:
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
-      - name: "Set up Python 3.9"
+      - name: "Set up Python 3.11"
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.11"
       - name: "Install dependencies"
         run: pip install -e .[dev,mysql]
       - name: "Set up .env file"
@@ -99,11 +99,11 @@ jobs:
         with:
           run-suffix: ".2"
           lang-name: Python
-          lang-version: "3.9"
+          lang-version: "3.11"
           webhook-url: ${{secrets.BUILD_WEBHOOK}}
 
   postgresql:
-    name: "PostgreSQL & Python 3.10"
+    name: "PostgreSQL & Python 3.12"
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -121,10 +121,10 @@ jobs:
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
-      - name: "Set up Python 3.10"
+      - name: "Set up Python 3.12"
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.12"
       - name: "Install dependencies"
         run: pip install -e .[dev,pgsql]
       - name: "Set up .env file"
@@ -152,7 +152,7 @@ jobs:
         with:
           run-suffix: ".3"
           lang-name: Python
-          lang-version: "3.10"
+          lang-version: "3.12"
           webhook-url: ${{secrets.BUILD_WEBHOOK}}
 
   coveralls:

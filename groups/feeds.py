@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable, cast
+from typing import TYPE_CHECKING, Iterable
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.db.models import Prefetch
-from django.utils import timezone as tz
+from django.db.models.functions import Now
 from django.utils.decorators import method_decorator
 from django.utils.feedgenerator import Atom1Feed
 from django.views.decorators.cache import cache_control
@@ -42,7 +42,7 @@ class GroupRSS(Feed):
             'published', 'modified', 'series__slug',
             'series__title', 'series__format'
         ).select_related('series').filter(
-            published__lte=tz.now(),
+            published__lte=Now(),
             series__licensed=False
         ).order_by('-published')
         return Group.objects.prefetch_related(
@@ -87,8 +87,7 @@ class GroupRSS(Feed):
 
         :return: An iterable of ``Chapter`` objects.
         """
-        max_ = cast(int, settings.CONFIG['MAX_RELEASES'])
-        return obj.releases.all()[:max_]
+        return obj.releases.all()[:settings.CONFIG['MAX_RELEASES']]
 
     def item_description(self, item: Chapter) -> str:
         """

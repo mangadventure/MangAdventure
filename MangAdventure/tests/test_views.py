@@ -1,5 +1,4 @@
 from operator import attrgetter
-from typing import Dict, List
 
 from django.core.cache import cache
 from django.urls import reverse
@@ -61,8 +60,8 @@ class TestIndex(MangadvViewTestBase):
 class TestSearch(MangadvViewTestBase):
     URL = reverse('search')
 
-    def _test_filter(self, params: Dict[str, str] = {},
-                     results: List[str] = []):
+    def _test_filter(self, params: dict[str, str] = {},
+                     results: list[str] = []):
         cache.clear()
         r = self.client.get(self.URL, params)
         assert r.status_code == 200

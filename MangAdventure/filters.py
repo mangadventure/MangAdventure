@@ -5,15 +5,14 @@ A collection of filters used in the admin interface.
 """
 
 from functools import partial
-from typing import Tuple, Type
 
 from django.contrib.admin.filters import (
     FieldListFilter, RelatedFieldListFilter, SimpleListFilter
 )
 
 
-def title_filter(title: str, klass: Type[FieldListFilter] =
-                 FieldListFilter) -> Type[FieldListFilter]:
+def title_filter(title: str, klass: type[FieldListFilter] =
+                 FieldListFilter) -> type[FieldListFilter]:
     """
     A :class:`FieldListFilter` with a custom title.
 
@@ -33,7 +32,7 @@ def title_filter(title: str, klass: Type[FieldListFilter] =
 
 
 def boolean_filter(title: str, param: str, names:
-                   Tuple[str, str]) -> Type[SimpleListFilter]:
+                   tuple[str, str]) -> type[SimpleListFilter]:
     """
     A boolean :class:`SimpleListFilter`.
 

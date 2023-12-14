@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 from mimetypes import guess_type
-from typing import TYPE_CHECKING, Iterable, Optional
+from typing import TYPE_CHECKING, Iterable, cast
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.db.models import F, Prefetch
-from django.utils import timezone as tz
+from django.db.models.functions import Now
 from django.utils.decorators import method_decorator
 from django.utils.feedgenerator import Atom1Feed
 from django.views.decorators.cache import cache_control
@@ -86,7 +86,7 @@ class LibraryRSS(Feed):
         """
         return item.modified
 
-    def item_enclosure_url(self, item: Series) -> Optional[str]:
+    def item_enclosure_url(self, item: Series) -> str | None:
         """
         Get the enclosure URL of the item.
 
@@ -96,7 +96,7 @@ class LibraryRSS(Feed):
         """
         return item.cover.url if item.cover else None
 
-    def item_enclosure_length(self, item: Series) -> Optional[int]:
+    def item_enclosure_length(self, item: Series) -> int | None:
         """
         Get the enclosure length of the item.
 
@@ -106,7 +106,7 @@ class LibraryRSS(Feed):
         """
         return item.cover.size if item.cover else None
 
-    def item_enclosure_mime_type(self, item: Series) -> Optional[str]:
+    def item_enclosure_mime_type(self, item: Series) -> str | None:
         """
         Get the enclosure type of the item.
 
@@ -132,7 +132,7 @@ class ReleasesRSS(Feed):
     item_guid_is_permalink = True
 
     def get_object(self, request: HttpRequest, slug:
-                   Optional[str] = None) -> Optional[Series]:
+                   str | None = None) -> Series | None:
         """
         Get a ``Series`` object from the request.
 
@@ -148,7 +148,7 @@ class ReleasesRSS(Feed):
             'title', 'volume', 'number',
             'published', 'modified', 'series'
         ).filter(
-            published__lte=tz.now(),
+            published__lte=Now(),
             series__licensed=False
         ).order_by(F('volume').asc(nulls_last=True), 'number')
         return Series.objects.only(
@@ -157,7 +157,7 @@ class ReleasesRSS(Feed):
             Prefetch('chapters', queryset=chapters)
         ).get(slug=slug)
 
-    def link(self, obj: Optional[Series]) -> str:
+    def link(self, obj: Series | None) -> str:
         """
         Get the link of the feed's page.
 
@@ -167,7 +167,7 @@ class ReleasesRSS(Feed):
         """
         return obj.get_absolute_url() if obj else '/'
 
-    def title(self, obj: Optional[Series]) -> str:
+    def title(self, obj: Series | None) -> str:
         """
         Get the title of the feed.
 
@@ -178,7 +178,7 @@ class ReleasesRSS(Feed):
         title = obj.title if obj else 'Releases'
         return f'{title} - {self.author_name}'
 
-    def description(self, obj: Optional[Series]) -> str:
+    def description(self, obj: Series | None) -> str:
         """
         Get the description of the feed.
 
@@ -192,7 +192,7 @@ class ReleasesRSS(Feed):
             return 'This series is licensed.'
         return f'Updates when a new chapter of {obj.title} is added'
 
-    def items(self, obj: Optional[Series]) -> Iterable[Chapter]:
+    def items(self, obj: Series | None) -> Iterable[Chapter]:
         """
         Get an iterable of the feed's items.
 
@@ -203,12 +203,12 @@ class ReleasesRSS(Feed):
         if getattr(obj, 'licensed', False):  # pragma: no cover
             return []
         if hasattr(obj, 'chapters'):
-            return list(obj.chapters.all())  # type: ignore
+            return list(cast(Series, obj).chapters.all())
         return Chapter.objects.only(
             'title', 'volume', 'number', 'published', 'modified',
             'series__slug', 'series__title', 'series__format'
         ).select_related('series').filter(
-            published__lte=tz.now(), series__licensed=False
+            published__lte=Now(), series__licensed=False
         ).order_by('-published')[:_max]
 
     def item_description(self, item: Chapter) -> str:

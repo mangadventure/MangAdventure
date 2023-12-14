@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, cast
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.db.models import Subquery
+from django.db.models.functions import Now
 from django.http import HttpResponse
-from django.utils import timezone as tz
 from django.utils.cache import patch_vary_headers
 from django.utils.decorators import method_decorator
-from django.utils.feedgenerator import Atom1Feed
+from django.utils.feedgenerator import Atom1Feed, RssFeed
 from django.utils.http import http_date
 from django.views.decorators.cache import cache_control
 
@@ -66,8 +66,8 @@ class BookmarksRSS(Feed):
                 b'The provided token is invalid.',
                 status=403, content_type='text/plain'
             )
-        feedgen = self.get_feed(obj, request)
-        res = HttpResponse(content_type=feedgen.content_type)  # type: ignore
+        feedgen = cast(Atom1Feed | RssFeed, self.get_feed(obj, request))
+        res = HttpResponse(content_type=feedgen.content_type)
         patch_vary_headers(res, ('Authorization',))
         res['Last-Modified'] = http_date(
             feedgen.latest_post_date().timestamp()
@@ -98,7 +98,7 @@ class BookmarksRSS(Feed):
             'published', 'modified', 'series__slug',
             'series__title', 'series__format'
         ).select_related('series').filter(
-            published__lte=tz.now(),
+            published__lte=Now(),
             series__licensed=False,
             series_id__in=Subquery(
                 Bookmark.objects.filter(

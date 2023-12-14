@@ -4,9 +4,9 @@ Functions used to generate JSON-LD_ objects.
 .. _JSON-LD: https://json-ld.org/
 """
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, TypeAlias
 
-JSON = Dict[str, Any]
+JSON: TypeAlias = dict[str, Any]
 
 
 def schema(at_type: str, items: JSON) -> JSON:
@@ -26,7 +26,7 @@ def schema(at_type: str, items: JSON) -> JSON:
     }
 
 
-def breadcrumbs(items: List[Tuple[str, str]]) -> JSON:
+def breadcrumbs(items: list[tuple[str, str]]) -> JSON:
     """
     Generate a :schema:`BreadcrumbList` JSON-LD object.
 
@@ -50,7 +50,7 @@ def breadcrumbs(items: List[Tuple[str, str]]) -> JSON:
     })
 
 
-def carousel(items: List[str]) -> JSON:
+def carousel(items: list[str]) -> JSON:
     """
     Generate an :schema:`ItemList` JSON-LD object.
 

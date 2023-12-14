@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, cast
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
 
 
-def extra_settings(request: HttpRequest) -> Dict:
+def extra_settings(request: HttpRequest) -> dict:
     """
     Context processor which defines some settings variables & schemas.
 
@@ -31,9 +31,7 @@ def extra_settings(request: HttpRequest) -> Dict:
     full_uri = request.build_absolute_uri()
     base_uri = request.build_absolute_uri('/')
     path_uri = request.build_absolute_uri(request.path)
-    logo_uri = request.build_absolute_uri(
-        cast(str, settings.CONFIG['LOGO_OG'])
-    )
+    logo_uri = request.build_absolute_uri(settings.CONFIG['LOGO_OG'])
     searchbox = schema('WebSite', {
         'url': base_uri,
         'potentialAction': [{

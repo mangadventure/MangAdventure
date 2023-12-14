@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, NamedTuple, Tuple
+from typing import TYPE_CHECKING, NamedTuple
 
 from django.db.models import Count, Max, Q, Sum
-from django.utils import timezone as tz
+from django.db.models.functions import Now
 
 from reader.models import Series
 
@@ -27,7 +27,7 @@ class _SearchParams(NamedTuple):
     query: str
     author: str
     status: str
-    categories: Tuple[List[str], List[str]]
+    categories: tuple[list[str], list[str]]
 
     def __bool__(self) -> bool:
         """
@@ -73,7 +73,7 @@ def qsfilter(params: _SearchParams) -> Q:
     :return: The created queryset filter.
 
     .. _`queryset filter`:
-        https://docs.djangoproject.com/en/4.1/
+        https://docs.djangoproject.com/en/5.0/
         topics/db/queries/#complex-lookups-with-q
     """
     filters = Q()
@@ -110,8 +110,8 @@ def query(params: _SearchParams) -> QuerySet:
     """
     if not params:
         return Series.objects.none()
-    q = Q(chapters__published__lte=tz.now())
-    return Series.objects.annotate(  # type: ignore
+    q = Q(chapters__published__lte=Now())
+    return Series.objects.annotate(
         chapter_count=Count('chapters', filter=q),
         latest_upload=Max('chapters__published', filter=q),
         views=Sum('chapters__views', distinct=True)

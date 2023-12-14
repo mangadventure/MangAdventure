@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, Optional, cast
+from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
 from django.db.models import Prefetch
+from django.db.models.functions import Now
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.utils import timezone as tz
 from django.utils.html import escapejs
 from django.views.decorators.cache import cache_control
 
@@ -23,7 +23,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
 
 
-def _error_context(msg: str, status: int = 500) -> Dict[str, Any]:
+def _error_context(msg: str, status: int = 500) -> dict[str, Any]:
     return {'error_message': msg, 'error_status': status}
 
 
@@ -36,10 +36,10 @@ def index(request: HttpRequest) -> HttpResponse:
 
     :return: A response with the rendered ``index.html`` template.
     """
-    max_ = cast(int, settings.CONFIG['MAX_RELEASES'])
+    max_: int = settings.CONFIG['MAX_RELEASES']
     groups = Group.objects.only('name')
     latest = Chapter.objects.filter(
-        published__lte=tz.now(),
+        published__lte=Now(),
         series__licensed=False
     ).order_by('-published').only(
         'title', 'number', 'volume', 'final', 'published',
@@ -94,7 +94,7 @@ def opensearch(request: HttpRequest) -> HttpResponse:
 
     :return: A response with the rendered ``opensearch.xml`` template.
     """
-    icon = request.build_absolute_uri(cast(str, settings.CONFIG['FAVICON']))
+    icon = request.build_absolute_uri(settings.CONFIG['FAVICON'])
     search_ = request.build_absolute_uri('/search/')
     self_ = request.build_absolute_uri('/opensearch.xml')
     return render(
@@ -151,7 +151,7 @@ def robots(request: HttpRequest) -> HttpResponse:
     return HttpResponse(content=robots_, content_type=ctype)
 
 
-def handler400(request: HttpRequest, exception: Optional[Exception]
+def handler400(request: HttpRequest, exception: Exception | None
                = None, template_name: str = 'error.html'
                ) -> HttpResponse:  # pragma: no cover
     """
@@ -172,7 +172,7 @@ def handler400(request: HttpRequest, exception: Optional[Exception]
     return render(request, template_name, context, status=400)
 
 
-def handler403(request: HttpRequest, exception: Optional[Exception]
+def handler403(request: HttpRequest, exception: Exception | None
                = None, template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`403` responses.
@@ -192,7 +192,7 @@ def handler403(request: HttpRequest, exception: Optional[Exception]
     return render(request, template_name, context, status=403)
 
 
-def handler404(request: HttpRequest, exception: Optional[Exception]
+def handler404(request: HttpRequest, exception: Exception | None
                = None, template_name: str = 'error.html') -> HttpResponse:
     """
     Handler for :status:`404` responses.
@@ -210,7 +210,7 @@ def handler404(request: HttpRequest, exception: Optional[Exception]
     return render(request, template_name, context, status=404)
 
 
-def handler500(request: HttpRequest, exception: Optional[Exception]
+def handler500(request: HttpRequest, exception: Exception | None
                = None, template_name: str = 'error.html'
                ) -> HttpResponse:  # pragma: no cover
     """

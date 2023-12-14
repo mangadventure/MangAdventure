@@ -17,7 +17,7 @@ from os import path, remove
 from pathlib import PurePath
 from shutil import rmtree
 from threading import Lock, Thread
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
@@ -33,9 +33,9 @@ from django.db import models
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
 from django.urls import reverse
-from django.utils import timezone as tz
 from django.utils.functional import cached_property
 from django.utils.text import slugify
+from django.utils.timezone import now
 
 from MangAdventure import __version__ as VERSION, storage, utils, validators
 
@@ -71,7 +71,7 @@ class _NonZeroIntegerField(models.PositiveSmallIntegerField):
 class AliasManager(models.Manager):
     """A :class:`~django.db.models.Manager` for aliases."""
 
-    def names(self) -> List[str]:
+    def names(self) -> list[str]:
         """
         Get the names of the aliases.
 
@@ -152,7 +152,7 @@ class Category(models.Model):
     """A model representing a category."""
     #: The category's ID.
     id = models.CharField(
-        primary_key=True, default='', max_length=25, auto_created=True
+        primary_key=True, db_default='', max_length=25, auto_created=True
     )
     #: The unique name of the category.
     name = models.CharField(
@@ -231,7 +231,7 @@ class Series(models.Model):
     #: The publication status of the series.
     status = models.CharField(
         blank=False, max_length=10,
-        choices=Status.choices, default=Status.ONGOING,
+        choices=Status, default=Status.ONGOING,
         help_text='The publication status of the series.'
     )
     #: The licensing status of the series.
@@ -283,7 +283,7 @@ class Series(models.Model):
         return PurePath('series', self.slug)
 
     @cached_property
-    def sitemap_images(self) -> List[str]:
+    def sitemap_images(self) -> list[str]:
         """
         Get the list of images used in the sitemap.
 
@@ -346,7 +346,7 @@ class Chapter(models.Model):
         db_index=True, help_text=(
             'You can select a future date to schedule'
             ' the publication of the chapter.'
-        ), default=tz.now
+        ), default=now
     )
     #: The modification date of the chapter.
     modified = models.DateTimeField(auto_now=True, db_index=True)
@@ -356,7 +356,7 @@ class Chapter(models.Model):
     )
     #: The total views of the chapter.
     views = models.PositiveIntegerField(
-        default=0, db_index=True, editable=False,
+        db_default=0, db_index=True, editable=False,
         help_text='The total views of the chapter.'
     )
 
@@ -556,7 +556,7 @@ class Chapter(models.Model):
         return root
 
     @cached_property
-    def sitemap_images(self) -> List[str]:
+    def sitemap_images(self) -> list[str]:
         """
         Get the list of images used in the sitemap.
 
@@ -565,7 +565,7 @@ class Chapter(models.Model):
         return [p.image.url for p in self.pages.all()]
 
     @cached_property
-    def _tuple(self) -> Tuple[Union[int, float], float]:
+    def _tuple(self) -> tuple[int | float, float]:
         return self.volume or float('inf'), self.number
 
     def __str__(self) -> str:
@@ -575,21 +575,20 @@ class Chapter(models.Model):
         :return: The chapter formatted according to the
                  :attr:`~reader.models.Series.format`.
         """
-        # TODO: use removeprefix (Py3.9+)
         if not self.series:  # pragma: no cover
             return Series.format.default.format(  # type: ignore
                 title=self.title or 'N/A',
                 volume=self.volume or '?',
                 number=f'{self.number:g}',
                 date='', series=''
-            ).replace('Vol. ?, ', '')
+            ).removeprefix('Vol. ?, ')
         return self.series.format.format(
             title=self.title,
             volume=self.volume or '?',
             number=f'{self.number:g}',
             date=self.published.strftime('%F'),
             series=self.series.title
-        ).replace('Vol. ?, ', '')
+        ).removeprefix('Vol. ?, ')
 
     def __eq__(self, other: Any) -> bool:
         """
@@ -701,8 +700,8 @@ class Page(models.Model):
             ),
         )
 
-    def delete(self, using: Optional[str] = None,
-               keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
+    def delete(self, using: str | None = None,
+               keep_parents: bool = False) -> tuple[int, dict[str, int]]:
         if self.image:
             # XXX: can't use self.image.delete() for some reason
             self.image.storage.delete(self.image.name)

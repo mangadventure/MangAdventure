@@ -1,9 +1,14 @@
 """Pagination utilities."""
 
-from typing import Any, Dict, List
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from rest_framework.pagination import BasePagination, PageNumberPagination
 from rest_framework.response import Response
+
+if TYPE_CHECKING:  # pragma: no cover
+    from rest_framework.viewsets import ViewSet
 
 
 class DummyPagination(BasePagination):
@@ -12,13 +17,13 @@ class DummyPagination(BasePagination):
     def to_html(self) -> str:
         return ''
 
-    def paginate_queryset(self, *args, **kwargs) -> List:
+    def paginate_queryset(self, *args, **kwargs) -> list:
         return list(args[0])
 
     def get_paginated_response(self, data: Any) -> Response:
         return Response({'results': data})
 
-    def get_paginated_response_schema(self, schema: Dict) -> Dict:
+    def get_paginated_response_schema(self, schema: dict) -> dict:
         return {'type': 'object', 'properties': {'results': schema}}
 
 
@@ -33,7 +38,7 @@ class PageLimitPagination(PageNumberPagination):
             'results': data
         })
 
-    def get_paginated_response_schema(self, schema: Dict) -> Dict:
+    def get_paginated_response_schema(self, schema: dict) -> dict:
         return {
             'type': 'object',
             'properties': {
@@ -51,13 +56,12 @@ class PageLimitPagination(PageNumberPagination):
             }
         }
 
-    def get_schema_operation_parameters(self, view: Any) -> List[Dict]:
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
         params = super().get_schema_operation_parameters(view)
         params[0]['schema']['minimum'] = 1
-        # TODO: use dict union (Py3.9+)
-        params[1]['schema'].update({
+        params[1]['schema'] |= {
             'minimum': 1, 'default': self.page_size
-        })
+        }
         return params
 
 

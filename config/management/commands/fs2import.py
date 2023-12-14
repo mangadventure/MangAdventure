@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from io import StringIO
 from os.path import abspath, join
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from django.core.files import File
 from django.core.management import BaseCommand, CommandError, call_command
@@ -155,7 +155,7 @@ class Command(BaseCommand):
             all_chapters.append(chapter)
         try:
             Chapter.objects.bulk_create(all_chapters)
-            groups_through.objects.bulk_create(chapter_groups)  # type: ignore
+            groups_through.objects.bulk_create(chapter_groups)
             self._print_success('Chapters successfully imported.')
         except IntegrityError as e:  # pragma: no cover
             raise CommandError('Failed to insert chapters') from e
@@ -182,7 +182,7 @@ class Command(BaseCommand):
         self._print_success('Successfully imported FoolSlide2 data.')
 
     @staticmethod
-    def _get_element(tables: List[Element], name: str) -> List[Element]:
+    def _get_element(tables: list[Element], name: str) -> list[Element]:
         return list(filter(
             lambda t: t.attrib['name'].endswith(name), tables
         ))
@@ -193,7 +193,7 @@ class Command(BaseCommand):
         return getattr(elem, 'text', None) or ''
 
     @staticmethod
-    def _sort_children(tables: List[Element], name: str) -> List[Element]:
+    def _sort_children(tables: list[Element], name: str) -> list[Element]:
         return sorted(tables, key=lambda p: Command._get_column(p, name))
 
     def _print(self, text: str, **kwargs):

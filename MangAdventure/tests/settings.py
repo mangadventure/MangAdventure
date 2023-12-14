@@ -203,7 +203,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-DEFAULT_FROM_EMAIL = 'evangelos-ch@users.noreply.github.com'
+DEFAULT_FROM_EMAIL = 'rainx0r@users.noreply.github.com'
 
 DISALLOWED_USER_AGENTS = [re.compile(re.escape(b), re.I) for b in BOTS]
 DISALLOWED_USER_AGENTS.append(re.compile('^$'))  # empty UA
@@ -223,6 +223,8 @@ LANGUAGE_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+
+FORMS_URLFIELD_ASSUME_HTTPS = False
 
 # XXX: No SSL on localhost
 SECURE_SSL_REDIRECT = env.get('HTTPS', False)

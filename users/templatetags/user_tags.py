@@ -1,7 +1,5 @@
 """Template tags of the users app."""
 
-from typing import Dict, List
-
 from django.core.cache import cache
 from django.template.defaultfilters import register
 
@@ -12,7 +10,7 @@ from allauth.socialaccount.templatetags.socialaccount import (
 
 
 @register.simple_tag
-def get_oauth_providers() -> List[Dict[str, str]]:
+def get_oauth_providers() -> list[dict[str, str]]:
     """Get a list of available OAuth providers."""
     if not (providers := cache.get('oauth.providers')):
         providers = list(SocialApp.objects.values('provider', 'name'))

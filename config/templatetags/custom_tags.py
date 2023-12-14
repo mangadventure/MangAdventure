@@ -2,7 +2,6 @@
 
 from json import dumps
 from os.path import basename, splitext
-from typing import Dict, List
 from urllib.parse import urljoin as join
 from urllib.request import Request, urlopen
 
@@ -27,7 +26,7 @@ def urljoin(origin: str, pathname: str) -> str:
 
 
 @register.filter(is_safe=True)
-def jsonld(value: Dict, element_id: str) -> str:
+def jsonld(value: dict, element_id: str) -> str:
     """
     Generate a JSON-LD script tag.
 
@@ -49,7 +48,7 @@ def jsonld(value: Dict, element_id: str) -> str:
 
 
 @register.filter
-def vslice(value: List, var: int) -> List:
+def vslice(value: list, var: int) -> list:
     """
     Filter used to dynamically :tag:`slice` a list.
 

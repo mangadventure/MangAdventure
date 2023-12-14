@@ -1,7 +1,5 @@
 """Model serializers for the groups app."""
 
-from typing import Dict, List
-
 from rest_framework.fields import RegexField, SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
@@ -31,13 +29,13 @@ class GroupSerializer(ModelSerializer):
         help_text='The members of this group.', method_name='_get_members'
     )
 
-    def _get_members(self, obj: Group) -> List[str]:
+    def _get_members(self, obj: Group) -> list[str]:
         return [
             f'{r.get_role_display()}: {r.member.name}'
             for r in obj.roles.all()
         ]
 
-    def create(self, validated_data: Dict) -> Group:
+    def create(self, validated_data: dict) -> Group:
         """Create a new ``Group`` instance."""
         # manually set the manager to the current user
         return super().create({
@@ -78,7 +76,7 @@ class MemberSerializer(ModelSerializer):
         method_name='_get_groups'
     )
 
-    def _get_groups(self, obj: Member) -> List[str]:
+    def _get_groups(self, obj: Member) -> list[str]:
         return [
             f'{g.name} ({obj.get_roles(g)})' for g
             in obj.groups.only('id', 'name').distinct()

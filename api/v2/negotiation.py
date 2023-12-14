@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from rest_framework.negotiation import DefaultContentNegotiation
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class OpenAPIContentNegotiation(DefaultContentNegotiation):
     """Class that fixes content negotiation for the OpenAPI schema."""
 
-    def get_accept_list(self, request: Request) -> List[str]:
+    def get_accept_list(self, request: Request) -> list[str]:
         return super().get_accept_list(request) + [
             'application/vnd.oai.openapi+json'
         ]

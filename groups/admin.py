@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING
 
 from django.contrib import admin
 from django.db.models.functions import Lower
@@ -23,8 +23,8 @@ class MemberRoleInline(admin.StackedInline):
     model = Role
     extra = 1
 
-    def get_formset(self, request: HttpRequest, obj: Optional[Role],
-                    **kwargs) -> Type[BaseInlineFormSet]:  # pragma: no cover
+    def get_formset(self, request: HttpRequest, obj: Role | None,
+                    **kwargs) -> type[BaseInlineFormSet]:  # pragma: no cover
         formset = super().get_formset(request, obj, **kwargs)
         if request.user.is_superuser:
             return formset
@@ -74,8 +74,8 @@ class GroupAdmin(admin.ModelAdmin):
     )
     empty_value_display = 'N/A'
 
-    def get_form(self, request: HttpRequest, obj: Optional[Group]
-                 = None, change: bool = False, **kwargs) -> Type[ModelForm]:
+    def get_form(self, request: HttpRequest, obj: Group | None
+                 = None, change: bool = False, **kwargs) -> type[ModelForm]:
         form = super().get_form(request, obj, change, **kwargs)
         if 'manager' in form.base_fields:
             form.base_fields['manager'].initial = request.user.id
@@ -102,7 +102,7 @@ class GroupAdmin(admin.ModelAdmin):
         ) if obj.website else ''
 
     def has_change_permission(self, request: HttpRequest, obj:
-                              Optional[Group] = None) -> bool:
+                              Group | None = None) -> bool:
         """
         Return ``True`` if editing the object is permitted.
 
@@ -119,7 +119,7 @@ class GroupAdmin(admin.ModelAdmin):
         return obj.manager_id == request.user.id
 
     def has_delete_permission(self, request: HttpRequest, obj:
-                              Optional[Group] = None) -> bool:
+                              Group | None = None) -> bool:
         """
         Return ``True`` if deleting the object is permitted.
 

@@ -16,7 +16,7 @@ if find_spec('csp'):  # pragma: no cover
     )(flatpage)
 
 #: The URL patterns of the config app.
-urlpatterns = [
+urlpatterns: list = [
     path('info/', info_page, {'url': '/info/'}, name='info'),
     path('privacy/', info_page, {'url': '/privacy/'}, name='privacy'),
 ]
@@ -28,8 +28,6 @@ if settings.DEBUG:  # pragma: no cover
     )
     if find_spec('debug_toolbar'):
         from debug_toolbar import urls as djdt_urls
-        urlpatterns.append(
-            path('__debug__/', include(djdt_urls))  # type: ignore
-        )
+        urlpatterns.append(path('__debug__/', include(djdt_urls)))
 
 __all__ = ['urlpatterns']

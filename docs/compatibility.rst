@@ -11,9 +11,9 @@ Python
      - Compatibility
    * - <=2.7
      - Incompatible
-   * - 3.0 - 3.7
+   * - 3.0 - 3.9
      - Incompatible
-   * - 3.8 - 3.10
+   * - 3.10 - 3.12
      - Compatible
 
 Databases
@@ -25,11 +25,11 @@ Databases
 
    * - Version
      - Compatibility
-   * - <5.7
+   * - <=5.7
      - Incompatible
-   * - 5.7
-     - Compatible
-   * - >=8.0
+   * - 8.0.0-8.0.10
+     - Incompatible
+   * - >=8.0.11
      - Untested
 
 .. list-table:: MariadB
@@ -42,10 +42,10 @@ Databases
      - Incompatible
    * - 10.3
      - Compatible
-   * - 10.4
-     - Untested
-   * - 10.5
+   * - 10.4-10.11
      - Compatible
+   * - >=11.0
+     - Untested
 
 .. list-table:: PostgreSQL
    :header-rows: 1
@@ -53,15 +53,17 @@ Databases
 
    * - Version
      - Compatibility
-   * - <11
+   * - <12
      - Incompatible
-   * - 11
-     - Compatible
    * - 12
      - Untested
    * - 13
      - Compatible
    * - 14
+     - Untested
+   * - 15
+     - Compatible
+   * - 16
      - Untested
 
 .. list-table:: Oracle
@@ -70,9 +72,9 @@ Databases
 
    * - Version
      - Compatibility
-   * - <19.1
+   * - <19c
      - Incompatible
-   * - >=19.1
+   * - >=19c
      - Untested
 
 .. list-table:: MSSQL
@@ -90,9 +92,9 @@ Databases
 
    * - Version
      - Compatibility
-   * - <3.9
+   * - <3.27
      - Incompatible
-   * - >=3.9
+   * - >=3.27
      - Compatible
 
 Browsers
@@ -147,10 +149,3 @@ Browsers
    :alt: iOS Safari
 
 .. |X| unicode:: U+2716
-
-.. note::
-
-   | The ``/api/v2/docs/`` endpoint is special.
-   | See this__ link for its compatibility table.
-
-   __ https://caniuse.com/mdn-html_elements_slot

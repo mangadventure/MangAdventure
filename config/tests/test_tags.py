@@ -5,7 +5,7 @@ from django.contrib.flatpages.models import FlatPage
 
 from pytest import fixture, mark
 
-from config.templatetags.custom_tags import get_type, jsonld, urljoin, vslice
+from config.templatetags.custom_tags import jsonld, urljoin, vslice
 from config.templatetags.flatpage_tags import breadcrumbs_ld
 
 
@@ -41,30 +41,10 @@ def test_vslice():
 
 
 @fixture
-def mock_urlopen(monkeypatch):
-    fake_urlopen = MagicMock()
-    fake_urlopen().__enter__().info() \
-        .get_content_type.return_value = 'image/jpeg'
-    monkeypatch.setattr('config.templatetags.custom_tags.urlopen', fake_urlopen)
-
-
-@fixture
 def mock_request(monkeypatch):
     fake_request = MagicMock()
     fake_request().build_absolute_uri.return_value = 'https://example.com'
     monkeypatch.setattr('django.http.request.HttpRequest', fake_request)
-
-
-def test_get_type(mock_urlopen):
-    assert get_type('https://example.com/my_link.webp') == 'image/jpeg'
-
-
-def test_get_type_no_network():
-    assert get_type('https://example.com/my_link.png') == 'image/png'
-
-
-def test_get_type_invalid():
-    assert get_type('https://example.com/my_link.flif') == 'image/jpeg'
 
 
 @mark.django_db

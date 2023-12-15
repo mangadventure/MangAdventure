@@ -172,11 +172,11 @@ class ChapterAdmin(admin.ModelAdmin):
                  **kwargs) -> type[ModelForm]:  # pragma: no cover
         form = super().get_form(request, obj, **kwargs)
         if 'series' in form.base_fields and not request.user.is_superuser:
-            qs = Series.objects.filter(manager_id=request.user.id)
-            cast(ModelChoiceField, form.base_fields['series']).queryset = qs
+            cast(ModelChoiceField, form.base_fields['series']).queryset = \
+                Series.objects.filter(manager_id=request.user.id)
         if 'cover' in form.base_fields and obj is not None:
-            qs = Page.objects.filter(chapter_id=obj.id)
-            cast(ModelChoiceField, form.base_fields['cover']).queryset = qs
+            cast(ModelChoiceField, form.base_fields['cover']).queryset = \
+                Page.objects.filter(chapter_id=obj.id)
         return form
 
     def formfield_for_foreignkey(self, db_field: ForeignKey,
@@ -184,11 +184,11 @@ class ChapterAdmin(admin.ModelAdmin):
                                  ) -> ModelChoiceField:  # pragma: no cover
         field = super().formfield_for_foreignkey(db_field, request, **kwargs)
         if db_field.name == 'cover':
-            field.label_from_instance = _page_number
+            field.label_from_instance = _page_number  # type: ignore
         return field
 
-    def has_change_permission(self, request: HttpRequest, obj:
-                              Chapter | None = None) -> bool:
+    def has_change_permission(self, request: HttpRequest,
+                              obj: Chapter | None = None) -> bool:
         """
         Return ``True`` if editing the object is permitted.
 
@@ -204,8 +204,8 @@ class ChapterAdmin(admin.ModelAdmin):
             return True
         return obj.series.manager_id == request.user.id
 
-    def has_delete_permission(self, request: HttpRequest, obj:
-                              Chapter | None = None) -> bool:
+    def has_delete_permission(self, request: HttpRequest,
+                              obj: Chapter | None = None) -> bool:
         """
         Return ``True`` if deleting the object is permitted.
 
@@ -269,8 +269,8 @@ class SeriesAdmin(admin.ModelAdmin):
     actions = ('toggle_licensed',)
     empty_value_display = 'N/A'
 
-    def get_form(self, request: HttpRequest, obj: Series | None
-                 = None, change: bool = False, **kwargs) -> type[ModelForm]:
+    def get_form(self, request: HttpRequest, obj: Series | None = None,
+                 change: bool = False, **kwargs) -> type[ModelForm]:
         form = super().get_form(request, obj, change, **kwargs)
         if 'format' in form.base_fields:
             form.base_fields['format'].help_text = mark_safe('<br>'.join((
@@ -328,8 +328,8 @@ class SeriesAdmin(admin.ModelAdmin):
         """
         queryset.update(licensed=Q(licensed=False))
 
-    def has_change_permission(self, request: HttpRequest, obj:
-                              Series | None = None) -> bool:
+    def has_change_permission(self, request: HttpRequest,
+                              obj: Series | None = None) -> bool:
         """
         Return ``True`` if editing the object is permitted.
 
@@ -345,8 +345,8 @@ class SeriesAdmin(admin.ModelAdmin):
             return True
         return obj.manager_id == request.user.id
 
-    def has_delete_permission(self, request: HttpRequest, obj:
-                              Series | None = None) -> bool:
+    def has_delete_permission(self, request: HttpRequest,
+                              obj: Series | None = None) -> bool:
         """
         Return ``True`` if deleting the object is permitted.
 
@@ -409,8 +409,8 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
     search_fields = ('name', 'description')
 
-    def get_readonly_fields(self, request: HttpRequest, obj:
-                            Category | None = None) -> tuple:
+    def get_readonly_fields(self, request: HttpRequest,
+                            obj: Category | None = None) -> tuple[str, ...]:
         """
         Return the fields that cannot be changed.
 

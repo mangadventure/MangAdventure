@@ -11,9 +11,7 @@ def test_discord_name():
     validate = DiscordNameValidator()
     validate('Epic_user-123#8910')
     with raises(ValidationError):
-        validate('User')
-    with raises(ValidationError):
-        validate('User8910')
+        validate('!' * 33)
 
 
 def test_reddit_name():

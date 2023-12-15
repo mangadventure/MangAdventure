@@ -74,8 +74,8 @@ class GroupAdmin(admin.ModelAdmin):
     )
     empty_value_display = 'N/A'
 
-    def get_form(self, request: HttpRequest, obj: Group | None
-                 = None, change: bool = False, **kwargs) -> type[ModelForm]:
+    def get_form(self, request: HttpRequest, obj: Group | None = None,
+                 change: bool = False, **kwargs) -> type[ModelForm]:
         form = super().get_form(request, obj, change, **kwargs)
         if 'manager' in form.base_fields:
             form.base_fields['manager'].initial = request.user.id
@@ -101,8 +101,8 @@ class GroupAdmin(admin.ModelAdmin):
             ' target="_blank">{0}</a>', obj.website
         ) if obj.website else ''
 
-    def has_change_permission(self, request: HttpRequest, obj:
-                              Group | None = None) -> bool:
+    def has_change_permission(self, request: HttpRequest,
+                              obj: Group | None = None) -> bool:
         """
         Return ``True`` if editing the object is permitted.
 
@@ -114,12 +114,13 @@ class GroupAdmin(admin.ModelAdmin):
 
         :return: ``True`` if the user is allowed to edit the group.
         """
-        if request.user.is_superuser or obj is None:
-            return True
-        return obj.manager_id == request.user.id
+        return (
+            request.user.is_superuser or obj is None or
+            obj.manager_id == request.user.id
+        )
 
-    def has_delete_permission(self, request: HttpRequest, obj:
-                              Group | None = None) -> bool:
+    def has_delete_permission(self, request: HttpRequest,
+                              obj: Group | None = None) -> bool:
         """
         Return ``True`` if deleting the object is permitted.
 
@@ -131,9 +132,10 @@ class GroupAdmin(admin.ModelAdmin):
 
         :return: ``True`` if the user is allowed to delete the group.
         """
-        if request.user.is_superuser or obj is None:
-            return True
-        return obj.manager_id == request.user.id
+        return (
+            request.user.is_superuser or obj is None or
+            obj.manager_id == request.user.id
+        )
 
 
 admin.site.register(Group, GroupAdmin)

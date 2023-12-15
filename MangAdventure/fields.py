@@ -40,4 +40,7 @@ class DiscordURLField(URLField):
     default_validators = (DiscordServerValidator(),)
 
 
-__all__ = ['TwitterField', 'DiscordNameField', 'DiscordURLField', 'RedditField']
+__all__ = [
+    'TwitterField', 'DiscordNameField',
+    'DiscordURLField', 'RedditField'
+]

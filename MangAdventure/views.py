@@ -100,7 +100,8 @@ def opensearch(request: HttpRequest) -> HttpResponse:
     return render(
         request, 'opensearch.xml', {
             'name': settings.CONFIG['NAME'],
-            'search': search_, 'self': self_, 'icon': icon,
+            'icon_type': settings.CONFIG['FAVICON_TYPE'],
+            'icon': icon, 'search': search_, 'self': self_,
         }, 'application/opesearchdescription+xml'
     )
 

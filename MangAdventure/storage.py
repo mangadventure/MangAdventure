@@ -35,6 +35,7 @@ def _is_newer(a: Path, b: Path) -> bool:
 
 class ProcessedStaticFilesFinder(FileSystemFinder):
     """Static files finder that for processed files."""
+
     def find_location(self, root: str, path: str,
                       prefix: str | None = None) -> str | None:
         if path.startswith('COMPILED'):
@@ -45,6 +46,7 @@ class ProcessedStaticFilesFinder(FileSystemFinder):
 
 class ProcessedStaticFilesStorage(StaticFilesStorage):
     """Static files storage class with postprocessing."""
+
     def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
 

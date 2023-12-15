@@ -288,6 +288,7 @@ CONFIG = {
     'DISCORD': '',
     'TWITTER': '',
     'FAVICON': '',
+    'FAVICON_TYPE': '',
     'LOGO': '',
     'LOGO_TW': '',
     'LOGO_OG': '',

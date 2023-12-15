@@ -2,26 +2,14 @@
 
 from __future__ import annotations
 
-from io import BytesIO
 from os import remove
 from typing import Any
-from zipfile import BadZipfile, ZipFile
 
 from django.core.exceptions import ValidationError
 # XXX: not parsed properly when under TYPE_CHECKING
 from django.core.files import File
 from django.core.validators import RegexValidator
 from django.utils.deconstruct import deconstructible
-
-from PIL import Image
-
-
-def _remove_file(file: File):
-    try:
-        if hasattr(file, 'path'):
-            remove(file.path)
-    except FileNotFoundError:
-        pass
 
 
 @deconstructible
@@ -48,7 +36,11 @@ class FileSizeValidator:
         :raises ValidationError: If the file is too large.
         """
         if file.size >= self.max_mb << 20:
-            _remove_file(file)
+            if hasattr(file, 'path'):
+                try:
+                    remove(file.path)
+                except FileNotFoundError:
+                    pass
             raise ValidationError(
                 self.message, code=self.code,
                 params={'max': self.max_mb}
@@ -76,50 +68,6 @@ class FileSizeValidator:
         return hash(self.code) | self.max_mb
 
 
-def zipfile_validator(file: File):
-    """
-    Validate a zip file:
-
-    * It must be a valid :class:`~zipfile.ZipFile`.
-    * It must only contain image files.
-    * It cannot contain more than 1 subfolder.
-
-    :param file: The file to be validated.
-
-    :raises ValidationError: If any of the validations failed.
-    """
-    messages = (
-        'The file cannot contain more than 1 subfolder.',
-        'The file must only contain image files.',
-        'The file must be in zip/cbz format.'
-    )
-    codes = ('no_multiple_subfolders', 'only_images', 'invalid_format')
-    zf = None
-    try:
-        zf = ZipFile(file)
-    except BadZipfile as err:
-        _remove_file(file)
-        raise ValidationError(messages[2], code=codes[2]) from err
-    else:
-        first_folder = True
-        for f in zf.namelist():
-            if zf.getinfo(f).is_dir():
-                if first_folder:
-                    first_folder = False
-                    continue
-                _remove_file(file)
-                raise ValidationError(messages[0], code=codes[0])
-            try:
-                data = BytesIO(zf.read(f))
-                Image.open(data).verify()
-            except Exception as exc:
-                _remove_file(file)
-                raise ValidationError(messages[1], code=codes[1]) from exc
-    finally:
-        if zf:
-            zf.close()
-
-
 class DiscordServerValidator(RegexValidator):
     """Validates a Discord server URL."""
     regex = r'^https://discord\.(gg|me)/[A-Za-z0-9_%-]+$'
@@ -136,8 +84,8 @@ class TwitterNameValidator(RegexValidator):
 
 class DiscordNameValidator(RegexValidator):
     """Validates a Discord name."""
-    regex = r'^.{1,32}#[0-9]{4}$'
-    message = 'Invalid Discord username and discriminator.'
+    regex = r'^.{1,32}(#[0-9]{4})?$'
+    message = 'Invalid Discord username.'
     code = 'invalid_discord_name'
 
 
@@ -148,8 +96,12 @@ class RedditNameValidator(RegexValidator):
     code = 'invalid_reddit_name'
 
 
+# XXX: kept for migrations
+def zipfile_validator(_):
+    ...
+
+
 __all__ = [
     'FileSizeValidator', 'DiscordServerValidator',
-    'zipfile_validator', 'TwitterNameValidator',
-    'DiscordNameValidator', 'RedditNameValidator'
+    'TwitterNameValidator', 'DiscordNameValidator', 'RedditNameValidator'
 ]

@@ -65,7 +65,7 @@ class TestRedirectChapter(ReaderTestBase):
 
     @patch.object(
         ImageFileDescriptor, '__set__',
-        ImageFileDescriptor.__mro__[1].__set__)
+        ImageFileDescriptor.__mro__[1].__set__)  # type: ignore
     def test_redirect(self):
         self.chapter.number = 2
         self.chapter.volume = 2

@@ -6,6 +6,7 @@
 
 import re
 from importlib.util import find_spec
+from mimetypes import guess_type
 from pathlib import Path
 from typing import TypedDict
 from urllib.parse import urlsplit
@@ -593,6 +594,7 @@ class _Config(TypedDict):
     DISCORD: str | None
     TWITTER: str | None
     FAVICON: str
+    FAVICON_TYPE: str
     LOGO: str
     LOGO_TW: str
     LOGO_OG: str
@@ -622,6 +624,7 @@ CONFIG: _Config = {
     'DISCORD': env.get('DISCORD'),
     'TWITTER': env.get('TWITTER'),
     'FAVICON': MEDIA_URL + env['FAVICON'],
+    'FAVICON_TYPE': guess_type(env['FAVICON'])[0] or 'image/jpeg',
     'LOGO': MEDIA_URL + (LOGO := env['LOGO']),
     'LOGO_TW': MEDIA_URL + env.get('LOGO_TW', LOGO),
     'LOGO_OG': MEDIA_URL + env.get('LOGO_OG', LOGO),
@@ -672,4 +675,4 @@ if find_spec('sentry_sdk'):
         traces_sample_rate=env.float('SENTRY_SAMPLE_RATE', 0.0) / 100
     )
 
-del BOTS, CDN, UMAMI_URL, LOGO, LOGS_DIR, VERSION
+del BOTS, CDN, LOGO, LOGS_DIR, UMAMI_URL, VERSION

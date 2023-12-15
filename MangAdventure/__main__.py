@@ -10,4 +10,5 @@ def run():
     execute_from_command_line(argv)
 
 
-if __name__ == '__main__': run()  # noqa: E701
+if __name__ == '__main__':
+    run()

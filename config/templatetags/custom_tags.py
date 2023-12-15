@@ -1,11 +1,8 @@
 """Template tags of the config app."""
 
 from json import dumps
-from os.path import basename, splitext
 from urllib.parse import urljoin as join
-from urllib.request import Request, urlopen
 
-from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.defaultfilters import register, slice_filter
 from django.utils.html import format_html
@@ -60,53 +57,4 @@ def vslice(value: list, var: int) -> list:
     return slice_filter(value, f':{var:d}')
 
 
-@register.filter
-def get_type(link: str) -> str:
-    """
-    Get the type of an image given its URL.
-
-    :param link: The link to the image file.
-
-    :return: The mime type of the image.
-    """
-    if (key := 'type.' + basename(link.lower())) in cache:
-        return cache.get(key)  # pragma: no cover
-    try:
-        # Disallow non-HTTP(S) schemes
-        if not link.startswith(('http://', 'https://')):
-            raise Exception('Invalid scheme')
-        request = Request(link, method='HEAD')
-        with urlopen(request) as response:  # nosec: B310
-            type_ = response.info().get_content_type()
-            cache.add(key, type_)
-            return type_
-    except Exception:
-        return {
-            '.apng': 'image/apng',
-            '.bmp': 'image/bmp',
-            '.gif': 'image/gif',
-            '.heic': 'image/heic',
-            '.heif': 'image/heif',
-            '.ico': 'image/x-icon',
-            '.icon': 'image/x-icon',
-            '.j2k': 'image/jp2',
-            '.jfif': 'image/jpeg',
-            '.jls': 'image/jls',
-            '.jp2': 'image/jp2',
-            '.jpeg': 'image/jpeg',
-            '.jpf': 'image/jpx',
-            '.jpg': 'image/jpeg',
-            '.jpm': 'image/jpm',
-            '.jpx': 'image/jpx',
-            '.jxl': 'image/jxl',
-            '.jxr': 'image/jxr',
-            '.jxs': 'image/jxs',
-            '.png': 'image/png',
-            '.svg': 'image/svg+xml',
-            '.tif': 'image/tiff',
-            '.tiff': 'image/tiff',
-            '.webp': 'image/webp'
-        }.get(splitext(link.lower())[-1], 'image/jpeg')
-
-
-__all__ = ['urljoin', 'vslice', 'jsonld', 'get_type']
+__all__ = ['urljoin', 'vslice', 'jsonld']

@@ -19,7 +19,7 @@ from shutil import rmtree
 from threading import Lock, Thread
 from typing import Any
 from xml.etree import ElementTree as ET
-from zipfile import ZipFile
+from zipfile import BadZipfile, ZipFile
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -28,6 +28,7 @@ from django.contrib.contenttypes.fields import (
 )
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.expressions import F
@@ -36,6 +37,8 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.utils.timezone import now
+
+from PIL import Image
 
 from MangAdventure import __version__ as VERSION, storage, utils, validators
 
@@ -352,14 +355,13 @@ class Chapter(models.Model):
     )
     #: The file which contains the chapter's pages.
     file = models.FileField(
+        blank=True, max_length=255,
+        validators=(validators.FileSizeValidator(100),),
         help_text=(
             'Upload a zip or cbz file containing the chapter pages.'
             ' Its size cannot exceed 100 MBs and it'
             ' must not contain more than 1 subfolder.'
-        ), validators=(
-            validators.FileSizeValidator(100),
-            validators.zipfile_validator
-        ), blank=True, max_length=255
+        )
     )
     #: The status of the chapter.
     final = models.BooleanField(
@@ -390,8 +392,7 @@ class Chapter(models.Model):
     )
 
     class Meta:
-        # BUG: ordering with F() seems to be broken
-        # ordering = ('series', F('volume').asc(nulls_last=True), 'number')
+        ordering = ('series', F('volume').asc(nulls_last=True), 'number')
         get_latest_by = ('published', 'modified')
         constraints = (
             models.UniqueConstraint(
@@ -431,7 +432,6 @@ class Chapter(models.Model):
         """Save the current instance."""
         super().save(*args, **kwargs)
         if self.file:
-            validators.zipfile_validator(self.file)
             self.unzip()
 
     def get_absolute_url(self) -> str:
@@ -466,19 +466,46 @@ class Chapter(models.Model):
         if full_path.exists():
             rmtree(full_path)
         full_path.mkdir(parents=True)
-        with ZipFile(self.file) as zf:
-            for name in utils.natsort(zf.namelist()):
-                if zf.getinfo(name).is_dir():
-                    continue
-                counter += 1
-                data = zf.read(name)
-                dgst = blake2b(data, digest_size=16).hexdigest()
-                filename = dgst + path.splitext(name)[-1]
-                file_path = path.join(dir_path, filename)
-                (full_path / filename).write_bytes(data)
-                pages.append(Page(
-                    chapter_id=self.id, number=counter, image=file_path
-                ))
+
+        try:
+            with ZipFile(self.file) as zf:
+                first_folder = True
+                for name in utils.natsort(zf.namelist()):
+                    if zf.getinfo(name).is_dir():
+                        if first_folder:
+                            first_folder = False
+                            continue
+                        remove(self.file.path)
+                        raise ValidationError(
+                            'The file cannot contain more than 1 subfolder.',
+                            code='no_multiple_subfolders'
+                        )
+                    counter += 1
+                    try:
+                        data = zf.read(name)
+                        img = Image.open(BytesIO(data))
+                        img.verify()
+                    except Exception as exc:
+                        remove(self.file.path)
+                        raise ValidationError(
+                            'The file must only contain valid image files.',
+                            code='only_images'
+                        ) from exc
+                    dgst = blake2b(data, digest_size=16).hexdigest()
+                    filename = dgst + path.splitext(name)[-1]
+                    file_path = path.join(dir_path, filename)
+                    (full_path / filename).write_bytes(data)
+                    pages.append(Page(
+                        chapter_id=self.id, number=counter,
+                        image=file_path, mime=img.get_format_mimetype()
+                    ))
+        except BadZipfile as err:
+            remove(self.file.path)
+            raise ValidationError(
+                'The file must be in zip/cbz format.',
+                code='invalid_format'
+            ) from err
+
         self.pages.all().delete()
         self.pages.bulk_create(pages)
         self.file.delete(save=True)
@@ -733,6 +760,8 @@ class Page(models.Model):
     height = models.PositiveIntegerField(editable=False)
     #: The width of the image.
     width = models.PositiveIntegerField(editable=False)
+    #: The mime type of the image.
+    mime = models.CharField(max_length=25, editable=False)
     #: The number of the page.
     number = _NonZeroIntegerField()
     #: The position of the page.

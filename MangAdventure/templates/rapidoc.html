@@ -1,4 +1,4 @@
-<!DOCTYPE html>{% load cache static custom_tags %}
+<!DOCTYPE html>{% load cache static %}
 <html lang="en-us">{% spaceless %}
   <head>{% cache 604800 head %}
     <meta charset="UTF-8">
@@ -6,7 +6,7 @@
     <meta name="generator" content="RapiDoc 9.3.3">
     <meta name="robots" content="nosnippet">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="{{ config.FAVICON }}" rel="shortcut icon" type="{{ config.FAVICON|get_type }}">
+    <link href="{{ config.FAVICON }}" rel="shortcut icon" type="{{ config.FAVICON_TYPE }}">
     <link href="{{ config.FONT_URL }}" rel="stylesheet" type="text/css" crossorigin="anonymous">
     <script src="{% static 'vendor/rapidoc-min.js' %}" type="application/javascript"></script>
     <title>{{ config.NAME }} API docs</title>{% endcache %}

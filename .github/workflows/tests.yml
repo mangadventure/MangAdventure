@@ -32,6 +32,7 @@ jobs:
         env:
           DB_TYPE: sqlite3
       - name: "Set up coveralls"
+        if: github.actor != 'dependabot[bot]'
         run: |-
           pip install coveralls
           coveralls --service=github
@@ -84,6 +85,7 @@ jobs:
           DB_TYPE: mysql
           DB_PASSWORD: ${{secrets.DB_PASSWORD}}
       - name: "Set up coveralls"
+        if: github.actor != 'dependabot[bot]'
         run: |-
           pip install coveralls
           coveralls --service=github
@@ -137,6 +139,7 @@ jobs:
           DB_TYPE: postgresql
           DB_PASSWORD: ${{secrets.DB_PASSWORD}}
       - name: "Set up coveralls"
+        if: github.actor != 'dependabot[bot]'
         run: |-
           pip install coveralls
           coveralls --service=github
@@ -158,6 +161,7 @@ jobs:
   coveralls:
     name: "Coveralls"
     needs: [sqlite, mysql, postgresql]
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     container: python:3-slim
     steps:

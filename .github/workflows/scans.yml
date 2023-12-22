@@ -1,17 +1,28 @@
 name: Scans
 
 run-name: >-
-  ${{github.event_name == 'pull_request' &&
-  github.event.head_commit.message || 'Code scanning'}}
+  ${{github.event_name == 'schedule' &&
+  'Monthly code scanning' || github.event.head_commit.message}}
 
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: "0 0 2 * *"
+  push:
+    branches: [master]
+    paths:
+      - "**/*.py"
+      - "**/*.js"
+      - "pyproject.toml"
   pull_request:
     branches: [master]
     paths:
       - "**/*.py"
       - "**/*.js"
       - "pyproject.toml"
+
+concurrency:
+  group: ${{github.workflow}}-${{github.head_ref}}
+  cancel-in-progress: true
 
 jobs:
   codeql:

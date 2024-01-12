@@ -32,8 +32,10 @@ It is written in Django, SCSS and Vanilla JS. No PHP, no Node.js, no jQuery.
 * [x] Supports web analytics.
   * [x] And tracking chapter views.
 * [x] Allows for migration from FoolSlide2.
-* [x] Has Tachiyomi & Aidoku extensions.
+* [x] Supports reader/downloader [apps][apps].
 * [ ] More features coming soon...
+
+[apps]: https://github.com/mangadventure/MangAdventure/wiki/Apps
 
 ## Documentation
 
@@ -43,11 +45,11 @@ The documentation is available on [Read the Docs][rtfd].
 
 ## Sites
 
-You can find a list of sites that use MangAdventure in the [wiki][].
+You can find a list of sites that use MangAdventure in the [wiki][sites].
 
 If you use MangAdventure for your own site, please add it there.
 
-[wiki]: https://github.com/mangadventure/MangAdventure/wiki
+[sites]: https://github.com/mangadventure/MangAdventure/wiki/Sites
 
 ## Contributing
 

@@ -281,7 +281,9 @@ class Delete(TemplateView):
         uid = request.user.id
         logout(request)
         UserProfile.objects.get(user_id=uid).delete()
-        return redirect('index')
+        response = redirect('index')
+        response['Clear-Site-Data'] = '"*"'
+        return response
 
 
 __all__ = [

@@ -88,6 +88,7 @@ class CategoryViewSet(CORSMixin, ModelViewSet):
     """
     schema = OpenAPISchema(tags=('categories',), component_name='Category')
     serializer_class = serializers.CategorySerializer
+    filter_backends = filters.CATEGORY_FILTERS
     queryset = models.Category.objects.all()
     lookup_field = 'name'
     http_method_names = METHODS

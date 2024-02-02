@@ -5,6 +5,8 @@ v1.0.0
 ^^^^^^
 
 * Added series kind & rating
+* Added licensed series filter to API
+* Added unused categories filter to API
 * Dropped support for Python<3.10
 * Dropped support for Django<5.0
 * Removed the old API views

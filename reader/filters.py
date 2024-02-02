@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from django.db.models import Count
+
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import (
     BaseFilterBackend, OrderingFilter, SearchFilter
@@ -156,6 +158,30 @@ class SlugFilter(SearchFilter):
         return [] if param is None else [param.replace('\x00', '')]
 
 
+class LicenseFilter(BaseFilterBackend):
+    """Series license filter."""
+    description = 'Filter out licensed series.'
+
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
+        if view.action != 'list':
+            return queryset
+        licensed = request.query_params.get('licensed', 'true') == 'true'
+        return queryset if licensed else queryset.exclude(licensed=True)
+
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
+        return [{
+            'name': 'licensed',
+            'required': False,
+            'in': 'query',
+            'description': 'Include licensed series.',
+            'schema': {
+                'type': 'boolean',
+                'default': True
+            }
+        }]
+
+
 class SeriesSort(OrderingFilter):
     """Series sort order filter."""
     ordering_fields = ['title', 'latest_upload', 'chapter_count', 'views']
@@ -272,7 +298,7 @@ class PageFilter(BaseFilterBackend):
             raise ValidationError(detail={
                 'error': f'Invalid number: {request.query_params["number"]}'
             })
-        if request.query_params.get('track') == 'true':
+        if request.query_params.get('track', 'false') == 'true':
             Chapter.track_view(
                 series__slug=series,
                 series__licensed=False,
@@ -317,7 +343,36 @@ class PageFilter(BaseFilterBackend):
             'required': False,
             'in': 'query',
             'description': 'Track chapter views.',
-            'schema': {'type': 'boolean'}
+            'schema': {
+                'type': 'boolean',
+                'default': False
+            }
+        }]
+
+
+class UsageFilter(BaseFilterBackend):
+    """Category usage filter."""
+    description = 'Filter out unused categories.'
+
+    def filter_queryset(self, request: Request, queryset: QuerySet,
+                        view: ViewSet) -> QuerySet:
+        if view.action != 'list':
+            return queryset
+        unused = request.query_params.get('unused', 'true') == 'true'
+        return queryset if unused else queryset.annotate(
+            series_count=Count('series')
+        ).exclude(series_count=0)
+
+    def get_schema_operation_parameters(self, view: ViewSet) -> list[dict]:
+        return [{
+            'name': 'unused',
+            'required': False,
+            'in': 'query',
+            'description': 'Include unused categories.',
+            'schema': {
+                'type': 'boolean',
+                'default': True
+            }
         }]
 
 
@@ -334,14 +389,18 @@ class TrackingFilter(BaseFilterBackend):
             'required': False,
             'in': 'query',
             'description': 'Track chapter views.',
-            'schema': {'type': 'boolean'}
+            'schema': {
+                'type': 'boolean',
+                'default': False
+            }
         }]
 
 
 #: The filters used in the series endpoint.
 SERIES_FILTERS = [
     TitleFilter, AuthorFilter, ArtistFilter,
-    StatusFilter, CategoriesFilter, SlugFilter, SeriesSort
+    StatusFilter, CategoriesFilter, SlugFilter,
+    LicenseFilter, SeriesSort
 ]
 
 #: The filters used in the chapters endpoint.
@@ -350,5 +409,11 @@ CHAPTER_FILTERS = [ChapterFilter, DateFormat]
 #: The filters used in the pages endpoint.
 PAGE_FILTERS = [PageFilter]
 
+#: The filters used in the categories endpoint.
+CATEGORY_FILTERS = [UsageFilter]
 
-__all__ = ['SERIES_FILTERS', 'CHAPTER_FILTERS', 'PAGE_FILTERS']
+
+__all__ = [
+    'SERIES_FILTERS', 'CHAPTER_FILTERS', 'PAGE_FILTERS',
+    'CATEGORY_FILTERS', 'DateFormat', 'TrackingFilter'
+]

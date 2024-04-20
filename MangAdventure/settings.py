@@ -337,48 +337,49 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 #: The account adapter class to use.
-#: See :auth:`ACCOUNT_ADAPTER <configuration.html>`.
+#: See :auth:`ACCOUNT_ADAPTER <account/configuration.html>`.
 ACCOUNT_ADAPTER = 'users.adapters.AccountAdapter'
 
 #: A callable that returns the display name of the user.
-#: See :auth:`ACCOUNT_USER_DISPLAY <configuration.html>`.
+#: See :auth:`ACCOUNT_USER_DISPLAY <account/configuration.html>`.
 ACCOUNT_USER_DISPLAY = 'users.get_user_display'
 
 #: The user is required to hand over an e-mail address when signing up.
-#: See :auth:`ACCOUNT_EMAIL_REQUIRED <configuration.html>`.
+#: See :auth:`ACCOUNT_EMAIL_REQUIRED <account/configuration.html>`.
 ACCOUNT_EMAIL_REQUIRED = True
 
 #: The user cannot have more than one e-mail address.
-#: See :auth:`ACCOUNT_CHANGE_EMAIL <configuration.html>`.
+#: See :auth:`ACCOUNT_CHANGE_EMAIL <account/configuration.html>`.
 ACCOUNT_CHANGE_EMAIL = True
 
 #: Use either the username or the email to login.
-#: See :auth:`ACCOUNT_AUTHENTICATION_METHOD <configuration.html>`.
+#: See :auth:`ACCOUNT_AUTHENTICATION_METHOD <account/configuration.html>`.
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 
 #: The user is blocked from logging in until the email address is verified.
-#: See :auth:`ACCOUNT_EMAIL_VERIFICATION <configuration.html>`.
+#: See :auth:`ACCOUNT_EMAIL_VERIFICATION <account/configuration.html>`.
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 #: Override some of the builtin forms.
-#: See :auth:`ACCOUNT_FORMS <configuration.html>`.
+#: See :auth:`ACCOUNT_FORMS <socialaccount/configuration.html>`.
 ACCOUNT_FORMS = {
     'signup': 'users.forms.RegistrationForm',
     'reset_password': 'users.forms.PasswordResetForm'
 }
 
 #: The social account adapter class to use.
-#: See :auth:`SOCIALACCOUNT_ADAPTER <configuration.html>`.
+#: See :auth:`SOCIALACCOUNT_ADAPTER <socialaccount/configuration.html>`.
 SOCIALACCOUNT_ADAPTER = 'users.adapters.SocialAccountAdapter'
 
-#: Automatically connect social accounts to local ones. See
-#: :auth:`SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT <configuration.html>`.
+#: Automatically connect social accounts to local ones.
+#: See :auth:`SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT
+#: <socialaccount/configuration.html>`.
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 
 #: Social account provider customization. See
-#: :auth:`Google <providers.html#google>`,
-#: :auth:`GitHub <providers.html#github>`,
-#: :auth:`Discord <providers.html#discord>`.
+#: :auth:`Google <socialaccount/providers/google.html>`,
+#: :auth:`GitHub <socialaccount/providers/github.html>`,
+#: :auth:`Discord <socialaccount/providers/discord.html>`.
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'VERIFIED_EMAIL': True,
@@ -467,7 +468,7 @@ if env.bool('HTTPS', True):
     SESSION_COOKIE_SECURE = True
 
     #: The default protocol used when generating account URLs.
-    #: See :auth:`ACCOUNT_DEFAULT_HTTP_PROTOCOL <configuration.html>`.
+    #: See :auth:`ACCOUNT_DEFAULT_HTTP_PROTOCOL <account/configuration.html>`.
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
     #: The default protocol used in URL fields.
@@ -479,7 +480,7 @@ UMAMI_URL = env.get('UMAMI_URL')
 # Optional django-csp module
 if find_spec('csp'):
     #: Set the :csp:`default-src` CSP directive.
-    CSP_DEFAULT_SRC = ("'none'",)
+    CSP_DEFAULT_SRC = ("'self'",)
 
     #: Set the :csp:`connect-src` CSP directive.
     CSP_CONNECT_SRC = ("'self'", UMAMI_URL) if UMAMI_URL else ("'self'",)
@@ -664,7 +665,7 @@ if DEBUG:
 ################
 
 if find_spec('sentry_sdk'):
-    from sentry_sdk.hub import init as sentry_init
+    from sentry_sdk import init as sentry_init
     from sentry_sdk.integrations.django import DjangoIntegration
     sentry_init(
         debug=DEBUG,

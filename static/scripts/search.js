@@ -42,12 +42,12 @@
   }
 
   function initialize() {
-    const url = new URL(window.location);
+    const url = new URL(window.location.toString());
     const form = document.getElementById('search-form');
     const table = document.getElementById('result-table');
 
-    if (table && window.Tablesort) {
-      new window.Tablesort(table);
+    if (table && globalThis.Tablesort) {
+      new globalThis.Tablesort(table);
       table.querySelector('th').removeAttribute('data-sort-default');
     }
 

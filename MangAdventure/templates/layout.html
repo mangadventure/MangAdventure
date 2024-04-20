@@ -45,7 +45,7 @@
       <meta property="og:type" content="website">
       <meta property="og:site_name" content="{{ config.NAME }}">
       <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-      <link href="{{ config.FAVICON }}" rel="shortcut icon" type="{{ config.FAVICON_TYPE }}">
+      <link href="{{ config.FAVICON }}" rel="icon" type="{{ config.FAVICON_TYPE }}">
       <link href="{% url 'manifest' %}" rel="manifest" type="application/manifest+json">
       <link href="{% url 'opensearch' %}" rel="search" title="{{ config.NAME }}"
             type="application/opensearchdescription+xml">
@@ -104,7 +104,7 @@
               </a>
             </li>
             <li id="searchlink">
-              <a class="navig-link" href="{% url 'search' %}">
+              <a class="navig-link" href="{% url 'search' %}" rel="search">
                 <i class="mi mi-search"></i><span class="ident">Search</span>
               </a>
             </li>

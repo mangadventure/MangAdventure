@@ -38,7 +38,7 @@ class Command(BaseCommand):
         out = stdout if (file := options['file']) == '-' else open(file, 'w')
         try:
             for log in LogEntry.objects.iterator():
-                user = log.user.username
+                user = log.user.username  # type: ignore
                 date = log.action_time.isoformat(' ', 'seconds')
                 act = log.get_action_flag_display()
                 try:

@@ -53,7 +53,7 @@ class TestRedirectSeries(ReaderTestBase):
         assert get_redirect_list() == [(url3, url1), (url2, url1)]
 
 
-class TestRedirectChapter(ReaderTestBase):
+class TestMoveChapter(ReaderTestBase):
     def setup_method(self):
         super().setup_method()
         self.series = Series.objects.create(
@@ -66,7 +66,7 @@ class TestRedirectChapter(ReaderTestBase):
     @patch.object(
         ImageFileDescriptor, '__set__',
         ImageFileDescriptor.__mro__[1].__set__)  # type: ignore
-    def test_redirect(self):
+    def test_move(self):
         self.chapter.number = 2
         self.chapter.volume = 2
         self.chapter.save(update_fields=('number', 'volume'))

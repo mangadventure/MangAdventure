@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.messages import error, info
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
@@ -53,17 +54,17 @@ def profile(request: HttpRequest) -> HttpResponse:
     :raises Http404: If there is no active user with the specified ``id``.
     """
     try:
-        uid = int(request.GET.get('id', request.user.id))  # type: ignore
+        uid = int(request.GET.get('id', request.user.pk))  # type: ignore
         prof = UserProfile.objects.select_related('user').only(
             'avatar', 'bio', 'user__email', 'user__username',
             'user__first_name', 'user__last_name',
             'user__is_active', 'user__is_superuser'
         ).get_or_create(user_id=uid)[0]
-    except (ValueError, IntegrityError) as e:
+    except (ValueError, IntegrityError, User.DoesNotExist) as e:
         raise Http404 from e
     if not prof.user.is_active:  # pragma: no cover
         raise Http404('Inactive user')
-    if uid != request.user.id and prof.user.is_superuser:
+    if uid != request.user.pk and prof.user.is_superuser:
         raise Http404('Cannot view profile of superuser')
     uri = request.build_absolute_uri(request.path)
     crumbs = breadcrumbs([('User', uri)])
@@ -81,7 +82,7 @@ def export(request: HttpRequest) -> FileResponse:
 
     :return: A response with the JSON data.
     """
-    profile = UserProfile.objects.get_or_create(user_id=request.user.id)[0]
+    profile = UserProfile.objects.get_or_create(user_id=request.user.pk)[0]
     data = dumps(profile.export(), cls=DjangoJSONEncoder).encode()
     return FileResponse(
         BytesIO(data), as_attachment=True,
@@ -112,7 +113,7 @@ class EditUser(TemplateView):
                 'user__is_staff', 'user__date_joined',
                 'user__is_active', 'user__is_superuser'
             ).select_related('user').get_or_create(
-                user_id=request.user.id
+                user_id=request.user.pk
             )[0]
             url = request.path
             p_url = url.rsplit('/', 2)[0] + '/'
@@ -221,14 +222,14 @@ class Bookmarks(TemplateView):
             ('Bookmarks', request.build_absolute_uri(url))
         ])
         chapters = Chapter.objects.filter(series_id__in=Subquery(
-            Bookmark.objects.filter(user_id=request.user.id).values('series')
+            Bookmark.objects.filter(user_id=request.user.pk).values('series')
         )).select_related('series').order_by('-published').only(
             'title', 'volume', 'number', 'published',
             'final', 'series__cover', 'series__slug',
             'series__title', 'series__format'
         )
         token = UserProfile.objects.only('token') \
-            .get_or_create(user_id=request.user.id)[0].token
+            .get_or_create(user_id=request.user.pk)[0].token
         return self.render_to_response(self.get_context_data(
             releases=list(chapters), breadcrumbs=crumbs, token=token
         ))
@@ -245,7 +246,7 @@ class Bookmarks(TemplateView):
                  | An empty :status:`204` response when deleting a bookmark.
         """
         bookmark, created = Bookmark.objects.only('id').get_or_create(
-            user_id=request.user.id, series_id=request.POST.get('series', 0)
+            user_id=request.user.pk, series_id=request.POST.get('series', 0)
         )
         if not created:
             bookmark.delete()
@@ -278,7 +279,7 @@ class Delete(TemplateView):
 
         :return: A redirect to :func:`index`.
         """
-        uid = request.user.id
+        uid = request.user.pk
         logout(request)
         UserProfile.objects.get(user_id=uid).delete()
         response = redirect('index')

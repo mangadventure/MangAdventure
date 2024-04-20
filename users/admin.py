@@ -200,7 +200,6 @@ class OAuthAppAdmin(SocialAppAdmin):
     list_display = ('name', '_provider', 'client_id')
     exclude = ('provider_id', 'settings')
     sortable_by = ('name', '_provider')
-    radio_fields = {'provider': admin.HORIZONTAL}
 
     def get_form(self, *args, **kwargs) -> ModelForm:  # pragma: no cover
         form = super().get_form(*args, **kwargs)

@@ -27,7 +27,7 @@ class SignedRedisCache(RedisCache):
             def dumps(self, obj: Any) -> Any:
                 if type(obj) is int:
                     return obj
-                data = dumps(obj, self.protocol)
+                data = dumps(obj, self.protocol)  # type: ignore
                 return _sign_data(data) + data
 
             def loads(self, data: Any) -> Any:

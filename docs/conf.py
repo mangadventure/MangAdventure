@@ -31,11 +31,13 @@ extensions = [
     'sphinx.ext.viewcode',
 ]
 templates_path = ['_templates']
-source_suffix = '.rst'
+source_suffix = {
+    '.rst': 'restructuredtext'
+}
 master_doc = 'index'
 language = 'en'
 pygments_style = 'manni'
-needs_sphinx = '7.2'
+needs_sphinx = '8.1'
 
 
 # -- InterSphinx & extlinks configuration --
@@ -51,7 +53,7 @@ intersphinx_mapping = {
 extlinks = {
     'setting': (f'{_django}ref/settings/#std:setting-%s', '%s'),
     'tag': (f'{_django}ref/templates/builtins/#%s', '%s'),
-    'auth': ('https://django-allauth.rtfd.io/en/latest/%s', '%s'),
+    'auth': ('https://docs.allauth.org/en/latest/%s', '%s'),
     'csp': (f'{_mdn}HTTP/Headers/Content-Security-Policy/%s', '%s'),
     'status': (f'{_mdn}HTTP/Status/%s', '%s'),
     'header': (f'{_mdn}HTTP/Headers/%s', '%s'),
@@ -75,6 +77,8 @@ autodoc_default_options = {
         '__weakref__',
         '__slotnames__',
         '__annotations__',
+        '__firstlineno__',
+        '__static_attributes__',
     ))
 }
 autodoc_mock_imports = ['pytest']
@@ -90,10 +94,9 @@ autodoc_typehints = 'none'
 # -- Options for HTML output --
 
 html_theme = 'sphinx_rtd_theme'
-html_theme_path = [__import__(html_theme).get_html_theme_path()]
 html_theme_options = {
     'logo_only': True,
-    'display_version': False,
+    'language_selector': False,
     'collapse_navigation': True,
 }
 html_static_path = ['_static']

@@ -253,7 +253,7 @@ class CubariSerializer(ModelSerializer):
         return self.context['view'].request.build_absolute_uri(obj.cover.url)
 
     def _get_aliases(self, obj: Series) -> list[str]:
-        return obj.aliases.names()
+        return obj.aliases.names()  # type: ignore
 
     def _get_metadata(self, obj: Series) -> list[list[str]]:
         return [

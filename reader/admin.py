@@ -185,7 +185,7 @@ class ChapterAdmin(admin.ModelAdmin):
         field = super().formfield_for_foreignkey(db_field, request, **kwargs)
         if db_field.name == 'cover':
             field.label_from_instance = _page_number  # type: ignore
-        return field
+        return cast(ModelChoiceField, field)
 
     def has_change_permission(self, request: HttpRequest,
                               obj: Chapter | None = None) -> bool:
@@ -377,7 +377,7 @@ class AuthorAdmin(admin.ModelAdmin):
 
         :return: A comma-separated list of aliases.
         """
-        return ', '.join(obj.aliases.names())
+        return ', '.join(obj.aliases.names())  # type: ignore
 
 
 class ArtistAdmin(admin.ModelAdmin):
@@ -398,7 +398,7 @@ class ArtistAdmin(admin.ModelAdmin):
 
         :return: A comma-separated list of aliases.
         """
-        return ', '.join(obj.aliases.names())
+        return ', '.join(obj.aliases.names())  # type: ignore
 
 
 class CategoryAdmin(admin.ModelAdmin):

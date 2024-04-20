@@ -13,7 +13,7 @@ Python
      - Incompatible
    * - 3.0 - 3.9
      - Incompatible
-   * - 3.10 - 3.12
+   * - 3.10 - 3.13
      - Compatible
 
 Databases
@@ -38,11 +38,9 @@ Databases
 
    * - Version
      - Compatibility
-   * - <10.3
+   * - <10.5
      - Incompatible
-   * - 10.3
-     - Compatible
-   * - 10.4-10.11
+   * - 10.5-10.11
      - Compatible
    * - >=11.0
      - Untested
@@ -53,10 +51,8 @@ Databases
 
    * - Version
      - Compatibility
-   * - <12
+   * - <13
      - Incompatible
-   * - 12
-     - Untested
    * - 13
      - Compatible
    * - 14
@@ -64,6 +60,8 @@ Databases
    * - 15
      - Compatible
    * - 16
+     - Compatible
+   * - 17
      - Untested
 
 .. list-table:: Oracle
@@ -92,9 +90,9 @@ Databases
 
    * - Version
      - Compatibility
-   * - <3.27
+   * - <3.31
      - Incompatible
-   * - >=3.27
+   * - >=3.31
      - Compatible
 
 Browsers

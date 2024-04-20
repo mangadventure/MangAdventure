@@ -21,49 +21,51 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3 :: Only",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System",
 ]
 keywords = ["manga", "scanlation", "reader"]
 dynamic = ["version", "readme"]
 dependencies = [
-  "django~=5.0",
-  "djangorestframework>=3.14",
-  "django-allauth>=0.57",
-  "Pillow>=10.1",
+  "django~=5.1.4",
+  "djangorestframework>=3.15",
+  "django-allauth[socialaccount]~=65.3",
+  "pillow>=11.1",
   # because asottile is a jackass
   # https://github.com/sass/libsass-python/pull/400
-  "libsass-bin>=0.22",
-  "yaenv~=1.6.4"
+  "libsass-bin>=0.23",
+  "yaenv>=1.6.4"
 ]
 
 [project.optional-dependencies]
 dev = [
-  "django-stubs~=5.0",
-  "djangorestframework-stubs>=3.14",
-  "flake8~=6.1",
+  "django-stubs>=5.1",
+  "djangorestframework-stubs>=3.15",
+  "flake8~=7.1",
   # because asottile is a jackass, again
   # https://github.com/PyCQA/flake8/issues/234
   "flake8-pyproject>=1.2",
-  "isort>=5.12",
-  "bandit~=1.7",
-  "mypy~=1.7",
-  "pytest~=7.4",
-  "pytest-cov>=4.1",
-  "pytest-django>=4.7"
+  "isort>=5.13",
+  "bandit~=1.8",
+  "mypy~=1.14",
+  "pytest~=8.3",
+  "pytest-cov>=6.0",
+  "pytest-django>=4.9"
 ]
 docs = [
-  "sphinx~=7.2.6",
-  "sphinx-rtd-theme>=1.3",
-  "sphinx-autodoc-typehints~=1.25.2"
+  "sphinx~=8.1.3",
+  "sphinx-rtd-theme>=3.0",
+  "sphinx-autodoc-typehints>=3.0"
 ]
+fs2 = ["defusedxml>=0.7"]
 mysql = ["mysqlclient>=2.2"]
-pgsql = ["psycopg>=3.1"]
-redis = ["redis>5.0"]
+pgsql = ["psycopg>=3.2"]
+redis = ["redis>=5.2"]
 memc = ["pylibmc>=1.6"]
-csp = ["django-csp>=3.7"]
-sentry = ["sentry-sdk>=1.34"]
-debug = ["django-debug-toolbar>=4.2"]
+csp = ["django-csp>=3.8"]
+sentry = ["sentry-sdk>=2.19"]
+debug = ["django-debug-toolbar>=4.4"]
 uwsgi = ["uwsgi~=2.0"]
 
 [[project.authors]]
@@ -160,6 +162,7 @@ exclude_dirs = [
 skips = [
   "B104", # 0.0.0.0 is only used in debug mode
   "B301", # pickled data is verified with HMAC
+  "B314", # xml parse is safe with expat>=2.4.1
   "B403", # pickled data is verified with HMAC
   "B405", # covered by B314 (xml parse)
   "B703", # covered by B308 (mark_safe)

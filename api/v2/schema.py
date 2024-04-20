@@ -123,9 +123,6 @@ class OpenAPISchema(AutoSchema):
     def get_operation(self, path: str, method: str) -> dict:
         op = super().get_operation(path, method)
         op['summary'] = op.pop('description', '')
-        # fix incorrect plural forms
-        if op['operationId'][-2:] == 'ys':
-            op['operationId'] = op['operationId'][:-2] + 'ies'
         # disable security for unrestricted operations
         if method == 'GET' and not hasattr(self.view, '_restrict'):
             op['security'] = ()
@@ -154,10 +151,34 @@ class OpenAPISchema(AutoSchema):
             op['x-badges'] = [{'color': 'orange', 'label': 'Temporary'}]
         return op
 
+    def get_operation_id_base(
+            self, path: str, method: str, action: str) -> str:
+        model = getattr(getattr(self.view, 'queryset', None), 'model', None)
+        if self.operation_id_base is not None:
+            name = self.operation_id_base
+        elif model is not None:
+            name = model.__name__
+        elif self.get_serializer(path, method) is not None:
+            name = self.get_serializer(path, method).__class__.__name__
+            if name.endswith('Serializer'):
+                name = name[:-10]
+        else:
+            name = self.view.__class__.__name__
+            if name.endswith('APIView'):
+                name = name[:-7]
+            elif name.endswith('View'):
+                name = name[:-4]
+            if name.endswith(action.title()):
+                name = name[:-len(action)]
+        # XXX: pluralize without depending on inflection
+        if action == 'list' and not name.endswith('s'):
+            name = f'{name[:-1]}ies' if name.endswith('y') else f'{name}s'
+        return name
+
     def get_path_parameters(self, path: str, method: str) -> list[dict]:
         parameters = []
         model = getattr(getattr(self.view, 'queryset', None), 'model', None)
-        # parse the path without depending on uritemplate
+        # XXX: parse the path without depending on uritemplate
         for variable in self.variable_regex.findall(path):
             description = ''
             schema = {'type': 'string'}

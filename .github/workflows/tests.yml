@@ -31,18 +31,16 @@ jobs:
         run: py.test --cov-report=xml
         env:
           DB_TYPE: sqlite3
-      - name: "Set up coveralls"
+      - name: "Run coveralls"
         if: github.actor != 'dependabot[bot]'
-        run: |-
-          pip install coveralls
-          coveralls --service=github
+        run: pipx run -- coveralls --service=github
         continue-on-error: true
         env:
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: SQLite
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send status to Discord"
-        uses: MangAdventure/discord-webhook@v0.4
+        uses: MangAdventure/discord-webhook@v0.6
         if: github.event_name == 'push' && !cancelled()
         continue-on-error: true
         with:
@@ -84,18 +82,16 @@ jobs:
         env:
           DB_TYPE: mysql
           DB_PASSWORD: ${{secrets.DB_PASSWORD}}
-      - name: "Set up coveralls"
+      - name: "Run coveralls"
         if: github.actor != 'dependabot[bot]'
-        run: |-
-          pip install coveralls
-          coveralls --service=github
+        run: pipx run -- coveralls --service=github
         continue-on-error: true
         env:
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: MySQL
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send status to Discord"
-        uses: MangAdventure/discord-webhook@v0.4
+        uses: MangAdventure/discord-webhook@v0.6
         if: github.event_name == 'push' && !cancelled()
         continue-on-error: true
         with:
@@ -138,18 +134,16 @@ jobs:
         env:
           DB_TYPE: postgresql
           DB_PASSWORD: ${{secrets.DB_PASSWORD}}
-      - name: "Set up coveralls"
+      - name: "Run coveralls"
         if: github.actor != 'dependabot[bot]'
-        run: |-
-          pip install coveralls
-          coveralls --service=github
+        run: pipx run -- coveralls --service=github
         continue-on-error: true
         env:
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: PostgreSQL
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: "Send status to Discord"
-        uses: MangAdventure/discord-webhook@v0.4
+        uses: MangAdventure/discord-webhook@v0.6
         if: github.event_name == 'push' && !cancelled()
         continue-on-error: true
         with:

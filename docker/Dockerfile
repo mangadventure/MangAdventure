@@ -1,27 +1,31 @@
-FROM alpine:3.18
+FROM alpine:3.21
+
+SHELL [ "/bin/ash", "-e", "-c" ]
 
 WORKDIR /web
 
 COPY . .
 
 # hadolint ignore=DL3018
-RUN ([ -f .env ] || mv .env.example .env) \
-    && mkdir -p .well-known logs media \
-    && touch static/styles/_variables.scss \
-    && mv docker/uwsgi.ini /etc/uwsgi.ini \
-    && apk add --no-cache \
-        mimalloc2 \
-        python3 \
-        py3-pip \
-        py3-psycopg2 \
-        py3-redis \
-        py3-wheel \
-        uwsgi-python3 \
-    && pip install --no-cache-dir -e '.[csp,sentry]' \
-    && ./manage.py collectstatic --no-input \
-    && chown -R uwsgi:uwsgi /web \
-    && apk del py3-pip py3-wheel \
-    && rm -rf docker
+RUN <<EOF
+[ -f .env ] || mv .env.example .env
+mkdir -p .well-known logs media
+touch static/styles/_variables.scss
+mv docker/uwsgi.ini /etc/uwsgi.ini
+apk add --no-cache \
+  mimalloc2 \
+  python3 \
+  py3-pip \
+  py3-psycopg2 \
+  py3-redis \
+  py3-wheel \
+  uwsgi-python3
+pip install --no-cache-dir -e '.[csp,sentry]'
+./manage.py collectstatic --no-input
+chown -R uwsgi:uwsgi /web
+apk del py3-pip py3-wheel
+rm -rf docker
+EOF
 
 VOLUME /web/logs \
        /web/media \

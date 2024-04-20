@@ -100,12 +100,10 @@ def move_chapter(sender: type[Chapter], instance: Chapter, **kwargs):
         return
     old_dir = current.get_directory()
     new_dir = instance.get_directory()
-    print(old_dir, new_dir)
     if old_dir != new_dir:
         if current.volume != instance.volume:
             _move(old_dir.parent, new_dir.parent)
             old_dir = new_dir.parent / old_dir.name
-            print(old_dir, new_dir)
         if current.number != instance.number:
             _move(old_dir, new_dir)
             for page in (pages := current.pages.all()):

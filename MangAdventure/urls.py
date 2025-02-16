@@ -45,6 +45,9 @@ handler403 = 'MangAdventure.views.handler403'
 #: See :func:`MangAdventure.views.handler404`.
 handler404 = 'MangAdventure.views.handler404'
 
+#: See :func:`MangAdventure.views.handler429`.
+handler429 = 'MangAdventure.views.handler429'
+
 #: See :func:`MangAdventure.views.handler500`.
 handler500 = 'MangAdventure.views.handler500'
 

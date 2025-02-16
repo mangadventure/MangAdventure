@@ -211,6 +211,24 @@ def handler404(request: HttpRequest, exception: Exception | None
     return render(request, template_name, context, status=404)
 
 
+def handler429(request: HttpRequest, exception: Exception | None
+               = None, template_name: str = 'error.html') -> HttpResponse:
+    """
+    Handler for :status:`429` responses.
+
+    :param request: The original request.
+    :param exception: The exception that occurred.
+    :param template_name: The name of the error template.
+
+    :return: A :class:`~django.http.JsonResponse` for API URLs,
+             otherwise a response with the rendered error template.
+    """
+    if request.path.startswith('/api'):  # pragma: no cover
+        return JsonResponse({'error': 'Too many requests'}, status=429)
+    context = _error_context("Take a chill pill.", 429)
+    return render(request, template_name, context, status=429)
+
+
 def handler500(request: HttpRequest, exception: Exception | None
                = None, template_name: str = 'error.html'
                ) -> HttpResponse:  # pragma: no cover
@@ -233,7 +251,6 @@ def handler500(request: HttpRequest, exception: Exception | None
 
 
 __all__ = [
-    'index', 'search', 'opensearch', 'robots',
-    'contribute', 'manifest', 'handler400',
-    'handler403', 'handler404', 'handler500'
+    'index', 'search', 'opensearch', 'robots', 'contribute', 'manifest',
+    'handler400', 'handler403', 'handler404', 'handler429', 'handler500'
 ]

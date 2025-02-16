@@ -18,6 +18,7 @@
           <input type="{{ item.field.widget.input_type }}" class="input" name="{{ item.name }}"
                  id="{{ item.name }}" placeholder="{{ item.field.widget.attrs.placeholder }}"
                  {% if 'password' in item.name %}autocomplete="off"{% endif %}
+                 {% if item.name == 'email2' %}tabindex="-1"{% endif %}
                  {% if item.field.required %}required{% endif %}>
           {% if item.errors %}
             {% for error in item.errors %}

@@ -1,22 +1,26 @@
 """Form models for the users app."""
 
 from importlib.util import find_spec
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
+from allauth.account.adapter import get_adapter
 from allauth.account.forms import ResetPasswordForm, SignupForm
 
 from MangAdventure.validators import FileSizeValidator
 
 from .models import UserProfile
 
+if TYPE_CHECKING:
+    from django.http.request import HttpRequest
+
 if find_spec('sentry_sdk'):  # pragma: no cover
     from sentry_sdk import capture_message, configure_scope
 
-    def _log_honeypot(message: str, username: str | None, email: str):
+    def _log_honeypot(message: str, username: str | None, email: str | None):
         with configure_scope() as scope:
             scope.set_tag('username', username)
             scope.set_tag('email', email)
@@ -24,13 +28,13 @@ if find_spec('sentry_sdk'):  # pragma: no cover
 else:  # pragma: no cover
     from django.core.mail import mail_admins
 
-    def _log_honeypot(message: str, username: str | None, email: str):
+    def _log_honeypot(message: str, username: str | None, email: str | None):
         body = f'Username: {username or "N/A"}\nE-mail: {email}'
         mail_admins(message, body, fail_silently=True)
 
 
 class RegistrationForm(SignupForm):  # pragma: no cover
-    """Registration form with a honeypot field."""
+    """Registration form with a custom honeypot field."""
     #: The honeypot field.
     email2 = forms.EmailField(
         label='Email (again)',
@@ -40,16 +44,16 @@ class RegistrationForm(SignupForm):  # pragma: no cover
         })
     )
 
-    def clean(self):
-        """Fail validation if the honeypot field was set."""
-        result = super().clean()
-        if self.cleaned_data.get('email2'):
-            msg = 'Possible spam bot detected'
-            username = self.cleaned_data['username']
-            email = self.cleaned_data['email']
-            _log_honeypot(msg, username, email)
-            raise forms.ValidationError('Nope!')
-        return result
+    def try_save(self, request: HttpRequest):
+        """Do not create a user if the honeypot field was set."""
+        if not self.cleaned_data.get('email2'):
+            return super(SignupForm, self).try_save(request)
+        adapter = get_adapter()
+        username = self.cleaned_data.get('username')
+        email = self.cleaned_data.get('email')
+        _log_honeypot('Possible spam bot detected', username, email)
+        # return a fake email verification sent response
+        return None, adapter.respond_email_verification_sent(request, None)
 
 
 class PasswordResetForm(ResetPasswordForm):  # pragma: no cover
@@ -66,12 +70,11 @@ class PasswordResetForm(ResetPasswordForm):  # pragma: no cover
     def clean(self):
         """Fail validation if the honeypot field was set."""
         result = super().clean()
-        if self.cleaned_data.get('email2'):
-            msg = 'Possible spam bot detected'
-            email = self.cleaned_data['email']
-            _log_honeypot(msg, None, email)
-            raise forms.ValidationError('Nope!')
-        return result
+        if not self.cleaned_data.get('email2'):
+            return result
+        email = self.cleaned_data.get('email')
+        _log_honeypot('Possible spam bot detected', None, email)
+        raise forms.ValidationError('Cannot reset password')
 
 
 class UserProfileForm(forms.ModelForm):

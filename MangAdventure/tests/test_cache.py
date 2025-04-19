@@ -6,7 +6,7 @@ from MangAdventure.cache import SignedPyLibMCCache, SignedRedisCache
 from MangAdventure.tests.base import MangadvTestBase
 
 
-class TestCache(MangadvTestBase):
+class TestRedis(MangadvTestBase):
     @classmethod
     def setup_class(cls):
         super().setup_class()

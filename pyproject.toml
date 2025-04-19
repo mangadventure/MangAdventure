@@ -58,10 +58,10 @@ docs = [
   "sphinx-rtd-theme>=3.0",
   "sphinx-autodoc-typehints>=3.0"
 ]
-fs2 = ["defusedxml>=0.7"]
 mysql = ["mysqlclient>=2.2"]
 pgsql = ["psycopg>=3.2"]
 redis = ["redis>=5.2"]
+valkey = ["valkey>=6.0"]
 memc = ["pylibmc>=1.6"]
 csp = ["django-csp>=3.8"]
 sentry = ["sentry-sdk>=2.19"]
@@ -69,8 +69,8 @@ debug = ["django-debug-toolbar>=4.4"]
 uwsgi = ["uwsgi~=2.0"]
 
 [[project.authors]]
-name = "evangelos-ch"
-email = "me@evangelos.ai"
+name = "rainx0r"
+email = "evan@latent.dev"
 
 [[project.authors]]
 name = "ObserverOfTime"

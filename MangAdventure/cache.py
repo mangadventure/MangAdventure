@@ -41,8 +41,13 @@ class SignedRedisCache(RedisCache):
 
         class _SignedRedisCacheClient(RedisCacheClient):
             def __init__(self, *args, **kwargs):
+                try:
+                    # HACK: import valkey instead of redis if available
+                    __import__('sys').modules['redis'] = __import__('valkey')
+                except ImportError:
+                    pass
+                kwargs['serializer'] = _SignedRedisSerializer()
                 super().__init__(*args, **kwargs)
-                self._serializer = _SignedRedisSerializer()
 
         self._class = _SignedRedisCacheClient
 
@@ -54,7 +59,7 @@ class SignedPyLibMCCache(PyLibMCCache):
         super().__init__(*args)
 
         def _is_pickle(flag: int) -> bool:
-            return flag & 23 == 1
+            return flag & 0x17 == 1
 
         class _SignedMCClient(self._lib.Client):
             def serialize(self, value: Any) -> tuple[bytes, int]:

@@ -134,7 +134,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 #: Cache settings dictionary. See :setting:`CACHES`.
 CACHES = {}
-if find_spec('redis'):  # pragma: no cover
+if find_spec('redis') or find_spec('valkey'):  # pragma: no cover
     SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
     CACHES['default'] = {
         'BACKEND': 'MangAdventure.cache.SignedRedisCache',
@@ -149,7 +149,7 @@ elif find_spec('pylibmc'):  # pragma: no cover
     }
 else:
     __import__('warnings').warn_explicit((
-        "Neither redis-py nor pylibmc were installed. "
+        "None of redis-py, valkey-py, or pylibmc were installed. "
         "Falling back to unsigned local memory cache."
     ), UserWarning, __file__, 146)
     CACHES['default'] = {

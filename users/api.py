@@ -55,7 +55,7 @@ class BookmarkViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
         return cast(list, super().get_permissions())
 
     def get_queryset(self) -> QuerySet:
-        series = Series.objects.only('id', 'slug', 'title')
+        series = Series.objects.only('id', 'slug', 'title', 'cover')
         return self.request.user.bookmarks.prefetch_related(  # type: ignore
             Prefetch('series', queryset=series)
         )

@@ -5,13 +5,11 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import (
-    CharField, CurrentUserDefault, EmailField, HiddenField, URLField
+    CharField, CurrentUserDefault, EmailField,
+    HiddenField, ImageField, SlugField, URLField
 )
 from rest_framework.pagination import BasePagination
-from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer
-
-from reader.models import Series
 
 from .models import Bookmark, UserProfile
 
@@ -41,9 +39,17 @@ class BookmarkPagination(BasePagination):
 
 class BookmarkSerializer(ModelSerializer):
     """Serializer for bookmarks."""
-    series = SlugRelatedField(
-        queryset=Series.objects.only('id', 'slug', 'title'),
-        slug_field='slug', help_text='The slug of the series.'
+    series = SlugField(
+        source='series.slug', read_only=True,
+        help_text='The slug of the series.'
+    )
+    title = CharField(
+        source='series.title', read_only=True,
+        help_text='The title of the series.'
+    )
+    cover = ImageField(
+        source='series.cover', read_only=True,
+        help_text='The cover image of the series.'
     )
     user = HiddenField(default=CurrentUserDefault())
 
@@ -56,7 +62,7 @@ class BookmarkSerializer(ModelSerializer):
 
     class Meta:
         model = Bookmark
-        fields = ('series', 'user')
+        fields = ('series', 'title', 'cover', 'user')
 
 
 class ProfileSerializer(ModelSerializer):

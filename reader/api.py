@@ -269,15 +269,23 @@ class CubariViewSet(RetrieveModelMixin, CORSMixin, GenericViewSet):
         return Response(serializer.data)
 
     def get_queryset(self) -> QuerySet:
+        now = tz.now()
         pages = models.Page.objects.order_by('number')
         groups = Group.objects.only('name')
-        chapters = models.Chapter.objects.prefetch_related(
+
+        chapters = models.Chapter.objects.filter(
+            published__lte=now
+        ).prefetch_related(
             Prefetch('pages', queryset=pages),
             Prefetch('groups', queryset=groups)
         ).order_by(F('volume').asc(nulls_last=True), 'number').only(
             'id', 'title', 'number', 'volume', 'modified', 'series_id'
         )
-        return models.Series.objects.defer(
+        return models.Series.objects.annotate(
+            chapter_count=Count('chapters', filter=Q(
+                chapters__published__lte=now
+            )),
+        ).filter(chapter_count__gt=0).defer(
             'manager_id', 'modified', 'created', 'status'
         ).prefetch_related(
             Prefetch('chapters', queryset=chapters),

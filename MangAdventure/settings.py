@@ -475,9 +475,6 @@ if find_spec('csp'):
     #: Set the :csp:`default-src` CSP directive.
     CSP_DEFAULT_SRC = ("'none'",)
 
-    #: Set the :csp:`connect-src` CSP directive.
-    CSP_CONNECT_SRC = ("'self'", UMAMI_URL) if UMAMI_URL else ("'self'",)
-
     #: Set the :csp:`manifest-src` CSP directive.
     CSP_MANIFEST_SRC = ("'self'",)
 
@@ -500,6 +497,9 @@ if find_spec('csp'):
         'weserv': ("'self'", "https://images.weserv.nl"),
         'photon': ("'self'", "https://i3.wp.com")
     }.get(CDN, ("'self'",))
+
+    #: Set the :csp:`connect-src` CSP directive.
+    CSP_CONNECT_SRC = (*CSP_IMG_SRC, UMAMI_URL) if UMAMI_URL else CSP_IMG_SRC
 
     #: Set the :csp:`form-action` CSP directive.
     CSP_FORM_ACTION = ("'self'",)
@@ -627,7 +627,7 @@ if DEBUG:
 ################
 
 if find_spec('sentry_sdk'):
-    from sentry_sdk.hub import init as sentry_init
+    from sentry_sdk import init as sentry_init
     from sentry_sdk.integrations.django import DjangoIntegration
     sentry_init(
         debug=DEBUG,

@@ -11,7 +11,7 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Environment :: Web Environment",
   "Framework :: Django",
-  "Framework :: Django :: 4.1",
+  "Framework :: Django :: 4.2",
   "Intended Audience :: Other Audience",
   "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
@@ -21,19 +21,23 @@ classifiers = [
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: 3 :: Only",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System",
 ]
 keywords = ["manga", "scanlation", "reader"]
 dynamic = ["version", "readme"]
 dependencies = [
-  "django~=4.2.8",
-  "djangorestframework>=3.14",
-  "django-allauth>=0.57",
-  "Pillow>=10.1",
+  "django~=4.2.30",
+  "djangorestframework~=3.14.0",
+  "django-allauth~=0.59.0",
+  "Pillow~=10.4.0",
   # because asottile is a jackass
   # https://github.com/sass/libsass-python/pull/400
-  "libsass-bin>=0.22",
+  "libsass-bin>=0.23",
   "yaenv~=1.4.4; python_version=='3.8'",
   "yaenv~=1.5.3; python_version=='3.9'",
   "yaenv~=1.6.4; python_version>='3.10'"
@@ -42,14 +46,14 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "django-stubs~=4.2",
-  "djangorestframework-stubs>=3.14",
+  "djangorestframework-stubs~=3.14.5",
   "flake8~=6.1",
   # because asottile is a jackass, again
   # https://github.com/PyCQA/flake8/issues/234
   "flake8-pyproject>=1.2",
   "isort>=5.12",
   "bandit~=1.7",
-  "mypy~=1.7",
+  "mypy~=1.8.0",
   "pytest~=7.4",
   "pytest-cov>=4.1",
   "pytest-django>=4.7"
@@ -71,7 +75,7 @@ uwsgi = ["uwsgi~=2.0"]
 
 [[project.authors]]
 name = "rainx0r"
-email = "evan@latent.dev"
+email = "me@rainx0r.dev"
 
 [[project.authors]]
 name = "ObserverOfTime"

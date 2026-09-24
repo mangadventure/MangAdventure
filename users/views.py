@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import error, info
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.db.models import Subquery
@@ -59,7 +60,7 @@ def profile(request: HttpRequest) -> HttpResponse:
             'user__first_name', 'user__last_name',
             'user__is_active', 'user__is_superuser'
         ).get_or_create(user_id=uid)[0]
-    except (ValueError, IntegrityError) as e:
+    except (ValueError, IntegrityError, ObjectDoesNotExist) as e:
         raise Http404 from e
     if not prof.user.is_active:  # pragma: no cover
         raise Http404('Inactive user')

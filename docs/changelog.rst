@@ -1,6 +1,13 @@
 Changelog
 ---------
 
+v0.9.7
+^^^^^^
+
+* Fixed scheduled chapters showing on Cubari
+* Fixed profile crash on invalid user
+* Added support for valkey cache
+
 v0.9.6
 ^^^^^^
 

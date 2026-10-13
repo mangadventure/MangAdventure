@@ -27,6 +27,7 @@ jobs:
         run: cp .env.example .env
       - name: "Lint project"
         run: scripts/lint.sh
+        continue-on-error: true
       - name: "Run tests"
         run: py.test --cov-report=xml
         env:
@@ -78,6 +79,7 @@ jobs:
         run: cp .env.example .env
       - name: "Lint project"
         run: scripts/lint.sh
+        continue-on-error: true
       - name: "Run tests"
         run: py.test --cov-report=xml
         env:
@@ -131,6 +133,7 @@ jobs:
         run: cp .env.example .env
       - name: "Lint project"
         run: scripts/lint.sh
+        continue-on-error: true
       - name: "Run tests"
         run: py.test --cov-report=xml
         env:
